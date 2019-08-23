@@ -13,8 +13,10 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,7 +34,7 @@ public class ImgClassifyActivity extends AppCompatActivity {
     public static final int IMAGE_CAPTURE_REQUEST_CODE = 1;
 
     protected TextView tvModelName;
-    private RadioGroup rgModelDevice;
+    private RadioGroup rgChooseDevice;
     protected Button btnGallery;
     protected Button btnCamera;
     protected ImageView ivImageData;
@@ -58,12 +60,17 @@ public class ImgClassifyActivity extends AppCompatActivity {
         btnGallery = findViewById(R.id.btn_gallery);
         btnCamera = findViewById(R.id.btn_camera);
         tvModelName = findViewById(R.id.tv_model_name);
-        rgModelDevice = findViewById(R.id.rg_model_device);
+        rgChooseDevice = findViewById(R.id.rg_choose_device);
         ivImageData = findViewById(R.id.iv_image_data);
         tvTop1Result = findViewById(R.id.tv_top1_result);
         tvTop2Result = findViewById(R.id.tv_top2_result);
         tvTop3Result = findViewById(R.id.tv_top3_result);
         tvInferenceTime = findViewById(R.id.tv_inference_time);
+
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         btnGallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,8 +86,7 @@ public class ImgClassifyActivity extends AppCompatActivity {
             }
         });
 
-
-        rgModelDevice.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        rgChooseDevice.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (predictor != null && predictor.isLoaded()) {
@@ -100,6 +106,7 @@ public class ImgClassifyActivity extends AppCompatActivity {
                 }
             }
         });
+        rgChooseDevice.getChildAt(1).setEnabled(Utils.isSupportNPU());
 
         // load model
         predictor.init(this, modelFilePath, modelLabelPath, modelInputWidth, modelInputHeight);
@@ -121,6 +128,7 @@ public class ImgClassifyActivity extends AppCompatActivity {
     }
 
     public void updateUI() {
+        tvModelName.setText("model: " + predictor.modelName());
         Bitmap imageData = predictor.imageData();
         if (imageData != null) {
             ivImageData.setImageBitmap(imageData);
@@ -129,6 +137,16 @@ public class ImgClassifyActivity extends AppCompatActivity {
         tvTop2Result.setText(predictor.top2Result());
         tvTop3Result.setText(predictor.top3Result());
         tvInferenceTime.setText("inference time: " + predictor.inferenceTime() + " ms");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void checkStoragePermission() {
@@ -153,7 +171,7 @@ public class ImgClassifyActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
                     IMAGE_CAPTURE_REQUEST_CODE);
         } else {
-            takePictureAndRunModel();
+            takePhotoAndRunModel();
         }
     }
 
@@ -172,17 +190,17 @@ public class ImgClassifyActivity extends AppCompatActivity {
         if (requestCode == IMAGE_CAPTURE_REQUEST_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                     grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                takePictureAndRunModel();
+                takePhotoAndRunModel();
             } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    private void takePictureAndRunModel() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, IMAGE_CAPTURE_REQUEST_CODE);
+    private void takePhotoAndRunModel() {
+        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePhotoIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePhotoIntent, IMAGE_CAPTURE_REQUEST_CODE);
         }
     }
 

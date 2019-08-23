@@ -1,13 +1,3 @@
-/*
-*@file ClassifyItemModel.java
-*
-* Copyright (C) 2019. Huawei Technologies Co., Ltd. All rights reserved.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-*/
-
 package com.baidu.paddle.lite.demo;
 
 import android.content.Context;
@@ -38,14 +28,14 @@ public class ImgClassifyPredictor extends Predictor {
     }
 
     public boolean init(Context appCtx, String modelPath, String labelPath, long imageWidth, long imageHeight) {
-       super.init(appCtx, modelPath);
-       if (!super.isLoaded()) {
-           return false;
-       }
-       this.imageWidth = imageWidth;
-       this.imageHeight = imageHeight;
-       isLoaded &= loadLabel(labelPath);
-       return isLoaded;
+        super.init(appCtx, modelPath);
+        if (!super.isLoaded()) {
+            return false;
+        }
+        this.imageWidth = imageWidth;
+        this.imageHeight = imageHeight;
+        isLoaded &= loadLabel(labelPath);
+        return isLoaded;
     }
 
     protected boolean loadLabel(String labelPath) {
@@ -100,8 +90,8 @@ public class ImgClassifyPredictor extends Predictor {
         int channels = (int) inputShape[1];
         int width = (int) inputShape[3];
         int height = (int) inputShape[2];
-        Bitmap rgbaData = imageData.copy(Bitmap.Config.ARGB_8888,true);
-        Bitmap scaleData = Bitmap.createScaledBitmap(rgbaData, width, height,true);
+        Bitmap rgbaData = imageData.copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap scaleData = Bitmap.createScaledBitmap(rgbaData, width, height, true);
 
         float[] inputData = new float[channels * width * height];
         int rIndex, gIndex, bIndex;
@@ -161,7 +151,9 @@ public class ImgClassifyPredictor extends Predictor {
         return imageData;
     }
 
-    public void setImageData(Bitmap imageData) { this.imageData = imageData; }
+    public void setImageData(Bitmap imageData) {
+        this.imageData = imageData;
+    }
 
     public String top1Result() {
         return top1Result;

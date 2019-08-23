@@ -10,6 +10,7 @@ import java.io.OutputStream;
 
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
+
     public static String copyFromAssetsToCache(Context appCtx, String filePath) {
         String newPath = appCtx.getCacheDir() + "/" + filePath;
         File desDir = new File(newPath);
@@ -33,5 +34,10 @@ public class Utils {
             throw new RuntimeException(e);
         }
         return desDir.getPath();
+    }
+
+    public static boolean isSupportNPU() {
+        String hardware = android.os.Build.HARDWARE;
+        return hardware.equalsIgnoreCase("kirin810");
     }
 }
