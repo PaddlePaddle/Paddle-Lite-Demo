@@ -37,16 +37,18 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
 * iOS
     * 静态图识别
+
     ![](https://raw.githubusercontent.com/PaddlePaddle/Paddle-Lite-Demo/master/doc/ios_static.jpg)
 
     * 动态图识别
+
     ![](https://raw.githubusercontent.com/PaddlePaddle/Paddle-Lite-Demo/master/doc/ios_video.jpg)
 
 * Android
     * CPU预测结果（测试环境：华为nova5）
-    ![](https://raw.githubusercontent.com/PaddlePaddle/Paddle-Lite-Demo/master/doc/android_cat_cpu.jpg)
-    ![](https://raw.githubusercontent.com/PaddlePaddle/Paddle-Lite-Demo/master/doc/android_keyboard_cpu.jpg)
+
+    ![](https://raw.githubusercontent.com/PaddlePaddle/Paddle-Lite-Demo/master/doc/android_cat_cpu.jpg)      ![](https://raw.githubusercontent.com/PaddlePaddle/Paddle-Lite-Demo/master/doc/android_keyboard_cpu.jpg)
 
     * NPU预测结果（测试环境：华为nova5）
-    ![](https://raw.githubusercontent.com/PaddlePaddle/Paddle-Lite-Demo/master/doc/android_cat_npu.jpg)
-    ![](https://raw.githubusercontent.com/PaddlePaddle/Paddle-Lite-Demo/master/doc/android_keyboard_npu.jpg)
+
+    ![](https://raw.githubusercontent.com/PaddlePaddle/Paddle-Lite-Demo/master/doc/android_cat_npu.jpg)      ![](https://raw.githubusercontent.com/PaddlePaddle/Paddle-Lite-Demo/master/doc/android_keyboard_npu.jpg)
