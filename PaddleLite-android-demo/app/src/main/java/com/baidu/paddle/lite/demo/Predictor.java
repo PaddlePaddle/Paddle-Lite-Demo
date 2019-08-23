@@ -1,13 +1,3 @@
-/*
-*@file ClassifyItemModel.java
-*
-* Copyright (C) 2019. Huawei Technologies Co., Ltd. All rights reserved.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-*/
-
 package com.baidu.paddle.lite.demo;
 
 import android.content.Context;
@@ -27,6 +17,7 @@ public class Predictor {
     public int warmupIterNum = 1;
     public int inferIterNum = 1;
     protected Context appCtx = null;
+    public String modelName = "";
     protected int whichDevice = 0; // 0: CPU 1: NPU
     protected ArrayList<PaddlePredictor> paddlePredictors = new ArrayList<PaddlePredictor>(); // 0: CPU 1: NPU
     protected float inferenceTime = 0;
@@ -74,12 +65,15 @@ public class Predictor {
             config.setValidPlaces(validPlaces);
             paddlePredictors.add(PaddlePredictor.createPaddlePredictor(config));
         }
+        modelName = realPath.substring(realPath.lastIndexOf("/") + 1);
         return true;
     }
 
     public void releaseModel() {
         paddlePredictors.clear();
         isLoaded = false;
+        modelName = "";
+        whichDevice = 0;
     }
 
     public void useCPU() {
@@ -122,7 +116,13 @@ public class Predictor {
         return true;
     }
 
-    public boolean isLoaded() { return isLoaded; }
+    public boolean isLoaded() {
+        return isLoaded;
+    }
+
+    public String modelName() {
+        return modelName;
+    }
 
     public float inferenceTime() {
         return inferenceTime;

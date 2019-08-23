@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 break;
             case R.id.v_obj_detect:
-                Toast.makeText(MainActivity.this, "Not implement!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Still under construction...", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
