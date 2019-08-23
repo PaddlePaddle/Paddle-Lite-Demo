@@ -14,6 +14,9 @@
 * Android
     * Android Studio 3.4
     * Android手机或开发版，NPU功能暂时只在麒麟810芯片的华为手机（如Nova5系列）进行了测试，使用前请将EMUI更新到最新版本；
+    
+    目前，由于NPU暂时需要[full publish so lib](https://github.com/PaddlePaddle/Paddle-Lite/wiki/use_docker_install#%E7%BC%96%E8%AF%91lite)模式下编译的libpaddle_lite_jni.so（相比tiny publish so lib模式下编译的libpaddle_lite_jni.so，文件尺寸会大很多），且需要在当前[PaddleLite源码](https://github.com/PaddlePaddle/Paddle-Lite)基础上做一些额外的修改，因此，建议用户暂时使用本DEMO中自带的libpaddle_lite_jni.so测试NPU功能。与此同时，我们也很快会对tiny publish so模式下编译的libpaddle_lite_jni.so增加NPU的支持，并且和华为合作进一步压缩HIAI so库的大小，向用户提供更加轻量级的so库。
+    如果你只想测试CPU的预测能力，且又非常在意so库的大小，建议参考[Paddle Lite源码中自带的DEMO](https://github.com/PaddlePaddle/Paddle-Lite/wiki/demos)完成tiny publish so lib模式下libpaddle_lite_jni.so的编译、自带DEMO的Android工程的导入、编译和测试等工作。
 
 
 ## 安装
