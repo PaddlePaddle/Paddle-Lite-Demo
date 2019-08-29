@@ -36,6 +36,20 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     * 在图像分类Demo中，默认会载入一张猫的图像，并会在图像下方给出CPU的预测结果，如果你使用的是麒麟810芯片的华为手机（如Nova5系列），可以通过按下右上角的"NPU"按钮切换成NPU进行预测；
     * 在图像分类Demo中，你还可以通过上方的"Gallery"和"Take Photo"按钮从相册或相机中加载测试图像；
 
+## 更新到最新的预测库
+* Paddle-Lite项目：https://github.com/PaddlePaddle/Paddle-Lite
+* 参考 [Paddle-Lite文档](https://github.com/PaddlePaddle/Paddle-Lite/wiki)，编译IOS预测库或者Android预测库
+* 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
+### IOS更新预测库
+* 替换库文件：产出的`lib`目录替换`ios-classification_demo/classification_demo/lib`目录
+* 替换头文件：产出的`include`目录下的文件替换`ios-classification_demo/classification_demo/lib`目录下的文件
+
+### Android更新预测库
+* 由于当前Android demo支持NPU需要full_publish模式下编译的libpaddle_lite_jni.so库，且需要在Paddle-Lite源码下使用$./lite/tools/build_npu.sh --arm_os=android --arm_abi=armv8 --arm_lang=gcc build 命令进行编译生成armv64-v8a的libpaddle_lite_jni.so（armeabi-v7a的libpaddle_lite_jni.so的请将编译命令中的--arm_abi=armv8改为--arm_abi=armv7），但由于华为最新的DDK库并没有发布，可能无法完成相关编译工作，因此，如果想使用NPU功能，强烈建议使用demo中自带的libpaddle_lite_jni.so和HIAI DDK库；
+* 如果你不想使用NPU功能，且对libpaddle_lite_jni.so库大小非常敏感，你可以按照PaddleLite的编译文档在tiny_publish模式下编译生成tiny版libpaddle_lite_jni.so，同时需要修改Predictor.java部分代码，即修改loadModel函数的CxxConfig为MobileConfig，删除NPU模型加载代码，然后将assets目录里面的paddle fluid模型替换为naive buffer模型，建议参考[PaddleLite源码中的内置demo代码](https://github.com/PaddlePaddle/Paddle-Lite/tree/develop/lite/demo/java/android/PaddlePredictor)；
+* 替换jar文件：将PaddleLite编译生成的build.lite.xxx.android.xxx.xxx/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar替换demo中的PaddleLite-android-demo/app/libs/PaddlePredictor.jar
+* 替换jni库文件：将PaddleLite编译生成的build.lite.xxx.android.xxx.xxx/inference_lite_lib.android.xxx/java/so/libpaddle_lite_jni.so库替换demo中的PaddleLite-android-demo/app/src/main/jniLibs/arm64-v8a/libpaddle_lite_jni.so（armeabi-v7a的libpaddle_lite_jni.so请替换demo中的PaddleLite-android-demo/app/src/main/jniLibs/armeabi-v7a/libpaddle_lite_jni.so）
+
 ## 效果展示
 
 * iOS
