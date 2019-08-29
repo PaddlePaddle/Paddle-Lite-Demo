@@ -1,134 +1,181 @@
 package com.baidu.paddle.lite.demo;
 
-import android.Manifest;
-import android.content.ContentResolver;
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ImgClassifyActivity extends AppCompatActivity {
+public class ImgClassifyActivity extends CommonActivity {
     private static final String TAG = ImgClassifyActivity.class.getSimpleName();
-    public static final int GALLERY_REQUEST_CODE = 0;
-    public static final int IMAGE_CAPTURE_REQUEST_CODE = 1;
+
+    public static final int REQUEST_LOAD_MODEL = 0;
+    public static final int REQUEST_RUN_MODEL = 1;
+
+    public static final int RESPONSE_LOAD_MODEL_SUCCESS = 0;
+    public static final int RESPONSE_LOAD_MODEL_FAILED = 1;
+    public static final int RESPONSE_RUN_MODEL_SUCCESS = 2;
+    public static final int RESPONSE_RUN_MODEL_FAILED = 3;
+
+    protected ProgressDialog pbLoadModel = null;
+    protected ProgressDialog pbRunModel = null;
 
     protected TextView tvModelName;
-    private RadioGroup rgChooseDevice;
-    protected Button btnGallery;
-    protected Button btnCamera;
+    private TextView tvWhichDevice;
+    protected TextView tvInferenceTime;
     protected ImageView ivImageData;
     protected TextView tvTop1Result;
     protected TextView tvTop2Result;
     protected TextView tvTop3Result;
-    protected TextView tvInferenceTime;
 
-    // model info
-    public static final long modelInputWidth = 224;
-    public static final long modelInputHeight = 224;
-    public static final String modelFilePath = "image_classification/models/mobilenet_v1";
-    public static final String modelLabelPath = "image_classification/labels/synset_words.txt";
-    public static final String imageFilePath = "image_classification/images/egypt_cat.jpg";
+    // model config
+    protected String modelPath = "";
+    protected String labelPath = "";
+    protected String imagePath = "";
+    protected long[] inputShape = new long[]{};
+    protected float[] inputMean = new float[]{};
+    protected float[] inputScale = new float[]{};
 
     protected ImgClassifyPredictor predictor = new ImgClassifyPredictor();
+
+    protected Handler receiver = null; // receive messages from worker thread
+    protected Handler sender = null; // send command to worker thread
+    protected HandlerThread worker = null; // worker thread to load&run model
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_img_classify);
 
-        btnGallery = findViewById(R.id.btn_gallery);
-        btnCamera = findViewById(R.id.btn_camera);
         tvModelName = findViewById(R.id.tv_model_name);
-        rgChooseDevice = findViewById(R.id.rg_choose_device);
+        tvWhichDevice = findViewById(R.id.tv_which_device);
+        tvInferenceTime = findViewById(R.id.tv_inference_time);
         ivImageData = findViewById(R.id.iv_image_data);
         tvTop1Result = findViewById(R.id.tv_top1_result);
         tvTop2Result = findViewById(R.id.tv_top2_result);
         tvTop3Result = findViewById(R.id.tv_top3_result);
-        tvInferenceTime = findViewById(R.id.tv_inference_time);
 
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        btnGallery.setOnClickListener(new View.OnClickListener() {
+        receiver = new Handler() {
             @Override
-            public void onClick(View view) {
-                checkStoragePermission();
-            }
-        });
-
-        btnCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkCameraPermission();
-            }
-        });
-
-        rgChooseDevice.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (predictor != null && predictor.isLoaded()) {
-                    switch (group.getCheckedRadioButtonId()) {
-                        case R.id.rb_on_cpu:
-                            predictor.useCPU();
-                            break;
-                        case R.id.rb_on_npu:
-                            predictor.useNPU();
-                            break;
-                        default:
-                            break;
-                    }
-                    if (predictor.runModel()) {
-                        updateUI();
-                    }
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case RESPONSE_LOAD_MODEL_SUCCESS:
+                        pbLoadModel.dismiss();
+                        // reload test image and run model
+                        if (loadImage()) {
+                            runModel();
+                        }
+                        break;
+                    case RESPONSE_LOAD_MODEL_FAILED:
+                        pbLoadModel.dismiss();
+                        Toast.makeText(ImgClassifyActivity.this, "Load model failed!", Toast.LENGTH_SHORT).show();
+                        break;
+                    case RESPONSE_RUN_MODEL_SUCCESS:
+                        pbRunModel.dismiss();
+                        // obtain results and update UI
+                        outputResult();
+                        break;
+                    case RESPONSE_RUN_MODEL_FAILED:
+                        pbRunModel.dismiss();
+                        Toast.makeText(ImgClassifyActivity.this, "Run model failed!", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        break;
                 }
             }
-        });
-        rgChooseDevice.getChildAt(1).setEnabled(Utils.isSupportNPU());
+        };
 
-        // load model
-        predictor.init(this, modelFilePath, modelLabelPath, modelInputWidth, modelInputHeight);
-
-        // load test image and run model
-        if (predictor != null && predictor.isLoaded()) {
-            try {
-                InputStream is = getAssets().open(imageFilePath);
-                Bitmap image = BitmapFactory.decodeStream(is);
-                if (image != null) {
-                    if (predictor.runModel(image)) {
-                        updateUI();
-                    }
+        worker = new HandlerThread("Image Classification Worker");
+        worker.start();
+        sender = new Handler(worker.getLooper()) {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case REQUEST_LOAD_MODEL:
+                        // load model and reload test image
+                        if (predictor.init(ImgClassifyActivity.this, modelPath, labelPath, inputShape, inputMean,
+                                inputScale)) {
+                            receiver.sendEmptyMessage(RESPONSE_LOAD_MODEL_SUCCESS);
+                        } else {
+                            receiver.sendEmptyMessage(RESPONSE_LOAD_MODEL_FAILED);
+                        }
+                        break;
+                    case REQUEST_RUN_MODEL:
+                        // run model if model is loaded
+                        if (predictor.isLoaded() && predictor.runModel()) {
+                            receiver.sendEmptyMessage(RESPONSE_RUN_MODEL_SUCCESS);
+                        } else {
+                            receiver.sendEmptyMessage(RESPONSE_RUN_MODEL_FAILED);
+                        }
+                        break;
+                    default:
+                        break;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-        }
+        };
     }
 
-    public void updateUI() {
-        tvModelName.setText("model: " + predictor.modelName());
+    public void loadModel() {
+        pbLoadModel = ProgressDialog.show(this, "", "Loading model...", false, false);
+        sender.sendEmptyMessage(REQUEST_LOAD_MODEL);
+    }
+
+    public void runModel() {
+        pbRunModel = ProgressDialog.show(this, "", "Running model...", false, false);
+        sender.sendEmptyMessage(REQUEST_RUN_MODEL);
+    }
+
+    public boolean loadImage() {
+        try {
+            if (imagePath.isEmpty()) {
+                return false;
+            }
+            Bitmap imageData = null;
+            // read test image file from custom path if the first character of mode path is '/', otherwise read test
+            // image file from assets
+            if (!imagePath.substring(0, 1).equals("/")) {
+                InputStream imageStream = getAssets().open(imagePath);
+                imageData = BitmapFactory.decodeStream(imageStream);
+            } else {
+                if (!new File(imagePath).exists()) {
+                    return false;
+                }
+                imageData = BitmapFactory.decodeFile(imagePath);
+            }
+            if (imageData != null && predictor.isLoaded()) {
+                predictor.setImageData(imageData);
+                return true;
+            }
+        } catch (IOException e) {
+            Toast.makeText(ImgClassifyActivity.this, "Load image failed!", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void outputResult() {
+        tvModelName.setText("Model: " + predictor.modelName());
+        tvWhichDevice.setText("On: " + (predictor.isOnCPU() ? "CPU" : (predictor.isOnNPU() ? "NPU" : "Unknown")));
+        tvInferenceTime.setText("Inference time: " + predictor.inferenceTime() + " ms");
         Bitmap imageData = predictor.imageData();
         if (imageData != null) {
             ivImageData.setImageBitmap(imageData);
@@ -136,123 +183,105 @@ public class ImgClassifyActivity extends AppCompatActivity {
         tvTop1Result.setText(predictor.top1Result());
         tvTop2Result.setText(predictor.top2Result());
         tvTop3Result.setText(predictor.top3Result());
-        tvInferenceTime.setText("inference time: " + predictor.inferenceTime() + " ms");
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
+    public void onImageChanged(Bitmap imageData) {
+        // rerun model if users pick test image from gallery or camera
+        if (imageData != null && predictor.isLoaded()) {
+            predictor.setImageData(imageData);
+            runModel();
         }
-        return super.onOptionsItemSelected(item);
+        super.onImageChanged(imageData);
     }
 
-    private void checkStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
-                    GALLERY_REQUEST_CODE);
-        } else {
-            chooseImageAndRunModel();
+    public void onDeviceChanged(MenuItem item) {
+        // rerun model if users change the device to run model
+        if (predictor.isLoaded()) {
+            switch (item.getItemId()) {
+                case R.id.run_on_cpu:
+                    predictor.runOnCPU();
+                    break;
+                case R.id.run_on_npu:
+                    predictor.runOnNPU();
+                    break;
+            }
+            runModel();
         }
+        super.onDeviceChanged(item);
     }
 
-    private void checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
-                    IMAGE_CAPTURE_REQUEST_CODE);
-        } else {
-            takePhotoAndRunModel();
-        }
+    public void onSettingsClicked() {
+        startActivity(new Intent(ImgClassifyActivity.this, ImgClassifySettingsActivity.class));
+        super.onSettingsClicked();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == GALLERY_REQUEST_CODE &&
-                grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                chooseImageAndRunModel();
-            } else {
-                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        if (requestCode == IMAGE_CAPTURE_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                takePhotoAndRunModel();
-            } else {
-                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void takePhotoAndRunModel() {
-        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePhotoIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePhotoIntent, IMAGE_CAPTURE_REQUEST_CODE);
-        }
-    }
-
-    private void chooseImageAndRunModel() {
-        Intent intent = new Intent(Intent.ACTION_PICK, null);
-        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-        startActivityForResult(intent, GALLERY_REQUEST_CODE);
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean isLoaded = predictor.isLoaded();
+        menu.findItem(R.id.open_gallery).setEnabled(isLoaded);
+        menu.findItem(R.id.take_photo).setEnabled(isLoaded);
+        menu.findItem(R.id.run_on_cpu).setEnabled(isLoaded);
+        menu.findItem(R.id.run_on_npu).setEnabled(isLoaded);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && data != null) {
-            switch (requestCode) {
-                case GALLERY_REQUEST_CODE:
-                    try {
-                        ContentResolver resolver = getContentResolver();
-                        Uri originalUri = data.getData();
-                        Bitmap image = MediaStore.Images.Media.getBitmap(resolver, originalUri);
-                        String[] proj = {MediaStore.Images.Media.DATA};
-                        Cursor cursor = managedQuery(originalUri, proj, null, null, null);
-                        cursor.moveToFirst();
-                        if (predictor != null && predictor.isLoaded() && image != null) {
-                            if (predictor.runModel(image)) {
-                                updateUI();
-                            }
-                        }
-                    } catch (IOException e) {
-                        Log.e(TAG, e.toString());
-                    }
-                    break;
-                case IMAGE_CAPTURE_REQUEST_CODE:
-                    Bundle extras = data.getExtras();
-                    Bitmap image = (Bitmap) extras.get("data");
-                    if (predictor != null && predictor.isLoaded() && image != null) {
-                        if (predictor.runModel(image)) {
-                            updateUI();
-                        }
-                    }
-                    break;
-                default:
-                    break;
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean settingsChanged = false;
+        String model_path = sharedPreferences.getString(getString(R.string.ICS_MODEL_PATH_KEY),
+                getString(R.string.ICS_MODEL_PATH_DEFAULT));
+        String label_path = sharedPreferences.getString(getString(R.string.ICS_LABEL_PATH_KEY),
+                getString(R.string.ICS_LABEL_PATH_DEFAULT));
+        String image_path = sharedPreferences.getString(getString(R.string.ICS_IMAGE_PATH_KEY),
+                getString(R.string.ICS_IMAGE_PATH_DEFAULT));
+        settingsChanged |= !model_path.equalsIgnoreCase(modelPath);
+        settingsChanged |= !label_path.equalsIgnoreCase(labelPath);
+        settingsChanged |= !image_path.equalsIgnoreCase(imagePath);
+        long[] input_shape =
+                Utils.parseLongsFromString(sharedPreferences.getString(getString(R.string.ICS_INPUT_SHAPE_KEY),
+                        getString(R.string.ICS_INPUT_SHAPE_DEFAULT)), ",");
+        float[] input_mean =
+                Utils.parseFloatsFromString(sharedPreferences.getString(getString(R.string.ICS_INPUT_MEAN_KEY),
+                        getString(R.string.ICS_INPUT_MEAN_DEFAULT)), ",");
+        float[] input_scale =
+                Utils.parseFloatsFromString(sharedPreferences.getString(getString(R.string.ICS_INPUT_SCALE_KEY)
+                        , getString(R.string.ICS_INPUT_SCALE_DEFAULT)), ",");
+        settingsChanged |= input_shape.length != inputShape.length;
+        settingsChanged |= input_mean.length != inputMean.length;
+        settingsChanged |= input_scale.length != inputScale.length;
+        if (!settingsChanged) {
+            for (int i = 0; i < input_shape.length; i++) {
+                settingsChanged |= input_shape[i] != inputShape[i];
+            }
+            for (int i = 0; i < input_mean.length; i++) {
+                settingsChanged |= input_mean[i] != inputMean[i];
+            }
+            for (int i = 0; i < input_scale.length; i++) {
+                settingsChanged |= input_scale[i] != inputScale[i];
             }
         }
+        if (settingsChanged) {
+            modelPath = model_path;
+            labelPath = label_path;
+            imagePath = image_path;
+            inputShape = input_shape;
+            inputMean = input_mean;
+            inputScale = input_scale;
+            // reload model if configure has been changed
+            loadModel();
+        }
     }
+
 
     @Override
     protected void onDestroy() {
         if (predictor != null) {
             predictor.releaseModel();
         }
+        worker.quit();
         super.onDestroy();
     }
 }
-
