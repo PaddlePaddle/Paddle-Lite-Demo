@@ -1,7 +1,6 @@
 package com.baidu.paddle.lite.demo;
 
 import android.content.Context;
-
 import com.baidu.paddle.lite.CxxConfig;
 import com.baidu.paddle.lite.PaddlePredictor;
 import com.baidu.paddle.lite.Place;
@@ -36,7 +35,16 @@ public class Predictor {
         releaseModel();
 
         // load model
-        String realPath = Utils.copyFromAssetsToCache(appCtx, modelPath);
+        if (modelPath.isEmpty()) {
+            return false;
+        }
+        String realPath = modelPath;
+        if (!modelPath.substring(0, 1).equals("/")) {
+            // read model files from custom path if the first character of mode path is '/'
+            // otherwise copy model to cache from assets
+            realPath = appCtx.getCacheDir() + "/" + modelPath;
+            Utils.copyDirectoryFromAssets(appCtx, modelPath, realPath);
+        }
         if (realPath.isEmpty()) {
             return false;
         }
@@ -73,15 +81,22 @@ public class Predictor {
         paddlePredictors.clear();
         isLoaded = false;
         modelName = "";
+    }
+
+    public void runOnCPU() {
         whichDevice = 0;
     }
 
-    public void useCPU() {
-        whichDevice = 0;
-    }
-
-    public void useNPU() {
+    public void runOnNPU() {
         whichDevice = 1;
+    }
+
+    public boolean isOnCPU() {
+        return whichDevice == 0;
+    }
+
+    public boolean isOnNPU() {
+        return whichDevice == 1;
     }
 
     public Tensor getInput(int idx) {
@@ -128,5 +143,3 @@ public class Predictor {
         return inferenceTime;
     }
 }
-
-

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory android:title="Model Settings">
+        <ListPreference
+                android:defaultValue="@string/ICS_MODEL_PATH_DEFAULT"
+                android:key="@string/ICS_CHOOSE_PRE_INSTALLED_MODEL_KEY"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"
+                android:title="Choosing pre-installed models" />
+        <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/ICS_ENABLE_CUSTOM_MODEL_SETTINGS_KEY"
+                android:summaryOn="Enable"
+                android:summaryOff="Disable"
+                android:title="Enabling custom model settings"/>
+        <EditTextPreference
+                android:key="@string/ICS_MODEL_PATH_KEY"
+                android:defaultValue="@string/ICS_MODEL_PATH_DEFAULT"
+                android:title="Model Path" />
+        <EditTextPreference
+                android:key="@string/ICS_LABEL_PATH_KEY"
+                android:defaultValue="@string/ICS_LABEL_PATH_DEFAULT"
+                android:title="Label Path" />
+        <EditTextPreference
+                android:key="@string/ICS_IMAGE_PATH_KEY"
+                android:defaultValue="@string/ICS_IMAGE_PATH_DEFAULT"
+                android:title="Image Path" />
+        <EditTextPreference
+                android:key="@string/ICS_INPUT_SHAPE_KEY"
+                android:defaultValue="@string/ICS_INPUT_SHAPE_DEFAULT"
+                android:title="Input Shape (1,1,h,w) or (1,3,h,w)" />
+        <EditTextPreference
+                android:key="@string/ICS_INPUT_MEAN_KEY"
+                android:defaultValue="@string/ICS_INPUT_MEAN_DEFAULT"
+                android:title="Input Mean BGR(3 chs) or Gray(1 chs)" />
+        <EditTextPreference
+                android:key="@string/ICS_INPUT_SCALE_KEY"
+                android:defaultValue="@string/ICS_INPUT_SCALE_DEFAULT"
+                android:title="Input Scale BGR(3 chs) or Gray(1 chs)" />
+    </PreferenceCategory>
+</PreferenceScreen>

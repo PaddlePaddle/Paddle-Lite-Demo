@@ -1,0 +1,36 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:id="@+id/pick_image">
+        <item
+                android:id="@+id/open_gallery"
+                android:title="Open Gallery"
+                app:showAsAction="withText"/>
+
+        <item
+                android:id="@+id/take_photo"
+                android:title="Take Photo"
+                app:showAsAction="withText"/>
+    </group>
+
+    <group
+            android:id="@+id/choose_device"
+            android:checkableBehavior="single">
+        <item
+                android:id="@+id/run_on_cpu"
+                android:title="Run on CPU"
+                android:checked="true"
+                app:showAsAction="withText"/>
+
+        <item
+                android:id="@+id/run_on_npu"
+                android:title="Run on NPU"
+                app:showAsAction="withText"/>
+    </group>
+
+    <group>
+        <item
+                android:id="@+id/settings"
+                android:title="Settings..."
+                app:showAsAction="withText"/>
+    </group>
+</menu>

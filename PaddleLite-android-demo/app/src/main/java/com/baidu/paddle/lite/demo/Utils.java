@@ -1,42 +1,86 @@
 package com.baidu.paddle.lite.demo;
 
 import android.content.Context;
+import android.os.Environment;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
 
-    public static String copyFromAssetsToCache(Context appCtx, String filePath) {
-        String newPath = appCtx.getCacheDir() + "/" + filePath;
-        File desDir = new File(newPath);
-        try {
-            if (!desDir.exists()) {
-                desDir.mkdirs();
-            }
-            for (String fileName : appCtx.getAssets().list(filePath)) {
-                InputStream stream = appCtx.getAssets().open(filePath + "/" + fileName);
-                OutputStream output = new BufferedOutputStream(new FileOutputStream(newPath + "/" + fileName));
-                byte data[] = new byte[1024];
-                int count;
-                while ((count = stream.read(data)) != -1) {
-                    output.write(data, 0, count);
-                }
-                output.flush();
-                output.close();
-                stream.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public static void copyFileFromAssets(Context appCtx, String srcPath, String dstPath) {
+        if (srcPath.isEmpty() || dstPath.isEmpty()) {
+            return;
         }
-        return desDir.getPath();
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new BufferedInputStream(appCtx.getAssets().open(srcPath));
+            os = new BufferedOutputStream(new FileOutputStream(new File(dstPath)));
+            byte[] buffer = new byte[1024];
+            int length = 0;
+            while ((length = is.read(buffer)) != -1) {
+                os.write(buffer, 0, length);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                os.close();
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public static boolean isSupportNPU() {
+    public static void copyDirectoryFromAssets(Context appCtx, String srcDir, String dstDir) {
+        if (srcDir.isEmpty() || dstDir.isEmpty()) {
+            return;
+        }
+        try {
+            if (!new File(dstDir).exists()) {
+                new File(dstDir).mkdirs();
+            }
+            for (String fileName : appCtx.getAssets().list(srcDir)) {
+                String srcSubPath = srcDir + File.separator + fileName;
+                String dstSubPath = dstDir + File.separator + fileName;
+                if (new File(srcSubPath).isDirectory()) {
+                    copyDirectoryFromAssets(appCtx, srcSubPath, dstSubPath);
+                } else {
+                    copyFileFromAssets(appCtx, srcSubPath, dstSubPath);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static float[] parseFloatsFromString(String string, String delimiter) {
+        String[] pieces = string.trim().toLowerCase().split(delimiter);
+        float[] floats = new float[pieces.length];
+        for (int i = 0; i < pieces.length; i++) {
+            floats[i] = Float.parseFloat(pieces[i].trim());
+        }
+        return floats;
+    }
+
+    public static long[] parseLongsFromString(String string, String delimiter) {
+        String[] pieces = string.trim().toLowerCase().split(delimiter);
+        long[] longs = new long[pieces.length];
+        for (int i = 0; i < pieces.length; i++) {
+            longs[i] = Long.parseLong(pieces[i].trim());
+        }
+        return longs;
+    }
+
+    public static String getSDCardDirectory() {
+        return Environment.getExternalStorageDirectory().getAbsolutePath();
+    }
+
+    public static boolean isSupportedNPU() {
         String hardware = android.os.Build.HARDWARE;
         return hardware.equalsIgnoreCase("kirin810");
     }

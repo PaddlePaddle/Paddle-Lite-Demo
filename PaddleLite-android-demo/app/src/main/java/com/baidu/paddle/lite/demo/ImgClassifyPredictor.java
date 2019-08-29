@@ -7,6 +7,7 @@ import android.util.Log;
 import com.baidu.paddle.lite.Tensor;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Vector;
 
 import static android.graphics.Color.blue;
@@ -16,25 +17,52 @@ import static android.graphics.Color.red;
 public class ImgClassifyPredictor extends Predictor {
     private static final String TAG = ImgClassifyPredictor.class.getSimpleName();
     protected Vector<String> wordLabels = new Vector<String>();
-    protected long imageWidth = 224;
-    protected long imageHeight = 224;
+    protected long[] inputShape = new long[]{1, 3, 224, 224};
+    protected float[] inputMean = new float[]{0.f, 0.f, 0.f};
+    protected float[] inputScale = new float[]{1 / 255.f, 1 / 255.f, 1 / 255.f};
     protected Bitmap imageData = null;
     protected String top1Result = "";
     protected String top2Result = "";
     protected String top3Result = "";
+    protected float preprocessTime = 0;
+    protected float postprocessTime = 0;
 
     public ImgClassifyPredictor() {
         super();
     }
 
-    public boolean init(Context appCtx, String modelPath, String labelPath, long imageWidth, long imageHeight) {
+    public boolean init(Context appCtx, String modelPath, String labelPath, long[] inputShape, float[] inputMean,
+                        float[] inputScale) {
+        if (inputShape.length != 4) {
+            Log.i(TAG, "size of input shape should be: 4");
+            return false;
+        }
+        if (inputMean.length != inputShape[1]) {
+            Log.i(TAG, "size of input mean should be: " + Long.toString(inputShape[1]));
+            return false;
+        }
+        if (inputScale.length != inputShape[1]) {
+            Log.i(TAG, "size of input scale should be: " + Long.toString(inputShape[1]));
+            return false;
+        }
+        if (inputShape[0] != 1) {
+            Log.i(TAG, "only one batch is supported in the image classification demo, you can use any batch size in " +
+                    "your Apps!");
+            return false;
+        }
+        if (inputShape[1] != 1 && inputShape[1] != 3) {
+            Log.i(TAG, "only one/three channels are supported in the image classification demo, you can use any " +
+                    "channel size in your Apps!");
+            return false;
+        }
         super.init(appCtx, modelPath);
         if (!super.isLoaded()) {
             return false;
         }
-        this.imageWidth = imageWidth;
-        this.imageHeight = imageHeight;
         isLoaded &= loadLabel(labelPath);
+        this.inputShape = inputShape;
+        this.inputMean = inputMean;
+        this.inputScale = inputScale;
         return isLoaded;
     }
 
@@ -83,32 +111,44 @@ public class ImgClassifyPredictor extends Predictor {
 
         // set input shape
         Tensor inputTensor = getInput(0);
-        long[] inputShape = {1, 3, imageHeight, imageWidth};
         inputTensor.resize(inputShape);
 
-        // scale image, pre-process image, and feed input tensor with pre-processed data
+        // pre-process image, and feed input tensor with pre-processed data
+        Date start = new Date();
         int channels = (int) inputShape[1];
         int width = (int) inputShape[3];
         int height = (int) inputShape[2];
-        Bitmap rgbaData = imageData.copy(Bitmap.Config.ARGB_8888, true);
-        Bitmap scaleData = Bitmap.createScaledBitmap(rgbaData, width, height, true);
-
         float[] inputData = new float[channels * width * height];
-        int rIndex, gIndex, bIndex;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                bIndex = i * width + j;
-                gIndex = bIndex + width * height;
-                rIndex = gIndex + width * height;
-
-                int color = scaleData.getPixel(j, i);
-
-                inputData[bIndex] = (float) blue(color) / 255.0f;
-                inputData[gIndex] = (float) green(color) / 255.0f;
-                inputData[rIndex] = (float) red(color) / 255.0f;
+                int color = imageData.getPixel(j, i);
+                float b = (float) blue(color);
+                float g = (float) green(color);
+                float r = (float) red(color);
+                if (channels == 3) {
+                    b = b - inputMean[0];
+                    g = g - inputMean[1];
+                    r = r - inputMean[2];
+                    b = b * inputScale[0];
+                    g = g * inputScale[1];
+                    r = r * inputScale[2];
+                    int bIdx = i * width + j;
+                    int gIdx = bIdx + width * height;
+                    int rIdx = gIdx + width * height;
+                    inputData[bIdx] = b;
+                    inputData[gIdx] = g;
+                    inputData[rIdx] = r;
+                } else { // channels = 1
+                    float gray = (b + g + r) / 3.0f;
+                    gray = gray - inputMean[0];
+                    gray = gray * inputScale[0];
+                    inputData[i * width + j] = gray;
+                }
             }
         }
         inputTensor.setData(inputData);
+        Date end = new Date();
+        preprocessTime = (float) (end.getTime() - start.getTime());
 
         // inference
         super.runModel();
@@ -117,6 +157,7 @@ public class ImgClassifyPredictor extends Predictor {
         Tensor outputTensor = getOutput(0);
 
         // post-process
+        start = new Date();
         long outputShape[] = outputTensor.shape();
         long outputSize = 1;
         for (long s : outputShape) {
@@ -138,11 +179,16 @@ public class ImgClassifyPredictor extends Predictor {
                 }
             }
         }
+        end = new Date();
+        postprocessTime = (float) (end.getTime() - start.getTime());
 
         if (wordLabels.size() > 0) {
-            top1Result = "top1: " + wordLabels.get(max_index[0]) + " - " + String.format("%.2f", max_num[0] * 100) + "%";
-            top2Result = "top2: " + wordLabels.get(max_index[1]) + " - " + String.format("%.2f", max_num[1] * 100) + "%";
-            top3Result = "top3: " + wordLabels.get(max_index[2]) + " - " + String.format("%.2f", max_num[2] * 100) + "%";
+            top1Result = "Top1: " + wordLabels.get(max_index[0]) + " - " + String.format("%.2f", max_num[0] * 100) +
+                    "%";
+            top2Result = "Top2: " + wordLabels.get(max_index[1]) + " - " + String.format("%.2f", max_num[1] * 100) +
+                    "%";
+            top3Result = "Top3: " + wordLabels.get(max_index[2]) + " - " + String.format("%.2f", max_num[2] * 100) +
+                    "%";
         }
         return true;
     }
@@ -152,7 +198,13 @@ public class ImgClassifyPredictor extends Predictor {
     }
 
     public void setImageData(Bitmap imageData) {
-        this.imageData = imageData;
+        if (imageData == null) {
+            return;
+        }
+        // scale image to the size of input tensor
+        Bitmap rgbaData = imageData.copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap scaleData = Bitmap.createScaledBitmap(rgbaData, (int) inputShape[3], (int) inputShape[2], true);
+        this.imageData = scaleData;
     }
 
     public String top1Result() {
@@ -166,6 +218,12 @@ public class ImgClassifyPredictor extends Predictor {
     public String top3Result() {
         return top3Result;
     }
+
+    public float preprocessTime() {
+        return preprocessTime;
+    }
+
+    public float postprocessTime() {
+        return postprocessTime;
+    }
 }
-
-

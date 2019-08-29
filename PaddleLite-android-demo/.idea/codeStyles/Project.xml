@@ -4,5 +4,8 @@
     <AndroidXmlCodeStyleSettings>
       <option name="USE_CUSTOM_SETTINGS" value="true" />
     </AndroidXmlCodeStyleSettings>
+    <codeStyleSettings language="JAVA">
+      <option name="WRAP_LONG_LINES" value="true" />
+    </codeStyleSettings>
   </code_scheme>
 </component>
