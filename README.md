@@ -42,7 +42,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
 ### IOS更新预测库
 * 替换库文件：产出的`lib`目录替换`ios-classification_demo/classification_demo/lib`目录
-* 替换头文件：产出的`include`目录下的文件替换`ios-classification_demo/classification_demo/lib`目录下的文件
+* 替换头文件：产出的`include`目录下的文件替换`ios-classification_demo/classification_demo/paddle_lite`目录下的文件
 
 ### Android更新预测库
 * 由于当前Android demo支持NPU需要full_publish模式下编译的libpaddle_lite_jni.so库，且需要在Paddle-Lite源码下使用$./lite/tools/build_npu.sh --arm_os=android --arm_abi=armv8 --arm_lang=gcc build 命令进行编译生成armv64-v8a的libpaddle_lite_jni.so（armeabi-v7a的libpaddle_lite_jni.so的请将编译命令中的--arm_abi=armv8改为--arm_abi=armv7），但由于华为最新的DDK库并没有发布，可能无法完成相关编译工作，因此，如果想使用NPU功能，强烈建议使用demo中自带的libpaddle_lite_jni.so和HIAI DDK库；
