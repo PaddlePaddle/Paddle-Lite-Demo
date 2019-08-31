@@ -45,10 +45,21 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 * 替换头文件：产出的`include`目录下的文件替换`ios-classification_demo/classification_demo/paddle_lite`目录下的文件
 
 ### Android更新预测库
-* 由于当前Android demo支持NPU需要full_publish模式下编译的libpaddle_lite_jni.so库，且需要在Paddle-Lite源码下使用$./lite/tools/build_npu.sh --arm_os=android --arm_abi=armv8 --arm_lang=gcc build 命令进行编译生成armv64-v8a的libpaddle_lite_jni.so（armeabi-v7a的libpaddle_lite_jni.so的请将编译命令中的--arm_abi=armv8改为--arm_abi=armv7），但由于华为最新的DDK库并没有发布，可能无法完成相关编译工作，因此，如果想使用NPU功能，强烈建议使用demo中自带的libpaddle_lite_jni.so和HIAI DDK库；
-* 如果你不想使用NPU功能，且对libpaddle_lite_jni.so库大小非常敏感，你可以按照PaddleLite的编译文档在tiny_publish模式下编译生成tiny版libpaddle_lite_jni.so，同时需要修改Predictor.java部分代码，即修改loadModel函数的CxxConfig为MobileConfig，删除NPU模型加载代码，然后将assets目录里面的paddle fluid模型替换为naive buffer模型，建议参考[PaddleLite源码中的内置demo代码](https://github.com/PaddlePaddle/Paddle-Lite/tree/develop/lite/demo/java/android/PaddlePredictor)；
-* 替换jar文件：将PaddleLite编译生成的build.lite.xxx.android.xxx.xxx/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar替换demo中的PaddleLite-android-demo/app/libs/PaddlePredictor.jar
-* 替换jni库文件：将PaddleLite编译生成的build.lite.xxx.android.xxx.xxx/inference_lite_lib.android.xxx/java/so/libpaddle_lite_jni.so库替换demo中的PaddleLite-android-demo/app/src/main/jniLibs/arm64-v8a/libpaddle_lite_jni.so（armeabi-v7a的libpaddle_lite_jni.so请替换demo中的PaddleLite-android-demo/app/src/main/jniLibs/armeabi-v7a/libpaddle_lite_jni.so）
+* 仅支持CPU
+  * 替换jar文件：将PaddleLite编译生成的build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar替换demo中的PaddleLite-android-demo/app/libs/PaddlePredictor.jar
+  * 替换arm64-v8a jni库文件：将Paddle-Lite编译生成build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so库替换demo中的PaddleLite-android-demo/app/src/main/jniLibs/arm64-v8a/libpaddle_lite_jni.so
+  * 替换armeabi-v7a jni库文件：将Paddle-Lite编译生成的build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so库替换demo中的PaddleLite-android-demo/app/src/main/jniLibs/armeabi-v7a/libpaddle_lite_jni.so.
+
+  由于当前Android Demo使用了full_publish模式下编译的libpaddle_lite_jni.so库，请使用$ ./lite/tools/build.sh --arm_os=android --arm_abi=armv8 --arm_lang=gcc --android_stl=c++_shared full_publish 命令编译生成arm64-v8a的libpaddle_lite_jni.so，armeabi-v7a的libpaddle_lite_jni.so请将编译命令中的--arm_abi=armv8改为--arm_abi=armv7
+
+  如果对libpaddle_lite_jni.so库大小非常敏感，你可以按照PaddleLite的编译文档在tiny_publish模式下编译生成tiny版libpaddle_lite_jni.so，同时需要修改Predictor.java部分代码，即修改loadModel函数的CxxConfig为MobileConfig，删除NPU模型加载代码，然后将assets目录里面的paddle fluid模型替换为naive buffer模型，建议参考[PaddleLite源码中的内置demo代码](https://github.com/PaddlePaddle/Paddle-Lite/tree/develop/lite/demo/java/android/PaddlePredictor)；
+
+* 支持CPU和NPU
+  * 替换jar文件：将PaddleLite编译生成的build.lite.npu.android.xxx.gcc.cxx_shared/inference_lite_lib.android.xxx.npu/java/jar/PaddlePredictor.jar替换demo中的PaddleLite-android-demo/app/libs/PaddlePredictor.jar
+  * 替换arm64-v8a jni库文件：将Paddle-Lite编译生成build.lite.npu.android.armv8.gcc.cxx_shared/inference_lite_lib.android.armv8.npu/java/so/libpaddle_lite_jni.so库替换demo中的PaddleLite-android-demo/app/src/main/jniLibs/arm64-v8a/libpaddle_lite_jni.so
+  * 替换armeabi-v7a jni库文件：将Paddle-Lite编译生成的build.lite.npu.android.armv7.gcc.cxx_shared/inference_lite_lib.android.armv7.npu/java/so/libpaddle_lite_jni.so库替换demo中的PaddleLite-android-demo/app/src/main/jniLibs/armeabi-v7a/libpaddle_lite_jni.so.
+
+  由于当前Android demo支持NPU需要full_publish模式下编译的libpaddle_lite_jni.so库，且需要在Paddle-Lite源码下使用$ ./lite/tools/build_npu.sh --arm_abi=armv8 full_publish命令编译生成armv64-v8a的libpaddle_lite_jni.so，armeabi-v7a的libpaddle_lite_jni.so请将编译命令中的--arm_abi=armv8改为--arm_abi=armv7，但由于华为最新的DDK库并没有发布，可能无法完成相关编译工作，因此，如果想使用NPU功能，强烈建议使用demo中自带的libpaddle_lite_jni.so和HIAI DDK库；
 
 ## 效果展示
 
