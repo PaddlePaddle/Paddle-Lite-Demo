@@ -49,7 +49,7 @@ public class ImgClassifyActivity extends CommonActivity {
     protected String imagePath = "";
     protected long[] inputShape = new long[]{};
     protected float[] inputMean = new float[]{};
-    protected float[] inputScale = new float[]{};
+    protected float[] inputStd = new float[]{};
 
     protected ImgClassifyPredictor predictor = new ImgClassifyPredictor();
 
@@ -113,7 +113,7 @@ public class ImgClassifyActivity extends CommonActivity {
                     case REQUEST_LOAD_MODEL:
                         // load model and reload test image
                         if (predictor.init(ImgClassifyActivity.this, modelPath, labelPath, inputShape, inputMean,
-                                inputScale)) {
+                                inputStd)) {
                             receiver.sendEmptyMessage(RESPONSE_LOAD_MODEL_SUCCESS);
                         } else {
                             receiver.sendEmptyMessage(RESPONSE_LOAD_MODEL_FAILED);
@@ -246,12 +246,12 @@ public class ImgClassifyActivity extends CommonActivity {
         float[] input_mean =
                 Utils.parseFloatsFromString(sharedPreferences.getString(getString(R.string.ICS_INPUT_MEAN_KEY),
                         getString(R.string.ICS_INPUT_MEAN_DEFAULT)), ",");
-        float[] input_scale =
-                Utils.parseFloatsFromString(sharedPreferences.getString(getString(R.string.ICS_INPUT_SCALE_KEY)
-                        , getString(R.string.ICS_INPUT_SCALE_DEFAULT)), ",");
+        float[] input_std =
+                Utils.parseFloatsFromString(sharedPreferences.getString(getString(R.string.ICS_INPUT_STD_KEY)
+                        , getString(R.string.ICS_INPUT_STD_DEFAULT)), ",");
         settingsChanged |= input_shape.length != inputShape.length;
         settingsChanged |= input_mean.length != inputMean.length;
-        settingsChanged |= input_scale.length != inputScale.length;
+        settingsChanged |= input_std.length != inputStd.length;
         if (!settingsChanged) {
             for (int i = 0; i < input_shape.length; i++) {
                 settingsChanged |= input_shape[i] != inputShape[i];
@@ -259,8 +259,8 @@ public class ImgClassifyActivity extends CommonActivity {
             for (int i = 0; i < input_mean.length; i++) {
                 settingsChanged |= input_mean[i] != inputMean[i];
             }
-            for (int i = 0; i < input_scale.length; i++) {
-                settingsChanged |= input_scale[i] != inputScale[i];
+            for (int i = 0; i < input_std.length; i++) {
+                settingsChanged |= input_std[i] != inputStd[i];
             }
         }
         if (settingsChanged) {
@@ -269,7 +269,7 @@ public class ImgClassifyActivity extends CommonActivity {
             imagePath = image_path;
             inputShape = input_shape;
             inputMean = input_mean;
-            inputScale = input_scale;
+            inputStd = input_std;
             // reload model if configure has been changed
             loadModel();
         }
