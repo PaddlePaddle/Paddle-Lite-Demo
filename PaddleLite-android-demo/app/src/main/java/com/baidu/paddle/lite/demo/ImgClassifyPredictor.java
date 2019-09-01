@@ -18,8 +18,8 @@ public class ImgClassifyPredictor extends Predictor {
     private static final String TAG = ImgClassifyPredictor.class.getSimpleName();
     protected Vector<String> wordLabels = new Vector<String>();
     protected long[] inputShape = new long[]{1, 3, 224, 224};
-    protected float[] inputMean = new float[]{0.f, 0.f, 0.f};
-    protected float[] inputScale = new float[]{1 / 255.f, 1 / 255.f, 1 / 255.f};
+    protected float[] inputMean = new float[]{0.485f, 0.456f, 0.406f};
+    protected float[] inputStd = new float[]{0.229f, 0.224f, 0.225f};
     protected Bitmap imageData = null;
     protected String top1Result = "";
     protected String top2Result = "";
@@ -32,7 +32,7 @@ public class ImgClassifyPredictor extends Predictor {
     }
 
     public boolean init(Context appCtx, String modelPath, String labelPath, long[] inputShape, float[] inputMean,
-                        float[] inputScale) {
+                        float[] inputStd) {
         if (inputShape.length != 4) {
             Log.i(TAG, "size of input shape should be: 4");
             return false;
@@ -41,8 +41,8 @@ public class ImgClassifyPredictor extends Predictor {
             Log.i(TAG, "size of input mean should be: " + Long.toString(inputShape[1]));
             return false;
         }
-        if (inputScale.length != inputShape[1]) {
-            Log.i(TAG, "size of input scale should be: " + Long.toString(inputShape[1]));
+        if (inputStd.length != inputShape[1]) {
+            Log.i(TAG, "size of input std should be: " + Long.toString(inputShape[1]));
             return false;
         }
         if (inputShape[0] != 1) {
@@ -62,7 +62,7 @@ public class ImgClassifyPredictor extends Predictor {
         isLoaded &= loadLabel(labelPath);
         this.inputShape = inputShape;
         this.inputMean = inputMean;
-        this.inputScale = inputScale;
+        this.inputStd = inputStd;
         return isLoaded;
     }
 
@@ -122,26 +122,26 @@ public class ImgClassifyPredictor extends Predictor {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 int color = imageData.getPixel(j, i);
-                float b = (float) blue(color);
-                float g = (float) green(color);
-                float r = (float) red(color);
+                float r = (float) red(color) / 255.0f;
+                float g = (float) green(color) / 255.0f;
+                float b = (float) blue(color) / 255.0f;
                 if (channels == 3) {
-                    b = b - inputMean[0];
+                    r = r - inputMean[0];
                     g = g - inputMean[1];
-                    r = r - inputMean[2];
-                    b = b * inputScale[0];
-                    g = g * inputScale[1];
-                    r = r * inputScale[2];
-                    int bIdx = i * width + j;
-                    int gIdx = bIdx + width * height;
-                    int rIdx = gIdx + width * height;
-                    inputData[bIdx] = b;
-                    inputData[gIdx] = g;
+                    b = b - inputMean[2];
+                    r = r / inputStd[0];
+                    g = g / inputStd[1];
+                    b = b / inputStd[2];
+                    int rIdx = i * width + j;
+                    int gIdx = rIdx + width * height;
+                    int bIdx = gIdx + width * height;
                     inputData[rIdx] = r;
+                    inputData[gIdx] = g;
+                    inputData[bIdx] = b;
                 } else { // channels = 1
                     float gray = (b + g + r) / 3.0f;
                     gray = gray - inputMean[0];
-                    gray = gray * inputScale[0];
+                    gray = gray / inputStd[0];
                     inputData[i * width + j] = gray;
                 }
             }

@@ -32,10 +32,10 @@
         <EditTextPreference
                 android:key="@string/ICS_INPUT_MEAN_KEY"
                 android:defaultValue="@string/ICS_INPUT_MEAN_DEFAULT"
-                android:title="Input Mean BGR(3 chs) or Gray(1 chs)" />
+                android:title="Input Mean: RGB, (channel/255-mean)/std" />
         <EditTextPreference
-                android:key="@string/ICS_INPUT_SCALE_KEY"
-                android:defaultValue="@string/ICS_INPUT_SCALE_DEFAULT"
-                android:title="Input Scale BGR(3 chs) or Gray(1 chs)" />
+                android:key="@string/ICS_INPUT_STD_KEY"
+                android:defaultValue="@string/ICS_INPUT_STD_DEFAULT"
+                android:title="Input Std: RGB, (channel/255-mean)/std" />
     </PreferenceCategory>
 </PreferenceScreen>

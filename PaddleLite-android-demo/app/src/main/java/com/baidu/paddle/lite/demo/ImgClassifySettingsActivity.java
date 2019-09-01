@@ -16,14 +16,14 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
     EditTextPreference etImagePath = null;
     EditTextPreference etInputShape = null;
     EditTextPreference etInputMean = null;
-    EditTextPreference etInputScale = null;
+    EditTextPreference etInputStd = null;
 
     String[] preInstalledModelPaths = null;
     String[] preInstalledLabelPaths = null;
     String[] preInstalledImagePaths = null;
     String[] preInstalledInputShapes = null;
     String[] preInstalledInputMeans = null;
-    String[] preInstalledInputScales = null;
+    String[] preInstalledInputStds = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,23 +35,12 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
         }
 
         // initialize the settings of pre-installed models
-        preInstalledModelPaths = new String[]{getString(R.string.ICS_MODEL_PATH_DEFAULT)};
-        preInstalledLabelPaths = new String[]{getString(R.string.ICS_LABEL_PATH_DEFAULT)};
-        preInstalledImagePaths = new String[]{getString(R.string.ICS_IMAGE_PATH_DEFAULT)};
-        preInstalledInputShapes = new String[]{getString(R.string.ICS_INPUT_SHAPE_DEFAULT)};
-        preInstalledInputMeans = new String[]{getString(R.string.ICS_INPUT_MEAN_DEFAULT)};
-        preInstalledInputScales = new String[]{getString(R.string.ICS_INPUT_SCALE_DEFAULT)};
-        /*
-        preInstalledModelPaths = new String[]{getString(R.string.ICS_MODEL_PATH_DEFAULT), "image_classification" +
-                "/models/mobilenet_v2_relu"};
-        preInstalledLabelPaths = new String[]{getString(R.string.ICS_LABEL_PATH_DEFAULT), "image_classification" +
-                "/labels/synset_words.txt"};
-        preInstalledImagePaths = new String[]{getString(R.string.ICS_IMAGE_PATH_DEFAULT), "image_classification" +
-                "/images/egypt_cat.jpg"};
-        preInstalledInputShapes = new String[]{getString(R.string.ICS_INPUT_SHAPE_DEFAULT), "1,3,224,224"};
-        preInstalledInputMeans = new String[]{getString(R.string.ICS_INPUT_MEAN_DEFAULT), "0,0,0"};
-        preInstalledInputScales = new String[]{getString(R.string.ICS_INPUT_SCALE_DEFAULT), "0.0039,0.0039,0.0039"};
-        */
+        preInstalledModelPaths = new String[]{getString(R.string.ICS_MODEL_PATH_DEFAULT), "image_classification/models/test_model_2", "image_classification/models/test_model_3"};
+        preInstalledLabelPaths = new String[]{getString(R.string.ICS_LABEL_PATH_DEFAULT), "image_classification/labels/synset_words.txt", "image_classification/labels/synset_words.txt"};
+        preInstalledImagePaths = new String[]{getString(R.string.ICS_IMAGE_PATH_DEFAULT), "image_classification/images/egypt_cat.jpg", "image_classification/images/egypt_cat.jpg"};
+        preInstalledInputShapes = new String[]{getString(R.string.ICS_INPUT_SHAPE_DEFAULT), "1,3,224,224", "1,3,224,224"};
+        preInstalledInputMeans = new String[]{getString(R.string.ICS_INPUT_MEAN_DEFAULT), "0.485,0.456,0.406", "0.485,0.456,0.406"};
+        preInstalledInputStds = new String[]{getString(R.string.ICS_INPUT_STD_DEFAULT), "0.229,0.224,0.225", "0.229,0.224,0.225"};
 
         // intialize all of UI components
         lpChoosePreInstalledModel =
@@ -71,7 +60,7 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
         etImagePath = (EditTextPreference) findPreference(getString(R.string.ICS_IMAGE_PATH_KEY));
         etInputShape = (EditTextPreference) findPreference(getString(R.string.ICS_INPUT_SHAPE_KEY));
         etInputMean = (EditTextPreference) findPreference(getString(R.string.ICS_INPUT_MEAN_KEY));
-        etInputScale = (EditTextPreference) findPreference(getString(R.string.ICS_INPUT_SCALE_KEY));
+        etInputStd = (EditTextPreference) findPreference(getString(R.string.ICS_INPUT_STD_KEY));
     }
 
     private void reloadPreferenceAndUpdateUI() {
@@ -89,7 +78,7 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
                 editor.putString(getString(R.string.ICS_IMAGE_PATH_KEY), preInstalledImagePaths[modelIdx]);
                 editor.putString(getString(R.string.ICS_INPUT_SHAPE_KEY), preInstalledInputShapes[modelIdx]);
                 editor.putString(getString(R.string.ICS_INPUT_MEAN_KEY), preInstalledInputMeans[modelIdx]);
-                editor.putString(getString(R.string.ICS_INPUT_SCALE_KEY), preInstalledInputScales[modelIdx]);
+                editor.putString(getString(R.string.ICS_INPUT_STD_KEY), preInstalledInputStds[modelIdx]);
                 editor.commit();
             }
             lpChoosePreInstalledModel.setSummary(modelPath);
@@ -100,7 +89,7 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
         etImagePath.setEnabled(enableCustomModelSettings);
         etInputShape.setEnabled(enableCustomModelSettings);
         etInputMean.setEnabled(enableCustomModelSettings);
-        etInputScale.setEnabled(enableCustomModelSettings);
+        etInputStd.setEnabled(enableCustomModelSettings);
         modelPath = sharedPreferences.getString(getString(R.string.ICS_MODEL_PATH_KEY),
                 getString(R.string.ICS_MODEL_PATH_DEFAULT));
         String labelPath = sharedPreferences.getString(getString(R.string.ICS_LABEL_PATH_KEY),
@@ -111,8 +100,8 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
                 getString(R.string.ICS_INPUT_SHAPE_DEFAULT));
         String inputMean = sharedPreferences.getString(getString(R.string.ICS_INPUT_MEAN_KEY),
                 getString(R.string.ICS_INPUT_MEAN_DEFAULT));
-        String inputScale = sharedPreferences.getString(getString(R.string.ICS_INPUT_SCALE_KEY),
-                getString(R.string.ICS_INPUT_SCALE_DEFAULT));
+        String inputStd = sharedPreferences.getString(getString(R.string.ICS_INPUT_STD_KEY),
+                getString(R.string.ICS_INPUT_STD_DEFAULT));
         etModelPath.setSummary(modelPath);
         etModelPath.setText(modelPath);
         etLabelPath.setSummary(labelPath);
@@ -123,8 +112,8 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
         etInputShape.setText(inputShape);
         etInputMean.setSummary(inputMean);
         etInputMean.setText(inputMean);
-        etInputScale.setSummary(inputScale);
-        etInputScale.setText(inputScale);
+        etInputStd.setSummary(inputStd);
+        etInputStd.setText(inputStd);
     }
 
     @Override
