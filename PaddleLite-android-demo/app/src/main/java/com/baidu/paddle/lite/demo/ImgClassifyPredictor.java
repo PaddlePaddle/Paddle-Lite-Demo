@@ -183,12 +183,9 @@ public class ImgClassifyPredictor extends Predictor {
         postprocessTime = (float) (end.getTime() - start.getTime());
 
         if (wordLabels.size() > 0) {
-            top1Result = "Top1: " + wordLabels.get(max_index[0]) + " - " + String.format("%.2f", max_num[0] * 100) +
-                    "%";
-            top2Result = "Top2: " + wordLabels.get(max_index[1]) + " - " + String.format("%.2f", max_num[1] * 100) +
-                    "%";
-            top3Result = "Top3: " + wordLabels.get(max_index[2]) + " - " + String.format("%.2f", max_num[2] * 100) +
-                    "%";
+            top1Result = "Top1: " + wordLabels.get(max_index[0]) + " - " + String.format("%.3f", max_num[0]);
+            top2Result = "Top2: " + wordLabels.get(max_index[1]) + " - " + String.format("%.3f", max_num[1]);
+            top3Result = "Top3: " + wordLabels.get(max_index[2]) + " - " + String.format("%.3f", max_num[2]);
         }
         return true;
     }
