@@ -2,7 +2,9 @@
 
 
 ## 功能
-* iOS示例: 静态图像目标分类和视频流目标分类；
+* iOS示例: 
+    * 静态图像目标分类和视频流目标分类；
+    * 静态图像目标检测、相机拍照目标检测、相机视频流目标检测;
 * Android示例: 基于MobileNetV1的图像分类示例程序；
 
 ## 要求
@@ -23,6 +25,7 @@
 $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
 * iOS
+    * 下载opencv framework: , 下载完成后解压到ios-xxx_demo/xxx_demo/目录下
     * 打开xcode，点击“Open another project…”打开Paddle-Lite-Demo/ios-classification_demo/目录下的xcode工程；
     * 在选中左上角“project navigator”，选择“classification_demo”，修改“General”信息；
     * 插入ios真机（已验证：iphone8， iphonexr），选择Device为插入的真机；
@@ -53,13 +56,12 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 ## 效果展示
 
 * iOS
-    * 静态图识别
+    * mobilenetv1 目标分类
 
-    ![ios_static](doc/ios_static.jpg)
+    ![ios_static](doc/ios_static.jpg)      ![ios_video](doc/ios_video.jpg)
 
-    * 动态图识别
-
-    ![ios_video](doc/ios_video.jpg)
+    * mobilenetv1-ssd 目标检测
+    ![ios_image_detect](doc/ios-image-detection.jpg)      ![ios_video_detect](doc/ios-video-detection.jpg)
 
 * Android
     * CPU预测结果（测试环境：华为nova5）
