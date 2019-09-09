@@ -61,7 +61,8 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     ![ios_static](doc/ios_static.jpg)      ![ios_video](doc/ios_video.jpg)
 
     * mobilenetv1-ssd 目标检测
-    ![ios_image_detect](doc/ios-image-detection.jpg)      ![ios_video_detect](doc/ios-video-detection.jpg)
+    
+    ![ios_static](doc/ios-image-detection.jpg)      ![ios_video](doc/ios-video-detection.jpg)
 
 * Android
     * CPU预测结果（测试环境：华为nova5）
