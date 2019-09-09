@@ -25,8 +25,11 @@
 $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
 * iOS
-    * 下载opencv framework: , 下载完成后解压到ios-xxx_demo/xxx_demo/目录下
-    * 打开xcode，点击“Open another project…”打开Paddle-Lite-Demo/ios-classification_demo/目录下的xcode工程；
+    * 下载opencv framework, 下载完成后解压到`ios-xxx_demo/xxx_demo/`目录下
+    ```bash
+    wget https://paddle-inference-dist.bj.bcebos.com/PaddleLiteDemo/opencv2.framework.zip
+    ```
+    * 打开xcode，点击“Open another project…”打开`Paddle-Lite-Demo/ios-xxx_demo/`目录下的xcode工程；
     * 在选中左上角“project navigator”，选择“classification_demo”，修改“General”信息；
     * 插入ios真机（已验证：iphone8， iphonexr），选择Device为插入的真机；
     * 点击左上角“build and run”按钮；
