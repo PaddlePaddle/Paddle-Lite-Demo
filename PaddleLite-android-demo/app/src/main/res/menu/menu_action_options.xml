@@ -12,21 +12,6 @@
                 app:showAsAction="withText"/>
     </group>
 
-    <group
-            android:id="@+id/choose_device"
-            android:checkableBehavior="single">
-        <item
-                android:id="@+id/run_on_cpu"
-                android:title="Run on CPU"
-                android:checked="true"
-                app:showAsAction="withText"/>
-
-        <item
-                android:id="@+id/run_on_npu"
-                android:title="Run on NPU"
-                app:showAsAction="withText"/>
-    </group>
-
     <group>
         <item
                 android:id="@+id/settings"

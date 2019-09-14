@@ -36,7 +36,6 @@ public class ImgClassifyActivity extends CommonActivity {
     protected ProgressDialog pbRunModel = null;
 
     protected TextView tvModelName;
-    private TextView tvWhichDevice;
     protected TextView tvInferenceTime;
     protected ImageView ivImageData;
     protected TextView tvTop1Result;
@@ -63,7 +62,6 @@ public class ImgClassifyActivity extends CommonActivity {
         setContentView(R.layout.activity_img_classify);
 
         tvModelName = findViewById(R.id.tv_model_name);
-        tvWhichDevice = findViewById(R.id.tv_which_device);
         tvInferenceTime = findViewById(R.id.tv_inference_time);
         ivImageData = findViewById(R.id.iv_image_data);
         tvTop1Result = findViewById(R.id.tv_top1_result);
@@ -174,7 +172,6 @@ public class ImgClassifyActivity extends CommonActivity {
 
     public void outputResult() {
         tvModelName.setText("Model: " + predictor.modelName());
-        tvWhichDevice.setText("On: " + (predictor.isOnCPU() ? "CPU" : (predictor.isOnNPU() ? "NPU" : "Unknown")));
         tvInferenceTime.setText("Inference time: " + predictor.inferenceTime() + " ms");
         Bitmap imageData = predictor.imageData();
         if (imageData != null) {
@@ -195,22 +192,6 @@ public class ImgClassifyActivity extends CommonActivity {
         super.onImageChanged(imageData);
     }
 
-    public void onDeviceChanged(MenuItem item) {
-        // rerun model if users change the device to run model
-        if (predictor.isLoaded()) {
-            switch (item.getItemId()) {
-                case R.id.run_on_cpu:
-                    predictor.runOnCPU();
-                    break;
-                case R.id.run_on_npu:
-                    predictor.runOnNPU();
-                    break;
-            }
-            runModel();
-        }
-        super.onDeviceChanged(item);
-    }
-
     public void onSettingsClicked() {
         startActivity(new Intent(ImgClassifyActivity.this, ImgClassifySettingsActivity.class));
         super.onSettingsClicked();
@@ -221,8 +202,6 @@ public class ImgClassifyActivity extends CommonActivity {
         boolean isLoaded = predictor.isLoaded();
         menu.findItem(R.id.open_gallery).setEnabled(isLoaded);
         menu.findItem(R.id.take_photo).setEnabled(isLoaded);
-        menu.findItem(R.id.run_on_cpu).setEnabled(isLoaded);
-        menu.findItem(R.id.run_on_npu).setEnabled(isLoaded);
         return super.onPrepareOptionsMenu(menu);
     }
 

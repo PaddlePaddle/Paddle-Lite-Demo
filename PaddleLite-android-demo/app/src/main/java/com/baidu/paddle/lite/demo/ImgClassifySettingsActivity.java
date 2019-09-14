@@ -6,6 +6,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.support.v7.app.ActionBar;
+import android.widget.Toast;
 
 
 public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -35,12 +36,15 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
         }
 
         // initialize the settings of pre-installed models
-        preInstalledModelPaths = new String[]{getString(R.string.ICS_MODEL_PATH_DEFAULT), "image_classification/models/test_model_2", "image_classification/models/test_model_3"};
-        preInstalledLabelPaths = new String[]{getString(R.string.ICS_LABEL_PATH_DEFAULT), "image_classification/labels/synset_words.txt", "image_classification/labels/synset_words.txt"};
-        preInstalledImagePaths = new String[]{getString(R.string.ICS_IMAGE_PATH_DEFAULT), "image_classification/images/egypt_cat.jpg", "image_classification/images/egypt_cat.jpg"};
-        preInstalledInputShapes = new String[]{getString(R.string.ICS_INPUT_SHAPE_DEFAULT), "1,3,224,224", "1,3,224,224"};
-        preInstalledInputMeans = new String[]{getString(R.string.ICS_INPUT_MEAN_DEFAULT), "0.485,0.456,0.406", "0.485,0.456,0.406"};
-        preInstalledInputStds = new String[]{getString(R.string.ICS_INPUT_STD_DEFAULT), "0.229,0.224,0.225", "0.229,0.224,0.225"};
+        preInstalledModelPaths = new String[]{getString(R.string.ICS_MODEL_PATH_DEFAULT), "image_classification" +
+                "/models/mobilenet_v1_for_npu"};
+        preInstalledLabelPaths = new String[]{getString(R.string.ICS_LABEL_PATH_DEFAULT), "image_classification" +
+                "/labels/synset_words.txt"};
+        preInstalledImagePaths = new String[]{getString(R.string.ICS_IMAGE_PATH_DEFAULT), "image_classification" +
+                "/images/tabby_cat.jpg"};
+        preInstalledInputShapes = new String[]{getString(R.string.ICS_INPUT_SHAPE_DEFAULT), "1,3,224,224"};
+        preInstalledInputMeans = new String[]{getString(R.string.ICS_INPUT_MEAN_DEFAULT), "0.485,0.456,0.406"};
+        preInstalledInputStds = new String[]{getString(R.string.ICS_INPUT_STD_DEFAULT), "0.229,0.224,0.225"};
 
         // intialize all of UI components
         lpChoosePreInstalledModel =
@@ -114,6 +118,11 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
         etInputMean.setText(inputMean);
         etInputStd.setSummary(inputStd);
         etInputStd.setText(inputStd);
+
+        if (!Utils.isSupportedNPU()) {
+            Toast.makeText(this, "NPU is not supported on your device! Kirin 810 and 990's NPU is the only supported " +
+                    "NPU in Paddle-Lite.", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
