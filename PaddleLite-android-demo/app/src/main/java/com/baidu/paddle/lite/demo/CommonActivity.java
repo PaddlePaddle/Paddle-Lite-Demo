@@ -40,9 +40,6 @@ public class CommonActivity extends AppCompatActivity {
     public void onImageChanged(Bitmap image) {
     }
 
-    public void onDeviceChanged(MenuItem item) {
-    }
-
     public void onSettingsClicked() {
     }
 
@@ -69,18 +66,6 @@ public class CommonActivity extends AppCompatActivity {
                     takePhoto();
                 }
                 break;
-            case R.id.run_on_cpu:
-                if (!item.isChecked()) {
-                    onDeviceChanged(item);
-                    item.setChecked(true);
-                }
-                break;
-            case R.id.run_on_npu:
-                if (!item.isChecked()) {
-                    onDeviceChanged(item);
-                    item.setChecked(true);
-                }
-                break;
             case R.id.settings:
                 if (requestAllPermissions()) {
                     // make sure we have SDCard r&w permissions to load model from SDCard
@@ -89,16 +74,6 @@ public class CommonActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.run_on_npu).setEnabled(Utils.isSupportedNPU());
-        if (!Utils.isSupportedNPU()) {
-            Toast.makeText(CommonActivity.this, "Kirin 810's NPU is the only supported NPU in Paddle-Lite, but we " +
-                    "will add support for more HUAWEI NPUs in the future!", Toast.LENGTH_LONG).show();
-        }
-        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override

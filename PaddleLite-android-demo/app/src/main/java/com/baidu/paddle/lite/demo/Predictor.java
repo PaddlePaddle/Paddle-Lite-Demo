@@ -1,10 +1,7 @@
 package com.baidu.paddle.lite.demo;
 
 import android.content.Context;
-import com.baidu.paddle.lite.CxxConfig;
-import com.baidu.paddle.lite.PaddlePredictor;
-import com.baidu.paddle.lite.Place;
-import com.baidu.paddle.lite.Tensor;
+import com.baidu.paddle.lite.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,8 +14,7 @@ public class Predictor {
     public int inferIterNum = 1;
     protected Context appCtx = null;
     public String modelName = "";
-    protected int whichDevice = 0; // 0: CPU 1: NPU
-    protected ArrayList<PaddlePredictor> paddlePredictors = new ArrayList<PaddlePredictor>(); // 0: CPU 1: NPU
+    protected PaddlePredictor paddlePredictor = null;
     protected float inferenceTime = 0;
 
     public Predictor() {
@@ -48,83 +44,46 @@ public class Predictor {
         if (realPath.isEmpty()) {
             return false;
         }
-        // CPU
-        {
-            CxxConfig config = new CxxConfig();
-            config.setModelDir(realPath);
-            Place preferredPlace = new Place(Place.TargetType.ARM, Place.PrecisionType.FLOAT);
-            Place[] validPlaces = new Place[2];
-            validPlaces[0] = new Place(Place.TargetType.HOST, Place.PrecisionType.FLOAT);
-            validPlaces[1] = new Place(Place.TargetType.ARM, Place.PrecisionType.FLOAT);
-            config.setPreferredPlace(preferredPlace);
-            config.setValidPlaces(validPlaces);
-            paddlePredictors.add(PaddlePredictor.createPaddlePredictor(config));
-        }
-        // NPU
-        {
-            CxxConfig config = new CxxConfig();
-            config.setModelDir(realPath);
-            Place preferredPlace = new Place(Place.TargetType.NPU, Place.PrecisionType.FLOAT);
-            Place[] validPlaces = new Place[3];
-            validPlaces[0] = new Place(Place.TargetType.HOST, Place.PrecisionType.FLOAT);
-            validPlaces[1] = new Place(Place.TargetType.ARM, Place.PrecisionType.FLOAT);
-            validPlaces[2] = new Place(Place.TargetType.NPU, Place.PrecisionType.FLOAT);
-            config.setPreferredPlace(preferredPlace);
-            config.setValidPlaces(validPlaces);
-            paddlePredictors.add(PaddlePredictor.createPaddlePredictor(config));
-        }
+        MobileConfig config = new MobileConfig();
+        config.setModelDir(realPath);
+        paddlePredictor = PaddlePredictor.createPaddlePredictor(config);
+
         modelName = realPath.substring(realPath.lastIndexOf("/") + 1);
         return true;
     }
 
     public void releaseModel() {
-        paddlePredictors.clear();
+        paddlePredictor = null;
         isLoaded = false;
         modelName = "";
     }
 
-    public void runOnCPU() {
-        whichDevice = 0;
-    }
-
-    public void runOnNPU() {
-        whichDevice = 1;
-    }
-
-    public boolean isOnCPU() {
-        return whichDevice == 0;
-    }
-
-    public boolean isOnNPU() {
-        return whichDevice == 1;
-    }
-
     public Tensor getInput(int idx) {
-        if (paddlePredictors.size() < whichDevice + 1) {
+        if (!isLoaded()) {
             return null;
         }
-        return paddlePredictors.get(whichDevice).getInput(idx);
+        return paddlePredictor.getInput(idx);
     }
 
     public Tensor getOutput(int idx) {
-        if (paddlePredictors.size() < whichDevice + 1) {
+        if (!isLoaded()) {
             return null;
         }
-        return paddlePredictors.get(whichDevice).getOutput(idx);
+        return paddlePredictor.getOutput(idx);
     }
 
     public boolean runModel() {
-        if (paddlePredictors.size() < whichDevice + 1) {
+        if (!isLoaded()) {
             return false;
         }
         // warm up
         for (int i = 0; i < warmupIterNum; i++) {
-            paddlePredictors.get(whichDevice).run();
+            paddlePredictor.run();
         }
         // inference
         Date start = new Date();
         for (int i = 0; i < inferIterNum; i++) {
-            paddlePredictors.get(whichDevice).run();
+            paddlePredictor.run();
         }
         Date end = new Date();
         inferenceTime = (end.getTime() - start.getTime()) / (float) inferIterNum;
@@ -132,7 +91,7 @@ public class Predictor {
     }
 
     public boolean isLoaded() {
-        return isLoaded;
+        return paddlePredictor != null && isLoaded;
     }
 
     public String modelName() {

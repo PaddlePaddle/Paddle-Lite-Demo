@@ -82,6 +82,6 @@ public class Utils {
 
     public static boolean isSupportedNPU() {
         String hardware = android.os.Build.HARDWARE;
-        return hardware.equalsIgnoreCase("kirin810");
+        return hardware.equalsIgnoreCase("kirin810") || hardware.equalsIgnoreCase("kirin990");
     }
 }
