@@ -1,6 +1,7 @@
 package com.baidu.paddle.lite.demo;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +9,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -27,6 +31,20 @@ public class CommonActivity extends AppCompatActivity {
     public static final int OPEN_GALLERY_REQUEST_CODE = 0;
     public static final int TAKE_PHOTO_REQUEST_CODE = 1;
 
+    public static final int REQUEST_LOAD_MODEL = 0;
+    public static final int REQUEST_RUN_MODEL = 1;
+    public static final int RESPONSE_LOAD_MODEL_SUCCESSED = 0;
+    public static final int RESPONSE_LOAD_MODEL_FAILED = 1;
+    public static final int RESPONSE_RUN_MODEL_SUCCESSED = 2;
+    public static final int RESPONSE_RUN_MODEL_FAILED = 3;
+
+    protected ProgressDialog pbLoadModel = null;
+    protected ProgressDialog pbRunModel = null;
+
+    protected Handler receiver = null; // receive messages from worker thread
+    protected Handler sender = null; // send command to worker thread
+    protected HandlerThread worker = null; // worker thread to load&run model
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +53,90 @@ public class CommonActivity extends AppCompatActivity {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        receiver = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case RESPONSE_LOAD_MODEL_SUCCESSED:
+                        pbLoadModel.dismiss();
+                        onLoadModelSuccessed();
+                        break;
+                    case RESPONSE_LOAD_MODEL_FAILED:
+                        pbLoadModel.dismiss();
+                        Toast.makeText(CommonActivity.this, "Load model failed!", Toast.LENGTH_SHORT).show();
+                        onLoadModelFailed();
+                        break;
+                    case RESPONSE_RUN_MODEL_SUCCESSED:
+                        pbRunModel.dismiss();
+                        onRunModelSuccessed();
+                        break;
+                    case RESPONSE_RUN_MODEL_FAILED:
+                        pbRunModel.dismiss();
+                        Toast.makeText(CommonActivity.this, "Run model failed!", Toast.LENGTH_SHORT).show();
+                        onRunModelFailed();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+
+        worker = new HandlerThread("Predictor Worker");
+        worker.start();
+        sender = new Handler(worker.getLooper()) {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case REQUEST_LOAD_MODEL:
+                        // load model and reload test image
+                        if (onLoadModel()) {
+                            receiver.sendEmptyMessage(RESPONSE_LOAD_MODEL_SUCCESSED);
+                        } else {
+                            receiver.sendEmptyMessage(RESPONSE_LOAD_MODEL_FAILED);
+                        }
+                        break;
+                    case REQUEST_RUN_MODEL:
+                        // run model if model is loaded
+                        if (onRunModel()) {
+                            receiver.sendEmptyMessage(RESPONSE_RUN_MODEL_SUCCESSED);
+                        } else {
+                            receiver.sendEmptyMessage(RESPONSE_RUN_MODEL_FAILED);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+    }
+
+    public void loadModel() {
+        pbLoadModel = ProgressDialog.show(this, "", "Loading model...", false, false);
+        sender.sendEmptyMessage(REQUEST_LOAD_MODEL);
+    }
+
+    public void runModel() {
+        pbRunModel = ProgressDialog.show(this, "", "Running model...", false, false);
+        sender.sendEmptyMessage(REQUEST_RUN_MODEL);
+    }
+
+    public boolean onLoadModel() {
+        return true;
+    }
+
+    public boolean onRunModel() {
+        return true;
+    }
+
+    public void onLoadModelSuccessed() {
+    }
+
+    public void onLoadModelFailed() {
+    }
+
+    public void onRunModelSuccessed() {
+    }
+
+    public void onRunModelFailed() {
     }
 
     public void onImageChanged(Bitmap image) {
@@ -119,20 +221,20 @@ public class CommonActivity extends AppCompatActivity {
                 case OPEN_GALLERY_REQUEST_CODE:
                     try {
                         ContentResolver resolver = getContentResolver();
-                        Uri originalUri = data.getData();
-                        Bitmap imageData = MediaStore.Images.Media.getBitmap(resolver, originalUri);
+                        Uri uri = data.getData();
+                        Bitmap image = MediaStore.Images.Media.getBitmap(resolver, uri);
                         String[] proj = {MediaStore.Images.Media.DATA};
-                        Cursor cursor = managedQuery(originalUri, proj, null, null, null);
+                        Cursor cursor = managedQuery(uri, proj, null, null, null);
                         cursor.moveToFirst();
-                        onImageChanged(imageData);
+                        onImageChanged(image);
                     } catch (IOException e) {
                         Log.e(TAG, e.toString());
                     }
                     break;
                 case TAKE_PHOTO_REQUEST_CODE:
                     Bundle extras = data.getExtras();
-                    Bitmap imageData = (Bitmap) extras.get("data");
-                    onImageChanged(imageData);
+                    Bitmap image = (Bitmap) extras.get("data");
+                    onImageChanged(image);
                     break;
                 default:
                     break;
@@ -143,5 +245,11 @@ public class CommonActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        worker.quit();
+        super.onDestroy();
     }
 }

@@ -27,13 +27,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.v_img_classify:
+            case R.id.v_img_classify: {
                 Intent intent = new Intent(MainActivity.this, ImgClassifyActivity.class);
                 startActivity(intent);
-                break;
-            case R.id.v_obj_detect:
-                Toast.makeText(MainActivity.this, "Still under construction...", Toast.LENGTH_SHORT).show();
-                break;
+            } break;
+            case R.id.v_obj_detect: {
+                Intent intent = new Intent(MainActivity.this, ObjDetectActivity.class);
+                startActivity(intent);
+            } break;
         }
     }
 

@@ -41,7 +41,7 @@
                 android:layout_below="@+id/v_model_info">
 
             <ImageView
-                    android:id="@+id/iv_image_data"
+                    android:id="@+id/iv_input_image"
                     android:layout_width="400dp"
                     android:layout_height="400dp"
                     android:layout_centerHorizontal="true"

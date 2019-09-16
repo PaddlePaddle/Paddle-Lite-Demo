@@ -1,18 +1,12 @@
 package com.baidu.paddle.lite.demo;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,20 +18,9 @@ import java.io.InputStream;
 public class ImgClassifyActivity extends CommonActivity {
     private static final String TAG = ImgClassifyActivity.class.getSimpleName();
 
-    public static final int REQUEST_LOAD_MODEL = 0;
-    public static final int REQUEST_RUN_MODEL = 1;
-
-    public static final int RESPONSE_LOAD_MODEL_SUCCESS = 0;
-    public static final int RESPONSE_LOAD_MODEL_FAILED = 1;
-    public static final int RESPONSE_RUN_MODEL_SUCCESS = 2;
-    public static final int RESPONSE_RUN_MODEL_FAILED = 3;
-
-    protected ProgressDialog pbLoadModel = null;
-    protected ProgressDialog pbRunModel = null;
-
     protected TextView tvModelName;
     protected TextView tvInferenceTime;
-    protected ImageView ivImageData;
+    protected ImageView ivInputImage;
     protected TextView tvTop1Result;
     protected TextView tvTop2Result;
     protected TextView tvTop3Result;
@@ -46,15 +29,12 @@ public class ImgClassifyActivity extends CommonActivity {
     protected String modelPath = "";
     protected String labelPath = "";
     protected String imagePath = "";
+    protected Boolean enableRGBColorFormat = false;
     protected long[] inputShape = new long[]{};
     protected float[] inputMean = new float[]{};
     protected float[] inputStd = new float[]{};
 
     protected ImgClassifyPredictor predictor = new ImgClassifyPredictor();
-
-    protected Handler receiver = null; // receive messages from worker thread
-    protected Handler sender = null; // send command to worker thread
-    protected HandlerThread worker = null; // worker thread to load&run model
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,119 +43,69 @@ public class ImgClassifyActivity extends CommonActivity {
 
         tvModelName = findViewById(R.id.tv_model_name);
         tvInferenceTime = findViewById(R.id.tv_inference_time);
-        ivImageData = findViewById(R.id.iv_image_data);
+        ivInputImage = findViewById(R.id.iv_input_image);
         tvTop1Result = findViewById(R.id.tv_top1_result);
         tvTop2Result = findViewById(R.id.tv_top2_result);
         tvTop3Result = findViewById(R.id.tv_top3_result);
-
-        ActionBar supportActionBar = getSupportActionBar();
-        if (supportActionBar != null) {
-            supportActionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
-        receiver = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case RESPONSE_LOAD_MODEL_SUCCESS:
-                        pbLoadModel.dismiss();
-                        // reload test image and run model
-                        if (loadImage()) {
-                            runModel();
-                        }
-                        break;
-                    case RESPONSE_LOAD_MODEL_FAILED:
-                        pbLoadModel.dismiss();
-                        Toast.makeText(ImgClassifyActivity.this, "Load model failed!", Toast.LENGTH_SHORT).show();
-                        break;
-                    case RESPONSE_RUN_MODEL_SUCCESS:
-                        pbRunModel.dismiss();
-                        // obtain results and update UI
-                        outputResult();
-                        break;
-                    case RESPONSE_RUN_MODEL_FAILED:
-                        pbRunModel.dismiss();
-                        Toast.makeText(ImgClassifyActivity.this, "Run model failed!", Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        };
-
-        worker = new HandlerThread("Image Classification Worker");
-        worker.start();
-        sender = new Handler(worker.getLooper()) {
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case REQUEST_LOAD_MODEL:
-                        // load model and reload test image
-                        if (predictor.init(ImgClassifyActivity.this, modelPath, labelPath, inputShape, inputMean,
-                                inputStd)) {
-                            receiver.sendEmptyMessage(RESPONSE_LOAD_MODEL_SUCCESS);
-                        } else {
-                            receiver.sendEmptyMessage(RESPONSE_LOAD_MODEL_FAILED);
-                        }
-                        break;
-                    case REQUEST_RUN_MODEL:
-                        // run model if model is loaded
-                        if (predictor.isLoaded() && predictor.runModel()) {
-                            receiver.sendEmptyMessage(RESPONSE_RUN_MODEL_SUCCESS);
-                        } else {
-                            receiver.sendEmptyMessage(RESPONSE_RUN_MODEL_FAILED);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        };
     }
 
-    public void loadModel() {
-        pbLoadModel = ProgressDialog.show(this, "", "Loading model...", false, false);
-        sender.sendEmptyMessage(REQUEST_LOAD_MODEL);
+    @Override
+    public boolean onLoadModel() {
+        return super.onLoadModel() && predictor.init(ImgClassifyActivity.this, modelPath, labelPath,
+                enableRGBColorFormat,
+                inputShape, inputMean,
+                inputStd);
     }
 
-    public void runModel() {
-        pbRunModel = ProgressDialog.show(this, "", "Running model...", false, false);
-        sender.sendEmptyMessage(REQUEST_RUN_MODEL);
+    @Override
+    public boolean onRunModel() {
+        return super.onRunModel() && predictor.isLoaded() && predictor.runModel();
     }
 
-    public boolean loadImage() {
+    @Override
+    public void onLoadModelSuccessed() {
+        super.onLoadModelSuccessed();
+        // load test image from path and run model
         try {
             if (imagePath.isEmpty()) {
-                return false;
+                return;
             }
-            Bitmap imageData = null;
+            Bitmap image = null;
             // read test image file from custom path if the first character of mode path is '/', otherwise read test
             // image file from assets
             if (!imagePath.substring(0, 1).equals("/")) {
                 InputStream imageStream = getAssets().open(imagePath);
-                imageData = BitmapFactory.decodeStream(imageStream);
+                image = BitmapFactory.decodeStream(imageStream);
             } else {
                 if (!new File(imagePath).exists()) {
-                    return false;
+                    return;
                 }
-                imageData = BitmapFactory.decodeFile(imagePath);
+                image = BitmapFactory.decodeFile(imagePath);
             }
-            if (imageData != null && predictor.isLoaded()) {
-                predictor.setImageData(imageData);
-                return true;
+            if (image != null && predictor.isLoaded()) {
+                predictor.setInputImage(image);
+                runModel();
             }
         } catch (IOException e) {
             Toast.makeText(ImgClassifyActivity.this, "Load image failed!", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
-        return false;
     }
 
-    public void outputResult() {
+    @Override
+    public void onLoadModelFailed() {
+        super.onLoadModelFailed();
+    }
+
+    @Override
+    public void onRunModelSuccessed() {
+        super.onRunModelSuccessed();
+        // obtain results and update UI
         tvModelName.setText("Model: " + predictor.modelName());
         tvInferenceTime.setText("Inference time: " + predictor.inferenceTime() + " ms");
-        Bitmap imageData = predictor.imageData();
-        if (imageData != null) {
-            ivImageData.setImageBitmap(imageData);
+        Bitmap inputImage = predictor.inputImage();
+        if (inputImage != null) {
+            ivInputImage.setImageBitmap(inputImage);
         }
         tvTop1Result.setText(predictor.top1Result());
         tvTop2Result.setText(predictor.top2Result());
@@ -183,18 +113,23 @@ public class ImgClassifyActivity extends CommonActivity {
     }
 
     @Override
-    public void onImageChanged(Bitmap imageData) {
+    public void onRunModelFailed() {
+        super.onRunModelFailed();
+    }
+
+    @Override
+    public void onImageChanged(Bitmap image) {
+        super.onImageChanged(image);
         // rerun model if users pick test image from gallery or camera
-        if (imageData != null && predictor.isLoaded()) {
-            predictor.setImageData(imageData);
+        if (image != null && predictor.isLoaded()) {
+            predictor.setInputImage(image);
             runModel();
         }
-        super.onImageChanged(imageData);
     }
 
     public void onSettingsClicked() {
-        startActivity(new Intent(ImgClassifyActivity.this, ImgClassifySettingsActivity.class));
         super.onSettingsClicked();
+        startActivity(new Intent(ImgClassifyActivity.this, ImgClassifySettingsActivity.class));
     }
 
     @Override
@@ -219,6 +154,10 @@ public class ImgClassifyActivity extends CommonActivity {
         settingsChanged |= !model_path.equalsIgnoreCase(modelPath);
         settingsChanged |= !label_path.equalsIgnoreCase(labelPath);
         settingsChanged |= !image_path.equalsIgnoreCase(imagePath);
+        Boolean enable_rgb_color_format =
+                sharedPreferences.getBoolean(getString(R.string.ICS_ENABLE_RGB_COLOR_FORMAT_KEY),
+                        Boolean.parseBoolean(getString(R.string.ICS_ENABLE_RGB_COLOR_FORMAT_DEFAULT)));
+        settingsChanged |= enable_rgb_color_format != enableRGBColorFormat;
         long[] input_shape =
                 Utils.parseLongsFromString(sharedPreferences.getString(getString(R.string.ICS_INPUT_SHAPE_KEY),
                         getString(R.string.ICS_INPUT_SHAPE_DEFAULT)), ",");
@@ -246,6 +185,7 @@ public class ImgClassifyActivity extends CommonActivity {
             modelPath = model_path;
             labelPath = label_path;
             imagePath = image_path;
+            enableRGBColorFormat = enable_rgb_color_format;
             inputShape = input_shape;
             inputMean = input_mean;
             inputStd = input_std;
@@ -260,7 +200,6 @@ public class ImgClassifyActivity extends CommonActivity {
         if (predictor != null) {
             predictor.releaseModel();
         }
-        worker.quit();
         super.onDestroy();
     }
 }

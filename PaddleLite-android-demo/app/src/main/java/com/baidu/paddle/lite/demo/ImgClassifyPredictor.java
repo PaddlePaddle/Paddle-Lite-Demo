@@ -17,10 +17,11 @@ import static android.graphics.Color.red;
 public class ImgClassifyPredictor extends Predictor {
     private static final String TAG = ImgClassifyPredictor.class.getSimpleName();
     protected Vector<String> wordLabels = new Vector<String>();
+    protected Boolean enableRGBColorFormat = false;
     protected long[] inputShape = new long[]{1, 3, 224, 224};
     protected float[] inputMean = new float[]{0.485f, 0.456f, 0.406f};
     protected float[] inputStd = new float[]{0.229f, 0.224f, 0.225f};
-    protected Bitmap imageData = null;
+    protected Bitmap inputImage = null;
     protected String top1Result = "";
     protected String top2Result = "";
     protected String top3Result = "";
@@ -31,7 +32,8 @@ public class ImgClassifyPredictor extends Predictor {
         super();
     }
 
-    public boolean init(Context appCtx, String modelPath, String labelPath, long[] inputShape, float[] inputMean,
+    public boolean init(Context appCtx, String modelPath, String labelPath, Boolean enableRGBColorFormat,
+                        long[] inputShape, float[] inputMean,
                         float[] inputStd) {
         if (inputShape.length != 4) {
             Log.i(TAG, "size of input shape should be: 4");
@@ -60,6 +62,7 @@ public class ImgClassifyPredictor extends Predictor {
             return false;
         }
         isLoaded &= loadLabel(labelPath);
+        this.enableRGBColorFormat = enableRGBColorFormat;
         this.inputShape = inputShape;
         this.inputMean = inputMean;
         this.inputStd = inputStd;
@@ -99,13 +102,13 @@ public class ImgClassifyPredictor extends Predictor {
         return super.getOutput(idx);
     }
 
-    public boolean runModel(Bitmap imageData) {
-        setImageData(imageData);
+    public boolean runModel(Bitmap image) {
+        setInputImage(image);
         return runModel();
     }
 
     public boolean runModel() {
-        if (imageData == null) {
+        if (inputImage == null) {
             return false;
         }
 
@@ -121,23 +124,20 @@ public class ImgClassifyPredictor extends Predictor {
         float[] inputData = new float[channels * width * height];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                int color = imageData.getPixel(j, i);
-                float r = (float) red(color) / 255.0f;
-                float g = (float) green(color) / 255.0f;
-                float b = (float) blue(color) / 255.0f;
+                int pixel = inputImage.getPixel(j, i);
+                float r = (float) red(pixel) / 255.0f;
+                float g = (float) green(pixel) / 255.0f;
+                float b = (float) blue(pixel) / 255.0f;
                 if (channels == 3) {
-                    r = r - inputMean[0];
-                    g = g - inputMean[1];
-                    b = b - inputMean[2];
-                    r = r / inputStd[0];
-                    g = g / inputStd[1];
-                    b = b / inputStd[2];
-                    int rIdx = i * width + j;
-                    int gIdx = rIdx + width * height;
-                    int bIdx = gIdx + width * height;
-                    inputData[rIdx] = r;
-                    inputData[gIdx] = g;
-                    inputData[bIdx] = b;
+                    float ch0 = enableRGBColorFormat ? r : b;
+                    float ch1 = g;
+                    float ch2 = enableRGBColorFormat ? b : r;
+                    int idx0 = i * width + j;
+                    int idx1 = idx0 + width * height;
+                    int idx2 = idx1 + width * height;
+                    inputData[idx0] = (ch0 - inputMean[0]) / inputStd[0];
+                    inputData[idx1] = (ch1 - inputMean[1]) / inputStd[1];
+                    inputData[idx2] = (ch2 - inputMean[2]) / inputStd[2];
                 } else { // channels = 1
                     float gray = (b + g + r) / 3.0f;
                     gray = gray - inputMean[0];
@@ -190,18 +190,8 @@ public class ImgClassifyPredictor extends Predictor {
         return true;
     }
 
-    public Bitmap imageData() {
-        return imageData;
-    }
-
-    public void setImageData(Bitmap imageData) {
-        if (imageData == null) {
-            return;
-        }
-        // scale image to the size of input tensor
-        Bitmap rgbaData = imageData.copy(Bitmap.Config.ARGB_8888, true);
-        Bitmap scaleData = Bitmap.createScaledBitmap(rgbaData, (int) inputShape[3], (int) inputShape[2], true);
-        this.imageData = scaleData;
+    public Bitmap inputImage() {
+        return inputImage;
     }
 
     public String top1Result() {
@@ -222,5 +212,15 @@ public class ImgClassifyPredictor extends Predictor {
 
     public float postprocessTime() {
         return postprocessTime;
+    }
+
+    public void setInputImage(Bitmap image) {
+        if (image == null) {
+            return;
+        }
+        // scale image to the size of input tensor
+        Bitmap rgbaImage = image.copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap scaleImage = Bitmap.createScaledBitmap(rgbaImage, (int) inputShape[3], (int) inputShape[2], true);
+        this.inputImage = scaleImage;
     }
 }
