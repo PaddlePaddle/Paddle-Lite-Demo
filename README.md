@@ -5,7 +5,9 @@
 * iOS示例: 
     * 静态图像目标分类和视频流目标分类；
     * 静态图像目标检测、相机拍照目标检测、相机视频流目标检测;
-* Android示例: 基于MobileNetV1的图像分类示例程序；
+* Android示例: 
+    * 基于MobileNetV1的图像分类；
+    * 基于MobileNetV1-SSD的目标检测；
 
 ## 要求
 
@@ -34,8 +36,8 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     * 打开Android Studio，在"Welcome to Android Studio"窗口点击"Open an existing Android Studio project"，在弹出的路径选择窗口中进入"PaddleLite-android-demo"目录，然后点击右下角的"Open"按钮即可导入工程
     * 通过USB连接Android手机或开发板；
     * 载入工程后，点击菜单栏的Run->Run 'App'按钮，在弹出的"Select Deployment Target"窗口选择已经连接的Android设备，然后点击"OK"按钮；
-    * 手机上会出现Demo的主界面，选择第一个"Image Classification"图标，进入基于MobileNetV1的图像分类Demo，注："Object Detection"的Demo正在开发中，请忽略；
-    * 在图像分类Demo中，默认会载入一张猫的图像，并会在图像下方给出CPU的预测结果，如果你使用的是麒麟810芯片的华为手机（如Nova5系列），可以通过按下右上角的"NPU"按钮切换成NPU进行预测；
+    * 手机上会出现Demo的主界面，选择第一个"Image Classification"图标，进入基于MobileNetV1的图像分类示例程序；
+    * 在图像分类Demo中，默认会载入一张猫的图像，并会在图像下方给出CPU的预测结果，如果你使用的是麒麟810或990芯片的华为手机（如Nova5系列），可以在右上角的上下文菜单选择"Settings..."打开设置窗口切换NPU模型进行预测；
     * 在图像分类Demo中，你还可以通过上方的"Gallery"和"Take Photo"按钮从相册或相机中加载测试图像；
 
 ## 更新到最新的预测库
@@ -71,10 +73,23 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     ![ios_static](doc/ios-image-detection.jpg)      ![ios_video](doc/ios-video-detection.jpg)
 
 * Android
-    * CPU预测结果（测试环境：华为nova5）
+    * mobilenetv1 目标分类
 
-    ![android_cat_cpu](doc/android_cat_cpu.jpg)      ![android_keyboard_cpu](doc/android_keyboard_cpu.jpg)
+      - CPU预测结果（测试环境：华为nova5）
 
-    * NPU预测结果（测试环境：华为nova5）
+      ![android_image_classification_cat_cpu](doc/android_image_classification_cat_cpu.jpg)      ![android_image_classification_keyboard_cpu](doc/android_image_classification_keyboard_cpu.jpg)
 
-    ![android_cat_npu](doc/android_cat_npu.jpg)      ![android_keyboard_npu](doc/android_keyboard_npu.jpg)
+      - NPU预测结果（测试环境：华为nova5）
+
+      ![android_image_classification_cat_npu](doc/android_image_classification_cat_npu.jpg)      ![android_image_classification_keyboard_npu](doc/android_image_classification_keyboard_npu.jpg)
+ 
+    * mobilenetv1-ssd 目标检测
+
+      - CPU预测结果（测试环境：华为nova5）
+
+      ![android_object_detection_dog_npu](doc/android_object_detection_dog_cpu.jpg)
+
+      - NPU预测结果（测试环境：华为nova5）
+
+      待支持
+    
