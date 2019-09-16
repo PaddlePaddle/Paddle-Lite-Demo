@@ -61,7 +61,7 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
             preInstalledModelPaths.add("image_classification/models/mobilenet_v1_for_npu");
             preInstalledLabelPaths.add("image_classification/labels/synset_words.txt");
             preInstalledImagePaths.add("image_classification/images/tabby_cat.jpg");
-            preInstalledEnableRGBColorFormats.add(false);
+            preInstalledEnableRGBColorFormats.add(true);
             preInstalledInputShapes.add("1,3,224,224");
             preInstalledInputMeans.add("0.485,0.456,0.406");
             preInstalledInputStds.add("0.229,0.224,0.225");
