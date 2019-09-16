@@ -17,7 +17,7 @@ import static android.graphics.Color.red;
 public class ImgClassifyPredictor extends Predictor {
     private static final String TAG = ImgClassifyPredictor.class.getSimpleName();
     protected Vector<String> wordLabels = new Vector<String>();
-    protected Boolean enableRGBColorFormat = false;
+    protected Boolean enableRGBColorFormat = true;
     protected long[] inputShape = new long[]{1, 3, 224, 224};
     protected float[] inputMean = new float[]{0.485f, 0.456f, 0.406f};
     protected float[] inputStd = new float[]{0.229f, 0.224f, 0.225f};

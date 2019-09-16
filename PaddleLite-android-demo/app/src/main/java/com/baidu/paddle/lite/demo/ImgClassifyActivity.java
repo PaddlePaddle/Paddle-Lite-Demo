@@ -29,7 +29,7 @@ public class ImgClassifyActivity extends CommonActivity {
     protected String modelPath = "";
     protected String labelPath = "";
     protected String imagePath = "";
-    protected Boolean enableRGBColorFormat = false;
+    protected Boolean enableRGBColorFormat = true;
     protected long[] inputShape = new long[]{};
     protected float[] inputMean = new float[]{};
     protected float[] inputStd = new float[]{};

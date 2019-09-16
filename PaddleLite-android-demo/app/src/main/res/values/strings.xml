@@ -13,7 +13,7 @@
     <string name="ICS_MODEL_PATH_DEFAULT">image_classification/models/mobilenet_v1_for_cpu</string>
     <string name="ICS_LABEL_PATH_DEFAULT">image_classification/labels/synset_words.txt</string>
     <string name="ICS_IMAGE_PATH_DEFAULT">image_classification/images/tabby_cat.jpg</string>
-    <string name="ICS_ENABLE_RGB_COLOR_FORMAT_DEFAULT">false</string>
+    <string name="ICS_ENABLE_RGB_COLOR_FORMAT_DEFAULT">true</string>
     <string name="ICS_INPUT_SHAPE_DEFAULT">1,3,224,224</string>
     <string name="ICS_INPUT_MEAN_DEFAULT">0.485,0.456,0.406</string>
     <string name="ICS_INPUT_STD_DEFAULT">0.229,0.224,0.225</string>
