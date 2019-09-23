@@ -1,6 +1,7 @@
 package com.baidu.paddle.lite.demo;
 
 import android.content.Context;
+import android.util.Log;
 import com.baidu.paddle.lite.*;
 
 import java.util.ArrayList;
@@ -13,6 +14,9 @@ public class Predictor {
     public int warmupIterNum = 1;
     public int inferIterNum = 1;
     protected Context appCtx = null;
+    public int cpuThreadNum = 1;
+    public String cpuPowerMode = "LITE_POWER_HIGH";
+    public String modelPath = "";
     public String modelName = "";
     protected PaddlePredictor paddlePredictor = null;
     protected float inferenceTime = 0;
@@ -20,13 +24,13 @@ public class Predictor {
     public Predictor() {
     }
 
-    public boolean init(Context appCtx, String modelPath) {
+    public boolean init(Context appCtx, String modelPath, int cpuThreadNum, String cpuPowerMode) {
         this.appCtx = appCtx;
-        isLoaded = loadModel(modelPath);
+        isLoaded = loadModel(modelPath, cpuThreadNum, cpuPowerMode);
         return isLoaded;
     }
 
-    protected boolean loadModel(String modelPath) {
+    protected boolean loadModel(String modelPath, int cpuThreadNum, String cpuPowerMode) {
         // release model if exists
         releaseModel();
 
@@ -46,15 +50,38 @@ public class Predictor {
         }
         MobileConfig config = new MobileConfig();
         config.setModelDir(realPath);
+        config.setThreads(cpuThreadNum);
+        if (cpuPowerMode.equalsIgnoreCase("LITE_POWER_HIGH")) {
+            config.setPowerMode(PowerMode.LITE_POWER_HIGH);
+        } else if (cpuPowerMode.equalsIgnoreCase("LITE_POWER_LOW")) {
+            config.setPowerMode(PowerMode.LITE_POWER_LOW);
+        } else if (cpuPowerMode.equalsIgnoreCase("LITE_POWER_FULL")) {
+            config.setPowerMode(PowerMode.LITE_POWER_FULL);
+        } else if (cpuPowerMode.equalsIgnoreCase("LITE_POWER_NO_BIND")) {
+            config.setPowerMode(PowerMode.LITE_POWER_NO_BIND);
+        } else if (cpuPowerMode.equalsIgnoreCase("LITE_POWER_RAND_HIGH")) {
+            config.setPowerMode(PowerMode.LITE_POWER_RAND_HIGH);
+        } else if (cpuPowerMode.equalsIgnoreCase("LITE_POWER_RAND_LOW")) {
+            config.setPowerMode(PowerMode.LITE_POWER_RAND_LOW);
+        } else {
+            Log.e(TAG, "unknown cpu power mode!");
+            return false;
+        }
         paddlePredictor = PaddlePredictor.createPaddlePredictor(config);
 
-        modelName = realPath.substring(realPath.lastIndexOf("/") + 1);
+        this.cpuThreadNum = cpuThreadNum;
+        this.cpuPowerMode = cpuPowerMode;
+        this.modelPath = realPath;
+        this.modelName = realPath.substring(realPath.lastIndexOf("/") + 1);
         return true;
     }
 
     public void releaseModel() {
         paddlePredictor = null;
         isLoaded = false;
+        cpuThreadNum = 1;
+        cpuPowerMode = "LITE_POWER_HIGH";
+        modelPath = "";
         modelName = "";
     }
 
@@ -94,8 +121,20 @@ public class Predictor {
         return paddlePredictor != null && isLoaded;
     }
 
+    public String modelPath() {
+        return modelPath;
+    }
+
     public String modelName() {
         return modelName;
+    }
+
+    public int cpuThreadNum() {
+        return cpuThreadNum;
+    }
+
+    public String cpuPowerMode() {
+        return cpuPowerMode;
     }
 
     public float inferenceTime() {

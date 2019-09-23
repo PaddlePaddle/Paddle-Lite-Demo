@@ -18,7 +18,9 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
     EditTextPreference etModelPath = null;
     EditTextPreference etLabelPath = null;
     EditTextPreference etImagePath = null;
-    CheckBoxPreference cbEnableRGBColorFormat = null;
+    ListPreference lpCPUThreadNum = null;
+    ListPreference lpCPUPowerMode = null;
+    ListPreference lpInputColorFormat = null;
     EditTextPreference etInputShape = null;
     EditTextPreference etInputMean = null;
     EditTextPreference etInputStd = null;
@@ -26,8 +28,10 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
     List<String> preInstalledModelPaths = null;
     List<String> preInstalledLabelPaths = null;
     List<String> preInstalledImagePaths = null;
+    List<String> preInstalledCPUThreadNums = null;
+    List<String> preInstalledCPUPowerModes = null;
     List<String> preInstalledInputShapes = null;
-    List<Boolean> preInstalledEnableRGBColorFormats = null;
+    List<String> preInstalledInputColorFormats = null;
     List<String> preInstalledInputMeans = null;
     List<String> preInstalledInputStds = null;
 
@@ -45,14 +49,18 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
         preInstalledLabelPaths = new ArrayList<String>();
         preInstalledImagePaths = new ArrayList<String>();
         preInstalledInputShapes = new ArrayList<String>();
-        preInstalledEnableRGBColorFormats = new ArrayList<Boolean>();
+        preInstalledCPUThreadNums = new ArrayList<String>();
+        preInstalledCPUPowerModes = new ArrayList<String>();
+        preInstalledInputColorFormats = new ArrayList<String>();
         preInstalledInputMeans = new ArrayList<String>();
         preInstalledInputStds = new ArrayList<String>();
         // add mobilenet_v1_for_cpu
         preInstalledModelPaths.add(getString(R.string.ICS_MODEL_PATH_DEFAULT));
         preInstalledLabelPaths.add(getString(R.string.ICS_LABEL_PATH_DEFAULT));
         preInstalledImagePaths.add(getString(R.string.ICS_IMAGE_PATH_DEFAULT));
-        preInstalledEnableRGBColorFormats.add(Boolean.parseBoolean(getString(R.string.ICS_ENABLE_RGB_COLOR_FORMAT_DEFAULT)));
+        preInstalledCPUThreadNums.add(getString(R.string.ICS_CPU_THREAD_NUM_DEFAULT));
+        preInstalledCPUPowerModes.add(getString(R.string.ICS_CPU_POWER_MODE_DEFAULT));
+        preInstalledInputColorFormats.add(getString(R.string.ICS_INPUT_COLOR_FORMAT_DEFAULT));
         preInstalledInputShapes.add(getString(R.string.ICS_INPUT_SHAPE_DEFAULT));
         preInstalledInputMeans.add(getString(R.string.ICS_INPUT_MEAN_DEFAULT));
         preInstalledInputStds.add(getString(R.string.ICS_INPUT_STD_DEFAULT));
@@ -61,7 +69,9 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
             preInstalledModelPaths.add("image_classification/models/mobilenet_v1_for_npu");
             preInstalledLabelPaths.add("image_classification/labels/synset_words.txt");
             preInstalledImagePaths.add("image_classification/images/tabby_cat.jpg");
-            preInstalledEnableRGBColorFormats.add(true);
+            preInstalledCPUThreadNums.add("1"); // useless for NPU
+            preInstalledCPUPowerModes.add("LITE_POWER_HIGH");  // useless for NPU
+            preInstalledInputColorFormats.add("RGB");
             preInstalledInputShapes.add("1,3,224,224");
             preInstalledInputMeans.add("0.485,0.456,0.406");
             preInstalledInputStds.add("0.229,0.224,0.225");
@@ -80,14 +90,18 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
         }
         lpChoosePreInstalledModel.setEntries(preInstalledModelNames);
         lpChoosePreInstalledModel.setEntryValues(preInstalledModelPaths.toArray(new String[preInstalledModelPaths.size()]));
+        lpCPUThreadNum =
+                (ListPreference) findPreference(getString(R.string.ICS_CPU_THREAD_NUM_KEY));
+        lpCPUPowerMode =
+                (ListPreference) findPreference(getString(R.string.ICS_CPU_POWER_MODE_KEY));
         cbEnableCustomSettings =
                 (CheckBoxPreference) findPreference(getString(R.string.ICS_ENABLE_CUSTOM_SETTINGS_KEY));
         etModelPath = (EditTextPreference) findPreference(getString(R.string.ICS_MODEL_PATH_KEY));
         etModelPath.setTitle("Model Path (SDCard: " + Utils.getSDCardDirectory() + ")");
         etLabelPath = (EditTextPreference) findPreference(getString(R.string.ICS_LABEL_PATH_KEY));
         etImagePath = (EditTextPreference) findPreference(getString(R.string.ICS_IMAGE_PATH_KEY));
-        cbEnableRGBColorFormat =
-                (CheckBoxPreference) findPreference(getString(R.string.ICS_ENABLE_RGB_COLOR_FORMAT_KEY));
+        lpInputColorFormat =
+                (ListPreference) findPreference(getString(R.string.ICS_INPUT_COLOR_FORMAT_KEY));
         etInputShape = (EditTextPreference) findPreference(getString(R.string.ICS_INPUT_SHAPE_KEY));
         etInputMean = (EditTextPreference) findPreference(getString(R.string.ICS_INPUT_MEAN_KEY));
         etInputStd = (EditTextPreference) findPreference(getString(R.string.ICS_INPUT_STD_KEY));
@@ -106,8 +120,10 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
                 editor.putString(getString(R.string.ICS_MODEL_PATH_KEY), preInstalledModelPaths.get(modelIdx));
                 editor.putString(getString(R.string.ICS_LABEL_PATH_KEY), preInstalledLabelPaths.get(modelIdx));
                 editor.putString(getString(R.string.ICS_IMAGE_PATH_KEY), preInstalledImagePaths.get(modelIdx));
-                editor.putBoolean(getString(R.string.ICS_ENABLE_RGB_COLOR_FORMAT_KEY),
-                        preInstalledEnableRGBColorFormats.get(modelIdx));
+                editor.putString(getString(R.string.ICS_CPU_THREAD_NUM_KEY), preInstalledCPUThreadNums.get(modelIdx));
+                editor.putString(getString(R.string.ICS_CPU_POWER_MODE_KEY), preInstalledCPUPowerModes.get(modelIdx));
+                editor.putString(getString(R.string.ICS_INPUT_COLOR_FORMAT_KEY),
+                        preInstalledInputColorFormats.get(modelIdx));
                 editor.putString(getString(R.string.ICS_INPUT_SHAPE_KEY), preInstalledInputShapes.get(modelIdx));
                 editor.putString(getString(R.string.ICS_INPUT_MEAN_KEY), preInstalledInputMeans.get(modelIdx));
                 editor.putString(getString(R.string.ICS_INPUT_STD_KEY), preInstalledInputStds.get(modelIdx));
@@ -119,7 +135,9 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
         etModelPath.setEnabled(enableCustomSettings);
         etLabelPath.setEnabled(enableCustomSettings);
         etImagePath.setEnabled(enableCustomSettings);
-        cbEnableRGBColorFormat.setEnabled(enableCustomSettings);
+        lpCPUThreadNum.setEnabled(enableCustomSettings);
+        lpCPUPowerMode.setEnabled(enableCustomSettings);
+        lpInputColorFormat.setEnabled(enableCustomSettings);
         etInputShape.setEnabled(enableCustomSettings);
         etInputMean.setEnabled(enableCustomSettings);
         etInputStd.setEnabled(enableCustomSettings);
@@ -129,8 +147,12 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
                 getString(R.string.ICS_LABEL_PATH_DEFAULT));
         String imagePath = sharedPreferences.getString(getString(R.string.ICS_IMAGE_PATH_KEY),
                 getString(R.string.ICS_IMAGE_PATH_DEFAULT));
-        Boolean enableRGBColorFormat = sharedPreferences.getBoolean(getString(R.string.ICS_ENABLE_RGB_COLOR_FORMAT_KEY),
-                Boolean.parseBoolean(getString(R.string.ICS_ENABLE_RGB_COLOR_FORMAT_DEFAULT)));
+        String cpuThreadNum = sharedPreferences.getString(getString(R.string.ICS_CPU_THREAD_NUM_KEY),
+                getString(R.string.ICS_CPU_THREAD_NUM_DEFAULT));
+        String cpuPowerMode = sharedPreferences.getString(getString(R.string.ICS_CPU_POWER_MODE_KEY),
+                getString(R.string.ICS_CPU_POWER_MODE_DEFAULT));
+        String inputColorFormat = sharedPreferences.getString(getString(R.string.ICS_INPUT_COLOR_FORMAT_KEY),
+                getString(R.string.ICS_INPUT_COLOR_FORMAT_DEFAULT));
         String inputShape = sharedPreferences.getString(getString(R.string.ICS_INPUT_SHAPE_KEY),
                 getString(R.string.ICS_INPUT_SHAPE_DEFAULT));
         String inputMean = sharedPreferences.getString(getString(R.string.ICS_INPUT_MEAN_KEY),
@@ -143,7 +165,12 @@ public class ImgClassifySettingsActivity extends AppCompatPreferenceActivity imp
         etLabelPath.setText(labelPath);
         etImagePath.setSummary(imagePath);
         etImagePath.setText(imagePath);
-        cbEnableRGBColorFormat.setChecked(enableRGBColorFormat);
+        lpCPUThreadNum.setValue(cpuThreadNum);
+        lpCPUThreadNum.setSummary(cpuThreadNum);
+        lpCPUPowerMode.setValue(cpuPowerMode);
+        lpCPUPowerMode.setSummary(cpuPowerMode);
+        lpInputColorFormat.setValue(inputColorFormat);
+        lpInputColorFormat.setSummary(inputColorFormat);
         etInputShape.setSummary(inputShape);
         etInputShape.setText(inputShape);
         etInputMean.setSummary(inputMean);

@@ -18,7 +18,9 @@ public class ObjDetectSettingsActivity extends AppCompatPreferenceActivity imple
     EditTextPreference etModelPath = null;
     EditTextPreference etLabelPath = null;
     EditTextPreference etImagePath = null;
-    CheckBoxPreference cbEnableRGBColorFormat = null;
+    ListPreference lpCPUThreadNum = null;
+    ListPreference lpCPUPowerMode = null;
+    ListPreference lpInputColorFormat = null;
     EditTextPreference etInputShape = null;
     EditTextPreference etInputMean = null;
     EditTextPreference etInputStd = null;
@@ -28,7 +30,9 @@ public class ObjDetectSettingsActivity extends AppCompatPreferenceActivity imple
     List<String> preInstalledLabelPaths = null;
     List<String> preInstalledImagePaths = null;
     List<String> preInstalledInputShapes = null;
-    List<Boolean> preInstalledEnableRGBColorFormats = null;
+    List<String> preInstalledCPUThreadNums = null;
+    List<String> preInstalledCPUPowerModes = null;
+    List<String> preInstalledInputColorFormats = null;
     List<String> preInstalledInputMeans = null;
     List<String> preInstalledInputStds = null;
     List<String> preInstalledScoreThresholds = null;
@@ -47,7 +51,9 @@ public class ObjDetectSettingsActivity extends AppCompatPreferenceActivity imple
         preInstalledLabelPaths = new ArrayList<String>();
         preInstalledImagePaths = new ArrayList<String>();
         preInstalledInputShapes = new ArrayList<String>();
-        preInstalledEnableRGBColorFormats = new ArrayList<Boolean>();
+        preInstalledCPUThreadNums = new ArrayList<String>();
+        preInstalledCPUPowerModes = new ArrayList<String>();
+        preInstalledInputColorFormats = new ArrayList<String>();
         preInstalledInputMeans = new ArrayList<String>();
         preInstalledInputStds = new ArrayList<String>();
         preInstalledScoreThresholds = new ArrayList<String>();
@@ -55,7 +61,9 @@ public class ObjDetectSettingsActivity extends AppCompatPreferenceActivity imple
         preInstalledModelPaths.add(getString(R.string.ODS_MODEL_PATH_DEFAULT));
         preInstalledLabelPaths.add(getString(R.string.ODS_LABEL_PATH_DEFAULT));
         preInstalledImagePaths.add(getString(R.string.ODS_IMAGE_PATH_DEFAULT));
-        preInstalledEnableRGBColorFormats.add(Boolean.parseBoolean(getString(R.string.ODS_ENABLE_RGB_COLOR_FORMAT_DEFAULT)));
+        preInstalledCPUThreadNums.add(getString(R.string.ODS_CPU_THREAD_NUM_DEFAULT));
+        preInstalledCPUPowerModes.add(getString(R.string.ODS_CPU_POWER_MODE_DEFAULT));
+        preInstalledInputColorFormats.add(getString(R.string.ODS_INPUT_COLOR_FORMAT_DEFAULT));
         preInstalledInputShapes.add(getString(R.string.ODS_INPUT_SHAPE_DEFAULT));
         preInstalledInputMeans.add(getString(R.string.ODS_INPUT_MEAN_DEFAULT));
         preInstalledInputStds.add(getString(R.string.ODS_INPUT_STD_DEFAULT));
@@ -77,8 +85,12 @@ public class ObjDetectSettingsActivity extends AppCompatPreferenceActivity imple
         etModelPath.setTitle("Model Path (SDCard: " + Utils.getSDCardDirectory() + ")");
         etLabelPath = (EditTextPreference) findPreference(getString(R.string.ODS_LABEL_PATH_KEY));
         etImagePath = (EditTextPreference) findPreference(getString(R.string.ODS_IMAGE_PATH_KEY));
-        cbEnableRGBColorFormat =
-                (CheckBoxPreference) findPreference(getString(R.string.ODS_ENABLE_RGB_COLOR_FORMAT_KEY));
+        lpCPUThreadNum =
+                (ListPreference) findPreference(getString(R.string.ODS_CPU_THREAD_NUM_KEY));
+        lpCPUPowerMode =
+                (ListPreference) findPreference(getString(R.string.ODS_CPU_POWER_MODE_KEY));
+        lpInputColorFormat =
+                (ListPreference) findPreference(getString(R.string.ODS_INPUT_COLOR_FORMAT_KEY));
         etInputShape = (EditTextPreference) findPreference(getString(R.string.ODS_INPUT_SHAPE_KEY));
         etInputMean = (EditTextPreference) findPreference(getString(R.string.ODS_INPUT_MEAN_KEY));
         etInputStd = (EditTextPreference) findPreference(getString(R.string.ODS_INPUT_STD_KEY));
@@ -98,8 +110,10 @@ public class ObjDetectSettingsActivity extends AppCompatPreferenceActivity imple
                 editor.putString(getString(R.string.ODS_MODEL_PATH_KEY), preInstalledModelPaths.get(modelIdx));
                 editor.putString(getString(R.string.ODS_LABEL_PATH_KEY), preInstalledLabelPaths.get(modelIdx));
                 editor.putString(getString(R.string.ODS_IMAGE_PATH_KEY), preInstalledImagePaths.get(modelIdx));
-                editor.putBoolean(getString(R.string.ODS_ENABLE_RGB_COLOR_FORMAT_KEY),
-                        preInstalledEnableRGBColorFormats.get(modelIdx));
+                editor.putString(getString(R.string.ODS_CPU_THREAD_NUM_KEY), preInstalledCPUThreadNums.get(modelIdx));
+                editor.putString(getString(R.string.ODS_CPU_POWER_MODE_KEY), preInstalledCPUPowerModes.get(modelIdx));
+                editor.putString(getString(R.string.ODS_INPUT_COLOR_FORMAT_KEY),
+                        preInstalledInputColorFormats.get(modelIdx));
                 editor.putString(getString(R.string.ODS_INPUT_SHAPE_KEY), preInstalledInputShapes.get(modelIdx));
                 editor.putString(getString(R.string.ODS_INPUT_MEAN_KEY), preInstalledInputMeans.get(modelIdx));
                 editor.putString(getString(R.string.ODS_INPUT_STD_KEY), preInstalledInputStds.get(modelIdx));
@@ -113,7 +127,9 @@ public class ObjDetectSettingsActivity extends AppCompatPreferenceActivity imple
         etModelPath.setEnabled(enableCustomSettings);
         etLabelPath.setEnabled(enableCustomSettings);
         etImagePath.setEnabled(enableCustomSettings);
-        cbEnableRGBColorFormat.setEnabled(enableCustomSettings);
+        lpCPUThreadNum.setEnabled(enableCustomSettings);
+        lpCPUPowerMode.setEnabled(enableCustomSettings);
+        lpInputColorFormat.setEnabled(enableCustomSettings);
         etInputShape.setEnabled(enableCustomSettings);
         etInputMean.setEnabled(enableCustomSettings);
         etInputStd.setEnabled(enableCustomSettings);
@@ -124,8 +140,12 @@ public class ObjDetectSettingsActivity extends AppCompatPreferenceActivity imple
                 getString(R.string.ODS_LABEL_PATH_DEFAULT));
         String imagePath = sharedPreferences.getString(getString(R.string.ODS_IMAGE_PATH_KEY),
                 getString(R.string.ODS_IMAGE_PATH_DEFAULT));
-        Boolean enableRGBColorFormat = sharedPreferences.getBoolean(getString(R.string.ODS_ENABLE_RGB_COLOR_FORMAT_KEY),
-                Boolean.parseBoolean(getString(R.string.ODS_ENABLE_RGB_COLOR_FORMAT_DEFAULT)));
+        String cpuThreadNum = sharedPreferences.getString(getString(R.string.ODS_CPU_THREAD_NUM_KEY),
+                getString(R.string.ODS_CPU_THREAD_NUM_DEFAULT));
+        String cpuPowerMode = sharedPreferences.getString(getString(R.string.ODS_CPU_POWER_MODE_KEY),
+                getString(R.string.ODS_CPU_POWER_MODE_DEFAULT));
+        String inputColorFormat = sharedPreferences.getString(getString(R.string.ODS_INPUT_COLOR_FORMAT_KEY),
+                getString(R.string.ODS_INPUT_COLOR_FORMAT_DEFAULT));
         String inputShape = sharedPreferences.getString(getString(R.string.ODS_INPUT_SHAPE_KEY),
                 getString(R.string.ODS_INPUT_SHAPE_DEFAULT));
         String inputMean = sharedPreferences.getString(getString(R.string.ODS_INPUT_MEAN_KEY),
@@ -140,7 +160,12 @@ public class ObjDetectSettingsActivity extends AppCompatPreferenceActivity imple
         etLabelPath.setText(labelPath);
         etImagePath.setSummary(imagePath);
         etImagePath.setText(imagePath);
-        cbEnableRGBColorFormat.setChecked(enableRGBColorFormat);
+        lpCPUThreadNum.setValue(cpuThreadNum);
+        lpCPUThreadNum.setSummary(cpuThreadNum);
+        lpCPUPowerMode.setValue(cpuPowerMode);
+        lpCPUPowerMode.setSummary(cpuPowerMode);
+        lpInputColorFormat.setValue(inputColorFormat);
+        lpInputColorFormat.setSummary(inputColorFormat);
         etInputShape.setSummary(inputShape);
         etInputShape.setText(inputShape);
         etInputMean.setSummary(inputMean);

@@ -19,16 +19,18 @@ import java.io.InputStream;
 public class ObjDetectActivity extends CommonActivity {
     private static final String TAG = ObjDetectActivity.class.getSimpleName();
 
-    protected TextView tvModelName;
-    protected TextView tvInferenceTime;
+    protected TextView tvInputSetting;
     protected ImageView ivInputImage;
     protected TextView tvOutputResult;
+    protected TextView tvInferenceTime;
 
     // model config
     protected String modelPath = "";
     protected String labelPath = "";
     protected String imagePath = "";
-    protected Boolean enableRGBColorFormat = false;
+    protected int cpuThreadNum = 1;
+    protected String cpuPowerMode = "";
+    protected String inputColorFormat = "";
     protected long[] inputShape = new long[]{};
     protected float[] inputMean = new float[]{};
     protected float[] inputStd = new float[]{};
@@ -41,17 +43,19 @@ public class ObjDetectActivity extends CommonActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_obj_detect);
 
-        tvModelName = findViewById(R.id.tv_model_name);
+        tvInputSetting = findViewById(R.id.tv_input_setting);
         ivInputImage = findViewById(R.id.iv_input_image);
         tvInferenceTime = findViewById(R.id.tv_inference_time);
         tvOutputResult = findViewById(R.id.tv_output_result);
+        tvInputSetting.setMovementMethod(ScrollingMovementMethod.getInstance());
         tvOutputResult.setMovementMethod(ScrollingMovementMethod.getInstance());
     }
 
     @Override
     public boolean onLoadModel() {
-        return super.onLoadModel() && predictor.init(ObjDetectActivity.this, modelPath, labelPath,
-                enableRGBColorFormat,
+        return super.onLoadModel() && predictor.init(ObjDetectActivity.this, modelPath, labelPath, cpuThreadNum,
+                cpuPowerMode,
+                inputColorFormat,
                 inputShape, inputMean,
                 inputStd, scoreThreshold);
     }
@@ -101,7 +105,6 @@ public class ObjDetectActivity extends CommonActivity {
     public void onRunModelSuccessed() {
         super.onRunModelSuccessed();
         // obtain results and update UI
-        tvModelName.setText("Model: " + predictor.modelName());
         tvInferenceTime.setText("Inference time: " + predictor.inferenceTime() + " ms");
         Bitmap outputImage = predictor.outputImage();
         if (outputImage != null) {
@@ -153,10 +156,17 @@ public class ObjDetectActivity extends CommonActivity {
         settingsChanged |= !model_path.equalsIgnoreCase(modelPath);
         settingsChanged |= !label_path.equalsIgnoreCase(labelPath);
         settingsChanged |= !image_path.equalsIgnoreCase(imagePath);
-        Boolean enable_rgb_color_format =
-                sharedPreferences.getBoolean(getString(R.string.ODS_ENABLE_RGB_COLOR_FORMAT_KEY),
-                        Boolean.parseBoolean(getString(R.string.ODS_ENABLE_RGB_COLOR_FORMAT_DEFAULT)));
-        settingsChanged |= enable_rgb_color_format != enableRGBColorFormat;
+        int cpu_thread_num = Integer.parseInt(sharedPreferences.getString(getString(R.string.ODS_CPU_THREAD_NUM_KEY),
+                getString(R.string.ODS_CPU_THREAD_NUM_DEFAULT)));
+        settingsChanged |= cpu_thread_num != cpuThreadNum;
+        String cpu_power_mode =
+                sharedPreferences.getString(getString(R.string.ODS_CPU_POWER_MODE_KEY),
+                        getString(R.string.ODS_CPU_POWER_MODE_DEFAULT));
+        settingsChanged |= !cpu_power_mode.equalsIgnoreCase(cpuPowerMode);
+        String input_color_format =
+                sharedPreferences.getString(getString(R.string.ODS_INPUT_COLOR_FORMAT_KEY),
+                        getString(R.string.ODS_INPUT_COLOR_FORMAT_DEFAULT));
+        settingsChanged |= !input_color_format.equalsIgnoreCase(inputColorFormat);
         long[] input_shape =
                 Utils.parseLongsFromString(sharedPreferences.getString(getString(R.string.ODS_INPUT_SHAPE_KEY),
                         getString(R.string.ODS_INPUT_SHAPE_DEFAULT)), ",");
@@ -182,17 +192,23 @@ public class ObjDetectActivity extends CommonActivity {
         }
         float score_threshold =
                 Float.parseFloat(sharedPreferences.getString(getString(R.string.ODS_SCORE_THRESHOLD_KEY),
-                getString(R.string.ODS_SCORE_THRESHOLD_DEFAULT)));
+                        getString(R.string.ODS_SCORE_THRESHOLD_DEFAULT)));
         settingsChanged |= scoreThreshold != score_threshold;
         if (settingsChanged) {
             modelPath = model_path;
             labelPath = label_path;
             imagePath = image_path;
-            enableRGBColorFormat = enable_rgb_color_format;
+            cpuThreadNum = cpu_thread_num;
+            cpuPowerMode = cpu_power_mode;
+            inputColorFormat = input_color_format;
             inputShape = input_shape;
             inputMean = input_mean;
             inputStd = input_std;
             scoreThreshold = score_threshold;
+            // update UI
+            tvInputSetting.setText("Model Name: " + modelPath.substring(modelPath.lastIndexOf("/") + 1) + "\n" + "CPU" +
+                    " Thread Num: " + Integer.toString(cpuThreadNum) + "\n" + "CPU Power Mode: " + cpuPowerMode);
+            tvInputSetting.scrollTo(0, 0);
             // reload model if configure has been changed
             loadModel();
         }
