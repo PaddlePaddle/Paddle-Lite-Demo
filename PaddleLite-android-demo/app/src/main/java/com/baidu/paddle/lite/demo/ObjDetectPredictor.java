@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.*;
 import android.util.Log;
 
+import com.baidu.paddle.lite.PowerMode;
 import com.baidu.paddle.lite.Tensor;
 
 import java.io.InputStream;
@@ -17,7 +18,7 @@ import static android.graphics.Color.red;
 public class ObjDetectPredictor extends Predictor {
     private static final String TAG = ObjDetectPredictor.class.getSimpleName();
     protected Vector<String> wordLabels = new Vector<String>();
-    protected Boolean enableRGBColorFormat = false;
+    protected String inputColorFormat = "RGB";
     protected long[] inputShape = new long[]{1, 3, 300, 300};
     protected float[] inputMean = new float[]{0.5f, 0.5f, 0.5f};
     protected float[] inputStd = new float[]{0.5f, 0.5f, 0.5f};
@@ -32,7 +33,8 @@ public class ObjDetectPredictor extends Predictor {
         super();
     }
 
-    public boolean init(Context appCtx, String modelPath, String labelPath, Boolean enableRGBColorFormat,
+    public boolean init(Context appCtx, String modelPath, String labelPath, int cpuThreadNum, String cpuPowerMode,
+                        String inputColorFormat,
                         long[] inputShape, float[] inputMean,
                         float[] inputStd, float scoreThreshold) {
         if (inputShape.length != 4) {
@@ -57,12 +59,16 @@ public class ObjDetectPredictor extends Predictor {
                     "channel size in your Apps!");
             return false;
         }
-        super.init(appCtx, modelPath);
+        if (!inputColorFormat.equalsIgnoreCase("RGB") && !inputColorFormat.equalsIgnoreCase("BGR")) {
+            Log.i(TAG, "only RGB and BGR color format is supported.");
+            return false;
+        }
+        super.init(appCtx, modelPath, cpuThreadNum, cpuPowerMode);
         if (!super.isLoaded()) {
             return false;
         }
         isLoaded &= loadLabel(labelPath);
-        this.enableRGBColorFormat = enableRGBColorFormat;
+        this.inputColorFormat = inputColorFormat;
         this.inputShape = inputShape;
         this.inputMean = inputMean;
         this.inputStd = inputStd;
@@ -120,29 +126,40 @@ public class ObjDetectPredictor extends Predictor {
         int width = (int) inputShape[3];
         int height = (int) inputShape[2];
         float[] inputData = new float[channels * width * height];
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                int pixel = inputImage.getPixel(j, i);
-                float r = (float) red(pixel) / 255.0f;
-                float g = (float) green(pixel) / 255.0f;
-                float b = (float) blue(pixel) / 255.0f;
-                if (channels == 3) {
-                    float ch0 = enableRGBColorFormat ? r : b;
-                    float ch1 = g;
-                    float ch2 = enableRGBColorFormat ? b : r;
-                    int idx0 = i * width + j;
-                    int idx1 = idx0 + width * height;
-                    int idx2 = idx1 + width * height;
-                    inputData[idx0] = (ch0 - inputMean[0]) / inputStd[0];
-                    inputData[idx1] = (ch1 - inputMean[1]) / inputStd[1];
-                    inputData[idx2] = (ch2 - inputMean[2]) / inputStd[2];
-                } else { // channels = 1
-                    float gray = (b + g + r) / 3.0f;
-                    gray = gray - inputMean[0];
-                    gray = gray / inputStd[0];
-                    inputData[i * width + j] = gray;
+        if (channels == 3) {
+            int[] channelIdx = null;
+            if (inputColorFormat.equalsIgnoreCase("RGB")) {
+                channelIdx = new int[]{0, 1, 2};
+            } else if (inputColorFormat.equalsIgnoreCase("BGR")) {
+                channelIdx = new int[]{2, 1, 0};
+            } else {
+                Log.i(TAG, "unknown color format " + inputColorFormat + ", only RGB and BGR color format is " +
+                        "supported!");
+                return false;
+            }
+            int[] channelStride = new int[]{width * height, width * height * 2};
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int color = inputImage.getPixel(x, y);
+                    float[] rgb = new float[]{(float) red(color) / 255.0f, (float) green(color) / 255.0f,
+                            (float) blue(color) / 255.0f};
+                    inputData[y * width + x] = (rgb[channelIdx[0]] - inputMean[0]) / inputStd[0];
+                    inputData[y * width + x + channelStride[0]] = (rgb[channelIdx[1]] - inputMean[1]) / inputStd[1];
+                    inputData[y * width + x + channelStride[1]] = (rgb[channelIdx[2]] - inputMean[2]) / inputStd[2];
                 }
             }
+        } else if (channels == 1) {
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int color = inputImage.getPixel(x, y);
+                    float gray = (float) (red(color) + green(color) + blue(color)) / 3.0f / 255.0f;
+                    inputData[y * width + x] = (gray - inputMean[0]) / inputStd[0];
+                }
+            }
+        } else {
+            Log.i(TAG, "unsupported channel size " + Integer.toString(channels) + ",  only channel 1 and 3 is " +
+                    "supported!");
+            return false;
         }
         inputTensor.setData(inputData);
         Date end = new Date();

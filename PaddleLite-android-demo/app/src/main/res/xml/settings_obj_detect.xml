@@ -26,13 +26,33 @@
                 android:defaultValue="@string/ODS_IMAGE_PATH_DEFAULT"
                 android:title="Image Path" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="CPU Settings">
+        <ListPreference
+                android:defaultValue="@string/ODS_CPU_THREAD_NUM_DEFAULT"
+                android:key="@string/ODS_CPU_THREAD_NUM_KEY"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"
+                android:title="CPU Thread Num"
+                android:entries="@array/cpu_thread_num_entries"
+                android:entryValues="@array/cpu_thread_num_values"/>
+        <ListPreference
+                android:defaultValue="@string/ODS_CPU_POWER_MODE_DEFAULT"
+                android:key="@string/ODS_CPU_POWER_MODE_KEY"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"
+                android:title="CPU Power Mode"
+                android:entries="@array/cpu_power_mode_entries"
+                android:entryValues="@array/cpu_power_mode_values"/>
+    </PreferenceCategory>
     <PreferenceCategory android:title="Input Settings">
-        <CheckBoxPreference
-                android:defaultValue="@string/ODS_ENABLE_RGB_COLOR_FORMAT_DEFAULT"
-                android:key="@string/ODS_ENABLE_RGB_COLOR_FORMAT_KEY"
-                android:summaryOn="Use RGB color format"
-                android:summaryOff="Use BGR color format"
-                android:title="Enable RGB color format"/>
+        <ListPreference
+                android:defaultValue="@string/ODS_INPUT_COLOR_FORMAT_DEFAULT"
+                android:key="@string/ODS_INPUT_COLOR_FORMAT_KEY"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"
+                android:title="Input Color Format: BGR or RGB"
+                android:entries="@array/input_color_format_entries"
+                android:entryValues="@array/input_color_format_values"/>
         <EditTextPreference
                 android:key="@string/ODS_INPUT_SHAPE_KEY"
                 android:defaultValue="@string/ODS_INPUT_SHAPE_DEFAULT"
