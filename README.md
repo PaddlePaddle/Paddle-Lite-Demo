@@ -2,10 +2,13 @@
 
 
 ## 功能
-* iOS示例: 
+* iOS示例:
     * 静态图像目标分类和视频流目标分类；
     * 静态图像目标检测、相机拍照目标检测、相机视频流目标检测;
-* Android示例: 
+* Android示例:
+    * 基于MobileNetV1的图像分类；
+    * 基于MobileNetV1-SSD的目标检测；
+* ARMLinux示例:
     * 基于MobileNetV1的图像分类；
     * 基于MobileNetV1-SSD的目标检测；
 
@@ -18,6 +21,20 @@
 * Android
     * Android Studio 3.4
     * Android手机或开发版，NPU功能暂时只在麒麟810和990芯片的华为手机（如Nova5系列）进行了测试，使用前请将EMUI更新到最新版本；
+
+* ARMLinux
+    * RK3399（[Ubuntu 18.04](http://www.t-firefly.com/doc/download/page/id/3.html)） 或 树莓派3B（[Raspbian Buster with desktop](https://www.raspberrypi.org/downloads/raspbian/)），暂时验证了这两个软、硬件环境，其它平台用户可自行尝试；
+    * gcc g++ opencv cmake的安装（以下所有命令均在设备上操作）
+    ```bash
+    $ sudo apt-get update
+    $ sudo apt-get install gcc g++ make wget unzip libopencv-dev pkg-config
+    $ wget https://www.cmake.org/files/v3.10/cmake-3.10.3.tar.gz
+    $ tar -zxvf cmake-3.10.3.tar.gz
+    $ cd cmake-3.10.3
+    $ ./configure
+    $ make
+    $ sudo make install
+    ```
 
 ## 安装
 $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
@@ -40,6 +57,22 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     * 在图像分类Demo中，默认会载入一张猫的图像，并会在图像下方给出CPU的预测结果，如果你使用的是麒麟810或990芯片的华为手机（如Nova5系列），可以在右上角的上下文菜单选择"Settings..."打开设置窗口切换NPU模型进行预测；
     * 在图像分类Demo中，你还可以通过上方的"Gallery"和"Take Photo"按钮从相册或相机中加载测试图像；
 
+* ARMLinux
+    * 图像分类Demo的编译与运行（以下所有命令均在设备上操作）
+    ```bash
+    $ cd Paddle-Lite-Demo/PaddleLite-armlinux-demo/image_classification_demo
+    $ ./run.sh armv8 # RK3399
+    $ ./run.sh armv7hf # 树莓派3B
+    ```
+    在终端打印预测结果和性能数据，同时在build目录中生成result.jpg。
+    * 目标检测Demo的编译与运行（以下所有命令均在设备上操作）
+    ```bash
+    $ cd Paddle-Lite-Demo/PaddleLite-armlinux-demo/object_detection_demo
+    $ ./run.sh armv8 # RK3399
+    $ ./run.sh armv7hf # 树莓派3B
+    ```
+    在终端打印预测结果和性能数据，同时在build目录中生成result.jpg。
+
 ## 更新到最新的预测库
 * Paddle-Lite项目：https://github.com/PaddlePaddle/Paddle-Lite
 * 参考 [Paddle-Lite文档](https://github.com/PaddlePaddle/Paddle-Lite/wiki)，编译IOS预测库或者Android预测库
@@ -61,6 +94,11 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
   编译支持NPU的jni库，需要在Paddle-Lite源码下使用$ ./lite/tools/build_npu.sh --arm_abi=armv8 tiny_publish命令编译生成armv64-v8a的libpaddle_lite_jni.so，armeabi-v7a的libpaddle_lite_jni.so请将编译命令中的--arm_abi=armv8改为--arm_abi=armv7，但由于华为最新的DDK库并没有发布，可能无法完成相关编译工作，因此，如果想使用NPU功能，强烈建议使用demo中自带的libpaddle_lite_jni.so和HIAI DDK库；
 
+### ARMLinux
+* 替换头文件目录，将生成的cxx中的`include`目录替换`Paddle-Lite-Demo/PaddleLite-armlinux-demo/Paddle-Lite/include`目录；
+* 替换armv8动态库，将生成的cxx/libs中的`libpaddle_light_api_shared.so`替换`Paddle-Lite-Demo/PaddleLite-armlinux-demo/Paddle-Lite/libs/armv8/libpaddle_light_api_shared.so`；
+* 替换armv7hf动态库，将生成的cxx/libs中的`libpaddle_light_api_shared.so`替换`Paddle-Lite-Demo/PaddleLite-armlinux-demo/Paddle-Lite/libs/armv7hf/libpaddle_light_api_shared.so`；
+
 ## 效果展示
 
 * iOS
@@ -69,7 +107,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     ![ios_static](doc/ios_static.jpg)      ![ios_video](doc/ios_video.jpg)
 
     * mobilenetv1-ssd 目标检测
-    
+
     ![ios_static](doc/ios-image-detection.jpg)      ![ios_video](doc/ios-video-detection.jpg)
 
 * Android
@@ -82,7 +120,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
       - NPU预测结果（测试环境：华为nova5）
 
       ![android_image_classification_cat_npu](doc/android_image_classification_cat_npu.jpg)      ![android_image_classification_keyboard_npu](doc/android_image_classification_keyboard_npu.jpg)
- 
+
     * mobilenetv1-ssd 目标检测
 
       - CPU预测结果（测试环境：华为nova5）
@@ -92,4 +130,12 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
       - NPU预测结果（测试环境：华为nova5）
 
       待支持
-    
+
+* ARMLinux
+     * mobilenetv1 目标分类
+
+     准备中
+
+     * mobilenetv1-ssd 目标检测
+
+     准备中
