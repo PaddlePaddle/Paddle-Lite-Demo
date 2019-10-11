@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <vector>
 #include <limits>
+#include <fstream>
 
 const int WARMUP_COUNT = 1;
 const int REPEAT_COUNT = 5;
