@@ -20,6 +20,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <vector>
+#include <fstream>
 
 const int WARMUP_COUNT = 1;
 const int REPEAT_COUNT = 1;
