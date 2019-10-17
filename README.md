@@ -35,6 +35,7 @@
     $ make
     $ sudo make install
     ```
+    若需要使用摄像头进行预测，请参考[树莓派3B摄像头安装与激活](/temp/Readerme.md)
 
 ## 安装
 $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo

@@ -15,22 +15,24 @@
 #include "paddle_api.h"
 #include <arm_neon.h>
 #include <opencv2/opencv.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/core/core.hpp>
 #include <stdio.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include <vector>
 #include <limits>
-#include <fstream>
 
 const int WARMUP_COUNT = 1;
-const int REPEAT_COUNT = 5;
-const int CPU_THREAD_NUM = 1;
+const int REPEAT_COUNT = 1;
+const int CPU_THREAD_NUM = 2;
 const paddle::lite_api::PowerMode CPU_POWER_MODE =
     paddle::lite_api::PowerMode::LITE_POWER_HIGH;
 const std::vector<int64_t> INPUT_SHAPE = {1, 3, 300, 300};
 const std::vector<float> INPUT_MEAN = {0.5f, 0.5f, 0.5f};
 const std::vector<float> INPUT_STD = {0.5f, 0.5f, 0.5f};
 const float SCORE_THRESHOLD = 0.5f;
+bool video_flag = true;
 
 struct RESULT {
   std::string class_name;
@@ -64,13 +66,14 @@ std::vector<std::string> load_labels(const std::string &path) {
 void preprocess(cv::Mat &input_image, const std::vector<float> &input_mean,
                 const std::vector<float> &input_std, int input_width,
                 int input_height, float *input_data) {
-  cv::resize(input_image, input_image, cv::Size(input_width, input_height), 0,
+  cv::Mat resize_image;
+  cv::resize(input_image, resize_image, cv::Size(input_width, input_height), 0,
              0);
-  if (input_image.channels() == 4) {
-    cv::cvtColor(input_image, input_image, CV_BGRA2RGB);
+  if (resize_image.channels() == 4) {
+    cv::cvtColor(resize_image, resize_image, CV_BGRA2RGB);
   }
   cv::Mat norm_image;
-  input_image.convertTo(norm_image, CV_32FC3, 1 / 255.f);
+  resize_image.convertTo(norm_image, CV_32FC3, 1 / 255.f);
   // NHWC->NCHW
   int image_size = input_height * input_width;
   const float *image_data = reinterpret_cast<const float *>(norm_image.data);
@@ -110,10 +113,10 @@ void preprocess(cv::Mat &input_image, const std::vector<float> &input_mean,
 std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
                                 const std::vector<std::string> &word_labels,
                                 const float score_threshold,
-                                cv::Mat &output_image) {
+                                cv::Mat &output_image, double time) {
   std::vector<RESULT> results;
   std::vector<cv::Scalar> colors = {
-      cv::Scalar(204, 0, 255), cv::Scalar(0, 0, 255), cv::Scalar(51, 255, 255),
+      cv::Scalar(237, 189, 101), cv::Scalar(0, 0, 255), cv::Scalar(102, 153, 153),
       cv::Scalar(255, 0, 0),   cv::Scalar(9, 255, 0), cv::Scalar(0, 0, 0),
       cv::Scalar(51, 153, 51)};
   for (int64_t i = 0; i < output_size; i += 6) {
@@ -144,43 +147,67 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
     if (w > 0 && h > 0 && score <= 1) {
       cv::Scalar color = colors[results.size() % colors.size()];
       cv::rectangle(output_image, bounding_box, color);
+      cv::rectangle(output_image, cv::Point2d(lx, ly), cv::Point2d(lx + w, ly - 10),
+		    color, -1);
       cv::putText(output_image,
                   std::to_string(results.size()) + "." + class_name + ":" +
-                      std::to_string(score),
-                  cv::Point2d(lx, ly), cv::FONT_HERSHEY_PLAIN, 1, color);
+                  std::to_string(score), 
+		  cv::Point2d(lx, ly), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 255, 255));
       results.push_back(result);
     }
   }
+  cv::rectangle(output_image, cv::Point2d(0, 0), cv::Point2d(300, 10), cv::Scalar(0, 0, 0), -1);
+  cv::putText(output_image, "Prediction time:" + std::to_string(time) + " ms", cv::Point2d(0, 10),
+	      cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 255, 255));
   return results;
 }
 
-int main(int argc, char **argv) {
-  if (argc < 5) {
-    printf(
-        "Usage: \nobject_detection_demo model_dir label_path input_image_path "
-        "output_image_path\n");
-    return -1;
-  }
-  std::string model_dir = argv[1];
-  std::string label_path = argv[2];
-  std::string input_image_path = argv[3];
-  std::string output_image_path = argv[4];
+cv::Mat video_detect(cv::Mat& input_image, std::vector<std::string> word_labels,
+		std::shared_ptr<paddle::lite_api::PaddlePredictor>& predictor) {
+   
+  // Preprocess image and fill the data of input tensor
+  std::unique_ptr<paddle::lite_api::Tensor> input_tensor(
+      std::move(predictor->GetInput(0)));
+  input_tensor->Resize(INPUT_SHAPE);
+  int input_width = INPUT_SHAPE[3];
+  int input_height = INPUT_SHAPE[2];
+  auto *input_data = input_tensor->mutable_data<float>();
+  auto start_preprocess = get_current_us();
+  preprocess(input_image, INPUT_MEAN, INPUT_STD, input_width, input_height,
+             input_data);
+  auto end_preprocess = get_current_us();
+  double preprocess_time_cost = (end_preprocess - start_preprocess) / 1000.0f;
+  printf("preprocess time cost: %f ms\n", preprocess_time_cost);
 
-  // 0. Load Labels
-  std::vector<std::string> word_labels = load_labels(label_path);
+  // Run predictor
+  auto start_time = get_current_us();
+  predictor->Run();
+  auto end_time = get_current_us();
+  double prediction_time_cost = (end_time - start_time) / 1000.0f;
+  printf("prediction time cost: %f ms\n", prediction_time_cost);
 
-  // 1. Set MobileConfig
-  paddle::lite_api::MobileConfig config;
-  config.set_model_dir(model_dir);
-  config.set_threads(CPU_THREAD_NUM);
-  config.set_power_mode(CPU_POWER_MODE);
+  // Get the data of output tensor and postprocess to output detected objects
+  std::unique_ptr<const paddle::lite_api::Tensor> output_tensor(
+      std::move(predictor->GetOutput(0)));
+  const float *output_data = output_tensor->mutable_data<float>();
+  int64_t output_size = 1;
+  for (auto dim : output_tensor->shape())
+    output_size *= dim;
+  cv::Mat output_image = input_image.clone();
+  auto start_postprocess = get_current_us();
+  std::vector<RESULT> results = postprocess(
+      output_data, output_size, word_labels, SCORE_THRESHOLD, output_image, prediction_time_cost);
+  auto end_postprocess = get_current_us();
+  double postprocess_time_cost = (end_postprocess - start_postprocess) / 1000.0f;
+  printf("postprocess time cost: %f ms\n\n", postprocess_time_cost);
+  return output_image;
+}
 
-  // 2. Create PaddlePredictor by MobileConfig
-  std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor =
-      paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(
-          config);
-
-  // 3. Preprocess image and fill the data of input tensor
+void image_detect(std::vector<std::string> word_labels, 
+		     std::string input_image_path,
+                     std::string output_image_path, 
+		     std::shared_ptr<paddle::lite_api::PaddlePredictor>& predictor) {
+  // Preprocess image and fill the data of input tensor
   std::unique_ptr<paddle::lite_api::Tensor> input_tensor(
       std::move(predictor->GetInput(0)));
   input_tensor->Resize(INPUT_SHAPE);
@@ -190,9 +217,9 @@ int main(int argc, char **argv) {
   auto *input_data = input_tensor->mutable_data<float>();
   preprocess(input_image, INPUT_MEAN, INPUT_STD, input_width, input_height,
              input_data);
-  // imshow("object detection demo", input_image);
+  cv::imshow("object detection demo", input_image);
 
-  // 4. Run predictor
+  // Run predictor
   // warm up to skip the first inference and get more stable time, remove it in
   // actual products
   for (int i = 0; i < WARMUP_COUNT; i++) {
@@ -220,18 +247,19 @@ int main(int argc, char **argv) {
          WARMUP_COUNT, REPEAT_COUNT, total_time_cost / REPEAT_COUNT,
          max_time_cost, min_time_cost);
 
-  // 5. Get the data of output tensor and postprocess to output detected objects
+  // Get the data of output tensor and postprocess to output detected objects
   std::unique_ptr<const paddle::lite_api::Tensor> output_tensor(
       std::move(predictor->GetOutput(0)));
   const float *output_data = output_tensor->mutable_data<float>();
   int64_t output_size = 1;
-  for (auto dim : output_tensor->shape())
+  for (auto dim : output_tensor->shape()){
     output_size *= dim;
+  }
   cv::Mat output_image = input_image.clone();
   std::vector<RESULT> results = postprocess(
-      output_data, output_size, word_labels, SCORE_THRESHOLD, output_image);
+      output_data, output_size, word_labels, SCORE_THRESHOLD, output_image, total_time_cost / REPEAT_COUNT);
   cv::imwrite(output_image_path, output_image);
-  // imshow("object detection demo", output_image);
+  cv::imshow("object detection demo", output_image);
   printf("results: %d\n", results.size());
   for (int i = 0; i < results.size(); i++) {
     printf("[%d] %s - %f %f,%f,%f,%f\n", i, results[i].class_name.c_str(),
@@ -239,5 +267,70 @@ int main(int argc, char **argv) {
            results[i].bottom);
   }
   cv::waitKey(0);
+}
+
+int main(int argc, char **argv){
+  if (argc < 3 || argc == 4){
+    printf(
+        "Usage: \nIf you want to use video to do pretict, please set"
+        "\n\tobject_detection_demo model_dir label_path\n"
+        "\nIf you want to use image to do pretict, please set"
+        "\n\tobject_detection_demo model_dir label_path input_image_path "
+	      "output_image_path\n");
+    return -1;	 
+  }
+
+  std::string model_dir;
+  std::string label_path;
+  std::string input_image_path;
+  std::string output_image_path;
+  
+  if (argc > 3){
+    video_flag = false; 
+    model_dir = argv[1];
+    label_path = argv[2];
+    input_image_path = argv[3];
+    output_image_path = argv[4];
+  }
+  else{
+    model_dir = argv[1];
+    label_path = argv[2];
+  }
+
+  std::vector<std::string> word_labels = load_labels(label_path);
+
+  paddle::lite_api::MobileConfig config;
+  config.set_model_dir(model_dir);
+  config.set_threads(CPU_THREAD_NUM);
+  config.set_power_mode(CPU_POWER_MODE);
+
+  std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor = 
+      paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(
+          config);
+
+  if (video_flag){
+    cv::VideoCapture cap(-1);
+    cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
+    cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
+    if (!cap.isOpened()){
+      return -1;
+    }
+
+    while(1){
+      cv::Mat frame;	  
+      cap >> frame;
+      cv::Mat input_image = frame.clone();
+      cv::Mat output_image = video_detect(input_image, word_labels, predictor);
+      cv::imshow("Predictor CAM", output_image);
+      if (cv::waitKey(1) == char('q')){
+          break;
+      }
+    }
+    cap.release();
+    cv::destroyAllWindows();
+  }
+  else{
+    image_detect(word_labels, input_image_path, output_image_path, predictor);
+  }
   return 0;
 }
