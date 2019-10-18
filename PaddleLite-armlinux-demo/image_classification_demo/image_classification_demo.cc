@@ -23,14 +23,13 @@
 #include <fstream>
 
 const int WARMUP_COUNT = 1;
-const int REPEAT_COUNT = 1;
-const int CPU_THREAD_NUM = 1;
+const int REPEAT_COUNT = 5;
+const int CPU_THREAD_NUM = 2;
 const paddle::lite_api::PowerMode CPU_POWER_MODE =
     paddle::lite_api::PowerMode::LITE_POWER_HIGH;
 const std::vector<int64_t> INPUT_SHAPE = {1, 3, 224, 224};
 const std::vector<float> INPUT_MEAN = {0.485f, 0.456f, 0.406f};
 const std::vector<float> INPUT_STD = {0.229f, 0.224f, 0.225f};
-bool video_flag = true;
 
 struct RESULT {
   std::string class_name;
@@ -149,10 +148,10 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
   return results;
 }
 
-cv::Mat detection(bool video_flag,
-               cv::Mat &input_image,
-               std::vector<std::string> word_labels, 
-               std::shared_ptr<paddle::lite_api::PaddlePredictor>& predictor){
+cv::Mat detection(bool enable_camera,
+                  cv::Mat &input_image,
+                  std::vector<std::string> word_labels, 
+                  std::shared_ptr<paddle::lite_api::PaddlePredictor>& predictor){
   // Preprocess image and fill the data of input tensor
   std::unique_ptr<paddle::lite_api::Tensor> input_tensor(
       std::move(predictor->GetInput(0)));
@@ -168,7 +167,7 @@ cv::Mat detection(bool video_flag,
   printf("Preprocess time: %f ms\n", preprocess_time);
   
   double prediction_time;
-  if (!video_flag){
+  if (!enable_camera){
     // Run predictor
     // warm up to skip the first inference and get more stable time, remove it in
     // actual products
@@ -221,7 +220,7 @@ cv::Mat detection(bool video_flag,
   double postprocess_time = (postprocess_end_time - postprocess_start_time) / 1000.0f;
   printf("Postprocess time: %f ms\n\n", postprocess_time);
   
-  if (!video_flag){
+  if (!enable_camera){
     printf("results: %d\n", results.size());
     for (int i = 0; i < results.size(); i++) {
       printf("Top%d %s - %f\n", i, results[i].class_name.c_str(),
@@ -245,11 +244,12 @@ int main(int argc, char **argv){
   std::string label_path = argv[2];
   std::string input_image_path;
   std::string output_image_path;
+  bool enable_camera = true;
 
   if (argc > 3){
     input_image_path = argv[3];
     output_image_path = argv[4];
-    video_flag = false;
+    enable_camera = false;
   }
 
   // Load Labels
@@ -266,7 +266,7 @@ int main(int argc, char **argv){
       paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(
           config);
   
-  if(video_flag){
+  if(enable_camera){
     cv::VideoCapture cap(-1);
     cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
     cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
@@ -275,10 +275,9 @@ int main(int argc, char **argv){
     }
 
     while(1){
-      cv::Mat frame;	  
-      cap >> frame;
-      cv::Mat input_image = frame.clone();
-      cv::Mat output_image = detection(video_flag, input_image, word_labels, predictor);
+      cv::Mat input_image;	  
+      cap >> input_image;
+      cv::Mat output_image = detection(enable_camera, input_image, word_labels, predictor);
       cv::imshow("Predictor CAM", output_image);
       if (cv::waitKey(1) == char('q')){
           break;
@@ -290,7 +289,7 @@ int main(int argc, char **argv){
   else{
     printf("input: %s", input_image_path);
     cv::Mat input_image = cv::imread(input_image_path, 1);
-    cv::Mat output_image = detection(video_flag, input_image, word_labels, predictor);
+    cv::Mat output_image = detection(enable_camera, input_image, word_labels, predictor);
     cv::imwrite(output_image_path, output_image);
     cv::imshow("image classification demo", output_image);
     cv::waitKey(0);

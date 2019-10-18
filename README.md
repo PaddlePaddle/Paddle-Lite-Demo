@@ -24,6 +24,7 @@
 
 * ARMLinux
     * RK3399（[Ubuntu 18.04](http://www.t-firefly.com/doc/download/page/id/3.html)） 或 树莓派3B（[Raspbian Buster with desktop](https://www.raspberrypi.org/downloads/raspbian/)），暂时验证了这两个软、硬件环境，其它平台用户可自行尝试；
+    * 支持树莓派3B摄像头采集图像，具体参考[树莓派3B摄像头安装与测试](/PaddleLite-armlinux-demo/enable-camera-on-raspberry-pi.md)
     * gcc g++ opencv cmake的安装（以下所有命令均在设备上操作）
     ```bash
     $ sudo apt-get update
@@ -35,7 +36,6 @@
     $ make
     $ sudo make install
     ```
-    若需要使用摄像头进行预测，请参考[树莓派3B摄像头安装与激活](/temp/Readerme.md)
 
 ## 安装
 $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
