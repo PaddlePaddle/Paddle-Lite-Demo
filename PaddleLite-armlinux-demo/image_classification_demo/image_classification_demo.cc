@@ -148,8 +148,7 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
   return results;
 }
 
-cv::Mat detection(bool enable_camera,
-                  cv::Mat &input_image,
+cv::Mat detection(bool enable_camera, cv::Mat &input_image, 
                   std::vector<std::string> word_labels, 
                   std::shared_ptr<paddle::lite_api::PaddlePredictor>& predictor){
   // Preprocess image and fill the data of input tensor
@@ -287,7 +286,6 @@ int main(int argc, char **argv){
     cv::destroyAllWindows();
   }
   else{
-    printf("input: %s", input_image_path);
     cv::Mat input_image = cv::imread(input_image_path, 1);
     cv::Mat output_image = detection(enable_camera, input_image, word_labels, predictor);
     cv::imwrite(output_image_path, output_image);
