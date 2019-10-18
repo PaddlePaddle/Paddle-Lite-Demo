@@ -114,7 +114,7 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
   const int TOPK = 3;
   int max_indices[TOPK];
   double max_scores[TOPK];
-  for (int i = 0; i < TOPK; i++){
+  for (int i = 0; i < TOPK; i++) {
     max_indices[i] = 0;
     max_scores[i] = 0;
   }
@@ -148,9 +148,9 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
   return results;
 }
 
-cv::Mat detection(bool enable_camera, cv::Mat &input_image, 
-                  std::vector<std::string> word_labels, 
-                  std::shared_ptr<paddle::lite_api::PaddlePredictor>& predictor){
+cv::Mat detection(bool enable_camera, cv::Mat &input_image,
+                  std::vector<std::string> word_labels,
+                  std::shared_ptr<paddle::lite_api::PaddlePredictor> &predictor) {
   // Preprocess image and fill the data of input tensor
   std::unique_ptr<paddle::lite_api::Tensor> input_tensor(
       std::move(predictor->GetInput(0)));
@@ -164,9 +164,9 @@ cv::Mat detection(bool enable_camera, cv::Mat &input_image,
   double preprocess_end_time = get_current_us();
   double preprocess_time = (preprocess_end_time - preprocess_start_time) / 1000.0f;
   printf("Preprocess time: %f ms\n", preprocess_time);
-  
+
   double prediction_time;
-  if (!enable_camera){
+  if (!enable_camera) {
     // Run predictor
     // warm up to skip the first inference and get more stable time, remove it in
     // actual products
@@ -193,8 +193,8 @@ cv::Mat detection(bool enable_camera, cv::Mat &input_image,
       printf("iter %d cost: %f ms\n", i, cur_time_cost);
     }
     printf("warmup: %d repeat: %d, average: %f ms, max: %f ms, min: %f ms\n",
-          WARMUP_COUNT, REPEAT_COUNT, prediction_time,
-          max_time_cost, min_time_cost);
+           WARMUP_COUNT, REPEAT_COUNT, prediction_time,
+           max_time_cost, min_time_cost);
   }
   else {
     double start_time = get_current_us();
@@ -209,8 +209,9 @@ cv::Mat detection(bool enable_camera, cv::Mat &input_image,
       std::move(predictor->GetOutput(0)));
   const float *output_data = output_tensor->mutable_data<float>();
   int64_t output_size = 1;
-  for (auto dim : output_tensor->shape())
+  for (auto dim : output_tensor->shape()) {
     output_size *= dim;
+  }
   cv::Mat output_image = input_image.clone();
   double postprocess_start_time = get_current_us();
   std::vector<RESULT> results =
@@ -218,24 +219,25 @@ cv::Mat detection(bool enable_camera, cv::Mat &input_image,
   double postprocess_end_time = get_current_us();
   double postprocess_time = (postprocess_end_time - postprocess_start_time) / 1000.0f;
   printf("Postprocess time: %f ms\n\n", postprocess_time);
-  
-  if (!enable_camera){
+
+  if (!enable_camera) {
     printf("results: %d\n", results.size());
     for (int i = 0; i < results.size(); i++) {
       printf("Top%d %s - %f\n", i, results[i].class_name.c_str(),
-            results[i].score);
+             results[i].score);
     }
   }
   return output_image;
 }
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
   if (argc < 3 || argc == 4) {
-    printf("Usage: If you want to use video to do predict, please set"
-           "\n\timage_classification_demo model_dir label_path"
-           "If you want to use image to do predict, please set"
-           "\n\timage_classification_demo model_dir label_path "
-           "input_image_path output_image_path\n");
+    printf(
+        "Usage: If you want to use video to do predict, please set"
+        "\n\timage_classification_demo model_dir label_path"
+        "If you want to use image to do predict, please set"
+        "\n\timage_classification_demo model_dir label_path "
+        "input_image_path output_image_path\n");
     return -1;
   }
 
@@ -245,7 +247,7 @@ int main(int argc, char **argv){
   std::string output_image_path;
   bool enable_camera = true;
 
-  if (argc > 3){
+  if (argc > 3) {
     input_image_path = argv[3];
     output_image_path = argv[4];
     enable_camera = false;
@@ -262,30 +264,29 @@ int main(int argc, char **argv){
 
   // Create PaddlePredictor by MobileConfig
   std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor =
-      paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(
-          config);
-  
-  if(enable_camera){
+      paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(config);
+
+  if (enable_camera) {
     cv::VideoCapture cap(-1);
     cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
     cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
-    if (!cap.isOpened()){
+    if (!cap.isOpened()) {
       return -1;
     }
 
-    while(1){
-      cv::Mat input_image;	  
+    while (1) {
+      cv::Mat input_image;
       cap >> input_image;
       cv::Mat output_image = detection(enable_camera, input_image, word_labels, predictor);
       cv::imshow("Predictor CAM", output_image);
-      if (cv::waitKey(1) == char('q')){
-          break;
+      if (cv::waitKey(1) == char('q')) {
+        break;
       }
     }
     cap.release();
     cv::destroyAllWindows();
   }
-  else{
+  else {
     cv::Mat input_image = cv::imread(input_image_path, 1);
     cv::Mat output_image = detection(enable_camera, input_image, word_labels, predictor);
     cv::imwrite(output_image_path, output_image);
@@ -293,5 +294,4 @@ int main(int argc, char **argv){
     cv::waitKey(0);
   }
   return 0;
-
 }
