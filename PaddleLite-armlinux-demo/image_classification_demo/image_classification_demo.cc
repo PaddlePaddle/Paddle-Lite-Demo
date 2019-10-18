@@ -114,9 +114,11 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
                                 cv::Mat &output_image) {
   const int TOPK = 3;
   int max_indices[TOPK];
-  std::memset(max_indices, 0, sizeof(max_indices));
   double max_scores[TOPK];
-  std::memset(max_scores, 0.0, sizeof(max_scores));
+  for (int i = 0; i < TOPK; i++){
+    max_indices[i] = 0;
+    max_scores[i] = 0;
+  }
   for (int i = 0; i < output_size; i++) {
     float score = output_data[i];
     int index = i;
@@ -147,8 +149,10 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
   return results;
 }
 
-cv::Mat video_detect(cv::Mat& input_image, std::vector<std::string> word_labels, 
-                     std::shared_ptr<paddle::lite_api::PaddlePredictor>& predictor){
+cv::Mat detection(bool video_flag,
+               cv::Mat &input_image,
+               std::vector<std::string> word_labels, 
+               std::shared_ptr<paddle::lite_api::PaddlePredictor>& predictor){
   // Preprocess image and fill the data of input tensor
   std::unique_ptr<paddle::lite_api::Tensor> input_tensor(
       std::move(predictor->GetInput(0)));
@@ -162,14 +166,45 @@ cv::Mat video_detect(cv::Mat& input_image, std::vector<std::string> word_labels,
   double preprocess_end_time = get_current_us();
   double preprocess_time = (preprocess_end_time - preprocess_start_time) / 1000.0f;
   printf("Preprocess time: %f ms\n", preprocess_time);
-
-  // Run predictor
-  double start_time = get_current_us();
-  predictor->Run();
-  double end_time = get_current_us();
-
-  double prediction_time = (end_time - start_time) / 1000.0f;
-  printf("Prediction time: %f ms\n", prediction_time);
+  
+  double prediction_time;
+  if (!video_flag){
+    // Run predictor
+    // warm up to skip the first inference and get more stable time, remove it in
+    // actual products
+    for (int i = 0; i < WARMUP_COUNT; i++) {
+      predictor->Run();
+    }
+    // repeat to obtain the average time, set REPEAT_COUNT=1 in actual products
+    double max_time_cost = 0.0f;
+    double min_time_cost = std::numeric_limits<float>::max();
+    double total_time_cost = 0.0f;
+    for (int i = 0; i < REPEAT_COUNT; i++) {
+      auto start = get_current_us();
+      predictor->Run();
+      auto end = get_current_us();
+      double cur_time_cost = (end - start) / 1000.0f;
+      if (cur_time_cost > max_time_cost) {
+        max_time_cost = cur_time_cost;
+      }
+      if (cur_time_cost < min_time_cost) {
+        min_time_cost = cur_time_cost;
+      }
+      total_time_cost += cur_time_cost;
+      prediction_time = total_time_cost / REPEAT_COUNT;
+      printf("iter %d cost: %f ms\n", i, cur_time_cost);
+    }
+    printf("warmup: %d repeat: %d, average: %f ms, max: %f ms, min: %f ms\n",
+          WARMUP_COUNT, REPEAT_COUNT, prediction_time,
+          max_time_cost, min_time_cost);
+  }
+  else {
+    double start_time = get_current_us();
+    predictor->Run();
+    double end_time = get_current_us();
+    prediction_time = (end_time - start_time) / 1000.0f;
+    printf("Prediction time: %f ms\n", prediction_time);
+  }
 
   // Get the data of output tensor and postprocess to output detected objects
   std::unique_ptr<const paddle::lite_api::Tensor> output_tensor(
@@ -185,72 +220,15 @@ cv::Mat video_detect(cv::Mat& input_image, std::vector<std::string> word_labels,
   double postprocess_end_time = get_current_us();
   double postprocess_time = (postprocess_end_time - postprocess_start_time) / 1000.0f;
   printf("Postprocess time: %f ms\n\n", postprocess_time);
-
+  
+  if (!video_flag){
+    printf("results: %d\n", results.size());
+    for (int i = 0; i < results.size(); i++) {
+      printf("Top%d %s - %f\n", i, results[i].class_name.c_str(),
+            results[i].score);
+    }
+  }
   return output_image;
-}
-
-void image_detect(std::vector<std::string> word_labels, 
-                  std::string input_image_path,
-                  std::string output_image_path, 
-                  std::shared_ptr<paddle::lite_api::PaddlePredictor>& predictor){
-  // Preprocess image and fill the data of input tensor
-  std::unique_ptr<paddle::lite_api::Tensor> input_tensor(
-      std::move(predictor->GetInput(0)));
-  input_tensor->Resize(INPUT_SHAPE);
-  int input_width = INPUT_SHAPE[3];
-  int input_height = INPUT_SHAPE[2];
-  cv::Mat input_image = cv::imread(input_image_path, 1);
-  auto *input_data = input_tensor->mutable_data<float>();
-  preprocess(input_image, INPUT_MEAN, INPUT_STD, input_width, input_height,
-             input_data);
-  // imshow("image classification demo", input_image);
-
-  // Run predictor
-  // warm up to skip the first inference and get more stable time, remove it in
-  // actual products
-  for (int i = 0; i < WARMUP_COUNT; i++) {
-    predictor->Run();
-  }
-  // repeat to obtain the average time, set REPEAT_COUNT=1 in actual products
-  double max_time_cost = 0.0f;
-  double min_time_cost = std::numeric_limits<float>::max();
-  double total_time_cost = 0.0f;
-  for (int i = 0; i < REPEAT_COUNT; i++) {
-    auto start = get_current_us();
-    predictor->Run();
-    auto end = get_current_us();
-    double cur_time_cost = (end - start) / 1000.0f;
-    if (cur_time_cost > max_time_cost) {
-      max_time_cost = cur_time_cost;
-    }
-    if (cur_time_cost < min_time_cost) {
-      min_time_cost = cur_time_cost;
-    }
-    total_time_cost += cur_time_cost;
-    printf("iter %d cost: %f ms\n", i, cur_time_cost);
-  }
-  printf("warmup: %d repeat: %d, average: %f ms, max: %f ms, min: %f ms\n",
-         WARMUP_COUNT, REPEAT_COUNT, total_time_cost / REPEAT_COUNT,
-         max_time_cost, min_time_cost);
-
-  // Get the data of output tensor and postprocess to output detected objects
-  std::unique_ptr<const paddle::lite_api::Tensor> output_tensor(
-      std::move(predictor->GetOutput(0)));
-  const float *output_data = output_tensor->mutable_data<float>();
-  int64_t output_size = 1;
-  for (auto dim : output_tensor->shape())
-    output_size *= dim;
-  cv::Mat output_image = input_image.clone();
-  std::vector<RESULT> results =
-      postprocess(output_data, output_size, word_labels, output_image);
-  cv::imwrite(output_image_path, output_image);
-  imshow("image classification demo", output_image);
-  printf("results: %d\n", results.size());
-  for (int i = 0; i < results.size(); i++) {
-    printf("Top%d %s - %f\n", i, results[i].class_name.c_str(),
-           results[i].score);
-  }
-  cv::waitKey(0);
 }
 
 int main(int argc, char **argv){
@@ -263,21 +241,15 @@ int main(int argc, char **argv){
     return -1;
   }
 
-  std::string model_dir;
-  std::string label_path;
+  std::string model_dir = argv[1];
+  std::string label_path = argv[2];
   std::string input_image_path;
   std::string output_image_path;
 
   if (argc > 3){
-    model_dir = argv[1];
-    label_path = argv[2];
     input_image_path = argv[3];
     output_image_path = argv[4];
     video_flag = false;
-  }
-  else{
-    model_dir = argv[1];
-    label_path = argv[2];
   }
 
   // Load Labels
@@ -306,7 +278,7 @@ int main(int argc, char **argv){
       cv::Mat frame;	  
       cap >> frame;
       cv::Mat input_image = frame.clone();
-      cv::Mat output_image = video_detect(input_image, word_labels, predictor);
+      cv::Mat output_image = detection(video_flag, input_image, word_labels, predictor);
       cv::imshow("Predictor CAM", output_image);
       if (cv::waitKey(1) == char('q')){
           break;
@@ -317,7 +289,11 @@ int main(int argc, char **argv){
   }
   else{
     printf("input: %s", input_image_path);
-    image_detect(word_labels, input_image_path, output_image_path, predictor);
+    cv::Mat input_image = cv::imread(input_image_path, 1);
+    cv::Mat output_image = detection(video_flag, input_image, word_labels, predictor);
+    cv::imwrite(output_image_path, output_image);
+    cv::imshow("image classification demo", output_image);
+    cv::waitKey(0);
   }
   return 0;
 
