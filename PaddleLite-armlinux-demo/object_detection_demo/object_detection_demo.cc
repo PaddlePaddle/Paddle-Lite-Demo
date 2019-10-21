@@ -23,8 +23,8 @@
 #include <vector>
 #include <limits>
 
-const int WARMUP_COUNT = 1;
-const int REPEAT_COUNT = 5;
+int WARMUP_COUNT = 0;
+int REPEAT_COUNT = 1;
 const int CPU_THREAD_NUM = 2;
 const paddle::lite_api::PowerMode CPU_POWER_MODE =
     paddle::lite_api::PowerMode::LITE_POWER_HIGH;
@@ -161,8 +161,8 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
   return results;
 }
 
-cv::Mat detection(bool enable_camera, cv::Mat &input_image,
-                  std::vector<std::string> word_labels,
+cv::Mat detection(cv::Mat &input_image,
+                  std::vector<std::string>& word_labels,
                   std::shared_ptr<paddle::lite_api::PaddlePredictor> &predictor) {
   // Preprocess image and fill the data of input tensor
   std::unique_ptr<paddle::lite_api::Tensor> input_tensor(
@@ -176,10 +176,8 @@ cv::Mat detection(bool enable_camera, cv::Mat &input_image,
              input_data);
   double preprocess_end_time = get_current_us();
   double preprocess_time = (preprocess_end_time - preprocess_start_time) / 1000.0f;
-  printf("Preprocess time: %f ms\n", preprocess_time);
 
   double prediction_time;
-  if (!enable_camera) {
     // Run predictor
     // warm up to skip the first inference and get more stable time, remove it in
     // actual products
@@ -208,15 +206,6 @@ cv::Mat detection(bool enable_camera, cv::Mat &input_image,
     printf("warmup: %d repeat: %d, average: %f ms, max: %f ms, min: %f ms\n",
            WARMUP_COUNT, REPEAT_COUNT, prediction_time,
            max_time_cost, min_time_cost);
-  }
-  else {
-    double start_time = get_current_us();
-    // Run predictor
-    predictor->Run();
-    double end_time = get_current_us();
-    prediction_time = (end_time - start_time) / 1000.0f;
-    printf("Prediction time: %f ms\n", prediction_time);
-  }
 
   // Get the data of output tensor and postprocess to output detected objects
   std::unique_ptr<const paddle::lite_api::Tensor> output_tensor(
@@ -232,41 +221,34 @@ cv::Mat detection(bool enable_camera, cv::Mat &input_image,
       output_data, output_size, word_labels, SCORE_THRESHOLD, output_image, prediction_time);
   double postprocess_end_time = get_current_us();
   double postprocess_time = (postprocess_end_time - postprocess_start_time) / 1000.0f;
+
+  printf("results: %d\n", results.size());
+  for (int i = 0; i < results.size(); i++) {
+    printf("[%d] %s - %f %f,%f,%f,%f\n", i, results[i].class_name.c_str(),
+            results[i].score, results[i].left, results[i].top, results[i].right,
+            results[i].bottom);
+  }
+  printf("Preprocess time: %f ms\n", preprocess_time);
+  printf("Prediction time: %f ms\n", prediction_time);
   printf("Postprocess time: %f ms\n\n", postprocess_time);
 
-  if (!enable_camera) {
-    printf("results: %d\n", results.size());
-    for (int i = 0; i < results.size(); i++) {
-      printf("[%d] %s - %f %f,%f,%f,%f\n", i, results[i].class_name.c_str(),
-             results[i].score, results[i].left, results[i].top, results[i].right,
-             results[i].bottom);
-    }
-  }
   return output_image;
 }
 
 int main(int argc, char **argv) {
   if (argc < 3 || argc == 4) {
     printf(
-        "Usage: \nIf you want to use video to do pretict, please set"
-        "\n\tobject_detection_demo model_dir label_path\n"
-        "\nIf you want to use image to do pretict, please set"
-        "\n\tobject_detection_demo model_dir label_path input_image_path "
-        "output_image_path\n");
+        "Usage: If you want to use video to do predict, please set"
+        "\nobject_detection_demo model_dir label_path [input_image_path] [output_image_path]\n"
+        "disable fetching images from camera if input_image_path and input_image_path is set."
+        "If you want to use image to do predict, please set"
+        "\nimage_classification_demo model_dir label_path "
+        "input_image_path output_image_path\n");
     return -1;
   }
 
   std::string model_dir = argv[1];
   std::string label_path = argv[2];
-  std::string input_image_path;
-  std::string output_image_path;
-  bool enable_camera = true;
-
-  if (argc > 3) {
-    enable_camera = false;
-    input_image_path = argv[3];
-    output_image_path = argv[4];
-  }
 
   std::vector<std::string> word_labels = load_labels(label_path);
 
@@ -278,7 +260,18 @@ int main(int argc, char **argv) {
   std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor =
       paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(config);
 
-  if (enable_camera) {
+  if (argc > 3) {
+    WARMUP_COUNT = 1;
+    REPEAT_COUNT = 5;
+    std::string input_image_path = argv[3];
+    std::string output_image_path = argv[4];
+    cv::Mat input_image = cv::imread(input_image_path);
+    cv::Mat output_image = detection(input_image, word_labels, predictor);
+    cv::imwrite(output_image_path, output_image);
+    cv::imshow("Object Detection Demo", output_image);
+    cv::waitKey(0);
+  }
+  else{
     cv::VideoCapture cap(-1);
     cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
     cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
@@ -289,21 +282,14 @@ int main(int argc, char **argv) {
     while (1) {
       cv::Mat input_image;
       cap >> input_image;
-      cv::Mat output_image = detection(enable_camera, input_image, word_labels, predictor);
-      cv::imshow("Object Detection", output_image);
+      cv::Mat output_image = detection(input_image, word_labels, predictor);
+      cv::imshow("Object Detection Demo", output_image);
       if (cv::waitKey(1) == char('q')) {
         break;
       }
     }
     cap.release();
     cv::destroyAllWindows();
-  }
-  else {
-    cv::Mat input_image = cv::imread(input_image_path, 1);
-    cv::Mat output_image = detection(enable_camera, input_image, word_labels, predictor);
-    cv::imwrite("result.jpg", output_image);
-    cv::imshow("object detection demo", output_image);
-    cv::waitKey(0);
   }
   return 0;
 }
