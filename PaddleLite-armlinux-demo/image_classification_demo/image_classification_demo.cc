@@ -65,8 +65,7 @@ void preprocess(cv::Mat &input_image, const std::vector<float> &input_mean,
                 const std::vector<float> &input_std, int input_width,
                 int input_height, float *input_data) {
   cv::Mat resize_image;
-  cv::resize(input_image, resize_image, cv::Size(input_width, input_height), 0,
-             0);
+  cv::resize(input_image, resize_image, cv::Size(input_width, input_height), 0, 0);
   if (resize_image.channels() == 4) {
     cv::cvtColor(resize_image, resize_image, CV_BGRA2RGB);
   }
@@ -255,8 +254,7 @@ int main(int argc, char **argv) {
     cv::imwrite(output_image_path, output_image);
     cv::imshow("image classification demo", output_image);
     cv::waitKey(0);
-  }
-  else {
+  } else {
     cv::VideoCapture cap(-1);
     cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
     cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);

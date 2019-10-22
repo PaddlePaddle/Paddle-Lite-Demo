@@ -66,8 +66,7 @@ void preprocess(cv::Mat &input_image, const std::vector<float> &input_mean,
                 const std::vector<float> &input_std, int input_width,
                 int input_height, float *input_data) {
   cv::Mat resize_image;
-  cv::resize(input_image, resize_image, cv::Size(input_width, input_height), 0,
-             0);
+  cv::resize(input_image, resize_image, cv::Size(input_width, input_height), 0, 0);
   if (resize_image.channels() == 4) {
     cv::cvtColor(resize_image, resize_image, CV_BGRA2RGB);
   }
@@ -126,7 +125,7 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
     float score = output_data[i + 1];
     RESULT result;
     std::string class_name = "Unknown";
-    if (word_labels.size() > 0 && class_id >= 0 &&
+    if (word_labels.size() > 0 && class_id >= 0 && 
         class_id < word_labels.size()) {
       class_name = word_labels[class_id];
     }
@@ -140,8 +139,7 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
     int ly = static_cast<int>(result.top * output_image.rows);
     int w = static_cast<int>(result.right * output_image.cols) - lx;
     int h = static_cast<int>(result.bottom * output_image.rows) - ly;
-    cv::Rect bounding_box =
-        cv::Rect(lx, ly, w, h) &
+    cv::Rect bounding_box = cv::Rect(lx, ly, w, h) &
         cv::Rect(0, 0, output_image.cols, output_image.rows);
     if (w > 0 && h > 0 && score <= 1) {
       cv::Scalar color = colors[results.size() % colors.size()];
@@ -162,7 +160,7 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
 }
 
 cv::Mat process(cv::Mat &input_image,
-                std::vector<std::string>& word_labels,
+                std::vector<std::string> &word_labels,
                 std::shared_ptr<paddle::lite_api::PaddlePredictor> &predictor) {
   // Preprocess image and fill the data of input tensor
   std::unique_ptr<paddle::lite_api::Tensor> input_tensor(
@@ -178,34 +176,34 @@ cv::Mat process(cv::Mat &input_image,
   double preprocess_time = (preprocess_end_time - preprocess_start_time) / 1000.0f;
 
   double prediction_time;
-    // Run predictor
-    // warm up to skip the first inference and get more stable time, remove it in
-    // actual products
-    for (int i = 0; i < WARMUP_COUNT; i++) {
-      predictor->Run();
+  // Run predictor
+  // warm up to skip the first inference and get more stable time, remove it in
+  // actual products
+  for (int i = 0; i < WARMUP_COUNT; i++) {
+    predictor->Run();
+  }
+  // repeat to obtain the average time, set REPEAT_COUNT=1 in actual products
+  double max_time_cost = 0.0f;
+  double min_time_cost = std::numeric_limits<float>::max();
+  double total_time_cost = 0.0f;
+  for (int i = 0; i < REPEAT_COUNT; i++) {
+    auto start = get_current_us();
+    predictor->Run();
+    auto end = get_current_us();
+    double cur_time_cost = (end - start) / 1000.0f;
+    if (cur_time_cost > max_time_cost) {
+      max_time_cost = cur_time_cost;
     }
-    // repeat to obtain the average time, set REPEAT_COUNT=1 in actual products
-    double max_time_cost = 0.0f;
-    double min_time_cost = std::numeric_limits<float>::max();
-    double total_time_cost = 0.0f;
-    for (int i = 0; i < REPEAT_COUNT; i++) {
-      auto start = get_current_us();
-      predictor->Run();
-      auto end = get_current_us();
-      double cur_time_cost = (end - start) / 1000.0f;
-      if (cur_time_cost > max_time_cost) {
-        max_time_cost = cur_time_cost;
-      }
-      if (cur_time_cost < min_time_cost) {
-        min_time_cost = cur_time_cost;
-      }
-      total_time_cost += cur_time_cost;
-      prediction_time = total_time_cost / REPEAT_COUNT;
-      printf("iter %d cost: %f ms\n", i, cur_time_cost);
+    if (cur_time_cost < min_time_cost) {
+      min_time_cost = cur_time_cost;
     }
-    printf("warmup: %d repeat: %d, average: %f ms, max: %f ms, min: %f ms\n",
-           WARMUP_COUNT, REPEAT_COUNT, prediction_time,
-           max_time_cost, min_time_cost);
+    total_time_cost += cur_time_cost;
+    prediction_time = total_time_cost / REPEAT_COUNT;
+    printf("iter %d cost: %f ms\n", i, cur_time_cost);
+  }
+  printf("warmup: %d repeat: %d, average: %f ms, max: %f ms, min: %f ms\n",
+         WARMUP_COUNT, REPEAT_COUNT, prediction_time,
+         max_time_cost, min_time_cost);
 
   // Get the data of output tensor and postprocess to output detected objects
   std::unique_ptr<const paddle::lite_api::Tensor> output_tensor(
@@ -225,8 +223,8 @@ cv::Mat process(cv::Mat &input_image,
   printf("results: %d\n", results.size());
   for (int i = 0; i < results.size(); i++) {
     printf("[%d] %s - %f %f,%f,%f,%f\n", i, results[i].class_name.c_str(),
-            results[i].score, results[i].left, results[i].top, results[i].right,
-            results[i].bottom);
+           results[i].score, results[i].left, results[i].top, results[i].right,
+           results[i].bottom);
   }
   printf("Preprocess time: %f ms\n", preprocess_time);
   printf("Prediction time: %f ms\n", prediction_time);
@@ -267,8 +265,7 @@ int main(int argc, char **argv) {
     cv::imwrite(output_image_path, output_image);
     cv::imshow("Object Detection Demo", output_image);
     cv::waitKey(0);
-  }
-  else{
+  } else {
     cv::VideoCapture cap(-1);
     cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
     cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
