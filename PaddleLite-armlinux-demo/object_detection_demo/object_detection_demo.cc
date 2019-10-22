@@ -161,9 +161,9 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
   return results;
 }
 
-cv::Mat detection(cv::Mat &input_image,
-                  std::vector<std::string>& word_labels,
-                  std::shared_ptr<paddle::lite_api::PaddlePredictor> &predictor) {
+cv::Mat process(cv::Mat &input_image,
+                std::vector<std::string>& word_labels,
+                std::shared_ptr<paddle::lite_api::PaddlePredictor> &predictor) {
   // Preprocess image and fill the data of input tensor
   std::unique_ptr<paddle::lite_api::Tensor> input_tensor(
       std::move(predictor->GetInput(0)));
@@ -238,12 +238,9 @@ cv::Mat detection(cv::Mat &input_image,
 int main(int argc, char **argv) {
   if (argc < 3 || argc == 4) {
     printf(
-        "Usage: If you want to use video to do predict, please set"
-        "\nobject_detection_demo model_dir label_path [input_image_path] [output_image_path]\n"
-        "disable fetching images from camera if input_image_path and input_image_path is set."
-        "If you want to use image to do predict, please set"
-        "\nimage_classification_demo model_dir label_path "
-        "input_image_path output_image_path\n");
+        "Usage: \n"
+        "./object_detection_demo model_dir label_path [input_image_path] [output_image_path]"
+        "use images from camera if input_image_path and input_image_path isn't provided.");
     return -1;
   }
 
@@ -266,7 +263,7 @@ int main(int argc, char **argv) {
     std::string input_image_path = argv[3];
     std::string output_image_path = argv[4];
     cv::Mat input_image = cv::imread(input_image_path);
-    cv::Mat output_image = detection(input_image, word_labels, predictor);
+    cv::Mat output_image = process(input_image, word_labels, predictor);
     cv::imwrite(output_image_path, output_image);
     cv::imshow("Object Detection Demo", output_image);
     cv::waitKey(0);
@@ -278,11 +275,10 @@ int main(int argc, char **argv) {
     if (!cap.isOpened()) {
       return -1;
     }
-
     while (1) {
       cv::Mat input_image;
       cap >> input_image;
-      cv::Mat output_image = detection(input_image, word_labels, predictor);
+      cv::Mat output_image = process(input_image, word_labels, predictor);
       cv::imshow("Object Detection Demo", output_image);
       if (cv::waitKey(1) == char('q')) {
         break;
