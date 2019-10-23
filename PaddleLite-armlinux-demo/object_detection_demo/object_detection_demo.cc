@@ -153,9 +153,6 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
       results.push_back(result);
     }
   }
-  cv::rectangle(output_image, cv::Point2d(0, 0), cv::Point2d(300, 10), cv::Scalar(0, 0, 0), -1);
-  cv::putText(output_image, "Prediction time:" + std::to_string(time) + " ms", cv::Point2d(0, 10),
-              cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 255, 255));
   return results;
 }
 
