@@ -22,9 +22,9 @@
 #include <vector>
 #include <fstream>
 
-const int WARMUP_COUNT = 1;
-const int REPEAT_COUNT = 1;
-const int CPU_THREAD_NUM = 1;
+int WARMUP_COUNT = 0;
+int REPEAT_COUNT = 1;
+const int CPU_THREAD_NUM = 2;
 const paddle::lite_api::PowerMode CPU_POWER_MODE =
     paddle::lite_api::PowerMode::LITE_POWER_HIGH;
 const std::vector<int64_t> INPUT_SHAPE = {1, 3, 224, 224};
@@ -64,13 +64,13 @@ std::vector<std::string> load_labels(const std::string &path) {
 void preprocess(cv::Mat &input_image, const std::vector<float> &input_mean,
                 const std::vector<float> &input_std, int input_width,
                 int input_height, float *input_data) {
-  cv::resize(input_image, input_image, cv::Size(input_width, input_height), 0,
-             0);
-  if (input_image.channels() == 4) {
-    cv::cvtColor(input_image, input_image, CV_BGRA2RGB);
+  cv::Mat resize_image;
+  cv::resize(input_image, resize_image, cv::Size(input_width, input_height), 0, 0);
+  if (resize_image.channels() == 4) {
+    cv::cvtColor(resize_image, resize_image, CV_BGRA2RGB);
   }
   cv::Mat norm_image;
-  input_image.convertTo(norm_image, CV_32FC3, 1 / 255.f);
+  resize_image.convertTo(norm_image, CV_32FC3, 1 / 255.f);
   // NHWC->NCHW
   int image_size = input_height * input_width;
   const float *image_data = reinterpret_cast<const float *>(norm_image.data);
@@ -113,6 +113,10 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
   const int TOPK = 3;
   int max_indices[TOPK];
   double max_scores[TOPK];
+  for (int i = 0; i < TOPK; i++) {
+    max_indices[i] = 0;
+    max_scores[i] = 0;
+  }
   for (int i = 0; i < output_size; i++) {
     float score = output_data[i];
     int index = i;
@@ -135,7 +139,7 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
     }
     results[i].score = max_scores[i];
     cv::putText(output_image,
-                "Top" + std::to_string(i) + "." + results[i].class_name + ":" +
+                "Top" + std::to_string(i + 1) + "." + results[i].class_name + ":" +
                     std::to_string(results[i].score),
                 cv::Point2d(5, i * 18 + 20), cv::FONT_HERSHEY_PLAIN, 1,
                 cv::Scalar(51, 255, 255));
@@ -143,45 +147,24 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
   return results;
 }
 
-int main(int argc, char **argv) {
-  if (argc < 5) {
-    printf("Usage: \nimage_classification_demo model_dir label_path "
-           "input_image_path "
-           "output_image_path\n");
-    return -1;
-  }
-  std::string model_dir = argv[1];
-  std::string label_path = argv[2];
-  std::string input_image_path = argv[3];
-  std::string output_image_path = argv[4];
-
-  // 0. Load Labels
-  std::vector<std::string> word_labels = load_labels(label_path);
-
-  // 1. Set MobileConfig
-  paddle::lite_api::MobileConfig config;
-  config.set_model_dir(model_dir);
-  config.set_threads(CPU_THREAD_NUM);
-  config.set_power_mode(CPU_POWER_MODE);
-
-  // 2. Create PaddlePredictor by MobileConfig
-  std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor =
-      paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(
-          config);
-
-  // 3. Preprocess image and fill the data of input tensor
+cv::Mat process(cv::Mat &input_image,
+                std::vector<std::string> &word_labels,
+                std::shared_ptr<paddle::lite_api::PaddlePredictor> &predictor) {
+  // Preprocess image and fill the data of input tensor
   std::unique_ptr<paddle::lite_api::Tensor> input_tensor(
       std::move(predictor->GetInput(0)));
   input_tensor->Resize(INPUT_SHAPE);
   int input_width = INPUT_SHAPE[3];
   int input_height = INPUT_SHAPE[2];
-  cv::Mat input_image = cv::imread(input_image_path, 1);
   auto *input_data = input_tensor->mutable_data<float>();
+  double preprocess_start_time = get_current_us();
   preprocess(input_image, INPUT_MEAN, INPUT_STD, input_width, input_height,
              input_data);
-  // imshow("image classification demo", input_image);
+  double preprocess_end_time = get_current_us();
+  double preprocess_time = (preprocess_end_time - preprocess_start_time) / 1000.0f;
 
-  // 4. Run predictor
+  double prediction_time;
+  // Run predictor
   // warm up to skip the first inference and get more stable time, remove it in
   // actual products
   for (int i = 0; i < WARMUP_COUNT; i++) {
@@ -203,29 +186,93 @@ int main(int argc, char **argv) {
       min_time_cost = cur_time_cost;
     }
     total_time_cost += cur_time_cost;
+    prediction_time = total_time_cost / REPEAT_COUNT;
     printf("iter %d cost: %f ms\n", i, cur_time_cost);
   }
   printf("warmup: %d repeat: %d, average: %f ms, max: %f ms, min: %f ms\n",
-         WARMUP_COUNT, REPEAT_COUNT, total_time_cost / REPEAT_COUNT,
-         max_time_cost, min_time_cost);
+          WARMUP_COUNT, REPEAT_COUNT, prediction_time,
+          max_time_cost, min_time_cost);
 
-  // 5. Get the data of output tensor and postprocess to output detected objects
+  // Get the data of output tensor and postprocess to output detected objects
   std::unique_ptr<const paddle::lite_api::Tensor> output_tensor(
       std::move(predictor->GetOutput(0)));
   const float *output_data = output_tensor->mutable_data<float>();
   int64_t output_size = 1;
-  for (auto dim : output_tensor->shape())
+  for (auto dim : output_tensor->shape()) {
     output_size *= dim;
+  }
   cv::Mat output_image = input_image.clone();
+  double postprocess_start_time = get_current_us();
   std::vector<RESULT> results =
       postprocess(output_data, output_size, word_labels, output_image);
-  cv::imwrite(output_image_path, output_image);
-  // imshow("image classification demo", output_image);
+  double postprocess_end_time = get_current_us();
+  double postprocess_time = (postprocess_end_time - postprocess_start_time) / 1000.0f;
+
   printf("results: %d\n", results.size());
   for (int i = 0; i < results.size(); i++) {
     printf("Top%d %s - %f\n", i, results[i].class_name.c_str(),
-           results[i].score);
+            results[i].score);
   }
-  cv::waitKey(0);
+  printf("Preprocess time: %f ms\n", preprocess_time);
+  printf("Prediction time: %f ms\n", prediction_time);
+  printf("Postprocess time: %f ms\n\n", postprocess_time);
+  return output_image;
+}
+
+int main(int argc, char **argv) {
+  if (argc < 3 || argc == 4) {
+    printf(
+        "Usage: \n"
+        "./image_classification_demo model_dir label_path [input_image_path] [output_image_path]"
+        "use images from camera if input_image_path and input_image_path isn't provided.");
+    return -1;
+  }
+
+  std::string model_dir = argv[1];
+  std::string label_path = argv[2];
+
+  // Load Labels
+  std::vector<std::string> word_labels = load_labels(label_path);
+
+  // Set MobileConfig
+  paddle::lite_api::MobileConfig config;
+  config.set_model_dir(model_dir);
+  config.set_threads(CPU_THREAD_NUM);
+  config.set_power_mode(CPU_POWER_MODE);
+
+  // Create PaddlePredictor by MobileConfig
+  std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor =
+      paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(config);
+
+  if (argc > 3) {
+    WARMUP_COUNT = 1;
+    REPEAT_COUNT = 5;
+    std::string input_image_path = argv[3];
+    std::string output_image_path = argv[4];
+    cv::Mat input_image = cv::imread(input_image_path, 1);
+    cv::Mat output_image = process(input_image, word_labels, predictor);
+    cv::imwrite(output_image_path, output_image);
+    cv::imshow("image classification demo", output_image);
+    cv::waitKey(0);
+  } else {
+    cv::VideoCapture cap(-1);
+    cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
+    cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
+    if (!cap.isOpened()) {
+      return -1;
+    }
+    while (1) {
+      cv::Mat input_image;
+      cap >> input_image;
+      cv::Mat output_image = process(input_image, word_labels, predictor);
+      cv::imshow("image classification demo", output_image);
+      if (cv::waitKey(1) == char('q')) {
+        break;
+      }
+    }
+    cap.release();
+    cv::destroyAllWindows();
+  }
+
   return 0;
 }

@@ -24,6 +24,7 @@
 
 * ARMLinux
     * RK3399（[Ubuntu 18.04](http://www.t-firefly.com/doc/download/page/id/3.html)） 或 树莓派3B（[Raspbian Buster with desktop](https://www.raspberrypi.org/downloads/raspbian/)），暂时验证了这两个软、硬件环境，其它平台用户可自行尝试；
+    * 支持树莓派3B摄像头采集图像，具体参考[树莓派3B摄像头安装与测试](/PaddleLite-armlinux-demo/enable-camera-on-raspberry-pi.md)
     * gcc g++ opencv cmake的安装（以下所有命令均在设备上操作）
     ```bash
     $ sudo apt-get update
@@ -134,8 +135,8 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 * ARMLinux
      * mobilenetv1 目标分类
 
-     准备中
+     ![armlinux_image_classification_raspberry_pi](doc/armlinux_image_classification.jpg)
 
      * mobilenetv1-ssd 目标检测
 
-     准备中
+     ![armlinux_object_detection_raspberry_pi](doc/armlinux_object_detection.jpg)
