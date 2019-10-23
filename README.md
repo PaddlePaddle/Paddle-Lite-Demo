@@ -135,8 +135,8 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 * ARMLinux
      * mobilenetv1 目标分类
 
-     ![armlinux_image_classification_raspberry](doc/image_classification_demo.jpg)
+     ![armlinux_image_classification_raspberry_pi](doc/armlinux_image_classification.jpg)
 
      * mobilenetv1-ssd 目标检测
 
-     ![armlinux_object_detection_raspberry](doc/object_detection_demo.jpg)
+     ![armlinux_object_detection_raspberry_pi](doc/armlinux_object_detection.jpg)
