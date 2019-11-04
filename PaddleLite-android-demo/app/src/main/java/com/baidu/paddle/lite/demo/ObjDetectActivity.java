@@ -206,7 +206,7 @@ public class ObjDetectActivity extends CommonActivity {
             inputStd = input_std;
             scoreThreshold = score_threshold;
             // update UI
-            tvInputSetting.setText("Model Name: " + modelPath.substring(modelPath.lastIndexOf("/") + 1) + "\n" + "CPU" +
+            tvInputSetting.setText("Model: " + modelPath.substring(modelPath.lastIndexOf("/") + 1) + "\n" + "CPU" +
                     " Thread Num: " + Integer.toString(cpuThreadNum) + "\n" + "CPU Power Mode: " + cpuPowerMode);
             tvInputSetting.scrollTo(0, 0);
             // reload model if configure has been changed
