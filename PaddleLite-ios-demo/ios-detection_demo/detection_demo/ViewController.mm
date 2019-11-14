@@ -53,9 +53,9 @@ void neon_mean_scale(const float* din, float* dout, int size, std::vector<float>
     float32x4_t vmean0 = vdupq_n_f32(mean[0]);
     float32x4_t vmean1 = vdupq_n_f32(mean[1]);
     float32x4_t vmean2 = vdupq_n_f32(mean[2]);
-    float32x4_t vscale0 = vdupq_n_f32(scale[0]);
-    float32x4_t vscale1 = vdupq_n_f32(scale[0]);
-    float32x4_t vscale2 = vdupq_n_f32(scale[0]);
+    float32x4_t vscale0 = vdupq_n_f32(1.f / scale[0]);
+    float32x4_t vscale1 = vdupq_n_f32(1.f / scale[0]);
+    float32x4_t vscale2 = vdupq_n_f32(1.f / scale[0]);
     
     float* dout_c0 = dout;
     float* dout_c1 = dout + size;
@@ -80,9 +80,9 @@ void neon_mean_scale(const float* din, float* dout, int size, std::vector<float>
         dout_c2 += 4;
     }
     for (; i < size; i++) {
-        *(dout_c0++) = (*(din++) - mean[0]) * scale[0];
-        *(dout_c0++) = (*(din++) - mean[1]) * scale[1];
-        *(dout_c0++) = (*(din++) - mean[2]) * scale[2];
+        *(dout_c0++) = (*(din++) - mean[0]) / scale[0];
+        *(dout_c0++) = (*(din++) - mean[1]) / scale[1];
+        *(dout_c0++) = (*(din++) - mean[2]) / scale[2];
     }
 }
 
@@ -128,7 +128,7 @@ void fill_tensor_with_cvmat(const Mat& img_in, Tensor& tout, int width, int heig
 void fill_tensor_with_cvmat(const Mat& img_in, Tensor& tout, int width, int height,
                             std::vector<float> mean, std::vector<float> scale, bool is_scale) {
     if (img_in.channels() == 4) {
-        cv::cvtColor(img_in, img_in, CV_BGRA2RGB);
+        cv::cvtColor(img_in, img_in, CV_RGBA2RGB);
     }
     cv::Mat im;
     cv::resize(img_in, im, cv::Size(width, height), 0.f, 0.f);
@@ -262,8 +262,8 @@ std::vector<Object> detect_object(const float* data,
     MobileConfig config;
     config.set_model_dir(paddle_mobilenetv1_dir);
     net_mbv1 = CreatePaddlePredictor<MobileConfig>(config);
-    self.mean = {127.5f, 127.5f, 127.5f};//{0.485f, 0.456f, 0.406f};
-    self.scale = {1/ 127.5f, 1 / 127.5f, 1 / 127.5f};//{0.229f, 0.224f, 0.225f};
+    self.mean = {0.5f, 0.5f, 0.5f};
+    self.scale = {0.5f, 0.5f, 0.5f};
     cv::Mat img_cat;
     UIImageToMat(self.image, img_cat);
     std::unique_ptr<Tensor> input_tensor(std::move(net_mbv1->GetInput(0)));
@@ -271,11 +271,9 @@ std::vector<Object> detect_object(const float* data,
     auto tmp = input_tensor->mutable_data<float>();
     cv::Mat img;
     if (img_cat.channels() == 4) {
-        cv::cvtColor(img_cat, img, CV_BGRA2RGB);
-    } else {
-        cv::cvtColor(img_cat, img, CV_BGR2RGB);
+        cv::cvtColor(img_cat, img, CV_RGBA2RGB);
     }
-    fill_tensor_with_cvmat(img, *(input_tensor.get()), 300, 300, true);
+    fill_tensor_with_cvmat(img, *(input_tensor.get()), 300, 300, self.mean, self.scale, true);
     tic.start();
     net_mbv1->Run();
     tic.end();
@@ -286,7 +284,6 @@ std::vector<Object> detect_object(const float* data,
     for (auto& i : shape_out) {
         cnt *= i;
     }
-    cv::cvtColor(img, img, CV_RGB2BGR);
     auto rec_out = detect_object(ptr, static_cast<int>(cnt / 6), output_tensor->lod(), 0.6f, img);
     std::ostringstream result;
 //    result << "time: " << tic.get_average_ms() << " ms\n";
@@ -354,13 +351,11 @@ std::vector<Object> detect_object(const float* data,
                 if (self.flag_video.isOn || self.flag_cap_photo) {
                     self.flag_cap_photo = false;
                     if (image.channels() == 4) {
-                        cvtColor(image, self->_cvimg, CV_BGRA2RGB);
-                    } else {
-                        cvtColor(image, self->_cvimg, CV_BGR2RGB);
+                        cvtColor(image, self->_cvimg, CV_RGBA2RGB);
                     }
                     std::unique_ptr<Tensor> input_tensor(std::move(net_mbv1->GetInput(0)));
                     input_tensor->Resize({1, 3, 300, 300});
-                    fill_tensor_with_cvmat(self->_cvimg, *(input_tensor.get()), 300, 300, true);
+                    fill_tensor_with_cvmat(self->_cvimg, *(input_tensor.get()), 300, 300, self.mean, self.scale, true);
                     tic.start();
                     net_mbv1->Run();
                     tic.end();
@@ -379,6 +374,7 @@ std::vector<Object> detect_object(const float* data,
                     for (auto& obj : rec_out) {
                         result << "class: " << class_names[obj.class_id] << ", score: " << obj.prob << "\n";
                     }
+                    cvtColor(self->_cvimg, self->_cvimg, CV_RGB2BGR);
                     self.result.numberOfLines = 0;
                     self.result.text = [NSString stringWithUTF8String:result.str().c_str()];
                     self.imageView.image = MatToUIImage(self->_cvimg);
