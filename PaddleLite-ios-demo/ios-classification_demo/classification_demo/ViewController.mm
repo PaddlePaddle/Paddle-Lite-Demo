@@ -46,9 +46,9 @@ void neon_mean_scale(const float* din, float* dout, int size, std::vector<float>
     float32x4_t vmean0 = vdupq_n_f32(mean[0]);
     float32x4_t vmean1 = vdupq_n_f32(mean[1]);
     float32x4_t vmean2 = vdupq_n_f32(mean[2]);
-    float32x4_t vscale0 = vdupq_n_f32(scale[0]);
-    float32x4_t vscale1 = vdupq_n_f32(scale[0]);
-    float32x4_t vscale2 = vdupq_n_f32(scale[0]);
+    float32x4_t vscale0 = vdupq_n_f32(1.f / scale[0]);
+    float32x4_t vscale1 = vdupq_n_f32(1.f / scale[0]);
+    float32x4_t vscale2 = vdupq_n_f32(1.f / scale[0]);
     
     float* dout_c0 = dout;
     float* dout_c1 = dout + size;
@@ -73,9 +73,9 @@ void neon_mean_scale(const float* din, float* dout, int size, std::vector<float>
         dout_c2 += 4;
     }
     for (; i < size; i++) {
-        *(dout_c0++) = (*(din++) - mean[0]) * scale[0];
-        *(dout_c0++) = (*(din++) - mean[1]) * scale[1];
-        *(dout_c0++) = (*(din++) - mean[2]) * scale[2];
+        *(dout_c0++) = (*(din++) - mean[0]) / scale[0];
+        *(dout_c0++) = (*(din++) - mean[1]) / scale[1];
+        *(dout_c0++) = (*(din++) - mean[2]) / scale[2];
     }
 }
 
@@ -119,7 +119,7 @@ void fill_tensor_with_cvmat(const Mat& img_in, Tensor& tout, int width, int heig
 // fill tensor with mean and scale, neon speed up
 void fill_tensor_with_cvmat(const Mat& img_in, Tensor& tout, int width, int height, std::vector<float> mean, std::vector<float> scale) {
     if (img_in.channels() == 4) {
-        cv::cvtColor(img_in, img_in, CV_BGRA2RGB);
+        cv::cvtColor(img_in, img_in, CV_RGBA2RGB);
     }
     cv::Mat im;
     cv::resize(img_in, im, cv::Size(width, height), 0.f, 0.f);
@@ -214,8 +214,8 @@ std::string print_topk(const float *scores, const int size, const int topk, \
     MobileConfig config;
     config.set_model_dir(paddle_mobilenetv1_dir);
     net_mbv1 = CreatePaddlePredictor<MobileConfig>(config);
-    self.mean = {0, 0, 0};//{0.485f, 0.456f, 0.406f};
-    self.scale = {1, 1, 1};//{0.229f, 0.224f, 0.225f};
+    self.mean = {0.485f, 0.456f, 0.406f};
+    self.scale = {0.229f, 0.224f, 0.225f};
     NSString *label_file = [NSBundle.mainBundle pathForResource:@"labels" ofType:@"txt"];
     std::string label_file_str = std::string([label_file UTF8String]);
     self.labels = [self load_labels:label_file_str];
@@ -226,14 +226,14 @@ std::string print_topk(const float *scores, const int size, const int topk, \
     auto tmp = input_tensor->mutable_data<float>();
     cv::Mat img;
     if (img_cat.channels() == 4) {
-        cv::cvtColor(img_cat, img, CV_BGRA2RGB);
+        cv::cvtColor(img_cat, img, CV_RGBA2RGB);
     } else {
         img = img_cat;
     }
     for (int i = 0; i < 5; i++) {
         net_mbv1->Run();
     }
-    fill_tensor_with_cvmat(img, *(input_tensor.get()), 224, 224);
+    fill_tensor_with_cvmat(img, *(input_tensor.get()), 224, 224, self.mean, self.scale);
     tic.start();
     net_mbv1->Run();
     tic.end();
@@ -322,13 +322,11 @@ std::string print_topk(const float *scores, const int size, const int topk, \
             if (self.flag_init) {
                 count++;
                 if (image.channels() == 4) {
-                    cvtColor(image, self->_cvimg, CV_BGRA2RGB);
-                } else {
-                    cvtColor(image, self->_cvimg, CV_BGR2RGB);
+                    cvtColor(image, self->_cvimg, CV_RGBA2RGB);
                 }
                 std::unique_ptr<Tensor> input_tensor(std::move(net_mbv1->GetInput(0)));
                 input_tensor->Resize({1, 3, 224, 224});
-                fill_tensor_with_cvmat(self->_cvimg, *(input_tensor.get()), 224, 224);
+                fill_tensor_with_cvmat(self->_cvimg, *(input_tensor.get()), 224, 224, self.mean, self.scale);
                 tic.start();
                 net_mbv1->Run();
                 tic.end();
