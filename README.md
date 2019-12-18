@@ -60,6 +60,11 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     * 在图像分类Demo中，你还可以通过上方的"Gallery"和"Take Photo"按钮从相册或相机中加载测试图像；
 
 * ARMLinux
+    * 模型和预测库下载
+    ```bash
+    $ cd Paddle-Lite-Demo/PaddleLite-armlinux-demo
+    $ ./download_models_and_libs.sh # 下载模型和预测库
+    ```   
     * 图像分类Demo的编译与运行（以下所有命令均在设备上操作）
     ```bash
     $ cd Paddle-Lite-Demo/PaddleLite-armlinux-demo/image_classification_demo
