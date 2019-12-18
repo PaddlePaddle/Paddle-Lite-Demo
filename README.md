@@ -41,12 +41,12 @@
 $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
 * iOS
-    * 在PaddleLite-ios-demo目录下执行
+    * 在PaddleLite-ios-demo目录下执行download_dependencies.sh脚本，该脚本会离线下载并解压ios demo所需要的依赖，
+      包括paddle-lite 预测库，demo所需要的模型，opencv framework
     ```bash
     $ chmod +x download_dependencies.sh
     $ ./download_dependencies.sh
     ```
-    该脚本会离线下载并解压ios demo所需要的依赖，包括paddle-lite 预测库，demo所需要的模型，opencv framework
     * 打开xcode，点击“Open another project…”打开`Paddle-Lite-Demo/PaddleLite-ios-demo/ios-xxx_demo/`目录下的xcode工程；
     * 在选中左上角“project navigator”，选择“classification_demo”，修改“General”信息；
     * 插入ios真机（已验证：iphone8， iphonexr），选择Device为插入的真机；
@@ -66,7 +66,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     ```bash
     $ cd Paddle-Lite-Demo/PaddleLite-armlinux-demo
     $ ./download_models_and_libs.sh # 下载模型和预测库
-    ```   
+    ```
     * 图像分类Demo的编译与运行（以下所有命令均在设备上操作）
     ```bash
     $ cd Paddle-Lite-Demo/PaddleLite-armlinux-demo/image_classification_demo
