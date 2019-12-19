@@ -15,9 +15,9 @@
 #include <vector>
 #include <string>
 #include <mutex>
-#include "paddle_lite/paddle_api.h"
-#include "paddle_lite/paddle_use_ops.h"
-#include "paddle_lite/paddle_use_kernels.h"
+#include "include/paddle_api.h"
+#include "include/paddle_use_ops.h"
+#include "include/paddle_use_kernels.h"
 #include "timer.h"
 
 using namespace paddle::lite_api;
@@ -54,8 +54,8 @@ void neon_mean_scale(const float* din, float* dout, int size, std::vector<float>
     float32x4_t vmean1 = vdupq_n_f32(mean[1]);
     float32x4_t vmean2 = vdupq_n_f32(mean[2]);
     float32x4_t vscale0 = vdupq_n_f32(1.f / scale[0]);
-    float32x4_t vscale1 = vdupq_n_f32(1.f / scale[0]);
-    float32x4_t vscale2 = vdupq_n_f32(1.f / scale[0]);
+    float32x4_t vscale1 = vdupq_n_f32(1.f / scale[1]);
+    float32x4_t vscale2 = vdupq_n_f32(1.f / scale[2]);
     
     float* dout_c0 = dout;
     float* dout_c1 = dout + size;
@@ -81,48 +81,11 @@ void neon_mean_scale(const float* din, float* dout, int size, std::vector<float>
     }
     for (; i < size; i++) {
         *(dout_c0++) = (*(din++) - mean[0]) / scale[0];
-        *(dout_c0++) = (*(din++) - mean[1]) / scale[1];
-        *(dout_c0++) = (*(din++) - mean[2]) / scale[2];
+        *(dout_c1++) = (*(din++) - mean[1]) / scale[1];
+        *(dout_c2++) = (*(din++) - mean[2]) / scale[2];
     }
 }
 
-void neon_trans_layout(const float* din, float* dout, int size) {
-    float* dout_c0 = dout;
-    float* dout_c1 = dout + size;
-    float* dout_c2 = dout + size * 2;
-    int i = 0;
-    for (; i < size - 3; i += 8) {
-        float32x4x3_t vin30 = vld3q_f32(din);
-        float32x4x3_t vin31 = vld3q_f32(din + 12);
-        vst1q_f32(dout_c0, vin30.val[0]);
-        vst1q_f32(dout_c1, vin30.val[1]);
-        vst1q_f32(dout_c2, vin30.val[2]);
-        vst1q_f32(dout_c0 + 4, vin31.val[0]);
-        vst1q_f32(dout_c1 + 4, vin31.val[1]);
-        vst1q_f32(dout_c2 + 4, vin31.val[2]);
-        dout_c0 += 8;
-        dout_c1 += 8;
-        dout_c2 += 8;
-        din += 24;
-    }
-    for (; i < size; i++) {
-        *(dout_c0++) = *(din++);
-        *(dout_c1++) = *(din++);
-        *(dout_c2++) = *(din++);
-    }
-}
-// without mean and scale
-void fill_tensor_with_cvmat(const Mat& img_in, Tensor& tout, int width, int height, bool is_scale) {
-    if (img_in.channels() == 4) {
-        cv::cvtColor(img_in, img_in, CV_RGBA2RGB);
-    }
-    cv::Mat im;
-    cv::resize(img_in, im, cv::Size(width, height), 0.f, 0.f);
-    cv::Mat imgf;
-    float scale_factor = is_scale? 1 / 255.f : 1.f;
-    im.convertTo(imgf, CV_32FC3, scale_factor);
-    neon_trans_layout(reinterpret_cast<const float*>(imgf.data), tout.mutable_data<float>(), width * height);
-}
 
 // fill tensor with mean and scale, neon speed up
 void fill_tensor_with_cvmat(const Mat& img_in, Tensor& tout, int width, int height,
@@ -244,18 +207,14 @@ std::vector<Object> detect_object(const float* data,
     [_flag_process addTarget:self action:@selector(PSwitchValueChanged:) forControlEvents:UIControlEventValueChanged];
     [_flag_back_cam addTarget:self action:@selector(CSwitchValueChanged:) forControlEvents:UIControlEventValueChanged];
     
-//    self.imageView = [[UIImageView alloc]initWithFrame:self.view.frame];
     self.videoCamera = [[CvVideoCamera alloc] initWithParentView:self.preView];
     self.videoCamera.delegate = self;
-//    //            self.videoCamera.defaultAVCaptureDevicePosition = AVCaptureDevicePositionBack;
     self.videoCamera.defaultAVCaptureDevicePosition = AVCaptureDevicePositionFront;
     self.videoCamera.defaultAVCaptureSessionPreset = AVCaptureSessionPreset640x480;
-    //AVCaptureSessionPresetiFrame1280x720;
     self.videoCamera.defaultAVCaptureVideoOrientation = AVCaptureVideoOrientationPortrait;
     self.videoCamera.rotateVideo = 90;
     self.videoCamera.defaultFPS = 30;
     [self.view insertSubview:self.imageView atIndex:0];
-//    [self.videoCamera start];
     self.cvimg.create(640, 480, CV_8UC3);
     NSString *path = [[NSBundle mainBundle] bundlePath];
     std::string paddle_mobilenetv1_dir = std::string([path UTF8String]);
@@ -266,9 +225,9 @@ std::vector<Object> detect_object(const float* data,
     self.scale = {0.5f, 0.5f, 0.5f};
     cv::Mat img_cat;
     UIImageToMat(self.image, img_cat);
-    std::unique_ptr<Tensor> input_tensor(std::move(net_mbv1->GetInput(0)));
+    std::unique_ptr<Tensor> input_tensor(net_mbv1->GetInput(0));
     input_tensor->Resize({1, 3, 300, 300});
-    auto tmp = input_tensor->mutable_data<float>();
+    input_tensor->mutable_data<float>();
     cv::Mat img;
     if (img_cat.channels() == 4) {
         cv::cvtColor(img_cat, img, CV_RGBA2RGB);
@@ -277,7 +236,7 @@ std::vector<Object> detect_object(const float* data,
     tic.start();
     net_mbv1->Run();
     tic.end();
-    std::unique_ptr<const Tensor> output_tensor(std::move(net_mbv1->GetOutput(0)));
+    std::unique_ptr<const Tensor> output_tensor(net_mbv1->GetOutput(0));
     auto ptr = output_tensor->mutable_data<float>();
     auto shape_out = output_tensor->shape();
     int64_t cnt = 1;
@@ -286,7 +245,6 @@ std::vector<Object> detect_object(const float* data,
     }
     auto rec_out = detect_object(ptr, static_cast<int>(cnt / 6), output_tensor->lod(), 0.6f, img);
     std::ostringstream result;
-//    result << "time: " << tic.get_average_ms() << " ms\n";
     for (auto& obj : rec_out) {
         result << "class: " << class_names[obj.class_id] << ", score: " << obj.prob << "\n";
     }
@@ -353,13 +311,13 @@ std::vector<Object> detect_object(const float* data,
                     if (image.channels() == 4) {
                         cvtColor(image, self->_cvimg, CV_RGBA2RGB);
                     }
-                    std::unique_ptr<Tensor> input_tensor(std::move(net_mbv1->GetInput(0)));
+                    std::unique_ptr<Tensor> input_tensor(net_mbv1->GetInput(0));
                     input_tensor->Resize({1, 3, 300, 300});
                     fill_tensor_with_cvmat(self->_cvimg, *(input_tensor.get()), 300, 300, self.mean, self.scale, true);
                     tic.start();
                     net_mbv1->Run();
                     tic.end();
-                    std::unique_ptr<const Tensor> output_tensor(std::move(net_mbv1->GetOutput(0)));
+                    std::unique_ptr<const Tensor> output_tensor(net_mbv1->GetOutput(0));
                     auto ptr = output_tensor->mutable_data<float>();
                     auto shape_out = output_tensor->shape();
                     int64_t cnt = 1;
@@ -370,7 +328,6 @@ std::vector<Object> detect_object(const float* data,
                     auto rec_out = detect_object(ptr, static_cast<int>(cnt / 6),
                                                  output_tensor->lod(), 0.6f, self->_cvimg);
                     std::ostringstream result;
-                    //    result << "time: " << tic.get_average_ms() << " ms\n";
                     for (auto& obj : rec_out) {
                         result << "class: " << class_names[obj.class_id] << ", score: " << obj.prob << "\n";
                     }
