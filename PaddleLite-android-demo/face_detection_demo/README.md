@@ -1,1 +1,0 @@
-# PaddleLite-android-demo

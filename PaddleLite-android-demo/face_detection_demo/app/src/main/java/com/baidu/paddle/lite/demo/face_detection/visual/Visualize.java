@@ -86,7 +86,6 @@ public class Visualize {
                 boxAndScores.add(boxScore);
             }
         }
-        Log.i(TAG, "len of boxAndScores: " +  boxAndScores.size());
     }
 
     public void draw(List<float[]> boxAndScores, Bitmap outputImage, String outputResult ){
@@ -104,7 +103,6 @@ public class Visualize {
         int txtYOffset = (int) (Math.ceil(-txtPaint.getFontMetrics().ascent));
 
         for(float[] boxAndScore: boxAndScores) {
-            Log.i(TAG, "boxAndScore: " + boxAndScore[0] + boxAndScore[1] + boxAndScore[2] + boxAndScore[3] + boxAndScore[4]);
             canvas.drawRect(boxAndScore[0], boxAndScore[1], boxAndScore[2], boxAndScore[3], rectPaint);
 
         }

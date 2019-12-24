@@ -9,7 +9,6 @@ public class Config {
     public String imagePath = "";
     public int cpuThreadNum = 1;
     public String cpuPowerMode = "";
-
     public String inputColorFormat = "";
     public long[] inputShape = new long[]{};
     public float[] inputMean = new float[]{};
@@ -24,7 +23,6 @@ public class Config {
         this.imagePath = imagePath;
         this.cpuThreadNum = cpuThreadNum;
         this.cpuPowerMode = cpuPowerMode;
-
         this.inputColorFormat = inputColorFormat;
         this.inputShape = inputShape;
         this.inputMean = inputMean;

@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".FaceDetectSettingsActivity"
+                android:name=".SettingsActivity"
                 android:label="Settings">
         </activity>
     </application>
