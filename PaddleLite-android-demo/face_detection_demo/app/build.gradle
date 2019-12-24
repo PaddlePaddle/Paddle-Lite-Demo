@@ -5,7 +5,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.baidu.paddle.lite.demo"
+        applicationId "com.baidu.paddle.lite.demo.face_detection"
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 1
