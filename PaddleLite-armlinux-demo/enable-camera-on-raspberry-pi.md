@@ -8,7 +8,7 @@
 
 将树莓派断电后，将摄像头如下图安装在树莓派上。
 
-![](../doc/enable_camera_on_raspberry_pi_step0.png)
+![](https://paddlelite-demo.bj.bcebos.com/doc/enable_camera_on_raspberry_pi_step0.png)
 
 ## 3、配置
 
@@ -21,19 +21,19 @@ sudo raspi-config
 
 1. 选择 `Interfacing Options`
 
-![](../doc/enable_camera_on_raspberry_pi_step1.png)
+![](https://paddlelite-demo.bj.bcebos.com/doc/enable_camera_on_raspberry_pi_step1.png)
 
 2. 选择 `Camera`
 
-![](../doc/enable_camera_on_raspberry_pi_step2.png)
+![](https://paddlelite-demo.bj.bcebos.com/doc/enable_camera_on_raspberry_pi_step2.png)
 
 3. 点击 `Yes`
 
-![](../doc/enable_camera_on_raspberry_pi_step3.png)
+![](https://paddlelite-demo.bj.bcebos.com/doc/enable_camera_on_raspberry_pi_step3.png)
 
 4. 点击 `Ok`
 
-![](../doc/enable_camera_on_raspberry_pi_step4.png)
+![](https://paddlelite-demo.bj.bcebos.com/doc/enable_camera_on_raspberry_pi_step4.png)
 
 5. 之后重启树莓派
 
