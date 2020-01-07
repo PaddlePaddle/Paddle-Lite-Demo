@@ -31,7 +31,7 @@ dependencies {
     implementation files('libs/PaddlePredictor.jar')
 }
 
-def paddleLiteLibs = 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_1_0_bug_fixed.tar.gz'
+def paddleLiteLibs = 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_2_0.tar.gz'
 task downloadAndExtractPaddleLiteLibs(type: DefaultTask) {
     doFirst {
         println "Downloading and extracting Paddle Lite libs"
