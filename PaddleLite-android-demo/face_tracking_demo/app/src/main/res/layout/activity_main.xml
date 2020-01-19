@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextureView
+        android:id="@+id/texture_view"
+        android:layout_width="720px"
+        android:layout_height="1280px"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"  />
+    <TextureView
+        android:id="@+id/texture_view_output"
+        android:layout_width="720px"
+        android:layout_height="1280px"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"><!--水平展开-->
+        <TextureView
+            android:id="@+id/texture_view_face1"
+            android:layout_width="81dp"
+            android:layout_height="108dp"
+            android:layout_marginTop="1280px"
+            android:layout_marginLeft="0px"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
+        <TextureView
+            android:id="@+id/texture_view_face2"
+            android:layout_width="81dp"
+            android:layout_height="108dp"
+            android:layout_marginTop="1280px"
+            android:layout_marginLeft="100px"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
+        <TextureView
+            android:id="@+id/texture_view_face3"
+            android:layout_width="81dp"
+            android:layout_height="108dp"
+            android:layout_marginTop="1280px"
+            android:layout_marginLeft="200px"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
