@@ -13,6 +13,7 @@ import com.baidu.paddle.lite.demo.segmentation.config.Config;
 import com.baidu.paddle.lite.demo.segmentation.preprocess.Preprocess;
 import com.baidu.paddle.lite.demo.segmentation.visual.Visualize;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Vector;
@@ -140,26 +141,26 @@ public class Predictor {
         if (realPath.isEmpty()) {
             return false;
         }
-        MobileConfig modelConfig = new MobileConfig();
-        modelConfig.setModelDir(realPath);
-        modelConfig.setThreads(cpuThreadNum);
+        MobileConfig config = new MobileConfig();
+        config.setModelFromFile(realPath + File.separator + "model.nb");
+        config.setThreads(cpuThreadNum);
         if (cpuPowerMode.equalsIgnoreCase("LITE_POWER_HIGH")) {
-            modelConfig.setPowerMode(PowerMode.LITE_POWER_HIGH);
+            config.setPowerMode(PowerMode.LITE_POWER_HIGH);
         } else if (cpuPowerMode.equalsIgnoreCase("LITE_POWER_LOW")) {
-            modelConfig.setPowerMode(PowerMode.LITE_POWER_LOW);
+            config.setPowerMode(PowerMode.LITE_POWER_LOW);
         } else if (cpuPowerMode.equalsIgnoreCase("LITE_POWER_FULL")) {
-            modelConfig.setPowerMode(PowerMode.LITE_POWER_FULL);
+            config.setPowerMode(PowerMode.LITE_POWER_FULL);
         } else if (cpuPowerMode.equalsIgnoreCase("LITE_POWER_NO_BIND")) {
-            modelConfig.setPowerMode(PowerMode.LITE_POWER_NO_BIND);
+            config.setPowerMode(PowerMode.LITE_POWER_NO_BIND);
         } else if (cpuPowerMode.equalsIgnoreCase("LITE_POWER_RAND_HIGH")) {
-            modelConfig.setPowerMode(PowerMode.LITE_POWER_RAND_HIGH);
+            config.setPowerMode(PowerMode.LITE_POWER_RAND_HIGH);
         } else if (cpuPowerMode.equalsIgnoreCase("LITE_POWER_RAND_LOW")) {
-            modelConfig.setPowerMode(PowerMode.LITE_POWER_RAND_LOW);
+            config.setPowerMode(PowerMode.LITE_POWER_RAND_LOW);
         } else {
             Log.e(TAG, "unknown cpu power mode!");
             return false;
         }
-        paddlePredictor = PaddlePredictor.createPaddlePredictor(modelConfig);
+        paddlePredictor = PaddlePredictor.createPaddlePredictor(config);
         this.cpuThreadNum = cpuThreadNum;
         this.cpuPowerMode = cpuPowerMode;
         this.modelPath = realPath;

@@ -12,6 +12,7 @@ import com.baidu.paddle.lite.demo.face_detection.config.Config;
 import com.baidu.paddle.lite.demo.face_detection.preprocess.Preprocess;
 import com.baidu.paddle.lite.demo.face_detection.visual.Visualize;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Vector;
@@ -218,7 +219,7 @@ public class Predictor {
             return false;
         }
         MobileConfig config = new MobileConfig();
-        config.setModelDir(realPath);
+        config.setModelFromFile(realPath + File.separator + "model.nb");
         config.setThreads(cpuThreadNum);
         if (cpuPowerMode.equalsIgnoreCase("LITE_POWER_HIGH")) {
             config.setPowerMode(PowerMode.LITE_POWER_HIGH);
