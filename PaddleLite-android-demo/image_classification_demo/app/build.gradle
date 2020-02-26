@@ -31,7 +31,7 @@ dependencies {
     implementation files('libs/PaddlePredictor.jar')
 }
 
-def paddleLiteLibs = 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_2_0.tar.gz'
+def paddleLiteLibs = 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_3_0.tar.gz'
 task downloadAndExtractPaddleLiteLibs(type: DefaultTask) {
     doFirst {
         println "Downloading and extracting Paddle Lite libs"
@@ -80,11 +80,11 @@ preBuild.dependsOn downloadAndExtractPaddleLiteLibs
 
 def paddleLiteModels = [
     [
-     'src' : 'https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_cpu_v2_1_0.tar.gz',
+     'src' : 'https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_cpu_v2_3_0.tar.gz',
      'dest' : 'src/main/assets/models/mobilenet_v1_for_cpu'
     ],
     [
-     'src' : 'https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_npu_v2_1_0.tar.gz',
+     'src' : 'https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_npu_v2_3_0.tar.gz',
      'dest' : 'src/main/assets/models/mobilenet_v1_for_npu'
     ]
 ]
@@ -111,7 +111,7 @@ task downloadAndExtractPaddleLiteModels(type: DefaultTask) {
                 into "cache/${cacheName}"
             }
             // Copy model file
-            if (!file("${model.dest}/__model__.nb").exists() || !file("${model.dest}/param.nb").exists()) {
+            if (!file("${model.dest}/model.nb").exists()) {
                 copy {
                     from "cache/${cacheName}"
                     into "${model.dest}"
