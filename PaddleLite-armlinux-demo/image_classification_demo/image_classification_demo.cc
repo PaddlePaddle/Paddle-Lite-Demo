@@ -236,7 +236,7 @@ int main(int argc, char **argv) {
 
   // Set MobileConfig
   paddle::lite_api::MobileConfig config;
-  config.set_model_dir(model_dir);
+  config.set_model_from_file(model_dir);
   config.set_threads(CPU_THREAD_NUM);
   config.set_power_mode(CPU_POWER_MODE);
 
