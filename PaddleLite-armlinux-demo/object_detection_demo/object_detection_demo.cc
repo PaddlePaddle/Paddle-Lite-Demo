@@ -239,13 +239,13 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  std::string model_dir = argv[1];
+  std::string model_path = argv[1];
   std::string label_path = argv[2];
 
   std::vector<std::string> word_labels = load_labels(label_path);
 
   paddle::lite_api::MobileConfig config;
-  config.set_model_from_file(model_dir);
+  config.set_model_from_file(model_path);
   config.set_threads(CPU_THREAD_NUM);
   config.set_power_mode(CPU_POWER_MODE);
 
