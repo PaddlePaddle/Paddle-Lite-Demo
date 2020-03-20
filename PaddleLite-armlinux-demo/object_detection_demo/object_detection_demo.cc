@@ -103,8 +103,8 @@ void preprocess(cv::Mat &input_image, const std::vector<float> &input_mean,
   }
   for (; i < image_size; i++) {
     *(input_data_c0++) = (*(image_data++) - input_mean[0]) / input_std[0];
-    *(input_data_c0++) = (*(image_data++) - input_mean[1]) / input_std[1];
-    *(input_data_c0++) = (*(image_data++) - input_mean[2]) / input_std[2];
+    *(input_data_c1++) = (*(image_data++) - input_mean[1]) / input_std[1];
+    *(input_data_c2++) = (*(image_data++) - input_mean[2]) / input_std[2];
   }
 }
 
