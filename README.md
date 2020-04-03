@@ -10,6 +10,7 @@
     * 基于MobileNetV1-SSD的目标检测；
     * 基于Ultra-Light-Fast-Generic-Face-Detector-1MB的人脸检测；
     * 基于DeeplabV3+MobilNetV2的人像分割；
+    * 基于视频流的人脸检测+口罩识别；
 * ARMLinux示例:
     * 基于MobileNetV1的图像分类；
     * 基于MobileNetV1-SSD的目标检测；
@@ -147,6 +148,16 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
       - CPU预测结果（测试环境：华为nova5）
       
       ![android_human_segmentation_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_human_segmentation_cpu.jpg)
+
+      - NPU预测结果
+
+      待支持
+
+    * 基于视频流的人脸检测+口罩识别
+
+      - CPU预测结果（测试环境：华为mate30）
+      
+      ![android_mask_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_mask_detection_cpu.jpg)
 
       - NPU预测结果
 
