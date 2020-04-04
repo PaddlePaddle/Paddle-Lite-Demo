@@ -13,8 +13,6 @@ import android.opengl.Matrix;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import com.baidu.paddle.lite.demo.mask_detection.MainActivity;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -26,7 +24,7 @@ import java.util.List;
 
 public class CameraSurfaceView extends GLSurfaceView implements Renderer,
         SurfaceTexture.OnFrameAvailableListener {
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = CameraSurfaceView.class.getSimpleName();
 
     public static final int EXPECTED_PREVIEW_WIDTH = 1280;
     public static final int EXPECTED_PREVIEW_HEIGHT = 720;
