@@ -78,13 +78,13 @@ void FaceDetector::Postprocess(const cv::Mat &rgbaImage,
   }
 }
 
-void FaceDetector::Predict(const cv::Mat &rgbImage, std::vector<Face> *faces,
+void FaceDetector::Predict(const cv::Mat &rgbaImage, std::vector<Face> *faces,
                            double *preprocessTime, double *predictTime,
                            double *postprocessTime) {
   auto t = GetCurrentTime();
 
   t = GetCurrentTime();
-  Preprocess(rgbImage);
+  Preprocess(rgbaImage);
   *preprocessTime = GetElapsedTime(t);
   LOGD("Face detector postprocess costs %f ms", *preprocessTime);
 
@@ -94,7 +94,7 @@ void FaceDetector::Predict(const cv::Mat &rgbImage, std::vector<Face> *faces,
   LOGD("Face detector predict costs %f ms", *predictTime);
 
   t = GetCurrentTime();
-  Postprocess(rgbImage, faces);
+  Postprocess(rgbaImage, faces);
   *postprocessTime = GetElapsedTime(t);
   LOGD("Face detector postprocess costs %f ms", *postprocessTime);
 }
@@ -116,7 +116,7 @@ MaskClassifier::MaskClassifier(const std::string &modelDir,
           config);
 }
 
-void MaskClassifier::Preprocess(const cv::Mat &rgbImage,
+void MaskClassifier::Preprocess(const cv::Mat &rgbaImage,
                                 const std::vector<Face> &faces) {
   // Prepare input tensor
   auto inputTensor = predictor_->GetInput(0);
@@ -145,8 +145,8 @@ void MaskClassifier::Preprocess(const cv::Mat &rgbImage,
       }
     }
     cv::Mat resizedRGBAImage(
-        rgbImage, cv::Rect(cx - w / 2, cy - h / 2, w, h) &
-                      cv::Rect(0, 0, rgbImage.cols - 1, rgbImage.rows - 1));
+        rgbaImage, cv::Rect(cx - w / 2, cy - h / 2, w, h) &
+                       cv::Rect(0, 0, rgbaImage.cols - 1, rgbaImage.rows - 1));
     cv::resize(resizedRGBAImage, resizedRGBAImage,
                cv::Size(inputShape[3], inputShape[2]), 0.0f, 0.0f,
                cv::INTER_CUBIC);
@@ -180,13 +180,13 @@ void MaskClassifier::Postprocess(std::vector<Face> *faces) {
   }
 }
 
-void MaskClassifier::Predict(const cv::Mat &rgbImage, std::vector<Face> *faces,
+void MaskClassifier::Predict(const cv::Mat &rgbaImage, std::vector<Face> *faces,
                              double *preprocessTime, double *predictTime,
                              double *postprocessTime) {
   auto t = GetCurrentTime();
 
   t = GetCurrentTime();
-  Preprocess(rgbImage, *faces);
+  Preprocess(rgbaImage, *faces);
   *preprocessTime = GetElapsedTime(t);
   LOGD("Mask classifier postprocess costs %f ms", *preprocessTime);
 
