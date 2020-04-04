@@ -172,7 +172,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
             editor.putString(getString(R.string.FDT_INPUT_STD_KEY), fdtPreInstalledInputStds.get(selectedModelIdx));
             editor.putString(getString(R.string.FDT_SCORE_THRESHOLD_KEY), fdtPreInstalledScoreThresholds.get(selectedModelIdx));
             editor.commit();
-            lpFdtChoosePreInstalledModel.setSummary(fdtSelectedModelIdx);
+            lpFdtChoosePreInstalledModel.setSummary(selectedModelPath);
             fdtSelectedModelIdx = selectedModelIdx;
         }
 
@@ -217,7 +217,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
             editor.putString(getString(R.string.MCL_INPUT_MEAN_KEY), mclPreInstalledInputMeans.get(selectedModelIdx));
             editor.putString(getString(R.string.MCL_INPUT_STD_KEY), mclPreInstalledInputStds.get(selectedModelIdx));
             editor.commit();
-            lpMclChoosePreInstalledModel.setSummary(mclSelectedModelIdx);
+            lpMclChoosePreInstalledModel.setSummary(selectedModelPath);
         }
 
         modelDir = sharedPreferences.getString(getString(R.string.MCL_MODEL_DIR_KEY),
@@ -343,7 +343,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         settingsChanged |= input_std.length != mclInputStd.length;
         if (!settingsChanged) {
             for (int i = 0; i < input_std.length; i++) {
-                settingsChanged |= input_std[i] != fdtInputStd[i];
+                settingsChanged |= input_std[i] != mclInputStd[i];
             }
         }
         mclInputStd = input_std;
