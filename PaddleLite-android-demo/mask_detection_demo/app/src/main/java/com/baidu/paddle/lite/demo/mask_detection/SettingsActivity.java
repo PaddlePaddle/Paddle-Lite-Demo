@@ -218,6 +218,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
             editor.putString(getString(R.string.MCL_INPUT_STD_KEY), mclPreInstalledInputStds.get(selectedModelIdx));
             editor.commit();
             lpMclChoosePreInstalledModel.setSummary(selectedModelPath);
+            mclSelectedModelIdx = selectedModelIdx;
         }
 
         modelDir = sharedPreferences.getString(getString(R.string.MCL_MODEL_DIR_KEY),
