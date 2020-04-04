@@ -42,13 +42,13 @@ public:
                         const std::vector<float> &inputStd,
                         float scoreThreshold);
 
-  void Predict(const cv::Mat &rgbImage, std::vector<Face> *faces,
+  void Predict(const cv::Mat &rgbaImage, std::vector<Face> *faces,
                double *preprocessTime, double *predictTime,
                double *postprocessTime);
 
 private:
-  void Preprocess(const cv::Mat &rgbImage);
-  void Postprocess(const cv::Mat &rgbImage, std::vector<Face> *faces);
+  void Preprocess(const cv::Mat &rgbaImage);
+  void Postprocess(const cv::Mat &rgbaImage, std::vector<Face> *faces);
 
 private:
   float inputScale_;
@@ -70,7 +70,7 @@ public:
                double *postprocessTime);
 
 private:
-  void Preprocess(const cv::Mat &rgbImage, const std::vector<Face> &faces);
+  void Preprocess(const cv::Mat &rgbaImage, const std::vector<Face> &faces);
   void Postprocess(std::vector<Face> *faces);
 
 private:
