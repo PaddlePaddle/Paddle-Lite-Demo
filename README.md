@@ -158,6 +158,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
       - CPU预测结果（测试环境：华为mate30）
       
       ![android_mask_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_mask_detection_cpu.jpg)
+      <img src="https://paddlelite-demo.bj.bcebos.com/doc/android_mask_detection_cpu.jpg" title="android_mask_detection_cpu">
 
       - NPU预测结果
 
