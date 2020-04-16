@@ -45,11 +45,11 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 ## 效果展示
 先用人脸检测模型检测出人脸，然后用人脸关键点模型检测出人脸68个关键点。
 * 基于视频流的人脸检测
-  原始图片：![origin]((https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_origin_face_cpu.jpg)
+  原始图片：![origin](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_origin_face_cpu.jpg)
   用人脸检测模型检测出人脸，并将人脸用红色矩形框显示出来
   - CPU预测结果（测试环境：华为mate30）
 
-    ![android_face_cpu](.(https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_detect_cpu.jpg)
+    ![android_face_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_detect_cpu.jpg)
   - NPU预测结果
 
     待支持
