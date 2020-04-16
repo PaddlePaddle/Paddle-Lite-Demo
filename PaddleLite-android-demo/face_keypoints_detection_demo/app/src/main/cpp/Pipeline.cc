@@ -209,7 +209,7 @@ Pipeline::Pipeline(const std::string &fdtModelDir, const int fdtCPUThreadNum,
   faceDetector_.reset(new FaceDetector(
       fdtModelDir, fdtCPUThreadNum, fdtCPUPowerMode, fdtInputScale,
       fdtInputMean, fdtInputStd, detScoreThreshold));
-  facKeypointsDetector_.reset(new FacekeypointsDetecion(
+  facKeypointsDetector_.reset(new FaceKeypointsDetector(
       fkpModelDir, fkpCPUThreadNum, fkpCPUPowerMode, fkpInputWidth,
       fkpInputHeight, fkpInputMean, fkpInputStd));
 }
@@ -241,11 +241,11 @@ void Pipeline::VisualizeResults(const std::vector<Face> &faces,
       face_landmark.push_back(pp);
     }
     // 美白效果
-    cv::Mat tmp;
-    cv::Mat rgbImage;
-    cv::cvtColor(*rgbaImage, rgbImage, cv::COLOR_RGBA2RGB);
-    rgbImage = whitening(rgbImage);
-    cv::cvtColor(rgbImage, *rgbaImage, cv::COLOR_RGB2RGBA);
+//    cv::Mat tmp;
+//    cv::Mat rgbImage;
+//    cv::cvtColor(*rgbaImage, rgbImage, cv::COLOR_RGBA2RGB);
+//    rgbImage = whitening(rgbImage);
+//    cv::cvtColor(rgbImage, *rgbaImage, cv::COLOR_RGB2RGBA);
   }
 }
 

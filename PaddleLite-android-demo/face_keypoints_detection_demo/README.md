@@ -1,4 +1,4 @@
-# FaceKepypoint Demo 
+# Face Kepypoint Detection Demo 
   在Android上实现实时的人脸关键点的检测功能，支持多人脸的关键点检测
   同时，此Demo还提供了美妆功能，如美白、磨皮等
   另外，此Demo具有很好的易用性和开放性。如在demo中跑自己训练好的模型，新增美妆处理功能。
@@ -15,11 +15,13 @@
 
 ## 安装
 $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
- Android
-    * 打开Android Studio，在"Welcome to Android Studio"窗口点击"Open an existing Android Studio project"，在弹出的路径选择窗口中进入"face_keypoints_detection_demo"目录，然后点击右下角的"Open"按钮即可导入工程
+
+ * Android
+    * 打开Android Studio，在"Welcome to  Android Studio"窗口点击"Open an existing Android Studio project"，在弹出的路径选择窗口中进入"face_keypoints_detection_demo"目录，然后点击右下角的"Open"按钮即可导入工程
     * 通过USB连接Android手机或开发板；
     * 载入工程后，点击菜单栏的Run->Run 'App'按钮，在弹出的"Select Deployment Target"窗口选择已经连接的Android设备，然后点击"OK"按钮；
     * 由于Demo所用到的库和模型均通过app/build.gradle脚本在线下载，因此，第一次编译耗时较长（取决于网络下载速度），请耐心等待；
+
     * 如果库和模型下载失败，建议手动下载并拷贝到相应目录下
 
 
@@ -59,7 +61,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
 * 基于视频流的人脸关键点检测
 
-  用人脸检测模型检测出人脸，然后用口罩检测模型检测是否佩戴口罩，并用文本显示是否有口罩及其概率值
+  用人脸检测模型检测出人脸，然后用关键点检测模型检测出人脸68个关键点，并用绿色的圆点显示出来
 
   - CPU预测结果（测试环境：华为mate30）
 
