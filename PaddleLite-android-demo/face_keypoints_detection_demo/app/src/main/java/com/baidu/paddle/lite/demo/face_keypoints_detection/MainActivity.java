@@ -167,9 +167,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Came
                     SettingsActivity.fkpCPUThreadNum,
                     SettingsActivity.fkpCPUPowerMode,
                     SettingsActivity.fkpInputWidth,
-                    SettingsActivity.fkpInputHeight,
-                    SettingsActivity.fkpInputMean,
-                    SettingsActivity.fkpInputStd);
+                    SettingsActivity.fkpInputHeight);
         }
     }
 

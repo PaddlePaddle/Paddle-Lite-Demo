@@ -18,9 +18,7 @@ public class Native {
                         int fkpCPUThreadNum,
                         String fkpCPUPowerMode,
                         int fkpInputWidth,
-                        int fkpInputHeight,
-                        float[] fkpInputMean,
-                        float[] fkpInputStd) {
+                        int fkpInputHeight) {
         ctx = nativeInit(
                 fdtModelDir,
                 fdtCPUThreadNum,
@@ -33,9 +31,7 @@ public class Native {
                 fkpCPUThreadNum,
                 fkpCPUPowerMode,
                 fkpInputWidth,
-                fkpInputHeight,
-                fkpInputMean,
-                fkpInputStd);
+                fkpInputHeight);
         return ctx == 0;
     }
 
@@ -64,9 +60,7 @@ public class Native {
                                          int fkpCPUThreadNum,
                                          String fkpCPUPowerMode,
                                          int fkpInputWidth,
-                                         int fkpInputHeight,
-                                         float[] fkpInputMean,
-                                         float[] fkpInputStd);
+                                         int fkpInputHeight);
 
     public static native boolean nativeRelease(long ctx);
 

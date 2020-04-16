@@ -51,8 +51,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
     static public String fkpCPUPowerMode = "";
     static public int fkpInputWidth = 0;
     static public int fkpInputHeight = 0;
-    static public float[] fkpInputMean = new float[]{};
-    static public float[] fkpInputStd = new float[]{};
 
     ListPreference lpFkpChoosePreInstalledModel = null;
     EditTextPreference etFkpModelDir = null;
@@ -60,16 +58,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
     ListPreference lpFkpCPUPowerMode = null;
     EditTextPreference etFkpInputWidth = null;
     EditTextPreference etFkpInputHeight = null;
-    EditTextPreference etFkpInputMean = null;
-    EditTextPreference etFkpInputStd = null;
 
     List<String> fkpPreInstalledModelDirs = null;
     List<String> fkpPreInstalledCPUThreadNums = null;
     List<String> fkpPreInstalledCPUPowerModes = null;
     List<String> fkpPreInstalledInputWidths = null;
     List<String> fkpPreInstalledInputHeights = null;
-    List<String> fkpPreInstalledInputMeans = null;
-    List<String> fkpPreInstalledInputStds = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,15 +118,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         fkpPreInstalledCPUPowerModes = new ArrayList<String>();
         fkpPreInstalledInputWidths = new ArrayList<String>();
         fkpPreInstalledInputHeights = new ArrayList<String>();
-        fkpPreInstalledInputMeans = new ArrayList<String>();
-        fkpPreInstalledInputStds = new ArrayList<String>();
         fkpPreInstalledModelDirs.add(getString(R.string.FKP_MODEL_DIR_DEFAULT));
         fkpPreInstalledCPUThreadNums.add(getString(R.string.FKP_CPU_THREAD_NUM_DEFAULT));
         fkpPreInstalledCPUPowerModes.add(getString(R.string.FKP_CPU_POWER_MODE_DEFAULT));
         fkpPreInstalledInputWidths.add(getString(R.string.FKP_INPUT_WIDTH_DEFAULT));
         fkpPreInstalledInputHeights.add(getString(R.string.FKP_INPUT_HEIGHT_DEFAULT));
-        fkpPreInstalledInputMeans.add(getString(R.string.FKP_INPUT_MEAN_DEFAULT));
-        fkpPreInstalledInputStds.add(getString(R.string.FKP_INPUT_STD_DEFAULT));
         // Setup UI components
         lpFkpChoosePreInstalledModel =
                 (ListPreference) findPreference(getString(R.string.FKP_CHOOSE_PRE_INSTALLED_MODEL_KEY));
@@ -151,8 +141,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         etFkpModelDir.setTitle("Model dir (SDCard: " + Utils.getSDCardDirectory() + ")");
         etFkpInputWidth = (EditTextPreference) findPreference(getString(R.string.FKP_INPUT_WIDTH_KEY));
         etFkpInputHeight = (EditTextPreference) findPreference(getString(R.string.FKP_INPUT_HEIGHT_KEY));
-        etFkpInputMean = (EditTextPreference) findPreference(getString(R.string.FKP_INPUT_MEAN_KEY));
-        etFkpInputStd = (EditTextPreference) findPreference(getString(R.string.FKP_INPUT_STD_KEY));
     }
 
     private void reloadSettingsAndUpdateUI() {
@@ -214,8 +202,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
             editor.putString(getString(R.string.FKP_CPU_POWER_MODE_KEY), fkpPreInstalledCPUPowerModes.get(selectedModelIdx));
             editor.putString(getString(R.string.FKP_INPUT_WIDTH_KEY), fkpPreInstalledInputWidths.get(selectedModelIdx));
             editor.putString(getString(R.string.FKP_INPUT_HEIGHT_KEY), fkpPreInstalledInputHeights.get(selectedModelIdx));
-            editor.putString(getString(R.string.FKP_INPUT_MEAN_KEY), fkpPreInstalledInputMeans.get(selectedModelIdx));
-            editor.putString(getString(R.string.FKP_INPUT_STD_KEY), fkpPreInstalledInputStds.get(selectedModelIdx));
             editor.commit();
             lpFkpChoosePreInstalledModel.setSummary(selectedModelPath);
             fkpSelectedModelIdx = selectedModelIdx;
@@ -231,10 +217,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
                 getString(R.string.FKP_INPUT_WIDTH_DEFAULT));
         String inputHeight = sharedPreferences.getString(getString(R.string.FKP_INPUT_HEIGHT_KEY),
                 getString(R.string.FKP_INPUT_HEIGHT_DEFAULT));
-        inputMean = sharedPreferences.getString(getString(R.string.FKP_INPUT_MEAN_KEY),
-                getString(R.string.FKP_INPUT_MEAN_DEFAULT));
-        inputStd = sharedPreferences.getString(getString(R.string.FKP_INPUT_STD_KEY),
-                getString(R.string.FKP_INPUT_STD_DEFAULT));
 
         etFkpModelDir.setSummary(modelDir);
         lpFkpCPUThreadNum.setValue(cpuThreadNum);
@@ -243,10 +225,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         lpFkpCPUPowerMode.setSummary(cpuPowerMode);
         etFkpInputWidth.setSummary(inputWidth);
         etFkpInputHeight.setSummary(inputHeight);
-        etFkpInputMean.setSummary(inputMean);
-        etFkpInputMean.setText(inputMean);
-        etFkpInputStd.setSummary(inputStd);
-        etFkpInputStd.setText(inputStd);
     }
 
     static boolean checkAndUpdateSettings(Context ctx) {
@@ -326,28 +304,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
                 ctx.getString(R.string.FKP_INPUT_HEIGHT_DEFAULT));
         settingsChanged |= fkpInputHeight != Integer.parseInt(inputHeight);
         fkpInputHeight = Integer.parseInt(inputHeight);
-
-        inputMean = sharedPreferences.getString(ctx.getString(R.string.FKP_INPUT_MEAN_KEY),
-                ctx.getString(R.string.FKP_INPUT_MEAN_DEFAULT));
-        input_mean = Utils.parseFloatsFromString(inputMean, ",");
-        settingsChanged |= input_mean.length != fkpInputMean.length;
-        if (!settingsChanged) {
-            for (int i = 0; i < input_mean.length; i++) {
-                settingsChanged |= input_mean[i] != fkpInputMean[i];
-            }
-        }
-        fkpInputMean = input_mean;
-
-        inputStd = sharedPreferences.getString(ctx.getString(R.string.FKP_INPUT_STD_KEY),
-                ctx.getString(R.string.FKP_INPUT_STD_DEFAULT));
-        input_std = Utils.parseFloatsFromString(inputStd, ",");
-        settingsChanged |= input_std.length != fkpInputStd.length;
-        if (!settingsChanged) {
-            for (int i = 0; i < input_std.length; i++) {
-                settingsChanged |= input_std[i] != fkpInputStd[i];
-            }
-        }
-        fkpInputStd = input_std;
         return settingsChanged;
     }
 

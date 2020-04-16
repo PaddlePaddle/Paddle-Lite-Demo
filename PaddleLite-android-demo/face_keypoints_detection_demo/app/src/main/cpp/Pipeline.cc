@@ -44,8 +44,9 @@ void FaceDetector::Preprocess(const cv::Mat &rgbaImage) {
   auto inputTensor = predictor_->GetInput(0);
   inputTensor->Resize(inputShape);
   auto inputData = inputTensor->mutable_data<float>();
-  NHWC2NCHW(reinterpret_cast<const float *>(resizedBGRImage.data), inputData,
-            inputMean_.data(), inputStd_.data(), inputShape[3], inputShape[2]);
+  NHWC3ToNC3HW(reinterpret_cast<const float *>(resizedBGRImage.data), inputData,
+               inputMean_.data(), inputStd_.data(), inputShape[3],
+               inputShape[2]);
 }
 
 void FaceDetector::Postprocess(const cv::Mat &rgbaImage,
@@ -99,12 +100,11 @@ void FaceDetector::Predict(const cv::Mat &rgbaImage, std::vector<Face> *faces,
   LOGD("Face detector postprocess costs %f ms", *postprocessTime);
 }
 
-FaceKeypointsDetector::FaceKeypointsDetector(const std::string &modelDir, const int cpuThreadNum,
-                                           const std::string &cpuPowerMode, int inputWidth,
-                                           int inputHeight, const std::vector<float> &inputMean,
-                                           const std::vector<float> &inputStd)
-    : inputWidth_(inputWidth), inputHeight_(inputHeight), inputMean_(inputMean),
-      inputStd_(inputStd) {
+FaceKeypointsDetector::FaceKeypointsDetector(const std::string &modelDir,
+                                             const int cpuThreadNum,
+                                             const std::string &cpuPowerMode,
+                                             int inputWidth, int inputHeight)
+    : inputWidth_(inputWidth), inputHeight_(inputHeight) {
   paddle::lite_api::MobileConfig config;
   config.set_model_from_file(modelDir + "/model.nb");
   config.set_threads(cpuThreadNum);
@@ -114,8 +114,9 @@ FaceKeypointsDetector::FaceKeypointsDetector(const std::string &modelDir, const 
           config);
 }
 
-void FaceKeypointsDetector::Preprocess(const cv::Mat &rgbaImage,
-                                      const std::vector<Face> &faces) {
+void FaceKeypointsDetector::Preprocess(
+    const cv::Mat &rgbaImage, const std::vector<Face> &faces,
+    std::vector<cv::Rect> *adjustedFaceROIs) {
   // Prepare input tensor
   auto inputTensor = predictor_->GetInput(0);
   int batchSize = faces.size();
@@ -130,130 +131,133 @@ void FaceKeypointsDetector::Preprocess(const cv::Mat &rgbaImage,
     int w = faces[i].roi.width;
     int h = faces[i].roi.height;
     float roiAspectRatio =
-              static_cast<float>(faces[i].roi.width) / faces[i].roi.height;
+        static_cast<float>(faces[i].roi.width) / faces[i].roi.height;
     float inputAspectRatio = static_cast<float>(inputShape[3]) / inputShape[2];
     if (fabs(roiAspectRatio - inputAspectRatio) > 1e-5) {
       float widthRatio = static_cast<float>(faces[i].roi.width) / inputShape[3];
-      float heightRatio = static_cast<float>(faces[i].roi.height) / inputShape[2];
+      float heightRatio =
+          static_cast<float>(faces[i].roi.height) / inputShape[2];
       if (widthRatio > heightRatio) {
         h = w / inputAspectRatio;
       } else {
         w = h * inputAspectRatio;
       }
     }
-    cv::Mat resizedRGBAImage(
-                rgbaImage, cv::Rect(cx - w / 2, cy - h / 2, w, h) &
-                           cv::Rect(0, 0, rgbaImage.cols - 1, rgbaImage.rows - 1));
-
+    // Update the face region with adjusted roi
+    (*adjustedFaceROIs)[i] =
+        cv::Rect(cx - w / 2, cy - h / 2, w, h) &
+        cv::Rect(0, 0, rgbaImage.cols - 1, rgbaImage.rows - 1);
+    // Crop and obtain the face image
+    cv::Mat resizedRGBAImage(rgbaImage, (*adjustedFaceROIs)[i]);
     cv::resize(resizedRGBAImage, resizedRGBAImage,
                cv::Size(inputShape[3], inputShape[2]), 0.0f, 0.0f,
                cv::INTER_CUBIC);
     cv::Mat resizedGRAYImage;
     cv::cvtColor(resizedRGBAImage, resizedGRAYImage, cv::COLOR_RGBA2GRAY);
-    resizedGRAYImage.convertTo(resizedGRAYImage, CV_32FC3, 1.0 / 255.0f);
-    NHWC2NCHW_GRAY(reinterpret_cast<const float *>(resizedGRAYImage.data), inputData,
-                   inputMean_.data(), inputStd_.data(), inputShape[3],
-                   inputShape[2]);
+    resizedGRAYImage.convertTo(resizedGRAYImage, CV_32FC1);
+    cv::Mat mean, std;
+    cv::meanStdDev(resizedGRAYImage, mean, std);
+    float inputMean = static_cast<float>(mean.at<double>(0, 0));
+    float inputStd = static_cast<float>(std.at<double>(0, 0)) + 0.000001f;
+    NHWC1ToNC1HW(reinterpret_cast<const float *>(resizedGRAYImage.data),
+                 inputData, &inputMean, &inputStd, inputShape[3],
+                 inputShape[2]);
     inputData += inputShape[1] * inputShape[2] * inputShape[3];
   }
 }
 
-void FaceKeypointsDetector::Postprocess(std::vector<Face> *faces,
-                                       std::vector<cv::Point2d> *points) {
+void FaceKeypointsDetector::Postprocess(
+    const std::vector<cv::Rect> &adjustedFaceROIs, std::vector<Face> *faces) {
   auto outputTensor = predictor_->GetOutput(0);
   auto outputData = outputTensor->data<float>();
   auto outputShape = outputTensor->shape();
   int outputSize = ShapeProduction(outputShape);
   int batchSize = faces->size();
   int keypointsNum = outputSize / batchSize;
-  assert(keypointsNum==136);
+  assert(batchSize == adjustedFaceROIs.size());
+  assert(keypointsNum == 136); // 68 x 2
   for (int i = 0; i < batchSize; i++) {
-    // get keypoints 68 x 2
+    // Face keypoints with coordinates (x, y)
     for (int j = 0; j < keypointsNum; j += 2) {
-      points->push_back(cv::Point2d(outputData[j], outputData[j + 1]));
+      (*faces)[i].keypoints.push_back(cv::Point2d(
+          adjustedFaceROIs[i].x + outputData[j] * adjustedFaceROIs[i].width,
+          adjustedFaceROIs[i].y +
+              outputData[j + 1] * adjustedFaceROIs[i].height));
     }
     outputData += keypointsNum;
   }
 }
 
-void FaceKeypointsDetector::Predict(const cv::Mat &rgbImage, std::vector<Face> *faces,
-                                   std::vector<cv::Point2d> *points, double *preprocessTime,
-                                   double *predictTime, double *postprocessTime) {
+void FaceKeypointsDetector::Predict(const cv::Mat &rgbImage,
+                                    std::vector<Face> *faces,
+                                    double *preprocessTime, double *predictTime,
+                                    double *postprocessTime) {
   auto t = GetCurrentTime();
-
-  t = GetCurrentTime();
-  Preprocess(rgbImage, *faces);
+  std::vector<cv::Rect> adjustedFaceROIs(faces->size());
+  Preprocess(rgbImage, *faces, &adjustedFaceROIs);
   *preprocessTime = GetElapsedTime(t);
-  LOGD("FaceKeypoint classifier postprocess costs %f ms", *preprocessTime);
+  LOGD("Face keypoints detector postprocess costs %f ms", *preprocessTime);
 
   t = GetCurrentTime();
   predictor_->Run();
   *predictTime = GetElapsedTime(t);
-  LOGD("FaceKeypoint classifier predict costs %f ms", *predictTime);
+  LOGD("Face keypoints detector predict costs %f ms", *predictTime);
 
   t = GetCurrentTime();
-  Postprocess(faces, points);
+  Postprocess(adjustedFaceROIs, faces);
   *postprocessTime = GetElapsedTime(t);
-  LOGD("FaceKeypoint classifier postprocess costs %f ms", *postprocessTime);
+  LOGD("Face keypoints detector postprocess costs %f ms", *postprocessTime);
 }
 
 Pipeline::Pipeline(const std::string &fdtModelDir, const int fdtCPUThreadNum,
                    const std::string &fdtCPUPowerMode, float fdtInputScale,
                    const std::vector<float> &fdtInputMean,
                    const std::vector<float> &fdtInputStd,
-                   float detScoreThreshold, const std::string &fkpModelDir,
+                   float fdtScoreThreshold, const std::string &fkpModelDir,
                    const int fkpCPUThreadNum,
                    const std::string &fkpCPUPowerMode, int fkpInputWidth,
-                   int fkpInputHeight, const std::vector<float> &fkpInputMean,
-                   const std::vector<float> &fkpInputStd) {
+                   int fkpInputHeight) {
   faceDetector_.reset(new FaceDetector(
       fdtModelDir, fdtCPUThreadNum, fdtCPUPowerMode, fdtInputScale,
-      fdtInputMean, fdtInputStd, detScoreThreshold));
-  facKeypointsDetector_.reset(new FaceKeypointsDetector(
-      fkpModelDir, fkpCPUThreadNum, fkpCPUPowerMode, fkpInputWidth,
-      fkpInputHeight, fkpInputMean, fkpInputStd));
+      fdtInputMean, fdtInputStd, fdtScoreThreshold));
+  faceKeypointsDetector_.reset(
+      new FaceKeypointsDetector(fkpModelDir, fkpCPUThreadNum, fkpCPUPowerMode,
+                                fkpInputWidth, fkpInputHeight));
 }
 
 void Pipeline::VisualizeResults(const std::vector<Face> &faces,
-                                         const std::vector<cv::Point2d> &points,
-                                         cv::Mat *rgbaImage) {
-  int keypointSize = 68;
-  int rows = rgbaImage->rows;
-  int cols = rgbaImage->cols;
-
+                                cv::Mat *rgbaImage,
+                                double *visualizeResultsTime) {
+  auto t = GetCurrentTime();
   for (int i = 0; i < faces.size(); i++) {
     auto roi = faces[i].roi;
     // Configure color
-    cv::Scalar color =  cv::Scalar(255, 0, 0);
+    cv::Scalar color = cv::Scalar(255, 0, 0);
     // Draw roi object
     cv::rectangle(*rgbaImage, faces[i].roi, color, 2);
-
-    // Draw points
-    int offset = i * keypointSize;
-    std::vector<cv::Point2d> face_landmark;
-    for (int k = 0; k < keypointSize; k++){
-      cv::Point2d res = points[offset + k];
-      cv::Point2d pp;
-      pp.x = faces[i].roi.x + res.x * faces[i].roi.width;
-      pp.y = faces[i].roi.y + res.y * faces[i].roi.height;
-
-      cv::circle(*rgbaImage, pp, 1, cv::Scalar(0, 255, 0), 2); //在图像中画出特征点，1是圆的半径
-      face_landmark.push_back(pp);
+    // Draw face keypoints
+    for (int j = 0; j < faces[i].keypoints.size(); j++) {
+      cv::circle(*rgbaImage, faces[i].keypoints[j], 1, cv::Scalar(0, 255, 0),
+                 2); //在图像中画出特征点，1是圆的半径
     }
     // 美白效果
-//    cv::Mat tmp;
-//    cv::Mat rgbImage;
-//    cv::cvtColor(*rgbaImage, rgbImage, cv::COLOR_RGBA2RGB);
-//    rgbImage = whitening(rgbImage);
-//    cv::cvtColor(rgbImage, *rgbaImage, cv::COLOR_RGB2RGBA);
+    // cv::Mat tmp;
+    // cv::Mat rgbImage;
+    // cv::cvtColor(*rgbaImage, rgbImage, cv::COLOR_RGBA2RGB);
+    // rgbImage = whitening(rgbImage);
+    // cv::cvtColor(rgbImage, *rgbaImage, cv::COLOR_RGB2RGBA);
   }
+  *visualizeResultsTime = GetElapsedTime(t);
+  LOGI("VisualizeResults costs %f ms", *visualizeResultsTime);
 }
 
 void Pipeline::VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,
                                double fdtPreprocessTime, double fdtPredictTime,
                                double fdtPostprocessTime,
                                double fkpPreprocessTime, double fkpPredictTime,
-                               double fkpPostprocessTime, cv::Mat *rgbaImage) {
+                               double fkpPostprocessTime,
+                               double visualizeResultsTime,
+                               cv::Mat *rgbaImage) {
   char text[255];
   cv::Scalar color = cv::Scalar(255, 255, 255);
   int font_face = cv::FONT_HERSHEY_PLAIN;
@@ -283,7 +287,7 @@ void Pipeline::VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,
   offset.y += text_size.height;
   cv::putText(*rgbaImage, text, offset, font_face, font_scale, color,
               thickness);
-  // FaceKeypointsDetector
+  // Face keypoints detector
   sprintf(text, "FKP preprocess time: %.1f ms", fkpPreprocessTime);
   offset.y += text_size.height;
   cv::putText(*rgbaImage, text, offset, font_face, font_scale, color,
@@ -296,6 +300,11 @@ void Pipeline::VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,
   offset.y += text_size.height;
   cv::putText(*rgbaImage, text, offset, font_face, font_scale, color,
               thickness);
+  // Visualize results
+  sprintf(text, "Visualize results time: %.1f ms", visualizeResultsTime);
+  offset.y += text_size.height;
+  cv::putText(*rgbaImage, text, offset, font_face, font_scale, color,
+              thickness);
 }
 
 bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
@@ -303,6 +312,7 @@ bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
   double readGLFBOTime = 0, writeGLTextureTime = 0;
   double fdtPreprocessTime = 0, fdtPredictTime = 0, fdtPostprocessTime = 0;
   double fkpPreprocessTime = 0, fkpPredictTime = 0, fkpPostprocessTime = 0;
+  double visualizeResultsTime = 0;
 
   cv::Mat rgbaImage;
   CreateRGBAImageFromGLFBOTexture(textureWidth, textureHeight, &rgbaImage,
@@ -314,20 +324,17 @@ bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
                          &fdtPostprocessTime);
   if (faces.size() > 0) {
     // Stage2: FaceKeypoint detection
-      std::vector<cv::Point2d> points;
-      facKeypointsDetector_->Predict(rgbaImage, &faces, &points, &fkpPreprocessTime,
-                             &fkpPredictTime, &fkpPostprocessTime);
+    faceKeypointsDetector_->Predict(rgbaImage, &faces, &fkpPreprocessTime,
+                                    &fkpPredictTime, &fkpPostprocessTime);
     // Stage3: Visualize results
-    auto t = GetCurrentTime();
-    VisualizeResults(faces, points, &rgbaImage);
-    double time = GetElapsedTime(t);
-    LOGI("--visual time: %f ms", time);
+    VisualizeResults(faces, &rgbaImage, &visualizeResultsTime);
   }
 
   // Visualize the status(performace data) to origin image
   VisualizeStatus(readGLFBOTime, writeGLTextureTime, fdtPreprocessTime,
                   fdtPredictTime, fdtPostprocessTime, fkpPreprocessTime,
-                  fkpPredictTime, fkpPostprocessTime, &rgbaImage);
+                  fkpPredictTime, fkpPostprocessTime, visualizeResultsTime,
+                  &rgbaImage);
 
   // Dump modified image if savedImagePath is set
   if (!savedImagePath.empty()) {

@@ -32,7 +32,5 @@
     <string name="FKP_CPU_POWER_MODE_DEFAULT">LITE_POWER_HIGH</string>
     <string name="FKP_INPUT_WIDTH_DEFAULT">60</string>
     <string name="FKP_INPUT_HEIGHT_DEFAULT">60</string>
-    <string name="FKP_INPUT_MEAN_DEFAULT">0.5,0.5,0.5</string>
-    <string name="FKP_INPUT_STD_DEFAULT">1.0,1.0,1.0</string>
 </resources>
 
