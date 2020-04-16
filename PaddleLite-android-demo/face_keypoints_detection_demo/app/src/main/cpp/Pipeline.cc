@@ -99,103 +99,102 @@ void FaceDetector::Predict(const cv::Mat &rgbaImage, std::vector<Face> *faces,
   LOGD("Face detector postprocess costs %f ms", *postprocessTime);
 }
 
-FacekeypointsDetecion::FacekeypointsDetecion(const std::string &modelDir, const int cpuThreadNum,
+FaceKeypointsDetector::FaceKeypointsDetector(const std::string &modelDir, const int cpuThreadNum,
                                            const std::string &cpuPowerMode, int inputWidth,
                                            int inputHeight, const std::vector<float> &inputMean,
                                            const std::vector<float> &inputStd)
-        : inputWidth_(inputWidth), inputHeight_(inputHeight), inputMean_(inputMean),
-          inputStd_(inputStd) {
-    paddle::lite_api::MobileConfig config;
-    config.set_model_from_file(modelDir + "/model.nb");
-    config.set_threads(cpuThreadNum);
-    config.set_power_mode(ParsePowerMode(cpuPowerMode));
-    predictor_ =
-            paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(
-                    config);
+    : inputWidth_(inputWidth), inputHeight_(inputHeight), inputMean_(inputMean),
+      inputStd_(inputStd) {
+  paddle::lite_api::MobileConfig config;
+  config.set_model_from_file(modelDir + "/model.nb");
+  config.set_threads(cpuThreadNum);
+  config.set_power_mode(ParsePowerMode(cpuPowerMode));
+  predictor_ =
+      paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(
+          config);
 }
 
-void FacekeypointsDetecion::Preprocess(const cv::Mat &rgbaImage,
+void FaceKeypointsDetector::Preprocess(const cv::Mat &rgbaImage,
                                       const std::vector<Face> &faces) {
-    // Prepare input tensor
-    auto inputTensor = predictor_->GetInput(0);
-    int batchSize = faces.size();
-    std::vector<int64_t> inputShape = {batchSize, 1, inputHeight_, inputWidth_};
-    inputTensor->Resize(inputShape);
-    auto inputData = inputTensor->mutable_data<float>();
-    for (int i = 0; i < batchSize; i++) {
-        // Adjust the face region to improve the accuracy according to the aspect
-        // ratio of input image of the target model
-        int cx = faces[i].roi.x + faces[i].roi.width / 2.0f;
-        int cy = faces[i].roi.y + faces[i].roi.height / 2.0f;
-        int w = faces[i].roi.width;
-        int h = faces[i].roi.height;
-        float roiAspectRatio =
-                static_cast<float>(faces[i].roi.width) / faces[i].roi.height;
-        float inputAspectRatio = static_cast<float>(inputShape[3]) / inputShape[2];
-        if (fabs(roiAspectRatio - inputAspectRatio) > 1e-5) {
-            float widthRatio = static_cast<float>(faces[i].roi.width) / inputShape[3];
-            float heightRatio =
-                    static_cast<float>(faces[i].roi.height) / inputShape[2];
-            if (widthRatio > heightRatio) {
-                h = w / inputAspectRatio;
-            } else {
-                w = h * inputAspectRatio;
-            }
-        }
-        cv::Mat resizedRGBAImage(
+  // Prepare input tensor
+  auto inputTensor = predictor_->GetInput(0);
+  int batchSize = faces.size();
+  std::vector<int64_t> inputShape = {batchSize, 1, inputHeight_, inputWidth_};
+  inputTensor->Resize(inputShape);
+  auto inputData = inputTensor->mutable_data<float>();
+  for (int i = 0; i < batchSize; i++) {
+    // Adjust the face region to improve the accuracy according to the aspect
+    // ratio of input image of the target model
+    int cx = faces[i].roi.x + faces[i].roi.width / 2.0f;
+    int cy = faces[i].roi.y + faces[i].roi.height / 2.0f;
+    int w = faces[i].roi.width;
+    int h = faces[i].roi.height;
+    float roiAspectRatio =
+              static_cast<float>(faces[i].roi.width) / faces[i].roi.height;
+    float inputAspectRatio = static_cast<float>(inputShape[3]) / inputShape[2];
+    if (fabs(roiAspectRatio - inputAspectRatio) > 1e-5) {
+      float widthRatio = static_cast<float>(faces[i].roi.width) / inputShape[3];
+      float heightRatio = static_cast<float>(faces[i].roi.height) / inputShape[2];
+      if (widthRatio > heightRatio) {
+        h = w / inputAspectRatio;
+      } else {
+        w = h * inputAspectRatio;
+      }
+    }
+    cv::Mat resizedRGBAImage(
                 rgbaImage, cv::Rect(cx - w / 2, cy - h / 2, w, h) &
                            cv::Rect(0, 0, rgbaImage.cols - 1, rgbaImage.rows - 1));
 
-        cv::resize(resizedRGBAImage, resizedRGBAImage,
-                   cv::Size(inputShape[3], inputShape[2]), 0.0f, 0.0f,
-                   cv::INTER_CUBIC);
-        cv::Mat resizedGRAYImage;
-        cv::cvtColor(resizedRGBAImage, resizedGRAYImage, cv::COLOR_RGBA2GRAY);
-        resizedGRAYImage.convertTo(resizedGRAYImage, CV_32FC3, 1.0 / 255.0f);
-        NHWC2NCHW_GRAY(reinterpret_cast<const float *>(resizedGRAYImage.data), inputData,
-                       inputMean_.data(), inputStd_.data(), inputShape[3],
-                       inputShape[2]);
-        inputData += inputShape[1] * inputShape[2] * inputShape[3];
-    }
+    cv::resize(resizedRGBAImage, resizedRGBAImage,
+               cv::Size(inputShape[3], inputShape[2]), 0.0f, 0.0f,
+               cv::INTER_CUBIC);
+    cv::Mat resizedGRAYImage;
+    cv::cvtColor(resizedRGBAImage, resizedGRAYImage, cv::COLOR_RGBA2GRAY);
+    resizedGRAYImage.convertTo(resizedGRAYImage, CV_32FC3, 1.0 / 255.0f);
+    NHWC2NCHW_GRAY(reinterpret_cast<const float *>(resizedGRAYImage.data), inputData,
+                   inputMean_.data(), inputStd_.data(), inputShape[3],
+                   inputShape[2]);
+    inputData += inputShape[1] * inputShape[2] * inputShape[3];
+  }
 }
 
-void FacekeypointsDetecion::Postprocess(std::vector<Face> *faces,
+void FaceKeypointsDetector::Postprocess(std::vector<Face> *faces,
                                        std::vector<cv::Point2d> *points) {
-    auto outputTensor = predictor_->GetOutput(0);
-    auto outputData = outputTensor->data<float>();
-    auto outputShape = outputTensor->shape();
-    int outputSize = ShapeProduction(outputShape);
-    int batchSize = faces->size();
-    int keypointsNum = outputSize / batchSize;
-    assert(keypointsNum==136);
-    for (int i = 0; i < batchSize; i++) {
-        // get keypoints 68 x 2
-        for (int j = 0; j < keypointsNum; j += 2) {
-            points->push_back(cv::Point2d(outputData[j], outputData[j + 1]));
-        }
-        outputData += keypointsNum;
+  auto outputTensor = predictor_->GetOutput(0);
+  auto outputData = outputTensor->data<float>();
+  auto outputShape = outputTensor->shape();
+  int outputSize = ShapeProduction(outputShape);
+  int batchSize = faces->size();
+  int keypointsNum = outputSize / batchSize;
+  assert(keypointsNum==136);
+  for (int i = 0; i < batchSize; i++) {
+    // get keypoints 68 x 2
+    for (int j = 0; j < keypointsNum; j += 2) {
+      points->push_back(cv::Point2d(outputData[j], outputData[j + 1]));
     }
+    outputData += keypointsNum;
+  }
 }
 
-void FacekeypointsDetecion::Predict(const cv::Mat &rgbImage, std::vector<Face> *faces,
+void FaceKeypointsDetector::Predict(const cv::Mat &rgbImage, std::vector<Face> *faces,
                                    std::vector<cv::Point2d> *points, double *preprocessTime,
                                    double *predictTime, double *postprocessTime) {
-    auto t = GetCurrentTime();
+  auto t = GetCurrentTime();
 
-    t = GetCurrentTime();
-    Preprocess(rgbImage, *faces);
-    *preprocessTime = GetElapsedTime(t);
-    LOGD("FaceKeypoint classifier postprocess costs %f ms", *preprocessTime);
+  t = GetCurrentTime();
+  Preprocess(rgbImage, *faces);
+  *preprocessTime = GetElapsedTime(t);
+  LOGD("FaceKeypoint classifier postprocess costs %f ms", *preprocessTime);
 
-    t = GetCurrentTime();
-    predictor_->Run();
-    *predictTime = GetElapsedTime(t);
-    LOGD("FaceKeypoint classifier predict costs %f ms", *predictTime);
+  t = GetCurrentTime();
+  predictor_->Run();
+  *predictTime = GetElapsedTime(t);
+  LOGD("FaceKeypoint classifier predict costs %f ms", *predictTime);
 
-    t = GetCurrentTime();
-    Postprocess(faces, points);
-    *postprocessTime = GetElapsedTime(t);
-    LOGD("FaceKeypoint classifier postprocess costs %f ms", *postprocessTime);
+  t = GetCurrentTime();
+  Postprocess(faces, points);
+  *postprocessTime = GetElapsedTime(t);
+  LOGD("FaceKeypoint classifier postprocess costs %f ms", *postprocessTime);
 }
 
 Pipeline::Pipeline(const std::string &fdtModelDir, const int fdtCPUThreadNum,
@@ -210,7 +209,7 @@ Pipeline::Pipeline(const std::string &fdtModelDir, const int fdtCPUThreadNum,
   faceDetector_.reset(new FaceDetector(
       fdtModelDir, fdtCPUThreadNum, fdtCPUPowerMode, fdtInputScale,
       fdtInputMean, fdtInputStd, detScoreThreshold));
-    facKeypointsDetector_.reset(new FacekeypointsDetecion(
+  facKeypointsDetector_.reset(new FacekeypointsDetecion(
       fkpModelDir, fkpCPUThreadNum, fkpCPUPowerMode, fkpInputWidth,
       fkpInputHeight, fkpInputMean, fkpInputStd));
 }
@@ -218,45 +217,36 @@ Pipeline::Pipeline(const std::string &fdtModelDir, const int fdtCPUThreadNum,
 void Pipeline::VisualizeResults(const std::vector<Face> &faces,
                                          const std::vector<cv::Point2d> &points,
                                          cv::Mat *rgbaImage) {
-    int keypointSize = 68;
-    int rows = rgbaImage->rows;
-    int cols = rgbaImage->cols;
+  int keypointSize = 68;
+  int rows = rgbaImage->rows;
+  int cols = rgbaImage->cols;
 
-    for (int i = 0; i < faces.size(); i++) {
-        auto roi = faces[i].roi;
-        // Configure color and text size
-        cv::Scalar color =  cv::Scalar(255, 0, 0);
-        std::string text = "Face";
-        int font_face = cv::FONT_HERSHEY_PLAIN;
-        double font_scale = 1.f;
-        float thickness = 1;
-        cv::Size text_size =
-                cv::getTextSize(text, font_face, font_scale, thickness, nullptr);
-        font_scale = faces[i].roi.width * font_scale / text_size.width;
-        text_size =
-                cv::getTextSize(text, font_face, font_scale, thickness, nullptr);
-        // Draw roi object
-        cv::rectangle(*rgbaImage, faces[i].roi, color, 2);
+  for (int i = 0; i < faces.size(); i++) {
+    auto roi = faces[i].roi;
+    // Configure color
+    cv::Scalar color =  cv::Scalar(255, 0, 0);
+    // Draw roi object
+    cv::rectangle(*rgbaImage, faces[i].roi, color, 2);
 
-        // Draw points
-        int offset = i * keypointSize;
-        std::vector<cv::Point2d> face_landmark;
-        for (int k = 0; k < keypointSize; k++){
-            cv::Point2d res = points[offset + k];
-            cv::Point2d pp;
-            pp.x = faces[i].roi.x + res.x * faces[i].roi.width;
-            pp.y = faces[i].roi.y + res.y * faces[i].roi.height;
+    // Draw points
+    int offset = i * keypointSize;
+    std::vector<cv::Point2d> face_landmark;
+    for (int k = 0; k < keypointSize; k++){
+      cv::Point2d res = points[offset + k];
+      cv::Point2d pp;
+      pp.x = faces[i].roi.x + res.x * faces[i].roi.width;
+      pp.y = faces[i].roi.y + res.y * faces[i].roi.height;
 
-            cv::circle(*rgbaImage, pp, 1, cv::Scalar(0, 255, 0), 2); //在图像中画出特征点，1是圆的半径
-            face_landmark.push_back(pp);
-        }
-        // 美白效果
-        cv::Mat tmp;
-        cv::Mat rgbImage;
-        cv::cvtColor(*rgbaImage, rgbImage, cv::COLOR_RGBA2RGB);
-        rgbImage = whitening(rgbImage);
-        cv::cvtColor(rgbImage, *rgbaImage, cv::COLOR_RGB2RGBA);
+      cv::circle(*rgbaImage, pp, 1, cv::Scalar(0, 255, 0), 2); //在图像中画出特征点，1是圆的半径
+      face_landmark.push_back(pp);
     }
+    // 美白效果
+    cv::Mat tmp;
+    cv::Mat rgbImage;
+    cv::cvtColor(*rgbaImage, rgbImage, cv::COLOR_RGBA2RGB);
+    rgbImage = whitening(rgbImage);
+    cv::cvtColor(rgbImage, *rgbaImage, cv::COLOR_RGB2RGBA);
+  }
 }
 
 void Pipeline::VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,
@@ -293,7 +283,7 @@ void Pipeline::VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,
   offset.y += text_size.height;
   cv::putText(*rgbaImage, text, offset, font_face, font_scale, color,
               thickness);
-  // Mask classification
+  // FaceKeypointsDetector
   sprintf(text, "FKP preprocess time: %.1f ms", fkpPreprocessTime);
   offset.y += text_size.height;
   cv::putText(*rgbaImage, text, offset, font_face, font_scale, color,

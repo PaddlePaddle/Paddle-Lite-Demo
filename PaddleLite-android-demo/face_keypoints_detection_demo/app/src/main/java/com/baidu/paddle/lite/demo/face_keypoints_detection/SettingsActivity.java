@@ -117,7 +117,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         etFdtInputStd = (EditTextPreference) findPreference(getString(R.string.FDT_INPUT_STD_KEY));
         etFdtScoreThreshold = (EditTextPreference) findPreference(getString(R.string.FDT_SCORE_THRESHOLD_KEY));
 
-        // FaceKeypoints detection
+        // Face keypoints detector
         // Initialize pre-installed models
         fkpPreInstalledModelDirs = new ArrayList<String>();
         fkpPreInstalledCPUThreadNums = new ArrayList<String>();
@@ -203,7 +203,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         etFdtInputStd.setText(inputStd);
         etFdtScoreThreshold.setSummary(scoreThreshold);
 
-        // FaceKeypoints detection
+        // Face keypoints detector
         selectedModelPath = sharedPreferences.getString(getString(R.string.FKP_CHOOSE_PRE_INSTALLED_MODEL_KEY),
                 getString(R.string.FKP_MODEL_DIR_DEFAULT));
         selectedModelIdx = lpFkpChoosePreInstalledModel.findIndexOfValue(selectedModelPath);
@@ -301,7 +301,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         settingsChanged |= fdtScoreThreshold != Float.parseFloat(scoreThreshold);
         fdtScoreThreshold = Float.parseFloat(scoreThreshold);
 
-        // FaceKeypoints detection
+        // Face keypoints detector
         modelDir = sharedPreferences.getString(ctx.getString(R.string.FKP_MODEL_DIR_KEY),
                 ctx.getString(R.string.FKP_MODEL_DIR_DEFAULT));
         settingsChanged |= !fdtModelDir.equalsIgnoreCase(modelDir);

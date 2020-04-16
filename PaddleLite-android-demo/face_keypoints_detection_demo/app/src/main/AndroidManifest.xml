@@ -15,7 +15,7 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name="com.baidu.paddle.lite.demo.face_keypoints_detection.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name="com.baidu.paddle.lite.demo.face_keypoints_detection.SettingsActivity"
+                android:name=".SettingsActivity"
                 android:label="Settings">
         </activity>
     </application>

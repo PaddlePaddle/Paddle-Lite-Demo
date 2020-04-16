@@ -16,7 +16,7 @@
 ## 安装
 $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
  Android
-    * 打开Android Studio，在"Welcome to Android Studio"窗口点击"Open an existing Android Studio project"，在弹出的路径选择窗口中进入"face_keypoints_demo"目录，然后点击右下角的"Open"按钮即可导入工程
+    * 打开Android Studio，在"Welcome to Android Studio"窗口点击"Open an existing Android Studio project"，在弹出的路径选择窗口中进入"face_keypoints_detection_demo"目录，然后点击右下角的"Open"按钮即可导入工程
     * 通过USB连接Android手机或开发板；
     * 载入工程后，点击菜单栏的Run->Run 'App'按钮，在弹出的"Select Deployment Target"窗口选择已经连接的Android设备，然后点击"OK"按钮；
     * 由于Demo所用到的库和模型均通过app/build.gradle脚本在线下载，因此，第一次编译耗时较长（取决于网络下载速度），请耐心等待；
@@ -45,11 +45,11 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 ## 效果展示
 先用人脸检测模型检测出人脸，然后用人脸关键点模型检测出人脸68个关键点。
 * 基于视频流的人脸检测
-  原始图片：![origin](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_origin_face_cpu.jpg)
+  原始图片：![android_face_keypoints_detection_origin_face](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_origin_face_cpu.jpg)
   用人脸检测模型检测出人脸，并将人脸用红色矩形框显示出来
   - CPU预测结果（测试环境：华为mate30）
 
-    ![android_face_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_detect_cpu.jpg)
+    ![android_face_keypoints_detection_face_detect_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_detect_cpu.jpg)
   - NPU预测结果
 
     待支持
@@ -58,7 +58,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
   用人脸检测模型检测出人脸，然后用口罩检测模型检测是否佩戴口罩，并用文本显示是否有口罩及其概率值
   - CPU预测结果（测试环境：华为mate30）
 
-    ![android_face_keypoints_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_keypoints1_cpu.jpg)
+    ![android_face_keypoints_detection_face_keypoints_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_keypoints1_cpu.jpg)
   - NPU预测结果
 
     待支持
@@ -78,9 +78,9 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 ### Java端
 * 模型存放，将下载好的模型解压存放在`app/src/assets/models`目录下
 * common Java包
-  在`app/src/java/com.baidu.paddle.lite.demo/common`目录下，实现摄像头和框架的公共处理，一般不用修改。其中，Utils.java用于存放一些公用的且与Java基类无关的功能，如果模型拷贝、字符串类型转换等
+  在`app/src/java/com/baidu/paddle/lite/demo/common`目录下，实现摄像头和框架的公共处理，一般不用修改。其中，Utils.java用于存放一些公用的且与Java基类无关的功能，如果模型拷贝、字符串类型转换等
 * mask_detection Java 包
-  在`app/src/java/com.baidu.paddle.lite.demo/face_keypoints_detection`目录下，实现APP界面消息事件和Java/C++端代码互传的桥梁功能
+  在`app/src/java/com/baidu/paddle/lite/demo/face_keypoints_detection`目录下，实现APP界面消息事件和Java/C++端代码互传的桥梁功能
 * MainActivity
     实现APP的创建、运行、释放功能
     重点关注`checkAndUpdateSettings`函数，实现APP界面值向C++端值互传

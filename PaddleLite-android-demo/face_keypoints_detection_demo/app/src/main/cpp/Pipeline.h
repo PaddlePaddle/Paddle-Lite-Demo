@@ -59,9 +59,9 @@ private:
   std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor_;
 };
 
-class FacekeypointsDetecion {
+class FaceKeypointsDetector {
 public:
-    explicit FacekeypointsDetecion(const std::string &modelDir, const int cpuThreadNum,
+    explicit FaceKeypointsDetector(const std::string &modelDir, const int cpuThreadNum,
                                   const std::string &cpuPowerMode, int inputWidth,
                                   int inputHeight, const std::vector<float> &inputMean,
                                   const std::vector<float> &inputStd);
@@ -135,5 +135,5 @@ private:
 
 private:
   std::shared_ptr<FaceDetector> faceDetector_;
-  std::shared_ptr<FacekeypointsDetecion> facKeypointsDetector_;
+  std::shared_ptr<FaceKeypointsDetector> facKeypointsDetector_;
 };
