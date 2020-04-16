@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FaceKeypoints Detection</string>
+    <string name="app_name">Face Keypoints Detection</string>
     <!-- Face detector -->
     <string name="FDT_CHOOSE_PRE_INSTALLED_MODEL_KEY">FDT_CHOOSE_INSTALLED_MODEL_KEY</string>
     <string name="FDT_ENABLE_CUSTOM_SETTINGS_KEY">FDT_ENABLE_CUSTOM_SETTINGS_KEY</string>
