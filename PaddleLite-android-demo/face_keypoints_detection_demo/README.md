@@ -43,31 +43,46 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
    
 
 ## 效果展示
-先用人脸检测模型检测出人脸，然后用人脸关键点模型检测出人脸68个关键点。
+先用人脸检测模型检测出人脸，然后用人脸关键点模型检测出人脸68个关键点
+
 * 基于视频流的人脸检测
-  原始图片：![android_face_keypoints_detection_origin_face](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_origin_face_cpu.jpg)
+
   用人脸检测模型检测出人脸，并将人脸用红色矩形框显示出来
+
   - CPU预测结果（测试环境：华为mate30）
 
     ![android_face_keypoints_detection_face_detect_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_detect_cpu.jpg)
+
   - NPU预测结果
 
     待支持
 
 * 基于视频流的人脸关键点检测
+
   用人脸检测模型检测出人脸，然后用口罩检测模型检测是否佩戴口罩，并用文本显示是否有口罩及其概率值
+
   - CPU预测结果（测试环境：华为mate30）
 
     ![android_face_keypoints_detection_face_keypoints_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_keypoints1_cpu.jpg)
+
   - NPU预测结果
 
     待支持
+
 * 基于视频流的人脸美妆
+
   用人脸检测模型检测出人脸，然后用人脸关键点模型检测出人脸68个关键点。根据人脸68个关键点对它做瘦脸、美白等处理。如瘦脸功能，利用其中3号点到5号点距离作为瘦左脸距离，13号点到15号点距离作为瘦右脸距离，同时利用局部平移算法完成瘦脸。
+
   - CPU预测结果（测试环境：华为mate30）
+
+    原始图片：
+    
+    ![android_face_keypoints_detection_origin_face](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_origin_face_cpu.jpg)
+
     美白特效结果：
 
     ![android_face_keypoints_detection_face_beauty_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_beauty_cpu.jpg)
+    
   - NPU预测结果
 
     待支持
