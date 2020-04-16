@@ -88,7 +88,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     待支持
 
 ## Demo内容介绍
-主要从Java和C++两部分简要的介绍Demo每部分功能，更多详细的内容请见：![Demo使用指南](https://paddlelite-demo.bj.bcebos.com/doc/Introduction_to_face_keypoints_detection_demo.docx)
+主要从Java和C++两部分简要的介绍Demo每部分功能，更多详细的内容请见：[Demo使用指南](https://paddlelite-demo.bj.bcebos.com/doc/Face_keypoints_detection_demo_instrodution.docx)
 
 ### Java端
 * 模型存放，将下载好的模型解压存放在`app/src/assets/models`目录下
