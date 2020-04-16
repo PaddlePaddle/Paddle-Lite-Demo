@@ -53,7 +53,7 @@ def archives = [
                 'dest': 'OpenCV'
         ],
         [
-                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/pyramidbox_lite_fp32_for_cpu_v2_3_add_extra.tar.gz',
+                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/pyramidbox_lite_fp32_for_cpu_v2_3_0.tar.gz',
                 'dest' : 'src/main/assets/models/pyramidbox_lite_for_cpu'
         ],
         [
