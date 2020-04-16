@@ -22,8 +22,8 @@ int64_t ShapeProduction(const std::vector<int64_t> &shape) {
   return res;
 }
 
-void NHWC2NCHW(const float *src, float *dst, const float *mean,
-               const float *std, int width, int height) {
+void NHWC3ToNC3HW(const float *src, float *dst, const float *mean,
+                  const float *std, int width, int height) {
   int size = height * width;
   float32x4_t vmean0 = vdupq_n_f32(mean ? mean[0] : 0.0f);
   float32x4_t vmean1 = vdupq_n_f32(mean ? mean[1] : 0.0f);
@@ -58,24 +58,21 @@ void NHWC2NCHW(const float *src, float *dst, const float *mean,
   }
 }
 
-void NHWC2NCHW_GRAY(const float *src, float *dst, const float *mean,
-                    const float *std, int width, int height) {
-    int size = height * width;
-    float32x4_t vmean0 = vdupq_n_f32(mean ? mean[0] : 0.0f);
-    float32x4_t vscale0 = vdupq_n_f32(std ? (1.0f / std[0]) : 1.0f);
-    float *dst_c0 = dst;
-    float *dst_c1 = dst + size;
-    float *dst_c2 = dst + size * 2;
-    int i = 0;
-    for (; i < size - 3; i += 4) {
-        float32x4_t vin = vld1q_f32(src);
-        float32x4_t vsub0 = vsubq_f32(vin, vmean0);
-        float32x4_t vs0 = vmulq_f32(vsub0, vscale0);
-        vst1q_f32(dst_c0, vs0);
-        src += 4;
-        dst_c0 += 4;
-    }
-    for (; i < size; i++) {
-        *(dst_c0++) = (*(src++) - mean[0]) / std[0];
-    }
+void NHWC1ToNC1HW(const float *src, float *dst, const float *mean,
+                  const float *std, int width, int height) {
+  int size = height * width;
+  float32x4_t vmean = vdupq_n_f32(mean ? mean[0] : 0.0f);
+  float32x4_t vscale = vdupq_n_f32(std ? (1.0f / std[0]) : 1.0f);
+  int i = 0;
+  for (; i < size - 3; i += 4) {
+    float32x4_t vin = vld1q_f32(src);
+    float32x4_t vsub = vsubq_f32(vin, vmean);
+    float32x4_t vs = vmulq_f32(vsub, vscale);
+    vst1q_f32(dst, vs);
+    src += 4;
+    dst += 4;
+  }
+  for (; i < size; i++) {
+    *(dst++) = (*(src++) - mean[0]) / std[0];
+  }
 }

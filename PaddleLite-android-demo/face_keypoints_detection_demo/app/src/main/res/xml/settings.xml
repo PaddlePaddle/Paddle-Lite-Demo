@@ -45,26 +45,16 @@
             android:title="Score threshold: (0.0, 1.0)" />
     </PreferenceCategory>
     <PreferenceCategory android:title="FaceKeypoints Detection">
+        <ListPreference
+            android:defaultValue="@string/FKP_MODEL_DIR_DEFAULT"
+            android:key="@string/FKP_CHOOSE_PRE_INSTALLED_MODEL_KEY"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="Choose pre-installed models" />
         <EditTextPreference
             android:defaultValue="@string/FKP_MODEL_DIR_DEFAULT"
             android:key="@string/FKP_MODEL_DIR_KEY"
             android:title="Model dir" />
-        <EditTextPreference
-            android:defaultValue="@string/FKP_INPUT_WIDTH_DEFAULT"
-            android:key="@string/FKP_INPUT_WIDTH_KEY"
-            android:title="Input width: downscaled width" />
-        <EditTextPreference
-            android:defaultValue="@string/FKP_INPUT_HEIGHT_DEFAULT"
-            android:key="@string/FKP_INPUT_HEIGHT_KEY"
-            android:title="Input height: downscaled height" />
-        <EditTextPreference
-            android:defaultValue="@string/FKP_INPUT_MEAN_DEFAULT"
-            android:key="@string/FKP_INPUT_MEAN_KEY"
-            android:title="Input mean: (channel/255-mean)/std" />
-        <EditTextPreference
-            android:defaultValue="@string/FKP_INPUT_STD_DEFAULT"
-            android:key="@string/FKP_INPUT_STD_KEY"
-            android:title="Input std: (channel/255-mean)/std" />
         <ListPreference
             android:defaultValue="@string/FKP_CPU_THREAD_NUM_DEFAULT"
             android:entries="@array/cpu_thread_num_entries"
@@ -81,11 +71,13 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="CPU power mode" />
-        <ListPreference
-            android:defaultValue="@string/FKP_MODEL_DIR_DEFAULT"
-            android:key="@string/FKP_CHOOSE_PRE_INSTALLED_MODEL_KEY"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Choose pre-installed models" />
+        <EditTextPreference
+            android:defaultValue="@string/FKP_INPUT_WIDTH_DEFAULT"
+            android:key="@string/FKP_INPUT_WIDTH_KEY"
+            android:title="Input width: downscaled width" />
+        <EditTextPreference
+            android:defaultValue="@string/FKP_INPUT_HEIGHT_DEFAULT"
+            android:key="@string/FKP_INPUT_HEIGHT_KEY"
+            android:title="Input height: downscaled height" />
     </PreferenceCategory>
 </PreferenceScreen>

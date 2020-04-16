@@ -22,7 +22,7 @@ extern "C" {
  * Class:     com_baidu_paddle_lite_demo_face_keypoints_detection_Native
  * Method:    nativeInit
  * Signature:
- * (Ljava/lang/String;ILjava/lang/String;F[F[FFLjava/lang/String;ILjava/lang/String;II[F[F)J
+ * (Ljava/lang/String;ILjava/lang/String;F[F[FFLjava/lang/String;ILjava/lang/String;II)J
  */
 JNIEXPORT jlong JNICALL
 Java_com_baidu_paddle_lite_demo_face_1keypoints_1detection_Native_nativeInit(
@@ -30,7 +30,7 @@ Java_com_baidu_paddle_lite_demo_face_1keypoints_1detection_Native_nativeInit(
     jstring jfdtCPUPowerMode, jfloat fdtInputScale, jfloatArray jfdtInputMean,
     jfloatArray jfdtInputStd, jfloat fdtScoreThreshold, jstring jfkpModelDir,
     jint fkpCPUThreadNum, jstring jfkpCPUPowerMode, jint fkpInputWidth,
-    jint fkpInputHeight, jfloatArray jfkpInputMean, jfloatArray jfkpInputStd) {
+    jint fkpInputHeight) {
   std::string fdtModelDir = jstring_to_cpp_string(env, jfdtModelDir);
   std::string fdtCPUPowerMode = jstring_to_cpp_string(env, jfdtCPUPowerMode);
   std::vector<float> fdtInputMean =
@@ -39,15 +39,10 @@ Java_com_baidu_paddle_lite_demo_face_1keypoints_1detection_Native_nativeInit(
       jfloatarray_to_float_vector(env, jfdtInputStd);
   std::string fkpModelDir = jstring_to_cpp_string(env, jfkpModelDir);
   std::string fkpCPUPowerMode = jstring_to_cpp_string(env, jfkpCPUPowerMode);
-  std::vector<float> fkpInputMean =
-      jfloatarray_to_float_vector(env, jfkpInputMean);
-  std::vector<float> fkpInputStd =
-      jfloatarray_to_float_vector(env, jfkpInputStd);
-  return reinterpret_cast<jlong>(
-      new Pipeline(fdtModelDir, fdtCPUThreadNum, fdtCPUPowerMode, fdtInputScale,
-                   fdtInputMean, fdtInputStd, fdtScoreThreshold, fkpModelDir,
-                   fkpCPUThreadNum, fkpCPUPowerMode, fkpInputWidth,
-                   fkpInputHeight, fkpInputMean, fkpInputStd));
+  return reinterpret_cast<jlong>(new Pipeline(
+      fdtModelDir, fdtCPUThreadNum, fdtCPUPowerMode, fdtInputScale,
+      fdtInputMean, fdtInputStd, fdtScoreThreshold, fkpModelDir,
+      fkpCPUThreadNum, fkpCPUPowerMode, fkpInputWidth, fkpInputHeight));
 }
 
 /*

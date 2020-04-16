@@ -14,17 +14,18 @@
 
 #pragma once
 
+#include "Utils.h"
 #include <fstream>
-#include <string>
-#include <vector>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
-#include "Utils.h"
+#include <string>
+#include <vector>
 
 // face keypoints process
 cv::Mat thin_face(cv::Mat image, std::vector<cv::Point2d> points);
-cv::Mat enlarge_eyes(cv::Mat image, std::vector<cv::Point2d> points, int radius=15, int strength=10);
-cv::Mat rouge(cv::Mat image,  std::vector<cv::Point2d> points, bool ruby=true);
+cv::Mat enlarge_eyes(cv::Mat image, std::vector<cv::Point2d> points,
+                     int radius = 15, int strength = 10);
+cv::Mat rouge(cv::Mat image, std::vector<cv::Point2d> points, bool ruby = true);
 cv::Mat whitening(cv::Mat image);

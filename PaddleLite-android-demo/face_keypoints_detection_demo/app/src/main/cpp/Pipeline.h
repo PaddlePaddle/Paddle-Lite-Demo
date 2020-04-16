@@ -14,9 +14,9 @@
 
 #pragma once
 
+#include "FaceProcess.h"
 #include "Utils.h"
 #include "paddle_api.h"
-#include "FaceProcess.h"
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #include <opencv2/core.hpp>
@@ -27,12 +27,10 @@
 #include <vector>
 
 struct Face {
-  // Detection result: face rectangle
+  // Face detection result: face rectangle
   cv::Rect roi;
-  // Classification result: confidence
-  float confidence;
-  // Classification result : class id
-  int classid;
+  // Face keypoints detection result: keypoint coordiate
+  std::vector<cv::Point2d> keypoints;
 };
 
 class FaceDetector {
@@ -61,26 +59,25 @@ private:
 
 class FaceKeypointsDetector {
 public:
-    explicit FaceKeypointsDetector(const std::string &modelDir, const int cpuThreadNum,
-                                  const std::string &cpuPowerMode, int inputWidth,
-                                  int inputHeight, const std::vector<float> &inputMean,
-                                  const std::vector<float> &inputStd);
+  explicit FaceKeypointsDetector(const std::string &modelDir,
+                                 const int cpuThreadNum,
+                                 const std::string &cpuPowerMode,
+                                 int inputWidth, int inputHeight);
 
-    void Predict(const cv::Mat &rgbImage, std::vector<Face> *faces,
-                 std::vector<cv::Point2d> *points,
-                 double *preprocessTime, double *predictTime,
-                 double *postprocessTime);
-
-private:
-    void Preprocess(const cv::Mat &rgbaImage, const std::vector<Face> &faces);
-    void Postprocess(std::vector<Face> *faces, std::vector<cv::Point2d> *points);
+  void Predict(const cv::Mat &rgbImage, std::vector<Face> *faces,
+               double *preprocessTime, double *predictTime,
+               double *postprocessTime);
 
 private:
-    int inputWidth_;
-    int inputHeight_;
-    std::vector<float> inputMean_;
-    std::vector<float> inputStd_;
-    std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor_;
+  void Preprocess(const cv::Mat &rgbaImage, const std::vector<Face> &faces,
+                  std::vector<cv::Rect> *adjustedFaceROIs);
+  void Postprocess(const std::vector<cv::Rect> &adjustedFaceROIs,
+                   std::vector<Face> *faces);
+
+private:
+  int inputWidth_;
+  int inputHeight_;
+  std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor_;
 };
 
 class Pipeline {
@@ -89,10 +86,9 @@ public:
            const std::string &detCPUPowerMode, float fdtInputScale,
            const std::vector<float> &fdtInputMean,
            const std::vector<float> &fdtInputStd, float fdtScoreThreshold,
-           const std::string &mclModelDir, const int mclCPUThreadNum,
-           const std::string &mclCPUPowerMode, int mclInputWidth,
-           int mclInputHeight, const std::vector<float> &mclInputMean,
-           const std::vector<float> &mclInputStd);
+           const std::string &fkpModelDir, const int fkpCPUThreadNum,
+           const std::string &fkpCPUPowerMode, int fkpInputWidth,
+           int fkpInputHeight);
 
   bool Process(int inTextureId, int outTextureId, int textureWidth,
                int textureHeight, std::string savedImagePath);
@@ -123,17 +119,17 @@ private:
   }
 
   // Visualize the results to origin image
-  void VisualizeResults(const std::vector<Face> &faces, const std::vector<cv::Point2d> &points,
-          cv::Mat *rgbaImage);
+  void VisualizeResults(const std::vector<Face> &faces, cv::Mat *rgbaImage,
+                        double *visualizeResultsTime);
 
   // Visualize the status(performace data) to origin image
   void VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,
                        double fdtPreprocessTime, double fdtPredictTime,
-                       double fdtPostprocessTime, double mclPreprocessTime,
-                       double mclPredictTime, double mclPostprocessTime,
-                       cv::Mat *rgbaImage);
+                       double fdtPostprocessTime, double fkpPreprocessTime,
+                       double fkpPredictTime, double fkpPostprocessTime,
+                       double visualizeResultsTime, cv::Mat *rgbaImage);
 
 private:
   std::shared_ptr<FaceDetector> faceDetector_;
-  std::shared_ptr<FaceKeypointsDetector> facKeypointsDetector_;
+  std::shared_ptr<FaceKeypointsDetector> faceKeypointsDetector_;
 };
