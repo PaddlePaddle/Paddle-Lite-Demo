@@ -248,7 +248,7 @@ void Pipeline::VisualizeResults(const std::vector<Face> &faces,
     // cv::cvtColor(rgbImage, *rgbaImage, cv::COLOR_RGB2RGBA);
   }
   *visualizeResultsTime = GetElapsedTime(t);
-  LOGI("VisualizeResults costs %f ms", *visualizeResultsTime);
+  LOGD("VisualizeResults costs %f ms", *visualizeResultsTime);
 }
 
 void Pipeline::VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,

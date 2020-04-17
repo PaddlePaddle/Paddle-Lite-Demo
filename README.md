@@ -165,9 +165,9 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
     * 基于视频流的人脸关键点检测
 
-      - CPU预测结果（测试环境：华为mate30）
+      - CPU预测结果（测试环境：OnePlus 7）
       
-      ![android_face_keypoints_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_keypoints2_cpu.jpg)
+      ![android_face_keypoints_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_cpu.jpg)
 
       - NPU预测结果
 
