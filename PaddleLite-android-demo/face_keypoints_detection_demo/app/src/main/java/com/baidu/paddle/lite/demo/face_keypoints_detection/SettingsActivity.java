@@ -44,7 +44,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
     List<String> fdtPreInstalledInputStds = null;
     List<String> fdtPreInstalledScoreThresholds = null;
 
-    // FaceKeypoints detection
+    // Face keypoints detector
     static public int fkpSelectedModelIdx = 0;
     static public String fkpModelDir = "";
     static public int fkpCPUThreadNum = 0;
