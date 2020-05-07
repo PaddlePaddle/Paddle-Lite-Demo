@@ -1,7 +1,6 @@
 # Paddle-Lite-Demo
 
-
-## 功能
+Paddle-Lite提供IOS、Android和ARMLinux的示例，具体如下：
 * iOS示例:
     * 基于MobileNetV1的图像分类（支持视频流）；
     * 基于MobileNetV1-SSD的目标检测（支持视频流）;
@@ -14,6 +13,12 @@
 * ARMLinux示例:
     * 基于MobileNetV1的图像分类；
     * 基于MobileNetV1-SSD的目标检测；
+
+关于Paddle-Lite和示例，请参考本文剩余章节和如下文档链接：
+* [文档官网](https://paddle-lite.readthedocs.io/zh/latest/index.html)
+* 文档官网中的[Android示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/android_app_demo.html)
+* 文档官网中的[IOS示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/ios_app_demo.html)
+* [Paddle-Lite Repo](https://github.com/PaddlePaddle/Paddle-Lite)
 
 ## 要求
 
