@@ -219,7 +219,7 @@ std::vector<Object> detect_object(const float* data,
     NSString *path = [[NSBundle mainBundle] bundlePath];
     std::string paddle_mobilenetv1_dir = std::string([path UTF8String]);
     MobileConfig config;
-    config.set_model_dir(paddle_mobilenetv1_dir);
+    config.set_model_from_file(paddle_mobilenetv1_dir + "/model.nb");
     net_mbv1 = CreatePaddlePredictor<MobileConfig>(config);
     self.mean = {0.5f, 0.5f, 0.5f};
     self.scale = {0.5f, 0.5f, 0.5f};

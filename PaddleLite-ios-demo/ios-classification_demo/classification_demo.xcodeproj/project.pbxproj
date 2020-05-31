@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E0846DEC23065E5300031405 /* param.nb in Resources */ = {isa = PBXBuildFile; fileRef = E0846DEA23065E5300031405 /* param.nb */; };
-		E0846DED23065E5300031405 /* __model__.nb in Resources */ = {isa = PBXBuildFile; fileRef = E0846DEB23065E5300031405 /* __model__.nb */; };
+		5277CD0A248386ED003DDFCE /* model.nb in Resources */ = {isa = PBXBuildFile; fileRef = 5277CD09248386ED003DDFCE /* model.nb */; };
 		E0846DF4230BCF5700031405 /* labels.txt in Resources */ = {isa = PBXBuildFile; fileRef = E0846DF3230BCF5700031405 /* labels.txt */; };
 		E0846DF6230BD75D00031405 /* cat.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E0846DF5230BD75D00031405 /* cat.jpg */; };
 		E0A18EDE219C03000015DC15 /* face.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E0A18EDD219C03000015DC15 /* face.jpg */; };
@@ -27,8 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E0846DEA23065E5300031405 /* param.nb */ = {isa = PBXFileReference; lastKnownFileType = file; path = param.nb; sourceTree = "<group>"; };
-		E0846DEB23065E5300031405 /* __model__.nb */ = {isa = PBXFileReference; lastKnownFileType = file; path = __model__.nb; sourceTree = "<group>"; };
+		5277CD09248386ED003DDFCE /* model.nb */ = {isa = PBXFileReference; lastKnownFileType = file; path = model.nb; sourceTree = "<group>"; };
 		E0846DF2230BC93900031405 /* timer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
 		E0846DF3230BCF5700031405 /* labels.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = labels.txt; sourceTree = "<group>"; };
 		E0846DF5230BD75D00031405 /* cat.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cat.jpg; sourceTree = "<group>"; };
@@ -77,8 +75,7 @@
 		E0846DE9230658E900031405 /* mobilenetv1 */ = {
 			isa = PBXGroup;
 			children = (
-				E0846DEB23065E5300031405 /* __model__.nb */,
-				E0846DEA23065E5300031405 /* param.nb */,
+				5277CD09248386ED003DDFCE /* model.nb */,
 			);
 			path = mobilenetv1;
 			sourceTree = "<group>";
@@ -191,13 +188,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E0846DEC23065E5300031405 /* param.nb in Resources */,
 				E0846DF4230BCF5700031405 /* labels.txt in Resources */,
 				E0A53564219A832E005A6056 /* LaunchScreen.storyboard in Resources */,
 				E0A53576219A89FF005A6056 /* lib in Resources */,
+				5277CD0A248386ED003DDFCE /* model.nb in Resources */,
 				E0A18EDE219C03000015DC15 /* face.jpg in Resources */,
 				E0846DF6230BD75D00031405 /* cat.jpg in Resources */,
-				E0846DED23065E5300031405 /* __model__.nb in Resources */,
 				E0A53561219A832E005A6056 /* Assets.xcassets in Resources */,
 				E0A5355F219A832A005A6056 /* Main.storyboard in Resources */,
 				E0A53581219AAFC1005A6056 /* lena.png in Resources */,

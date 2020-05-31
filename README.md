@@ -23,7 +23,8 @@ Paddle-Lite提供IOS、Android和ARMLinux的示例，具体如下：
 ## 要求
 
 * iOS
-    * Mac机器，需要有xcode环境（已验证：Xcode Version 10.1 (10B61)
+    * macOS+Xcode，已验证的环境：Xcode Version 11.5 (11E608c) on macOS Catalina(10.15.5)
+    * Xcode 11.3会报"Invalid bitcode version ..."的编译错误，请将Xcode升级到11.4及以上的版本后重新编译
     * 对于ios 12.x版本，如果提示“xxx.  which may not be supported by this version of Xcode”，请下载对应的[工具包]( https://github.com/iGhibli/iOS-DeviceSupport), 下载完成后解压放到/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport目录，重启xcode
 
 * Android
