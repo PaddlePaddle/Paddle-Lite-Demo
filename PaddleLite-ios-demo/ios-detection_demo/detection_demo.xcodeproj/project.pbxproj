@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E03A53D52325555500E62827 /* param.nb in Resources */ = {isa = PBXBuildFile; fileRef = E03A53D32325555500E62827 /* param.nb */; };
-		E03A53D62325555500E62827 /* __model__.nb in Resources */ = {isa = PBXBuildFile; fileRef = E03A53D42325555500E62827 /* __model__.nb */; };
+		5277CD0824838401003DDFCE /* model.nb in Resources */ = {isa = PBXBuildFile; fileRef = 5277CD0724838401003DDFCE /* model.nb */; };
 		E0846DF6230BD75D00031405 /* cat.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E0846DF5230BD75D00031405 /* cat.jpg */; };
 		E0A18EDE219C03000015DC15 /* face.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E0A18EDD219C03000015DC15 /* face.jpg */; };
 		E0A53559219A832A005A6056 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A53558219A832A005A6056 /* AppDelegate.m */; };
@@ -26,8 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E03A53D32325555500E62827 /* param.nb */ = {isa = PBXFileReference; lastKnownFileType = file; path = param.nb; sourceTree = "<group>"; };
-		E03A53D42325555500E62827 /* __model__.nb */ = {isa = PBXFileReference; lastKnownFileType = file; path = __model__.nb; sourceTree = "<group>"; };
+		5277CD0724838401003DDFCE /* model.nb */ = {isa = PBXFileReference; lastKnownFileType = file; path = model.nb; sourceTree = "<group>"; };
 		E0846DF2230BC93900031405 /* timer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
 		E0846DF5230BD75D00031405 /* cat.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cat.jpg; sourceTree = "<group>"; };
 		E0A18EDD219C03000015DC15 /* face.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = face.jpg; sourceTree = "<group>"; };
@@ -67,8 +65,7 @@
 		E03A53D22325555500E62827 /* mobilenetv1-ssd */ = {
 			isa = PBXGroup;
 			children = (
-				E03A53D32325555500E62827 /* param.nb */,
-				E03A53D42325555500E62827 /* __model__.nb */,
+				5277CD0724838401003DDFCE /* model.nb */,
 			);
 			path = "mobilenetv1-ssd";
 			sourceTree = "<group>";
@@ -192,11 +189,10 @@
 				E0A53576219A89FF005A6056 /* lib in Resources */,
 				E0A18EDE219C03000015DC15 /* face.jpg in Resources */,
 				E0846DF6230BD75D00031405 /* cat.jpg in Resources */,
-				E03A53D52325555500E62827 /* param.nb in Resources */,
 				E0A53561219A832E005A6056 /* Assets.xcassets in Resources */,
 				E0A5355F219A832A005A6056 /* Main.storyboard in Resources */,
-				E03A53D62325555500E62827 /* __model__.nb in Resources */,
 				E0A53581219AAFC1005A6056 /* lena.png in Resources */,
+				5277CD0824838401003DDFCE /* model.nb in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

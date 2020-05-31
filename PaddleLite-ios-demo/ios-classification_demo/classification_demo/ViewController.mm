@@ -170,7 +170,7 @@ std::string print_topk(const float *scores, const int size, const int topk, \
     NSString *path = [[NSBundle mainBundle] bundlePath];
     std::string paddle_mobilenetv1_dir = std::string([path UTF8String]);
     MobileConfig config;
-    config.set_model_dir(paddle_mobilenetv1_dir);
+    config.set_model_from_file(paddle_mobilenetv1_dir + "/model.nb");
     net_mbv1 = CreatePaddlePredictor<MobileConfig>(config);
     self.mean = {0.485f, 0.456f, 0.406f};
     self.scale = {0.229f, 0.224f, 0.225f};
