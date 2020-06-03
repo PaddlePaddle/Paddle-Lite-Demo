@@ -32,7 +32,7 @@ dependencies {
 }
 
 
-def paddleLiteLibs = 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_3_0.tar.gz'
+def paddleLiteLibs = 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_6_1.tar.gz'
 task downloadAndExtractPaddleLiteLibs(type: DefaultTask) {
     doFirst {
         println "Downloading and extracting Paddle Lite libs"
@@ -81,7 +81,7 @@ preBuild.dependsOn downloadAndExtractPaddleLiteLibs
 
 def paddleLiteModels = [
         [
-                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/facedetection_fp32_240_430_for_cpu_v2_3_0.tar.gz',
+                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/facedetection_fp32_240_430_for_cpu_v2_6_1.tar.gz',
                 'dest' : 'src/main/assets/face_detection/models/facedetection_for_cpu'
         ]
 ]
