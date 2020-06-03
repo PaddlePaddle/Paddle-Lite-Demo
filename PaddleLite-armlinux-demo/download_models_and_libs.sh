@@ -6,9 +6,9 @@ DETECTION_MODEL_DIR="$(pwd)/object_detection_demo/models/ssd_mobilenet_v1_pascal
 CLASSIFICATION_MODEL_DIR="$(pwd)/image_classification_demo/models/mobilenet_v1_for_cpu"
 LIBS_DIR="$(pwd)/Paddle-Lite"
 
-CLASSIFICATION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_cpu_v2_3_0.tar.gz"
-DETECTION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ssd_mobilenet_v1_pascalvoc_fp32_300_for_cpu_v2_3_0.tar.gz"
-LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/armlinux/paddle_lite_libs_v2_3_0.tar.gz"
+CLASSIFICATION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_cpu_v2_6_0.tar.gz"
+DETECTION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ssd_mobilenet_v1_pascalvoc_fp32_300_for_cpu_v2_6_0.tar.gz"
+LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/armlinux/paddle_lite_libs_v2_6_0.tar.gz"
 
 download_and_uncompress() {
   local url="$1"
