@@ -172,6 +172,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         etInputMean.setText(input_mean);
         etInputStd.setSummary(input_std);
         etInputStd.setText(input_std);
+        etScoreThreshold.setSummary(score_threshold);
         etScoreThreshold.setText(score_threshold);
     }
 
