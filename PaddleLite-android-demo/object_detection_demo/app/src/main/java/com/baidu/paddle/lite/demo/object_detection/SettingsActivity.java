@@ -6,6 +6,8 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.support.v7.app.ActionBar;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +68,22 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         preInstalledInputMeans.add(getString(R.string.INPUT_MEAN_DEFAULT));
         preInstalledInputStds.add(getString(R.string.INPUT_STD_DEFAULT));
         preInstalledScoreThresholds.add(getString(R.string.SCORE_THRESHOLD_DEFAULT));
+        // Add mobilenet_v1_for_npu if Soc is kirin 810 or 990
+        if (Utils.isSupportedNPU()) {
+            preInstalledModelPaths.add("models/ssd_mobilenet_v1_pascalvoc_for_npu");
+            preInstalledLabelPaths.add("labels/pascalvoc_label_list");
+            preInstalledImagePaths.add("images/dog.jpg");
+            preInstalledCPUThreadNums.add("1"); // Useless for NPU
+            preInstalledCPUPowerModes.add("LITE_POWER_HIGH");  // Useless for NPU
+            preInstalledInputColorFormats.add("RGB");
+            preInstalledInputShapes.add("1,3,300,300");
+            preInstalledInputMeans.add("0.5,0.5,0.5");
+            preInstalledInputStds.add("0.5,0.5,0.5");
+            preInstalledScoreThresholds.add("0.5");
+        } else {
+            Toast.makeText(this, "NPU is not supported on your device! Kirin 810 and 990's NPU is the only supported " +
+                    "NPU in Paddle-Lite.", Toast.LENGTH_LONG).show();
+        }
 
         // Setup UI components
         lpChoosePreInstalledModel =

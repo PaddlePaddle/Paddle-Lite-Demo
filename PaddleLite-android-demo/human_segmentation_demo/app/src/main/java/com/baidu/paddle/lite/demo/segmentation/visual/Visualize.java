@@ -15,7 +15,7 @@ public class Visualize {
 
         final int[] colors_map = {0xFF000000, 0xFFFFFF00};
 
-        float[] output = outputTensor.getFloatData();
+        long[] output = outputTensor.getLongData();
         long outputShape[] = outputTensor.shape();
         long outputSize = 1;
 
