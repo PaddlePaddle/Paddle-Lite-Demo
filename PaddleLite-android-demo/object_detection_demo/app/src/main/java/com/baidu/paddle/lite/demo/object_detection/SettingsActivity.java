@@ -68,9 +68,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         preInstalledInputMeans.add(getString(R.string.INPUT_MEAN_DEFAULT));
         preInstalledInputStds.add(getString(R.string.INPUT_STD_DEFAULT));
         preInstalledScoreThresholds.add(getString(R.string.SCORE_THRESHOLD_DEFAULT));
-        // Add mobilenet_v1_for_npu if Soc is kirin 810 or 990
+        // Add ssd_mobilenet_v1_pascalvoc_for_hybrid_cpu_npu if Soc is kirin 810 or 990
         if (Utils.isSupportedNPU()) {
-            preInstalledModelPaths.add("models/ssd_mobilenet_v1_pascalvoc_for_npu");
+            preInstalledModelPaths.add("models/ssd_mobilenet_v1_pascalvoc_for_hybrid_cpu_npu");
             preInstalledLabelPaths.add("labels/pascalvoc_label_list");
             preInstalledImagePaths.add("images/dog.jpg");
             preInstalledCPUThreadNums.add("1"); // Useless for NPU
