@@ -14,12 +14,12 @@
 
 #include "Pipeline.h"
 
-YoloDetector::YoloDetector(const std::string &modelDir,
-                           const std::string &labelPath, const int cpuThreadNum,
-                           const std::string &cpuPowerMode, int inputWidth,
-                           int inputHeight, const std::vector<float> &inputMean,
-                           const std::vector<float> &inputStd,
-                           float scoreThreshold)
+SSDDetector::SSDDetector(const std::string &modelDir,
+                         const std::string &labelPath, const int cpuThreadNum,
+                         const std::string &cpuPowerMode, int inputWidth,
+                         int inputHeight, const std::vector<float> &inputMean,
+                         const std::vector<float> &inputStd,
+                         float scoreThreshold)
     : inputWidth_(inputWidth), inputHeight_(inputHeight), inputMean_(inputMean),
       inputStd_(inputStd), scoreThreshold_(scoreThreshold) {
   paddle::lite_api::MobileConfig config;
@@ -34,7 +34,7 @@ YoloDetector::YoloDetector(const std::string &modelDir,
 }
 
 std::vector<std::string>
-YoloDetector::LoadLabelList(const std::string &labelPath) {
+SSDDetector::LoadLabelList(const std::string &labelPath) {
   std::ifstream file;
   std::vector<std::string> labels;
   file.open(labelPath);
@@ -48,7 +48,7 @@ YoloDetector::LoadLabelList(const std::string &labelPath) {
   return labels;
 }
 
-std::vector<cv::Scalar> YoloDetector::GenerateColorMap(int numOfClasses) {
+std::vector<cv::Scalar> SSDDetector::GenerateColorMap(int numOfClasses) {
   std::vector<cv::Scalar> colorMap = std::vector<cv::Scalar>(numOfClasses);
   for (int i = 0; i < numOfClasses; i++) {
     int j = 0;
@@ -66,8 +66,8 @@ std::vector<cv::Scalar> YoloDetector::GenerateColorMap(int numOfClasses) {
   return colorMap;
 }
 
-void YoloDetector::Preprocess(const cv::Mat &rgbaImage) {
-  // Set the data of input image
+void SSDDetector::Preprocess(const cv::Mat &rgbaImage) {
+  // Feed the input tensor with the data of the preprocessed image
   auto inputTensor = predictor_->GetInput(0);
   std::vector<int64_t> inputShape = {1, 3, inputHeight_, inputWidth_};
   inputTensor->Resize(inputShape);
@@ -82,15 +82,9 @@ void YoloDetector::Preprocess(const cv::Mat &rgbaImage) {
   NHWC3ToNC3HW(reinterpret_cast<const float *>(resizedRGBImage.data), inputData,
                inputMean_.data(), inputStd_.data(), inputShape[3],
                inputShape[2]);
-  // Set the size of input image
-  auto sizeTensor = predictor_->GetInput(1);
-  sizeTensor->Resize({1, 2});
-  auto sizeData = sizeTensor->mutable_data<int32_t>();
-  sizeData[0] = inputShape[3];
-  sizeData[1] = inputShape[2];
 }
 
-void YoloDetector::Postprocess(std::vector<RESULT> *results) {
+void SSDDetector::Postprocess(std::vector<RESULT> *results) {
   auto outputTensor = predictor_->GetOutput(0);
   auto outputData = outputTensor->data<float>();
   auto outputShape = outputTensor->shape();
@@ -110,33 +104,33 @@ void YoloDetector::Postprocess(std::vector<RESULT> *results) {
                             ? colorMap_[class_id]
                             : cv::Scalar(0, 0, 0);
     object.score = score;
-    object.x = outputData[i + 2] / inputWidth_;
-    object.y = outputData[i + 3] / inputHeight_;
-    object.w = (outputData[i + 4] - outputData[i + 2] + 1) / inputWidth_;
-    object.h = (outputData[i + 5] - outputData[i + 3] + 1) / inputHeight_;
+    object.x = MIN(MAX(outputData[i + 2], 0.0f), 1.0f);
+    object.y = MIN(MAX(outputData[i + 3], 0.0f), 1.0f);
+    object.w = MIN(MAX(outputData[i + 4] - outputData[i + 2], 0.0f), 1.0f);
+    object.h = MIN(MAX(outputData[i + 5] - outputData[i + 3], 0.0f), 1.0f);
     results->push_back(object);
   }
 }
 
-void YoloDetector::Predict(const cv::Mat &rgbaImage,
-                           std::vector<RESULT> *results, double *preprocessTime,
-                           double *predictTime, double *postprocessTime) {
+void SSDDetector::Predict(const cv::Mat &rgbaImage,
+                          std::vector<RESULT> *results, double *preprocessTime,
+                          double *predictTime, double *postprocessTime) {
   auto t = GetCurrentTime();
 
   t = GetCurrentTime();
   Preprocess(rgbaImage);
   *preprocessTime = GetElapsedTime(t);
-  LOGD("Yolo detector postprocess costs %f ms", *preprocessTime);
+  LOGD("SSD detector postprocess costs %f ms", *preprocessTime);
 
   t = GetCurrentTime();
   predictor_->Run();
   *predictTime = GetElapsedTime(t);
-  LOGD("Yolo detector predict costs %f ms", *predictTime);
+  LOGD("SSD detector predict costs %f ms", *predictTime);
 
   t = GetCurrentTime();
   Postprocess(results);
   *postprocessTime = GetElapsedTime(t);
-  LOGD("Yolo detector postprocess costs %f ms", *postprocessTime);
+  LOGD("SSD detector postprocess costs %f ms", *postprocessTime);
 }
 
 Pipeline::Pipeline(const std::string &modelDir, const std::string &labelPath,
@@ -144,9 +138,9 @@ Pipeline::Pipeline(const std::string &modelDir, const std::string &labelPath,
                    int inputWidth, int inputHeight,
                    const std::vector<float> &inputMean,
                    const std::vector<float> &inputStd, float scoreThreshold) {
-  yoloDetector_.reset(new YoloDetector(modelDir, labelPath, cpuThreadNum,
-                                       cpuPowerMode, inputWidth, inputHeight,
-                                       inputMean, inputStd, scoreThreshold));
+  ssdDetector_.reset(new SSDDetector(modelDir, labelPath, cpuThreadNum,
+                                     cpuPowerMode, inputWidth, inputHeight,
+                                     inputMean, inputStd, scoreThreshold));
 }
 
 void Pipeline::VisualizeResults(const std::vector<RESULT> &results,
@@ -223,8 +217,8 @@ bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
 
   // Feed the image, run inference and parse the results
   std::vector<RESULT> results;
-  yoloDetector_->Predict(rgbaImage, &results, &preprocessTime, &predictTime,
-                         &postprocessTime);
+  ssdDetector_->Predict(rgbaImage, &results, &preprocessTime, &predictTime,
+                        &postprocessTime);
 
   // Visualize the objects to the origin image
   VisualizeResults(results, &rgbaImage);
