@@ -45,7 +45,7 @@ dependencies {
 
 def archives = [
         [
-                'src' : 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_6_1_ddk320.tar.gz',
+                'src' : 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_6_1.tar.gz',
                 'dest': 'PaddleLite'
         ],
         [
