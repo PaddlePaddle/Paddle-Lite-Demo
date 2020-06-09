@@ -14,12 +14,11 @@
 
 #include "Pipeline.h"
 
-SSDDetector::SSDDetector(const std::string &modelDir,
-                         const std::string &labelPath, const int cpuThreadNum,
-                         const std::string &cpuPowerMode, int inputWidth,
-                         int inputHeight, const std::vector<float> &inputMean,
-                         const std::vector<float> &inputStd,
-                         float scoreThreshold)
+Detector::Detector(const std::string &modelDir, const std::string &labelPath,
+                   const int cpuThreadNum, const std::string &cpuPowerMode,
+                   int inputWidth, int inputHeight,
+                   const std::vector<float> &inputMean,
+                   const std::vector<float> &inputStd, float scoreThreshold)
     : inputWidth_(inputWidth), inputHeight_(inputHeight), inputMean_(inputMean),
       inputStd_(inputStd), scoreThreshold_(scoreThreshold) {
   paddle::lite_api::MobileConfig config;
@@ -33,8 +32,7 @@ SSDDetector::SSDDetector(const std::string &modelDir,
   colorMap_ = GenerateColorMap(labelList_.size());
 }
 
-std::vector<std::string>
-SSDDetector::LoadLabelList(const std::string &labelPath) {
+std::vector<std::string> Detector::LoadLabelList(const std::string &labelPath) {
   std::ifstream file;
   std::vector<std::string> labels;
   file.open(labelPath);
@@ -48,7 +46,7 @@ SSDDetector::LoadLabelList(const std::string &labelPath) {
   return labels;
 }
 
-std::vector<cv::Scalar> SSDDetector::GenerateColorMap(int numOfClasses) {
+std::vector<cv::Scalar> Detector::GenerateColorMap(int numOfClasses) {
   std::vector<cv::Scalar> colorMap = std::vector<cv::Scalar>(numOfClasses);
   for (int i = 0; i < numOfClasses; i++) {
     int j = 0;
@@ -66,7 +64,7 @@ std::vector<cv::Scalar> SSDDetector::GenerateColorMap(int numOfClasses) {
   return colorMap;
 }
 
-void SSDDetector::Preprocess(const cv::Mat &rgbaImage) {
+void Detector::Preprocess(const cv::Mat &rgbaImage) {
   // Feed the input tensor with the data of the preprocessed image
   auto inputTensor = predictor_->GetInput(0);
   std::vector<int64_t> inputShape = {1, 3, inputHeight_, inputWidth_};
@@ -84,7 +82,7 @@ void SSDDetector::Preprocess(const cv::Mat &rgbaImage) {
                inputShape[2]);
 }
 
-void SSDDetector::Postprocess(std::vector<RESULT> *results) {
+void Detector::Postprocess(std::vector<RESULT> *results) {
   auto outputTensor = predictor_->GetOutput(0);
   auto outputData = outputTensor->data<float>();
   auto outputShape = outputTensor->shape();
@@ -112,25 +110,25 @@ void SSDDetector::Postprocess(std::vector<RESULT> *results) {
   }
 }
 
-void SSDDetector::Predict(const cv::Mat &rgbaImage,
-                          std::vector<RESULT> *results, double *preprocessTime,
-                          double *predictTime, double *postprocessTime) {
+void Detector::Predict(const cv::Mat &rgbaImage, std::vector<RESULT> *results,
+                       double *preprocessTime, double *predictTime,
+                       double *postprocessTime) {
   auto t = GetCurrentTime();
 
   t = GetCurrentTime();
   Preprocess(rgbaImage);
   *preprocessTime = GetElapsedTime(t);
-  LOGD("SSD detector postprocess costs %f ms", *preprocessTime);
+  LOGD("Detector postprocess costs %f ms", *preprocessTime);
 
   t = GetCurrentTime();
   predictor_->Run();
   *predictTime = GetElapsedTime(t);
-  LOGD("SSD detector predict costs %f ms", *predictTime);
+  LOGD("Detector predict costs %f ms", *predictTime);
 
   t = GetCurrentTime();
   Postprocess(results);
   *postprocessTime = GetElapsedTime(t);
-  LOGD("SSD detector postprocess costs %f ms", *postprocessTime);
+  LOGD("Detector postprocess costs %f ms", *postprocessTime);
 }
 
 Pipeline::Pipeline(const std::string &modelDir, const std::string &labelPath,
@@ -138,9 +136,9 @@ Pipeline::Pipeline(const std::string &modelDir, const std::string &labelPath,
                    int inputWidth, int inputHeight,
                    const std::vector<float> &inputMean,
                    const std::vector<float> &inputStd, float scoreThreshold) {
-  ssdDetector_.reset(new SSDDetector(modelDir, labelPath, cpuThreadNum,
-                                     cpuPowerMode, inputWidth, inputHeight,
-                                     inputMean, inputStd, scoreThreshold));
+  detector_.reset(new Detector(modelDir, labelPath, cpuThreadNum, cpuPowerMode,
+                               inputWidth, inputHeight, inputMean, inputStd,
+                               scoreThreshold));
 }
 
 void Pipeline::VisualizeResults(const std::vector<RESULT> &results,
@@ -217,8 +215,8 @@ bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
 
   // Feed the image, run inference and parse the results
   std::vector<RESULT> results;
-  ssdDetector_->Predict(rgbaImage, &results, &preprocessTime, &predictTime,
-                        &postprocessTime);
+  detector_->Predict(rgbaImage, &results, &preprocessTime, &predictTime,
+                     &postprocessTime);
 
   // Visualize the objects to the origin image
   VisualizeResults(results, &rgbaImage);

@@ -27,21 +27,17 @@
 
 struct RESULT {
   std::string class_name;
-  cv::Scalar fill_color;
+  int class_id;
   float score;
-  float x;
-  float y;
-  float w;
-  float h;
 };
 
-class Detector {
+class Classifier {
 public:
-  explicit Detector(const std::string &modelDir, const std::string &labelPath,
-                    const int cpuThreadNum, const std::string &cpuPowerMode,
-                    int inputWidth, int inputHeight,
-                    const std::vector<float> &inputMean,
-                    const std::vector<float> &inputStd, float scoreThreshold);
+  explicit Classifier(const std::string &modelDir, const std::string &labelPath,
+                      const int cpuThreadNum, const std::string &cpuPowerMode,
+                      int inputWidth, int inputHeight,
+                      const std::vector<float> &inputMean,
+                      const std::vector<float> &inputStd);
 
   void Predict(const cv::Mat &rgbImage, std::vector<RESULT> *results,
                double *preprocessTime, double *predictTime,
@@ -49,7 +45,6 @@ public:
 
 private:
   std::vector<std::string> LoadLabelList(const std::string &path);
-  std::vector<cv::Scalar> GenerateColorMap(int numOfClasses);
   void Preprocess(const cv::Mat &rgbaImage);
   void Postprocess(std::vector<RESULT> *results);
 
@@ -58,9 +53,7 @@ private:
   int inputHeight_;
   std::vector<float> inputMean_;
   std::vector<float> inputStd_;
-  float scoreThreshold_;
   std::vector<std::string> labelList_;
-  std::vector<cv::Scalar> colorMap_;
   std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor_;
 };
 
@@ -69,7 +62,7 @@ public:
   Pipeline(const std::string &modelDir, const std::string &labelPath,
            const int cpuThreadNum, const std::string &cpuPowerMode,
            int inputWidth, int inputHeight, const std::vector<float> &inputMean,
-           const std::vector<float> &inputStd, float scoreThreshold);
+           const std::vector<float> &inputStd);
 
   bool Process(int inTextureId, int outTextureId, int textureWidth,
                int textureHeight, std::string savedImagePath);
@@ -108,5 +101,5 @@ private:
                        double postprocessTime, cv::Mat *rgbaImage);
 
 private:
-  std::shared_ptr<Detector> detector_;
+  std::shared_ptr<Classifier> classifier_;
 };

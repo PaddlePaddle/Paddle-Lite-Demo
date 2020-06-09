@@ -1,4 +1,4 @@
-package com.baidu.paddle.lite.demo.yolo_detection;
+package com.baidu.paddle.lite.demo.mobilenet_classification;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.baidu.paddle.lite.demo.common.AppCompatPreferenceActivity;
 import com.baidu.paddle.lite.demo.common.Utils;
-import com.baidu.paddle.lite.demo.yolo_detection.R;
+import com.baidu.paddle.lite.demo.mobilenet_classification.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
     static public int inputHeight = 0;
     static public float[] inputMean = new float[]{};
     static public float[] inputStd = new float[]{};
-    static public float scoreThreshold = 0.0f;
 
     ListPreference lpChoosePreInstalledModel = null;
     EditTextPreference etModelDir = null;
@@ -40,7 +39,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
     EditTextPreference etInputHeight = null;
     EditTextPreference etInputMean = null;
     EditTextPreference etInputStd = null;
-    EditTextPreference etScoreThreshold = null;
 
     List<String> preInstalledModelDirs = null;
     List<String> preInstalledLabelPaths = null;
@@ -50,7 +48,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
     List<String> preInstalledInputHeights = null;
     List<String> preInstalledInputMeans = null;
     List<String> preInstalledInputStds = null;
-    List<String> preInstalledScoreThresholds = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,7 +67,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         preInstalledInputHeights = new ArrayList<String>();
         preInstalledInputMeans = new ArrayList<String>();
         preInstalledInputStds = new ArrayList<String>();
-        preInstalledScoreThresholds = new ArrayList<String>();
         preInstalledModelDirs.add(getString(R.string.MODEL_DIR_DEFAULT));
         preInstalledLabelPaths.add(getString(R.string.LABEL_PATH_DEFAULT));
         preInstalledCPUThreadNums.add(getString(R.string.CPU_THREAD_NUM_DEFAULT));
@@ -79,18 +75,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         preInstalledInputHeights.add(getString(R.string.INPUT_HEIGHT_DEFAULT));
         preInstalledInputMeans.add(getString(R.string.INPUT_MEAN_DEFAULT));
         preInstalledInputStds.add(getString(R.string.INPUT_STD_DEFAULT));
-        preInstalledScoreThresholds.add(getString(R.string.SCORE_THRESHOLD_DEFAULT));
-        // Add yolov3_mobilenet_v3_for_hybrid_cpu_npu for CPU and huawei NPU
+        // Add mobilenet_v1_for_npu if Soc is kirin 810 or 990
         if (Utils.isSupportedNPU()) {
-            preInstalledModelDirs.add("models/yolov3_mobilenet_v3_for_hybrid_cpu_npu");
-            preInstalledLabelPaths.add("labels/coco-labels-2014_2017.txt");
+            preInstalledModelDirs.add("models/mobilenet_v1_for_npu");
+            preInstalledLabelPaths.add("labels/synset_words.txt");
             preInstalledCPUThreadNums.add("1"); // Useless for NPU
             preInstalledCPUPowerModes.add("LITE_POWER_HIGH");  // Useless for NPU
-            preInstalledInputWidths.add("320");
-            preInstalledInputHeights.add("320");
+            preInstalledInputWidths.add("224");
+            preInstalledInputHeights.add("224");
             preInstalledInputMeans.add("0.485,0.456,0.406");
             preInstalledInputStds.add("0.229,0.224,0.225");
-            preInstalledScoreThresholds.add("0.2");
         } else {
             Toast.makeText(this, "NPU model is not supported by your device.", Toast.LENGTH_LONG).show();
         }
@@ -113,7 +107,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         etInputHeight = (EditTextPreference) findPreference(getString(R.string.INPUT_HEIGHT_KEY));
         etInputMean = (EditTextPreference) findPreference(getString(R.string.INPUT_MEAN_KEY));
         etInputStd = (EditTextPreference) findPreference(getString(R.string.INPUT_STD_KEY));
-        etScoreThreshold = (EditTextPreference) findPreference(getString(R.string.SCORE_THRESHOLD_KEY));
     }
 
     private void reloadSettingsAndUpdateUI() {
@@ -132,7 +125,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
             editor.putString(getString(R.string.INPUT_HEIGHT_KEY), preInstalledInputHeights.get(selected_model_idx));
             editor.putString(getString(R.string.INPUT_MEAN_KEY), preInstalledInputMeans.get(selected_model_idx));
             editor.putString(getString(R.string.INPUT_STD_KEY), preInstalledInputStds.get(selected_model_idx));
-            editor.putString(getString(R.string.SCORE_THRESHOLD_KEY), preInstalledScoreThresholds.get(selected_model_idx));
             editor.commit();
             lpChoosePreInstalledModel.setSummary(selected_model_dir);
             selectedModelIdx = selected_model_idx;
@@ -154,8 +146,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
                 getString(R.string.INPUT_MEAN_DEFAULT));
         String input_std = sharedPreferences.getString(getString(R.string.INPUT_STD_KEY),
                 getString(R.string.INPUT_STD_DEFAULT));
-        String score_threshold = sharedPreferences.getString(getString(R.string.SCORE_THRESHOLD_KEY),
-                getString(R.string.SCORE_THRESHOLD_DEFAULT));
 
         etModelDir.setSummary(model_dir);
         etLabelPath.setSummary(label_path);
@@ -171,8 +161,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         etInputMean.setText(input_mean);
         etInputStd.setSummary(input_std);
         etInputStd.setText(input_std);
-        etScoreThreshold.setSummary(score_threshold);
-        etScoreThreshold.setText(score_threshold);
     }
 
     static boolean checkAndUpdateSettings(Context ctx) {
@@ -231,11 +219,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         }
         inputStd = array_data;
 
-        String score_threshold = sharedPreferences.getString(ctx.getString(R.string.SCORE_THRESHOLD_KEY),
-                ctx.getString(R.string.SCORE_THRESHOLD_DEFAULT));
-        settingsChanged |= scoreThreshold != Float.parseFloat(score_threshold);
-        scoreThreshold = Float.parseFloat(score_threshold);
-
         return settingsChanged;
     }
 
@@ -249,7 +232,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         inputHeight = 0;
         inputMean = new float[]{};
         inputStd = new float[]{};
-        scoreThreshold = 0;
     }
 
     @Override

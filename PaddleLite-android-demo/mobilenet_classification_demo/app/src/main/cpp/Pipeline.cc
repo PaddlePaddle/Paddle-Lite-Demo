@@ -14,13 +14,13 @@
 
 #include "Pipeline.h"
 
-Detector::Detector(const std::string &modelDir, const std::string &labelPath,
-                   const int cpuThreadNum, const std::string &cpuPowerMode,
-                   int inputWidth, int inputHeight,
-                   const std::vector<float> &inputMean,
-                   const std::vector<float> &inputStd, float scoreThreshold)
+Classifier::Classifier(const std::string &modelDir,
+                       const std::string &labelPath, const int cpuThreadNum,
+                       const std::string &cpuPowerMode, int inputWidth,
+                       int inputHeight, const std::vector<float> &inputMean,
+                       const std::vector<float> &inputStd)
     : inputWidth_(inputWidth), inputHeight_(inputHeight), inputMean_(inputMean),
-      inputStd_(inputStd), scoreThreshold_(scoreThreshold) {
+      inputStd_(inputStd) {
   paddle::lite_api::MobileConfig config;
   config.set_model_from_file(modelDir + "/model.nb");
   config.set_threads(cpuThreadNum);
@@ -29,16 +29,20 @@ Detector::Detector(const std::string &modelDir, const std::string &labelPath,
       paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(
           config);
   labelList_ = LoadLabelList(labelPath);
-  colorMap_ = GenerateColorMap(labelList_.size());
 }
 
-std::vector<std::string> Detector::LoadLabelList(const std::string &labelPath) {
+std::vector<std::string>
+Classifier::LoadLabelList(const std::string &labelPath) {
   std::ifstream file;
   std::vector<std::string> labels;
   file.open(labelPath);
   while (file) {
     std::string line;
     std::getline(file, line);
+    std::string::size_type pos = line.find(" ");
+    if (pos != std::string::npos) {
+      line = line.substr(pos);
+    }
     labels.push_back(line);
   }
   file.clear();
@@ -46,26 +50,8 @@ std::vector<std::string> Detector::LoadLabelList(const std::string &labelPath) {
   return labels;
 }
 
-std::vector<cv::Scalar> Detector::GenerateColorMap(int numOfClasses) {
-  std::vector<cv::Scalar> colorMap = std::vector<cv::Scalar>(numOfClasses);
-  for (int i = 0; i < numOfClasses; i++) {
-    int j = 0;
-    int label = i;
-    int R = 0, G = 0, B = 0;
-    while (label) {
-      R |= (((label >> 0) & 1) << (7 - j));
-      G |= (((label >> 1) & 1) << (7 - j));
-      B |= (((label >> 2) & 1) << (7 - j));
-      j++;
-      label >>= 3;
-    }
-    colorMap[i] = cv::Scalar(R, G, B);
-  }
-  return colorMap;
-}
-
-void Detector::Preprocess(const cv::Mat &rgbaImage) {
-  // Set the data of input image
+void Classifier::Preprocess(const cv::Mat &rgbaImage) {
+  // Feed the input tensor with the data of the preprocessed image
   auto inputTensor = predictor_->GetInput(0);
   std::vector<int64_t> inputShape = {1, 3, inputHeight_, inputWidth_};
   inputTensor->Resize(inputShape);
@@ -80,99 +66,89 @@ void Detector::Preprocess(const cv::Mat &rgbaImage) {
   NHWC3ToNC3HW(reinterpret_cast<const float *>(resizedRGBImage.data), inputData,
                inputMean_.data(), inputStd_.data(), inputShape[3],
                inputShape[2]);
-  // Set the size of input image
-  auto sizeTensor = predictor_->GetInput(1);
-  sizeTensor->Resize({1, 2});
-  auto sizeData = sizeTensor->mutable_data<int32_t>();
-  sizeData[0] = inputShape[3];
-  sizeData[1] = inputShape[2];
 }
 
-void Detector::Postprocess(std::vector<RESULT> *results) {
+bool topk_compare_func(std::pair<float, int> a, std::pair<float, int> b) {
+  return (a.first > b.first);
+}
+
+void Classifier::Postprocess(std::vector<RESULT> *results) {
   auto outputTensor = predictor_->GetOutput(0);
   auto outputData = outputTensor->data<float>();
   auto outputShape = outputTensor->shape();
   int outputSize = ShapeProduction(outputShape);
-  for (int i = 0; i < outputSize; i += 6) {
-    // Class id
-    auto class_id = static_cast<int>(round(outputData[i]));
-    // Confidence score
-    auto score = outputData[i + 1];
-    if (score < scoreThreshold_)
-      continue;
-    RESULT object;
-    object.class_name = class_id >= 0 && class_id < labelList_.size()
-                            ? labelList_[class_id]
-                            : "Unknow";
-    object.fill_color = class_id >= 0 && class_id < colorMap_.size()
-                            ? colorMap_[class_id]
-                            : cv::Scalar(0, 0, 0);
-    object.score = score;
-    object.x = outputData[i + 2] / inputWidth_;
-    object.y = outputData[i + 3] / inputHeight_;
-    object.w = (outputData[i + 4] - outputData[i + 2] + 1) / inputWidth_;
-    object.h = (outputData[i + 5] - outputData[i + 3] + 1) / inputHeight_;
-    results->push_back(object);
+  const int TOPK = 3;
+  std::vector<std::pair<float, int>> vec;
+  for (int i = 0; i < outputSize; i++) {
+    vec.push_back(std::make_pair(outputData[i], i));
+  }
+  std::partial_sort(vec.begin(), vec.begin() + TOPK, vec.end(),
+                    topk_compare_func);
+  results->resize(TOPK);
+  for (int i = 0; i < TOPK; i++) {
+    (*results)[i].score = vec[i].first;
+    (*results)[i].class_id = vec[i].second;
+    (*results)[i].class_name = "Unknown";
+    if ((*results)[i].class_id >= 0 &&
+        (*results)[i].class_id < labelList_.size()) {
+      (*results)[i].class_name = labelList_[(*results)[i].class_id];
+    }
   }
 }
 
-void Detector::Predict(const cv::Mat &rgbaImage, std::vector<RESULT> *results,
-                       double *preprocessTime, double *predictTime,
-                       double *postprocessTime) {
+void Classifier::Predict(const cv::Mat &rgbaImage, std::vector<RESULT> *results,
+                         double *preprocessTime, double *predictTime,
+                         double *postprocessTime) {
   auto t = GetCurrentTime();
 
   t = GetCurrentTime();
   Preprocess(rgbaImage);
   *preprocessTime = GetElapsedTime(t);
-  LOGD("Detector postprocess costs %f ms", *preprocessTime);
+  LOGD("Classifier postprocess costs %f ms", *preprocessTime);
 
   t = GetCurrentTime();
   predictor_->Run();
   *predictTime = GetElapsedTime(t);
-  LOGD("Detector predict costs %f ms", *predictTime);
+  LOGD("Classifier predict costs %f ms", *predictTime);
 
   t = GetCurrentTime();
   Postprocess(results);
   *postprocessTime = GetElapsedTime(t);
-  LOGD("Detector postprocess costs %f ms", *postprocessTime);
+  LOGD("Classifier postprocess costs %f ms", *postprocessTime);
 }
 
 Pipeline::Pipeline(const std::string &modelDir, const std::string &labelPath,
                    const int cpuThreadNum, const std::string &cpuPowerMode,
                    int inputWidth, int inputHeight,
                    const std::vector<float> &inputMean,
-                   const std::vector<float> &inputStd, float scoreThreshold) {
-  detector_.reset(new Detector(modelDir, labelPath, cpuThreadNum, cpuPowerMode,
-                               inputWidth, inputHeight, inputMean, inputStd,
-                               scoreThreshold));
+                   const std::vector<float> &inputStd) {
+  classifier_.reset(new Classifier(modelDir, labelPath, cpuThreadNum,
+                                   cpuPowerMode, inputWidth, inputHeight,
+                                   inputMean, inputStd));
 }
 
 void Pipeline::VisualizeResults(const std::vector<RESULT> &results,
                                 cv::Mat *rgbaImage) {
   int w = rgbaImage->cols;
   int h = rgbaImage->rows;
+  int cx = w / 2;
+  int offsetY = h / 2;
   for (int i = 0; i < results.size(); i++) {
-    RESULT object = results[i];
-    cv::Rect boundingBox =
-        cv::Rect(object.x * w, object.y * h, object.w * w, object.h * h) &
-        cv::Rect(0, 0, w - 1, h - 1);
-    // Configure text size
-    std::string text = object.class_name + " ";
-    text += std::to_string(static_cast<int>(object.score * 100)) + "%";
-    int fontFace = cv::FONT_HERSHEY_PLAIN;
-    double fontScale = 1.5f;
-    float fontThickness = 1.0f;
-    cv::Size textSize =
-        cv::getTextSize(text, fontFace, fontScale, fontThickness, nullptr);
-    // Draw roi object, text, and background
-    cv::rectangle(*rgbaImage, boundingBox, object.fill_color, 2);
-    cv::rectangle(*rgbaImage,
-                  cv::Point2d(boundingBox.x,
-                              boundingBox.y - round(textSize.height * 1.25f)),
-                  cv::Point2d(boundingBox.x + boundingBox.width, boundingBox.y),
-                  object.fill_color, -1);
-    cv::putText(*rgbaImage, text, cv::Point2d(boundingBox.x, boundingBox.y),
-                fontFace, fontScale, cv::Scalar(255, 255, 255), fontThickness);
+    cv::Scalar font_color = cv::Scalar(128, 128, 128);
+    int font_face = cv::FONT_HERSHEY_PLAIN;
+    double font_scale = 2.f;
+    float font_thickness = 2;
+    if (i == 0) { // Top 1
+      font_color = cv::Scalar(232, 155, 0);
+    }
+    std::string text = "Top" + std::to_string(i + 1) + "." +
+                       results[i].class_name + ":" +
+                       std::to_string(results[i].score);
+    cv::Size size =
+        cv::getTextSize(text, font_face, font_scale, font_thickness, nullptr);
+    cv::putText(*rgbaImage, text, cv::Point2d(cx - size.width / 2, offsetY),
+                cv::FONT_HERSHEY_PLAIN, font_scale, font_color, font_thickness);
+    offsetY += size.height * 1.5f;
   }
 }
 
@@ -221,8 +197,8 @@ bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
 
   // Feed the image, run inference and parse the results
   std::vector<RESULT> results;
-  detector_->Predict(rgbaImage, &results, &preprocessTime, &predictTime,
-                     &postprocessTime);
+  classifier_->Predict(rgbaImage, &results, &preprocessTime, &predictTime,
+                       &postprocessTime);
 
   // Visualize the objects to the origin image
   VisualizeResults(results, &rgbaImage);
