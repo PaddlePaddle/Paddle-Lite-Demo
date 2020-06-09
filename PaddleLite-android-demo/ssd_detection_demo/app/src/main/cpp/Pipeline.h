@@ -35,14 +35,13 @@ struct RESULT {
   float h;
 };
 
-class SSDDetector {
+class Detector {
 public:
-  explicit SSDDetector(const std::string &modelDir,
-                       const std::string &labelPath, const int cpuThreadNum,
-                       const std::string &cpuPowerMode, int inputWidth,
-                       int inputHeight, const std::vector<float> &inputMean,
-                       const std::vector<float> &inputStd,
-                       float scoreThreshold);
+  explicit Detector(const std::string &modelDir, const std::string &labelPath,
+                    const int cpuThreadNum, const std::string &cpuPowerMode,
+                    int inputWidth, int inputHeight,
+                    const std::vector<float> &inputMean,
+                    const std::vector<float> &inputStd, float scoreThreshold);
 
   void Predict(const cv::Mat &rgbImage, std::vector<RESULT> *results,
                double *preprocessTime, double *predictTime,
@@ -109,5 +108,5 @@ private:
                        double postprocessTime, cv::Mat *rgbaImage);
 
 private:
-  std::shared_ptr<SSDDetector> ssdDetector_;
+  std::shared_ptr<Detector> detector_;
 };
