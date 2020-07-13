@@ -120,7 +120,8 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
     ![ios_static](https://paddlelite-demo.bj.bcebos.com/doc/ios-image-detection.jpg)      ![ios_video](https://paddlelite-demo.bj.bcebos.com/doc/ios-video-detection.jpg)
     * 基于MobileNetV3 backbone的 DB文本检测和基于MobileNetV3 backbone的CRNN CTC文本识别的中英文OCR
-    ![ios static](https://aipe-easyedge.bj.bcebos.com/doc/paddlelite-ios-ocr-demo2.jpg)   ![ios_video](https://aipe-easyedge.bj.bcebos.com/doc/paddlelite-ios-ocr-demo1.jpg)
+    
+    ![ios_static](https://aipe-easyedge.bj.bcebos.com/doc/paddlelite-ios-ocr-demo-static.jpg)      ![ios_video](https://aipe-easyedge.bj.bcebos.com/doc/paddlelite-ios-ocr-demo-video.jpg))
    
 * Android
     * 基于MobileNetV1的图像分类
