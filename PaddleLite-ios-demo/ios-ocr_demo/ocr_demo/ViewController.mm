@@ -14,7 +14,6 @@
 #include "timer.h"
 #import "pdocr/ocr_db_post_process.h"
 #import "pdocr/ocr_crnn_process.h"
-#import "OcrData.h"
 
 using namespace paddle::lite_api;
 using namespace cv;
@@ -162,11 +161,6 @@ std::vector<Object> detect_object(const float *data,
             if (w > 0 && h > 0 && obj.prob <= 1) {
                 rect_out.push_back(obj);
                 cv::rectangle(image, rec_clip, cv::Scalar(255, 0, 0));
-//                std::cout << "detection, image size: " << image.cols
-//                          << ", " << image.rows << ", detect object: "
-//                          << class_names[obj.class_id] << ", score: "
-//                          << obj.prob << ", location: x=" << x << ", y="
-//                          << y << ", width=" << w << ", height=" << h << std::endl;
             }
         }
         dout += 6;
@@ -241,8 +235,7 @@ std::vector<Object> detect_object(const float *data,
     }
 
     result.label = text;
-//    std::cout<<"result:"<<[result.label UTF8String]<<std::endl;
-    ////get score
+    // get score
     std::unique_ptr<const Tensor> output_tensor1(std::move(net_ocr2->GetOutput(1)));
     auto *predict_batch = output_tensor1->data<float>();
     auto predict_shape = output_tensor1->shape();
@@ -288,7 +281,6 @@ std::vector<Object> detect_object(const float *data,
     auto *data0 = input_tensor->mutable_data<float>();
     const float *dimg = reinterpret_cast<const float *>(img_fp.data);
     neon_mean_scale(dimg, data0, img_fp.rows * img_fp.cols, self.mean, self.scale);
-//    fill_tensor_with_cvmat(img, *(input_tensor.get()), 960, 960, self.mean, self.scale, true);
     tic.clear();
     tic.start();
     net_ocr1->Run();
@@ -330,12 +322,10 @@ std::vector<Object> detect_object(const float *data,
 
     NSMutableArray *result = [[NSMutableArray alloc] init];
 
-//    std::cout<<"filter_boxes.size()"<<filter_boxes.size()<<std::endl;
     for (int i = 0; i < filter_boxes.size(); i++) {
         cv::Mat crop_img;
         crop_img = get_rotate_crop_image(image, filter_boxes[i]);
         OcrData *r = [self paddleOcrRec:crop_img ];
-//        std::cout<<r.category<<","<<[r.label UTF8String] <<","<<r.accuracy<<std::endl;
         NSMutableArray *points = [NSMutableArray new];
         for (int jj = 0; jj < 4; ++jj) {
             NSValue *v = [NSValue valueWithCGPoint:CGPointMake(
@@ -376,7 +366,6 @@ std::vector<Object> detect_object(const float *data,
         }
 
         ret[key] = value;
-//        ELOG(INFO) << "Label " << [key UTF8String] << ": " << [value UTF8String];
         cnt += 1;
     }
     return [NSArray arrayWithArray:ret];
@@ -428,10 +417,7 @@ std::vector<Object> detect_object(const float *data,
         result2<<[data.label UTF8String] <<","<<data.accuracy<<"\n";
         cnt += 1;
     }
-//    self.result.numberOfLines = 0;
-//    self.result.text = [NSString stringWithUTF8String:result2.str().c_str()];
     self.flag_init = true;
-//    self.imageView.image = MatToUIImage(originImage);
 }
 
 - (void)viewDidLoad {
@@ -460,7 +446,6 @@ std::vector<Object> detect_object(const float *data,
     self.videoCamera.rotateVideo = 90;
     self.videoCamera.defaultFPS = 30;
     [self.view insertSubview:self.imageView atIndex:0];
-//    self.cvimg.create(640, 480, CV_8UC3);
 }
 
 - (IBAction)swith_video_photo:(UISwitch *)sender {
@@ -536,8 +521,6 @@ std::vector<Object> detect_object(const float *data,
                         cnt += 1;
                     }
                     cvtColor(self->_cvimg, self->_cvimg, CV_RGB2BGR);
-//                    self.result.numberOfLines = 0;
-//                    self.result.text = [NSString stringWithUTF8String:result.str().c_str()];
                     self.imageView.image = MatToUIImage(self->_cvimg);
                 }
             }
