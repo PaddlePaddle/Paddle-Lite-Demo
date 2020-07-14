@@ -4,6 +4,7 @@ Paddle-Lite提供IOS、Android和ARMLinux的示例，具体如下：
 * iOS示例:
     * 基于MobileNetV1的图像分类（支持视频流）；
     * 基于MobileNetV1-SSD的目标检测（支持视频流）;
+    * 基于MobileNetV3 backbone的 DB文本检测和基于MobileNetV3 backbone的CRNN CTC文本识别的中英文OCR（支持视频流）；
 * Android示例:
     * 基于MobileNetV1的图像分类；
     * 基于MobileNetV1-SSD的目标检测；
@@ -118,7 +119,10 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     * 基于MobileNetV1-SSD的目标检测
 
     ![ios_static](https://paddlelite-demo.bj.bcebos.com/doc/ios-image-detection.jpg)      ![ios_video](https://paddlelite-demo.bj.bcebos.com/doc/ios-video-detection.jpg)
-
+    * 基于MobileNetV3 backbone的 DB文本检测和基于MobileNetV3 backbone的CRNN CTC文本识别的中英文OCR
+    
+    ![ios_static](https://aipe-easyedge.bj.bcebos.com/doc/paddlelite-ios-ocr-demo-static.jpg)      ![ios_video](https://aipe-easyedge.bj.bcebos.com/doc/paddlelite-ios-ocr-demo-video.jpg))
+   
 * Android
     * 基于MobileNetV1的图像分类
 
