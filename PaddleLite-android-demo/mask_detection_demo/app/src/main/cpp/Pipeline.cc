@@ -33,8 +33,7 @@ FaceDetector::FaceDetector(const std::string &modelDir, const int cpuThreadNum,
 void FaceDetector::Preprocess(const cv::Mat &rgbaImage) {
   auto t = GetCurrentTime();
   cv::Mat resizedRGBAImage;
-  cv::resize(rgbaImage, resizedRGBAImage, cv::Size(), inputScale_, inputScale_,
-             cv::INTER_CUBIC);
+  cv::resize(rgbaImage, resizedRGBAImage, cv::Size(), inputScale_, inputScale_);
   cv::Mat resizedBGRImage;
   cv::cvtColor(resizedRGBAImage, resizedBGRImage, cv::COLOR_RGBA2BGR);
   resizedBGRImage.convertTo(resizedBGRImage, CV_32FC3, 1.0 / 255.0f);
@@ -147,9 +146,7 @@ void MaskClassifier::Preprocess(const cv::Mat &rgbaImage,
     cv::Mat resizedRGBAImage(
         rgbaImage, cv::Rect(cx - w / 2, cy - h / 2, w, h) &
                        cv::Rect(0, 0, rgbaImage.cols - 1, rgbaImage.rows - 1));
-    cv::resize(resizedRGBAImage, resizedRGBAImage,
-               cv::Size(inputShape[3], inputShape[2]), 0.0f, 0.0f,
-               cv::INTER_CUBIC);
+    cv::resize(resizedRGBAImage, resizedRGBAImage, cv::Size(inputShape[3], inputShape[2]));
     cv::Mat resizedBGRImage;
     cv::cvtColor(resizedRGBAImage, resizedBGRImage, cv::COLOR_RGBA2BGR);
     resizedBGRImage.convertTo(resizedBGRImage, CV_32FC3, 1.0 / 255.0f);
