@@ -57,9 +57,7 @@ void Classifier::Preprocess(const cv::Mat &rgbaImage) {
   inputTensor->Resize(inputShape);
   auto inputData = inputTensor->mutable_data<float>();
   cv::Mat resizedRGBAImage;
-  cv::resize(rgbaImage, resizedRGBAImage,
-             cv::Size(inputShape[3], inputShape[2]), 0.0f, 0.0f,
-             cv::INTER_CUBIC);
+  cv::resize(rgbaImage, resizedRGBAImage, cv::Size(inputShape[3], inputShape[2]));
   cv::Mat resizedRGBImage;
   cv::cvtColor(resizedRGBAImage, resizedRGBImage, cv::COLOR_BGRA2RGB);
   resizedRGBImage.convertTo(resizedRGBImage, CV_32FC3, 1.0 / 255.0f);
