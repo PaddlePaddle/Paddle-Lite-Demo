@@ -1,6 +1,7 @@
 package com.baidu.paddle.lite.demo.common;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
@@ -9,6 +10,7 @@ import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
+import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -94,7 +96,7 @@ public class CameraSurfaceView extends GLSurfaceView implements Renderer,
     private int tcTex2Screen;
 
     public interface OnTextureChangedListener {
-        public boolean onTextureChanged(int inTextureId, int outTextureId, int textureWidth, int textureHeight);
+        public boolean onTextureChanged(Bitmap ARGB8888ImageBitmap);
     }
 
     private OnTextureChangedListener onTextureChangedListener = null;
@@ -191,11 +193,20 @@ public class CameraSurfaceView extends GLSurfaceView implements Renderer,
         // Check if the draw texture is set
         int targetTexureId = fboTexureId[0];
         if (onTextureChangedListener != null) {
-            boolean modified = onTextureChangedListener.onTextureChanged(fboTexureId[0], drawTexureId[0],
-                    textureWidth, textureHeight);
+            // Read pixels of FBO to a bitmap
+            ByteBuffer pixelBuffer = ByteBuffer.allocate(textureWidth * textureHeight * 4);
+            GLES20.glReadPixels(0, 0, textureWidth, textureHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
+            Bitmap ARGB8888ImageBitmap = Bitmap.createBitmap(textureWidth, textureHeight, Bitmap.Config.ARGB_8888);
+            ARGB8888ImageBitmap.copyPixelsFromBuffer(pixelBuffer);
+            boolean modified = onTextureChangedListener.onTextureChanged(ARGB8888ImageBitmap);
             if (modified) {
                 targetTexureId = drawTexureId[0];
+                // Update a bitmap to the GL texture if modified
+                GLES20.glActiveTexture(targetTexureId);
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, targetTexureId);
+                GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, ARGB8888ImageBitmap, 0);
             }
+            ARGB8888ImageBitmap.recycle();
         }
 
         // fboTexureId/drawTexureId->Screen

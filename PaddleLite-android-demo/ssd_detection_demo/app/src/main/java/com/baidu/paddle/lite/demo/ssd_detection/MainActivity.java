@@ -83,12 +83,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Came
     }
 
     @Override
-    public boolean onTextureChanged(int inTextureId, int outTextureId, int textureWidth, int textureHeight) {
+    public boolean onTextureChanged(Bitmap ARGB8888ImageBitmap) {
         String savedImagePath = "";
         synchronized (this) {
             savedImagePath = MainActivity.this.savedImagePath;
         }
-        boolean modified = predictor.process(inTextureId, outTextureId, textureWidth, textureHeight, savedImagePath);
+        boolean modified = predictor.process(ARGB8888ImageBitmap, savedImagePath);
         if (!savedImagePath.isEmpty()) {
             synchronized (this) {
                 MainActivity.this.savedImagePath = "";
