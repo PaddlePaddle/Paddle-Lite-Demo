@@ -71,40 +71,14 @@ public:
            int inputWidth, int inputHeight, const std::vector<float> &inputMean,
            const std::vector<float> &inputStd, float scoreThreshold);
 
-  bool Process(int inTextureId, int outTextureId, int textureWidth,
-               int textureHeight, std::string savedImagePath);
+  bool Process(cv::Mat &rgbaImage, std::string savedImagePath);
 
 private:
-  // Read pixels from FBO texture to CV image
-  void CreateRGBAImageFromGLFBOTexture(int textureWidth, int textureHeight,
-                                       cv::Mat *rgbaImage,
-                                       double *readGLFBOTime) {
-    auto t = GetCurrentTime();
-    rgbaImage->create(textureHeight, textureWidth, CV_8UC4);
-    glReadPixels(0, 0, textureWidth, textureHeight, GL_RGBA, GL_UNSIGNED_BYTE,
-                 rgbaImage->data);
-    *readGLFBOTime = GetElapsedTime(t);
-    LOGD("Read from FBO texture costs %f ms", *readGLFBOTime);
-  }
-
-  // Write back to texture2D
-  void WriteRGBAImageBackToGLTexture(const cv::Mat &rgbaImage, int textureId,
-                                     double *writeGLTextureTime) {
-    auto t = GetCurrentTime();
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureId);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rgbaImage.cols, rgbaImage.rows,
-                    GL_RGBA, GL_UNSIGNED_BYTE, rgbaImage.data);
-    *writeGLTextureTime = GetElapsedTime(t);
-    LOGD("Write back to texture2D costs %f ms", *writeGLTextureTime);
-  }
-
   // Visualize the results to origin image
   void VisualizeResults(const std::vector<RESULT> &results, cv::Mat *rgbaImage);
 
   // Visualize the status(performace data) to origin image
-  void VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,
-                       double preprocessTime, double predictTime,
+  void VisualizeStatus(double preprocessTime, double predictTime,
                        double postprocessTime, cv::Mat *rgbaImage);
 
 private:

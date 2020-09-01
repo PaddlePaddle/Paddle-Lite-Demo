@@ -1,6 +1,7 @@
 package com.baidu.paddle.lite.demo.ssd_detection;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 public class Native {
     static {
@@ -38,11 +39,12 @@ public class Native {
         return nativeRelease(ctx);
     }
 
-    public boolean process(int inTextureId, int outTextureId, int textureWidth, int textureHeight, String savedImagePath) {
+    public boolean process(Bitmap ARGB8888ImageBitmap, String savedImagePath) {
         if (ctx == 0) {
             return false;
         }
-        return nativeProcess(ctx, inTextureId, outTextureId, textureWidth, textureHeight, savedImagePath);
+        // ARGB8888 bitmap is only supported in native, other color formats can be added by yourself.
+        return nativeProcess(ctx, ARGB8888ImageBitmap, savedImagePath);
     }
 
     public static native long nativeInit(String modelDir,
@@ -57,5 +59,5 @@ public class Native {
 
     public static native boolean nativeRelease(long ctx);
 
-    public static native boolean nativeProcess(long ctx, int inTextureId, int outTextureId, int textureWidth, int textureHeight, String savedImagePath);
+    public static native boolean nativeProcess(long ctx, Bitmap ARGB888ImageBitmap, String savedImagePath);
 }

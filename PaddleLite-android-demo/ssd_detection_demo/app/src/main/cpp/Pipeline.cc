@@ -71,7 +71,8 @@ void Detector::Preprocess(const cv::Mat &rgbaImage) {
   inputTensor->Resize(inputShape);
   auto inputData = inputTensor->mutable_data<float>();
   cv::Mat resizedRGBAImage;
-  cv::resize(rgbaImage, resizedRGBAImage, cv::Size(inputShape[3], inputShape[2]));
+  cv::resize(rgbaImage, resizedRGBAImage,
+             cv::Size(inputShape[3], inputShape[2]));
   cv::Mat resizedRGBImage;
   cv::cvtColor(resizedRGBAImage, resizedRGBImage, cv::COLOR_BGRA2RGB);
   resizedRGBImage.convertTo(resizedRGBImage, CV_32FC3, 1.0 / 255.0f);
@@ -168,27 +169,18 @@ void Pipeline::VisualizeResults(const std::vector<RESULT> &results,
   }
 }
 
-void Pipeline::VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,
-                               double preprocessTime, double predictTime,
+void Pipeline::VisualizeStatus(double preprocessTime, double predictTime,
                                double postprocessTime, cv::Mat *rgbaImage) {
   char text[255];
   cv::Scalar fontColor = cv::Scalar(255, 255, 255);
   int fontFace = cv::FONT_HERSHEY_PLAIN;
   double fontScale = 1.f;
   float fontThickness = 1;
-  sprintf(text, "Read GLFBO time: %.1f ms", readGLFBOTime);
+  sprintf(text, "Preprocess time: %.1f ms", preprocessTime);
   cv::Size textSize =
       cv::getTextSize(text, fontFace, fontScale, fontThickness, nullptr);
   textSize.height *= 1.25f;
   cv::Point2d offset(10, textSize.height + 15);
-  cv::putText(*rgbaImage, text, offset, fontFace, fontScale, fontColor,
-              fontThickness);
-  sprintf(text, "Write GLTexture time: %.1f ms", writeGLTextureTime);
-  offset.y += textSize.height;
-  cv::putText(*rgbaImage, text, offset, fontFace, fontScale, fontColor,
-              fontThickness);
-  sprintf(text, "Preprocess time: %.1f ms", preprocessTime);
-  offset.y += textSize.height;
   cv::putText(*rgbaImage, text, offset, fontFace, fontScale, fontColor,
               fontThickness);
   sprintf(text, "Predict time: %.1f ms", predictTime);
@@ -201,15 +193,8 @@ void Pipeline::VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,
               fontThickness);
 }
 
-bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
-                       int textureHeight, std::string savedImagePath) {
-  static double readGLFBOTime = 0, writeGLTextureTime = 0;
+bool Pipeline::Process(cv::Mat &rgbaImage, std::string savedImagePath) {
   double preprocessTime = 0, predictTime = 0, postprocessTime = 0;
-
-  // Read pixels from FBO texture to CV image
-  cv::Mat rgbaImage;
-  CreateRGBAImageFromGLFBOTexture(textureWidth, textureHeight, &rgbaImage,
-                                  &readGLFBOTime);
 
   // Feed the image, run inference and parse the results
   std::vector<RESULT> results;
@@ -220,8 +205,7 @@ bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
   VisualizeResults(results, &rgbaImage);
 
   // Visualize the status(performance data) to the origin image
-  VisualizeStatus(readGLFBOTime, writeGLTextureTime, preprocessTime,
-                  predictTime, postprocessTime, &rgbaImage);
+  VisualizeStatus(preprocessTime, predictTime, postprocessTime, &rgbaImage);
 
   // Dump modified image if savedImagePath is set
   if (!savedImagePath.empty()) {
@@ -230,7 +214,5 @@ bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
     imwrite(savedImagePath, bgrImage);
   }
 
-  // Write back to texture2D
-  WriteRGBAImageBackToGLTexture(rgbaImage, outTextureId, &writeGLTextureTime);
   return true;
 }

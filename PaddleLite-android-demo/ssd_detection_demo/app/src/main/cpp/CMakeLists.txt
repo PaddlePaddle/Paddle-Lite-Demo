@@ -119,6 +119,7 @@ target_link_libraries(
   # Specifies the target library.
   Native
   paddle_light_api_shared
+  jnigraphics
   ${OpenCV_LIBS}
   GLESv2
   EGL
