@@ -1,7 +1,6 @@
 # Paddle-Lite-Demo
 
-
-## 功能
+Paddle-Lite提供IOS、Android和ARMLinux的示例，具体如下：
 * iOS示例:
     * 基于MobileNetV1的图像分类（支持视频流）；
     * 基于MobileNetV1-SSD的目标检测（支持视频流）;
@@ -11,14 +10,22 @@
     * 基于Ultra-Light-Fast-Generic-Face-Detector-1MB的人脸检测；
     * 基于DeeplabV3+MobilNetV2的人像分割；
     * 基于视频流的人脸检测+口罩识别；
+    * 基于YOLOV3-MobileNetV3的目标检测；
 * ARMLinux示例:
     * 基于MobileNetV1的图像分类；
     * 基于MobileNetV1-SSD的目标检测；
 
+关于Paddle-Lite和示例，请参考本文剩余章节和如下文档链接：
+* [文档官网](https://paddle-lite.readthedocs.io/zh/latest/index.html)
+* 文档官网中的[Android示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/android_app_demo.html)
+* 文档官网中的[IOS示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/ios_app_demo.html)
+* [Paddle-Lite Repo](https://github.com/PaddlePaddle/Paddle-Lite)
+
 ## 要求
 
 * iOS
-    * Mac机器，需要有xcode环境（已验证：Xcode Version 10.1 (10B61)
+    * macOS+Xcode，已验证的环境：Xcode Version 11.5 (11E608c) on macOS Catalina(10.15.5)
+    * Xcode 11.3会报"Invalid bitcode version ..."的编译错误，请将Xcode升级到11.4及以上的版本后重新编译
     * 对于ios 12.x版本，如果提示“xxx.  which may not be supported by this version of Xcode”，请下载对应的[工具包]( https://github.com/iGhibli/iOS-DeviceSupport), 下载完成后解压放到/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport目录，重启xcode
 
 * Android
@@ -165,13 +172,25 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
     * 基于视频流的人脸关键点检测
 
-      - CPU预测结果（测试环境：华为mate30）
+      - CPU预测结果（测试环境：OnePlus 7）
       
-      ![android_face_keypoints_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_keypoints2_cpu.jpg)
+      ![android_face_keypoints_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_cpu.jpg)
 
       - NPU预测结果
 
       待支持
+
+    * 基于YOLOV3-MobileNetV3的目标检测
+
+      - CPU预测结果（测试环境：华为p40，预测总耗时：55.9ms）
+      
+      ![android_yolo_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_yolo_detection_cpu.jpg)
+
+      - CPU+NPU异构计算预测结果（预测总耗时：27.1ms）；
+
+      ![android_yolo_detection_hybrid_cpu_npu](https://paddlelite-demo.bj.bcebos.com/doc/android_yolo_detection_hybrid_cpu_npu.jpg)
+
+      注意：CPU+NPU的异构计算需要基于[原始Paddle模型](https://paddlelite-demo.bj.bcebos.com/models/yolov3_mobilenet_v3_prune86_FPGM_320_fp32_fluid.tar.gz)和[配置文件](https://paddlelite-demo.bj.bcebos.com/models/yolov3_mobilenet_v3_prune86_FPGM_320_fp32_for_hybrid_cpu_npu_partition_config_file.txt)进行[手动分割子图](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/npu.html)，子图分割结果[如图所示](https://paddlelite-demo.bj.bcebos.com/models/yolov3_mobilenet_v3_prune86_FPGM_320_fp32_for_hybrid_cpu_npu_partition_result.jpg)：MobileNetV3被包裹在subgraph op内并Offload到NPU上执行（未做任何优化，后续将加入zero copy并对相关op进行针对性优化，届时性能将获更大的提升），yolo_box和multiclass_nms等算子在CPU上执行。
 
 * ARMLinux
      * 基于MobileNetV1的图像分类

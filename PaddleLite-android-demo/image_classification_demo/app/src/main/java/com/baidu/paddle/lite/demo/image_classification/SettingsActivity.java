@@ -75,8 +75,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
             preInstalledInputMeans.add("0.485,0.456,0.406");
             preInstalledInputStds.add("0.229,0.224,0.225");
         } else {
-            Toast.makeText(this, "NPU is not supported on your device! Kirin 810 and 990's NPU is the only supported " +
-                    "NPU in Paddle-Lite.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "NPU model is not supported by your device.", Toast.LENGTH_LONG).show();
         }
 
         // Setup UI components

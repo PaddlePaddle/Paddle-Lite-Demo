@@ -33,8 +33,7 @@ FaceDetector::FaceDetector(const std::string &modelDir, const int cpuThreadNum,
 void FaceDetector::Preprocess(const cv::Mat &rgbaImage) {
   auto t = GetCurrentTime();
   cv::Mat resizedRGBAImage;
-  cv::resize(rgbaImage, resizedRGBAImage, cv::Size(), inputScale_, inputScale_,
-             cv::INTER_CUBIC);
+  cv::resize(rgbaImage, resizedRGBAImage, cv::Size(), inputScale_, inputScale_);
   cv::Mat resizedBGRImage;
   cv::cvtColor(resizedRGBAImage, resizedBGRImage, cv::COLOR_RGBA2BGR);
   resizedBGRImage.convertTo(resizedBGRImage, CV_32FC3, 1.0 / 255.0f);
@@ -149,9 +148,7 @@ void FaceKeypointsDetector::Preprocess(
         cv::Rect(0, 0, rgbaImage.cols - 1, rgbaImage.rows - 1);
     // Crop and obtain the face image
     cv::Mat resizedRGBAImage(rgbaImage, (*adjustedFaceROIs)[i]);
-    cv::resize(resizedRGBAImage, resizedRGBAImage,
-               cv::Size(inputShape[3], inputShape[2]), 0.0f, 0.0f,
-               cv::INTER_CUBIC);
+    cv::resize(resizedRGBAImage, resizedRGBAImage, cv::Size(inputShape[3], inputShape[2]));
     cv::Mat resizedGRAYImage;
     cv::cvtColor(resizedRGBAImage, resizedGRAYImage, cv::COLOR_RGBA2GRAY);
     resizedGRAYImage.convertTo(resizedGRAYImage, CV_32FC1);
@@ -248,7 +245,7 @@ void Pipeline::VisualizeResults(const std::vector<Face> &faces,
     // cv::cvtColor(rgbImage, *rgbaImage, cv::COLOR_RGB2RGBA);
   }
   *visualizeResultsTime = GetElapsedTime(t);
-  LOGI("VisualizeResults costs %f ms", *visualizeResultsTime);
+  LOGD("VisualizeResults costs %f ms", *visualizeResultsTime);
 }
 
 void Pipeline::VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,

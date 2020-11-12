@@ -44,7 +44,7 @@
             android:defaultValue="@string/FDT_SCORE_THRESHOLD_DEFAULT"
             android:title="Score threshold: (0.0, 1.0)" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="FaceKeypoints Detection">
+    <PreferenceCategory android:title="Face keypoints detector">
         <ListPreference
             android:defaultValue="@string/FKP_MODEL_DIR_DEFAULT"
             android:key="@string/FKP_CHOOSE_PRE_INSTALLED_MODEL_KEY"

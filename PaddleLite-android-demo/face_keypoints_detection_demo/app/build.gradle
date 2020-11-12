@@ -5,7 +5,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.baidu.paddle.lite.demo.mask_detection"
+        applicationId "com.baidu.paddle.lite.demo.face_keypoints_detection_demo"
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 1
@@ -45,7 +45,7 @@ dependencies {
 
 def archives = [
         [
-                'src' : 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_3_add_extra.tar.gz',
+                'src' : 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_6_1.tar.gz',
                 'dest': 'PaddleLite'
         ],
         [
@@ -53,11 +53,11 @@ def archives = [
                 'dest': 'OpenCV'
         ],
         [
-                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/pyramidbox_lite_fp32_for_cpu_v2_3_0.tar.gz',
+                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/pyramidbox_lite_fp32_for_cpu_v2_6_1.tar.gz',
                 'dest' : 'src/main/assets/models/pyramidbox_lite_for_cpu'
         ],
         [
-                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/facekeypoints_detector_fp32_60_60_for_cpu_v2_3_add_extra.tar.gz',
+                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/facekeypoints_detector_fp32_60_60_for_cpu_v2_6_1.tar.gz',
                 'dest' : 'src/main/assets/models/facekeypoints_detector_for_cpu'
         ]
 ]

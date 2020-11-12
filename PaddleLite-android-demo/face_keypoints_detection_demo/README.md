@@ -34,14 +34,16 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
           将生成的build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/PaddlePredictor.jar
         * Java so
             * armeabi-v7a
-              将生成build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so
+              将生成的build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so
             * arm64-v8a
-              将生成build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so
+              将生成的build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so
     * 替换c++ 库
+        * 头文件
+          将生成的build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/cxx/include文件夹替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/include
         * armeabi-v7a
-          将生成build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so
+          将生成的build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so
         * arm64-v8a
-          将生成build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so
+          将生成的build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so
    
 
 ## 效果展示
@@ -53,7 +55,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
   - CPU预测结果（测试环境：华为mate30）
 
-    ![android_face_keypoints_detection_face_detect_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_detect_cpu.jpg)
+    ![android_face_keypoints_detection_face_region_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_region_cpu.jpg)
 
   - NPU预测结果
 
@@ -65,7 +67,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
   - CPU预测结果（测试环境：华为mate30）
 
-    ![android_face_keypoints_detection_face_keypoints_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_keypoints1_cpu.jpg)
+    ![android_face_keypoints_detection_face_keypoints_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_face_keypoints_cpu.jpg)
 
   - NPU预测结果
 
@@ -79,7 +81,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
     原始图片：
     
-    ![android_face_keypoints_detection_origin_face](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_origin_face_cpu.jpg)
+    ![android_face_keypoints_detection_origin_face](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_origin_face.jpg)
 
     美白特效结果：
 
@@ -95,7 +97,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 ### Java端
 * 模型存放，将下载好的模型解压存放在`app/src/assets/models`目录下
 * common Java包
-  在`app/src/java/com/baidu/paddle/lite/demo/common`目录下，实现摄像头和框架的公共处理，一般不用修改。其中，Utils.java用于存放一些公用的且与Java基类无关的功能，如果模型拷贝、字符串类型转换等
+  在`app/src/java/com/baidu/paddle/lite/demo/common`目录下，实现摄像头和框架的公共处理，一般不用修改。其中，Utils.java用于存放一些公用的且与Java基类无关的功能，例如模型拷贝、字符串类型转换等
 * mask_detection Java 包
   在`app/src/java/com/baidu/paddle/lite/demo/face_keypoints_detection`目录下，实现APP界面消息事件和Java/C++端代码互传的桥梁功能
 * MainActivity
