@@ -31,7 +31,7 @@ dependencies {
     implementation files('libs/PaddlePredictor.jar')
 }
 
-def paddleLiteLibs = 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_6_1_human_seg.tar.gz'
+def paddleLiteLibs = 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_7_0.tar.gz'
 task downloadAndExtractPaddleLiteLibs(type: DefaultTask) {
     doFirst {
         println "Downloading and extracting Paddle Lite libs"
@@ -80,7 +80,7 @@ preBuild.dependsOn downloadAndExtractPaddleLiteLibs
 
 def paddleLiteModels = [
         [
-                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/deeplab_mobilenet_fp32_for_cpu_v2_6_1.tar.gz',
+                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/deeplab_mobilenet_fp32_for_cpu_v2_7_0.tar.gz',
                 'dest' : 'src/main/assets/image_segmentation/models/deeplab_mobilenet_for_cpu'
         ],
 ]

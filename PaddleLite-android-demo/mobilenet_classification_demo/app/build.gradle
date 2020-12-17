@@ -45,7 +45,7 @@ dependencies {
 
 def archives = [
         [
-                'src' : 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_6_1.tar.gz',
+                'src' : 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_7_0.tar.gz',
                 'dest': 'PaddleLite'
         ],
         [
@@ -53,11 +53,11 @@ def archives = [
                 'dest': 'OpenCV'
         ],
         [
-                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_cpu_v2_6_0.tar.gz',
+                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_cpu_v2_7_0.tar.gz',
                 'dest' : 'src/main/assets/models/mobilenet_v1_for_cpu'
         ],
         [
-                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_npu_v2_6_0.tar.gz',
+                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_npu_v2_7_0.tar.gz',
                 'dest' : 'src/main/assets/models/mobilenet_v1_for_npu'
         ]
 ]
