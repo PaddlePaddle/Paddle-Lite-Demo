@@ -32,7 +32,7 @@ dependencies {
 }
 
 
-def paddleLiteLibs = 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_7_0.tar.gz'
+def paddleLiteLibs = 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_8_0.tar.gz'
 task downloadAndExtractPaddleLiteLibs(type: DefaultTask) {
     doFirst {
         println "Downloading and extracting Paddle Lite libs"
@@ -50,11 +50,14 @@ task downloadAndExtractPaddleLiteLibs(type: DefaultTask) {
         if (!file("cache/${cacheName}.tar.gz").exists()) {
             ant.get(src: paddleLiteLibs, dest: file("cache/${cacheName}.tar.gz"))
         }
-        // Unpack libs
-        copy {
-            from tarTree("cache/${cacheName}.tar.gz")
-            into "cache/${cacheName}"
+
+        if (!file("cache/${cacheName}").exists()) {
+            copy {
+                from tarTree("cache/${cacheName}.tar.gz")
+                into "cache/${cacheName}"
+            }
         }
+
         // Copy PaddlePredictor.jar
         if (!file("libs/PaddlePredictor.jar").exists()) {
             copy {
@@ -81,7 +84,7 @@ preBuild.dependsOn downloadAndExtractPaddleLiteLibs
 
 def paddleLiteModels = [
         [
-                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/facedetection_fp32_240_430_for_cpu_v2_7_0.tar.gz',
+                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/facedetection_fp32_240_430_for_cpu_v2_8_0.tar.gz',
                 'dest' : 'src/main/assets/face_detection/models/facedetection_for_cpu'
         ]
 ]
@@ -92,26 +95,28 @@ task downloadAndExtractPaddleLiteModels(type: DefaultTask) {
     }
     doLast {
         // Prepare cache folder for models
-        if (!file("cache").exists()) {
-            mkdir "cache"
+        String cachePath = "cache"
+        if (!file("${cachePath}").exists()) {
+            mkdir "${cachePath}"
         }
         paddleLiteModels.eachWithIndex { model, index ->
             MessageDigest messageDigest = MessageDigest.getInstance('MD5')
             messageDigest.update(model.src.bytes)
             String cacheName = new BigInteger(1, messageDigest.digest()).toString(32)
-            // Download model file
-            if (!file("cache/${cacheName}.tar.gz").exists()) {
-                ant.get(src: model.src, dest: file("cache/${cacheName}.tar.gz"))
-            }
-            // Unpack model file
-            copy {
-                from tarTree("cache/${cacheName}.tar.gz")
-                into "cache/${cacheName}"
+            // Download the target model if not exists
+            boolean copyFiles = !file("${model.dest}").exists()
+            if (!file("${cachePath}/${cacheName}.tar.gz").exists()) {
+                ant.get(src: model.src, dest: file("${cachePath}/${cacheName}.tar.gz"))
+                copyFiles = true; // force to copy files from the latest archive files
+                copy {
+                    from tarTree("cache/${cacheName}.tar.gz")
+                    into "cache/${cacheName}"
+                }
             }
             // Copy model file
-            if (!file("${model.dest}/model.nb").exists()) {
+            if (copyFiles) {
                 copy {
-                    from "cache/${cacheName}"
+                    from tarTree("${cachePath}/${cacheName}.tar.gz")
                     into "${model.dest}"
                 }
             }
