@@ -111,6 +111,23 @@ set_target_properties(
              # Provides the path to the library you want to import.
 )
 
+add_library(
+  # Sets the name of the library.
+  hcl
+  # Sets the library as a shared library.
+  SHARED
+  # Provides a relative path to your source file(s).
+  IMPORTED)
+
+set_target_properties(
+  # Specifies the target library.
+  hcl
+  # Specifies the parameter you want to define.
+  PROPERTIES IMPORTED_LOCATION
+             ${PaddleLite_DIR}/cxx/libs/${ANDROID_ABI}/libhcl.so
+             # Provides the path to the library you want to import.
+)
+
 # Specifies libraries CMake should link to your target library. You can link
 # multiple libraries, such as libraries you define in this build script,
 # prebuilt third-party libraries, or system libraries.
@@ -127,6 +144,7 @@ target_link_libraries(
   hiai
   hiai_ir
   hiai_ir_build
+  hcl
   )
 
 add_custom_command(
@@ -169,3 +187,11 @@ add_custom_command(
     ${CMAKE_COMMAND} -E copy
     ${PaddleLite_DIR}/cxx/libs/${ANDROID_ABI}/libhiai_ir_build.so
     ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libhiai_ir_build.so)
+
+add_custom_command(
+  TARGET Native
+  POST_BUILD
+  COMMAND
+    ${CMAKE_COMMAND} -E copy
+    ${PaddleLite_DIR}/cxx/libs/${ANDROID_ABI}/libhcl.so
+    ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libhcl.so)
