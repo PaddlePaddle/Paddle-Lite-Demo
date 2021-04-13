@@ -109,10 +109,6 @@ task downloadAndExtractPaddleLiteModels(type: DefaultTask) {
             if (!file("${cachePath}/${cacheName}.tar.gz").exists()) {
                 ant.get(src: model.src, dest: file("${cachePath}/${cacheName}.tar.gz"))
                 copyFiles = true; // force to copy files from the latest archive files
-                copy {
-                    from tarTree("cache/${cacheName}.tar.gz")
-                    into "cache/${cacheName}"
-                }
             }
             // Copy model file
             if (copyFiles) {
