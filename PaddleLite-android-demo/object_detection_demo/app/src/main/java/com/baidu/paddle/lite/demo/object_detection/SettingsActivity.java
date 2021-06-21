@@ -68,21 +68,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         preInstalledInputMeans.add(getString(R.string.INPUT_MEAN_DEFAULT));
         preInstalledInputStds.add(getString(R.string.INPUT_STD_DEFAULT));
         preInstalledScoreThresholds.add(getString(R.string.SCORE_THRESHOLD_DEFAULT));
-        // Add ssd_mobilenet_v1_pascalvoc_for_hybrid_cpu_npu if Soc is kirin 810 or 990
-        if (Utils.isSupportedNPU()) {
-            preInstalledModelPaths.add("models/ssd_mobilenet_v1_pascalvoc_for_hybrid_cpu_npu");
-            preInstalledLabelPaths.add("labels/pascalvoc_label_list");
-            preInstalledImagePaths.add("images/dog.jpg");
-            preInstalledCPUThreadNums.add("1"); // Useless for NPU
-            preInstalledCPUPowerModes.add("LITE_POWER_HIGH");  // Useless for NPU
-            preInstalledInputColorFormats.add("RGB");
-            preInstalledInputShapes.add("1,3,300,300");
-            preInstalledInputMeans.add("0.5,0.5,0.5");
-            preInstalledInputStds.add("0.5,0.5,0.5");
-            preInstalledScoreThresholds.add("0.5");
-        } else {
-            Toast.makeText(this, "NPU model is not supported by your device.", Toast.LENGTH_LONG).show();
-        }
 
         // Setup UI components
         lpChoosePreInstalledModel =

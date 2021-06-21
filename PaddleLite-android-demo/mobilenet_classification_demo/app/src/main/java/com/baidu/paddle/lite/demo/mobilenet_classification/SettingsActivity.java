@@ -75,19 +75,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         preInstalledInputHeights.add(getString(R.string.INPUT_HEIGHT_DEFAULT));
         preInstalledInputMeans.add(getString(R.string.INPUT_MEAN_DEFAULT));
         preInstalledInputStds.add(getString(R.string.INPUT_STD_DEFAULT));
-        // Add mobilenet_v1_for_npu if Soc is kirin 810 or 990
-        if (Utils.isSupportedNPU()) {
-            preInstalledModelDirs.add("models/mobilenet_v1_for_npu");
-            preInstalledLabelPaths.add("labels/synset_words.txt");
-            preInstalledCPUThreadNums.add("1"); // Useless for NPU
-            preInstalledCPUPowerModes.add("LITE_POWER_HIGH");  // Useless for NPU
-            preInstalledInputWidths.add("224");
-            preInstalledInputHeights.add("224");
-            preInstalledInputMeans.add("0.485,0.456,0.406");
-            preInstalledInputStds.add("0.229,0.224,0.225");
-        } else {
-            Toast.makeText(this, "NPU model is not supported by your device.", Toast.LENGTH_LONG).show();
-        }
+
         // Setup UI components
         lpChoosePreInstalledModel =
                 (ListPreference) findPreference(getString(R.string.CHOOSE_PRE_INSTALLED_MODEL_KEY));

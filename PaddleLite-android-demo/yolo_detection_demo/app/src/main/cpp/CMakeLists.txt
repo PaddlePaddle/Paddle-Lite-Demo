@@ -59,75 +59,6 @@ set_target_properties(
     # Provides the path to the library you want to import.
 )
 
-# Comment the followings if libpaddle_light_api_shared.so is not fit for NPU
-add_library(
-  # Sets the name of the library.
-  hiai
-  # Sets the library as a shared library.
-  SHARED
-  # Provides a relative path to your source file(s).
-  IMPORTED)
-
-set_target_properties(
-  # Specifies the target library.
-  hiai
-  # Specifies the parameter you want to define.
-  PROPERTIES IMPORTED_LOCATION
-             ${PaddleLite_DIR}/cxx/libs/${ANDROID_ABI}/libhiai.so
-             # Provides the path to the library you want to import.
-)
-
-add_library(
-  # Sets the name of the library.
-  hiai_ir
-  # Sets the library as a shared library.
-  SHARED
-  # Provides a relative path to your source file(s).
-  IMPORTED)
-
-set_target_properties(
-  # Specifies the target library.
-  hiai_ir
-  # Specifies the parameter you want to define.
-  PROPERTIES IMPORTED_LOCATION
-             ${PaddleLite_DIR}/cxx/libs/${ANDROID_ABI}/libhiai_ir.so
-             # Provides the path to the library you want to import.
-)
-
-add_library(
-  # Sets the name of the library.
-  hiai_ir_build
-  # Sets the library as a shared library.
-  SHARED
-  # Provides a relative path to your source file(s).
-  IMPORTED)
-
-set_target_properties(
-  # Specifies the target library.
-  hiai_ir_build
-  # Specifies the parameter you want to define.
-  PROPERTIES IMPORTED_LOCATION
-             ${PaddleLite_DIR}/cxx/libs/${ANDROID_ABI}/libhiai_ir_build.so
-             # Provides the path to the library you want to import.
-)
-
-add_library(
-  # Sets the name of the library.
-  hcl
-  # Sets the library as a shared library.
-  SHARED
-  # Provides a relative path to your source file(s).
-  IMPORTED)
-
-set_target_properties(
-  # Specifies the target library.
-  hcl
-  # Specifies the parameter you want to define.
-  PROPERTIES IMPORTED_LOCATION
-             ${PaddleLite_DIR}/cxx/libs/${ANDROID_ABI}/libhcl.so
-             # Provides the path to the library you want to import.
-)
-
 # Specifies libraries CMake should link to your target library. You can link
 # multiple libraries, such as libraries you define in this build script,
 # prebuilt third-party libraries, or system libraries.
@@ -140,8 +71,4 @@ target_link_libraries(
   GLESv2
   EGL
   ${log-lib}
-  hiai
-  hiai_ir
-  hiai_ir_build
-  hcl
   )
