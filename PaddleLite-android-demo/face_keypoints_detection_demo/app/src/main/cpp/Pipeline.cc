@@ -33,7 +33,8 @@ FaceDetector::FaceDetector(const std::string &modelDir, const int cpuThreadNum,
 void FaceDetector::Preprocess(const cv::Mat &rgbaImage) {
   auto t = GetCurrentTime();
   cv::Mat resizedRGBAImage;
-  cv::resize(rgbaImage, resizedRGBAImage, cv::Size(), inputScale_, inputScale_);
+  cv::resize(rgbaImage, resizedRGBAImage, cv::Size(640,480));
+
   cv::Mat resizedBGRImage;
   cv::cvtColor(resizedRGBAImage, resizedBGRImage, cv::COLOR_RGBA2BGR);
   resizedBGRImage.convertTo(resizedBGRImage, CV_32FC3, 1.0 / 255.0f);
@@ -48,34 +49,94 @@ void FaceDetector::Preprocess(const cv::Mat &rgbaImage) {
                inputShape[2]);
 }
 
+void FaceDetector::HardNms(std::vector<Face> *input, std::vector<Face> *output, float iou_threshold) {
+  std::sort(input->begin(), input->end(), [](const Face &a, const Face &b) { return a.score > b.score; });
+  int box_num = input->size();
+  std::vector<int> merged(box_num, 0);
+  for (int i = 0; i < box_num; i++) {
+    if (merged[i])
+      continue;
+    std::vector<Face> buf;
+    buf.push_back(input->at(i));
+    merged[i] = 1;
+
+    float h0 = input->at(i).roi.height;
+    float w0 = input->at(i).roi.width;
+
+    float area0 = h0 * w0;
+
+    for (int j = i + 1; j < box_num; j++) {
+      if (merged[j])
+        continue;
+
+      float inner_x0 =
+              input->at(i).roi.x > input->at(j).roi.x ? input->at(i).roi.x : input->at(j).roi.x;
+      float inner_y0 =
+              input->at(i).roi.y > input->at(j).roi.y ? input->at(i).roi.y : input->at(j).roi.y;
+
+      float inputi_x1 = input->at(i).roi.x + input->at(i).roi.width;
+      float inputi_y1 = input->at(i).roi.y + input->at(i).roi.height;
+      float inputj_x1 = input->at(j).roi.x + input->at(j).roi.width;
+      float inputj_y1 = input->at(j).roi.y + input->at(j).roi.height;
+      float inner_x1 = inputi_x1 < inputj_x1 ? inputi_x1 : inputj_x1;
+      float inner_y1 = inputi_y1 < inputj_y1 ? inputi_y1 : inputj_y1;
+
+      float inner_h = inner_y1 - inner_y0 + 1;
+      float inner_w = inner_x1 - inner_x0 + 1;
+      if (inner_h <= 0 || inner_w <= 0)
+        continue;
+      float inner_area = inner_h * inner_w;
+
+      float h1 = input->at(j).roi.height;
+      float w1 = input->at(j).roi.width;
+      float area1 = h1 * w1;
+
+      float score;
+      score = inner_area / (area0 + area1 - inner_area);
+      if (score > iou_threshold) {
+        merged[j] = 1;
+        buf.push_back(input->at(j));
+      }
+    }
+    output->push_back(buf[0]);
+  }
+}
+
 void FaceDetector::Postprocess(const cv::Mat &rgbaImage,
                                std::vector<Face> *faces) {
   int imageWidth = rgbaImage.cols;
   int imageHeight = rgbaImage.rows;
   // Get output tensor
-  auto outputTensor = predictor_->GetOutput(2);
+  auto outputTensor = predictor_->GetOutput(0);
   auto outputData = outputTensor->data<float>();
   auto outputShape = outputTensor->shape();
   int outputSize = ShapeProduction(outputShape);
+
+  auto outputTensor1 = predictor_->GetOutput(1);
+  auto outputData1 = outputTensor1->data<float>();
+
   faces->clear();
-  for (int i = 0; i < outputSize; i += 6) {
+  std::vector<Face> faces_tmp;
+  for (int i = 0; i < outputSize; i += 2) {
     // Class id
     float class_id = outputData[i];
     // Confidence score
     float score = outputData[i + 1];
-    int left = outputData[i + 2] * imageWidth;
-    int top = outputData[i + 3] * imageHeight;
-    int right = outputData[i + 4] * imageWidth;
-    int bottom = outputData[i + 5] * imageHeight;
+    int left = outputData1[2* i] * imageWidth;
+    int top = outputData1[2*i + 1] * imageHeight;
+    int right = outputData1[2*i + 2] * imageWidth;
+    int bottom = outputData1[2*i + 3] * imageHeight;
     int width = right - left;
     int height = bottom - top;
-    if (score > scoreThreshold_) {
+    if (score > scoreThreshold_ && score < 1) {
       Face face;
       face.roi = cv::Rect(left, top, width, height) &
                  cv::Rect(0, 0, imageWidth - 1, imageHeight - 1);
-      faces->push_back(face);
+      face.score = score;
+      faces_tmp.push_back(face);
     }
   }
+  HardNms(&faces_tmp, faces, 0.5);
 }
 
 void FaceDetector::Predict(const cv::Mat &rgbaImage, std::vector<Face> *faces,

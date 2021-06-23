@@ -10,7 +10,7 @@
     <string name="FDT_INPUT_MEAN_KEY">FDT_INPUT_MEAN_KEY</string>
     <string name="FDT_INPUT_STD_KEY">FDT_INPUT_STD_KEY</string>
     <string name="FDT_SCORE_THRESHOLD_KEY">FDT_SCORE_THRESHOLD_KEY</string>
-    <string name="FDT_MODEL_DIR_DEFAULT">models/pyramidbox_lite_for_cpu</string>
+    <string name="FDT_MODEL_DIR_DEFAULT">models/face_detector_for_cpu</string>
     <string name="FDT_CPU_THREAD_NUM_DEFAULT">1</string>
     <string name="FDT_CPU_POWER_MODE_DEFAULT">LITE_POWER_HIGH</string>
     <string name="FDT_INPUT_SCALE_DEFAULT">0.25</string>
