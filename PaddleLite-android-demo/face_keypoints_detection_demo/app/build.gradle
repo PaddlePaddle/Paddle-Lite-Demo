@@ -53,8 +53,8 @@ def archives = [
                 'dest': 'OpenCV'
         ],
         [
-                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/pyramidbox_lite_fp32_for_cpu_v2_9_0.tar.gz',
-                'dest' : 'src/main/assets/models/pyramidbox_lite_for_cpu'
+                'src' : 'https://paddlelite-demo.bj.bcebos.com/models/ultra_light_fast_generic_face_detector_1mb_640_for_cpu_v2_9_0.tar.gz',
+                'dest' : 'src/main/assets/models/face_detector_for_cpu'
         ],
         [
                 'src' : 'https://paddlelite-demo.bj.bcebos.com/models/facekeypoints_detector_fp32_60_60_for_cpu_v2_9_0.tar.gz',
