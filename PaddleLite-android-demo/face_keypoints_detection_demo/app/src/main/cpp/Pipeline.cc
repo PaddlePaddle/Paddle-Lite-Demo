@@ -33,7 +33,7 @@ FaceDetector::FaceDetector(const std::string &modelDir, const int cpuThreadNum,
 void FaceDetector::Preprocess(const cv::Mat &rgbaImage) {
   auto t = GetCurrentTime();
   cv::Mat resizedRGBAImage;
-  cv::resize(rgbaImage, resizedRGBAImage, cv::Size(640,480));
+  cv::resize(rgbaImage, resizedRGBAImage, cv::Size(rgbaImage.rows < 640 ? rgbaImage.rows:640, rgbaImage.cols < 480 ? rgbaImage.cols:480));
 
   cv::Mat resizedBGRImage;
   cv::cvtColor(resizedRGBAImage, resizedBGRImage, cv::COLOR_RGBA2BGR);
@@ -292,7 +292,7 @@ void Pipeline::VisualizeResults(const std::vector<Face> &faces,
     // Configure color
     cv::Scalar color = cv::Scalar(255, 0, 0);
     // Draw roi object
-    cv::rectangle(*rgbaImage, faces[i].roi, color, 2);
+//    cv::rectangle(*rgbaImage, faces[i].roi, color, 2);
     // Draw face keypoints
     for (int j = 0; j < faces[i].keypoints.size(); j++) {
       cv::circle(*rgbaImage, faces[i].keypoints[j], 1, cv::Scalar(0, 255, 0),
