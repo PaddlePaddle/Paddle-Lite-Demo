@@ -39,7 +39,7 @@ Paddle-Lite提供IOS、Android和ARMLinux的示例，具体如下：
     * Android Studio 4.2；
     * adb调试工具；
     * Android手机或开发版；
-    * HUAWEI手机支持NPU的[ Demo](https://paddlelite-demo.bj.bcebos.com/devices/huawei/kirin/PaddleLite-android-demo_v2_9_0.tar.gz)（NPU的功能暂时只在nova5、mate30和mate30 5G上进行了测试，用户可自行尝试其它搭载了麒麟810和990芯片的华为手机（如nova5i pro、mate30 pro、荣耀v30，mate40或p40，且需要将系统更新到最新版）
+    * 华为手机支持NPU的[ Demo](https://paddlelite-demo.bj.bcebos.com/devices/huawei/kirin/PaddleLite-android-demo_v2_9_0.tar.gz)（NPU的功能暂时只在nova5、mate30和mate30 5G上进行了测试，用户可自行尝试其它搭载了麒麟810和990芯片的华为手机（如nova5i pro、mate30 pro、荣耀v30，mate40或p40，且需要将系统更新到最新版）
 
 * ARMLinux
     * RK3399（[Ubuntu 18.04](http://www.t-firefly.com/doc/download/page/id/3.html)） 或 树莓派3B（[Raspbian Buster with desktop](https://www.raspberrypi.org/downloads/raspbian/)），暂时验证了这两个软、硬件环境，其它平台用户可自行尝试；
@@ -129,77 +129,33 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     ![ios_static](https://paddlelite-demo.bj.bcebos.com/doc/ios-image-detection.jpg)      ![ios_video](https://paddlelite-demo.bj.bcebos.com/doc/ios-video-detection.jpg)
 
 * Android
-    * 基于MobileNetV1的图像分类
-
-      - CPU预测结果（测试环境：华为nova5）
+    * 基于MobileNetV1的图像分类（CPU预测结果，测试环境：华为nova5）
 
       ![android_image_classification_cat_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_image_classification_cat_cpu.jpg)      ![android_image_classification_keyboard_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_image_classification_keyboard_cpu.jpg)
 
-      - NPU预测结果（测试环境：华为nova5）
-
-      ![android_image_classification_cat_npu](https://paddlelite-demo.bj.bcebos.com/doc/android_image_classification_cat_npu.jpg)      ![android_image_classification_keyboard_npu](https://paddlelite-demo.bj.bcebos.com/doc/android_image_classification_keyboard_npu.jpg)
-
-    * 基于MobileNetV1-SSD的目标检测
-
-      - CPU预测结果（测试环境：华为nova5）
+    * 基于MobileNetV1-SSD的目标检测（CPU预测结果，测试环境：华为nova5）
 
       ![android_object_detection_npu](https://paddlelite-demo.bj.bcebos.com/doc/android_object_detection_cpu.jpg)
 
-      - NPU预测结果（测试环境：华为nova5）
-
-      待支持
-
-    * 基于Ultra-Light-Fast-Generic-Face-Detector-1MB的人脸检测
-
-      - CPU预测结果（测试环境：华为nova5）
+    * 基于Ultra-Light-Fast-Generic-Face-Detector-1MB的人脸检测（CPU预测结果，测试环境：华为nova5）
 
       ![android_face_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_detection_cpu.jpg)
 
-      - NPU预测结果
-
-      待支持
-
-    * 基于DeeplabV3+MobilNetV2的人像分割
-
-      - CPU预测结果（测试环境：华为nova5）
+    * 基于DeeplabV3+MobilNetV2的人像分割（CPU预测结果，测试环境：华为nova5）
       
       ![android_human_segmentation_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_human_segmentation_cpu.jpg)
 
-      - NPU预测结果
-
-      待支持
-
-    * 基于视频流的人脸检测+口罩识别
-
-      - CPU预测结果（测试环境：华为mate30）
+    * 基于视频流的人脸检测+口罩识别（CPU预测结果，测试环境：华为mate30）
       
       ![android_mask_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_mask_detection_cpu.jpg)
 
-      - NPU预测结果
-
-      待支持
-
-    * 基于视频流的人脸关键点检测
-
-      - CPU预测结果（测试环境：OnePlus 7）
+    * 基于视频流的人脸关键点检测（CPU预测结果，测试环境：OnePlus 7）
       
       ![android_face_keypoints_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_cpu.jpg)
 
-      - NPU预测结果
-
-      待支持
-
-    * 基于YOLOV3-MobileNetV3的目标检测
-
-      - CPU预测结果（测试环境：华为p40，预测总耗时：55.9ms）
+    * 基于YOLOV3-MobileNetV3的目标检测（CPU预测结果，测试环境：华为p40）
       
       ![android_yolo_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_yolo_detection_cpu.jpg)
-
-      - CPU+NPU异构计算预测结果（预测总耗时：27.1ms）；
-
-      ![android_yolo_detection_hybrid_cpu_npu](https://paddlelite-demo.bj.bcebos.com/doc/android_yolo_detection_hybrid_cpu_npu.jpg)
-
-      注意：CPU+NPU的异构计算需要基于[原始Paddle模型](https://paddlelite-demo.bj.bcebos.com/models/yolov3_mobilenet_v3_prune86_FPGM_320_fp32_fluid.tar.gz)和[配置文件](https://paddlelite-demo.bj.bcebos.com/models/yolov3_mobilenet_v3_prune86_FPGM_320_fp32_for_hybrid_cpu_npu_partition_config_file.txt)进行[手动分割子图](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/npu.html)，子图分割结果[如图所示](https://paddlelite-demo.bj.bcebos.com/models/yolov3_mobilenet_v3_prune86_FPGM_320_fp32_for_hybrid_cpu_npu_partition_result.jpg)：MobileNetV3被包裹在subgraph op内并Offload到NPU上执行（未做任何优化，后续将加入zero copy并对相关op进行针对性优化，届时性能将获更大的提升），yolo_box和multiclass_nms等算子在CPU上执行。
 
 * ARMLinux
      * 基于MobileNetV1的图像分类
