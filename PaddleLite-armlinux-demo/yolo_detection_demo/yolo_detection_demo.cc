@@ -251,11 +251,11 @@ cv::Mat process(cv::Mat &input_image, std::shared_ptr<paddle::lite_api::PaddlePr
 }
 
 int main(int argc, char **argv) {
-  if (argc < 3) {
+  if (argc < 2) {
     printf(
         "Usage: \n"
-        "./yolov3_detection_demo model_dir label_path [input_image_path] [output_image_path]"
-        "use images from camera if input_image_path isn't provided.");
+        "./yolov3_detection_demo model_dir [input_image_path] [output_image_path]"
+        "use images from camera if input_image_path and output_image_path are not provided.");
     return -1;
   }
 
