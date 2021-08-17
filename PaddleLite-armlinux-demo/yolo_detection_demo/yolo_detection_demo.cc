@@ -31,33 +31,6 @@ const std::vector<int64_t> INPUT1_SHAPE = {1, 2};
 const std::vector<float> mean = {0.485f, 0.456f, 0.406f};
 const std::vector<float> scale = {0.229f, 0.224f, 0.225f};
 const float SCORE_THRESHOLD = 0.5f;
-const char* class_names[] = {"person",        "bicycle",      "car",
-                             "motorcycle",    "airplane",     "bus",
-                             "train",         "truck",        "boat",
-                             "traffic light", "fire hydrant", "stop sign",
-                             "parking meter", "bench",        "bird",
-                             "cat",           "dog",          "horse",
-                             "sheep",         "cow",          "elephant",
-                             "bear",          "zebra",        "giraffe",
-                             "backpack",      "umbrella",     "handbag",
-                             "tie",           "suitcase",     "frisbee",
-                             "skis",          "snowboard",    "sports ball",
-                             "kite",          "baseball bat", "baseball glove",
-                             "skateboard",    "surfboard",    "tennis racket",
-                             "bottle",        "wine glass",   "cup",
-                             "fork",          "knife",        "spoon",
-                             "bowl",          "banana",       "apple",
-                             "sandwich",      "orange",       "broccoli",
-                             "carrot",        "hot dog",      "pizza",
-                             "donut",         "cake",         "chair",
-                             "couch",         "potted plant", "bed",
-                             "dining table",  "toilet",       "tv",
-                             "laptop",        "mouse",        "remote",
-                             "keyboard",      "cell phone",   "microwave",
-                             "oven",          "toaster",      "sink",
-                             "refrigerator",  "book",         "clock",
-                             "vase",          "scissors",     "teddy bear",
-                             "hair drier",    "toothbrush"};
 
 struct RESULT {
   cv::Rect rec;
@@ -130,7 +103,9 @@ void preprocess(cv::Mat &img, int width,
   }
 }
 
-std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
+std::vector<RESULT> postprocess(const float *output_data,
+                                int64_t output_size,
+                                std::vector<std::string> &word_labels,
                                 const float score_threshold,
                                 cv::Mat &image) {
   if (output_data == nullptr) {
@@ -155,9 +130,13 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
       if (w > 0 && h > 0 && obj.prob <= 1) {
         rect_out.push_back(obj);
         cv::rectangle(image, rec_clip, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+        std::string text = "Unknown";
         std::string str_prob = std::to_string(obj.prob);
-        std::string text = std::string(class_names[obj.class_id]) + ": " +
+        if (word_labels.size() > 0 && obj.class_id >= 0 &&
+            obj.class_id < word_labels.size()) {
+          text = word_labels[obj.class_id] + ": " +
                            str_prob.substr(0, str_prob.find(".") + 4);
+        }
         int font_face = cv::FONT_HERSHEY_COMPLEX_SMALL;
         double font_scale = 1.f;
         int thickness = 1;
@@ -180,7 +159,7 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
 
         std::cout << "detection, image size: " << image.cols << ", "
                   << image.rows
-                  << ", detect object: " << class_names[obj.class_id]
+                  << ", detect object: " << text
                   << ", score: " << obj.prob << ", location: x=" << x
                   << ", y=" << y << ", width=" << w << ", height=" << h
                   << std::endl;
@@ -191,7 +170,9 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
   return rect_out;
 }
 
-cv::Mat process(cv::Mat &input_image, std::shared_ptr<paddle::lite_api::PaddlePredictor> &predictor) {
+cv::Mat process(cv::Mat &input_image,
+                std::vector<std::string> &word_labels,
+                std::shared_ptr<paddle::lite_api::PaddlePredictor> &predictor) {
   // Preprocess image and fill the data of input tensor
   int input_width = INPUT0_SHAPE[2];
   int input_height = INPUT0_SHAPE[3];
@@ -246,20 +227,24 @@ cv::Mat process(cv::Mat &input_image, std::shared_ptr<paddle::lite_api::PaddlePr
     output_size *= dim;
   }
   cv::Mat output_image = input_image.clone();
-  auto rec_out = postprocess(output_data, static_cast<int>(output_size / 6), SCORE_THRESHOLD, output_image);
+  auto rec_out = postprocess(
+    output_data, static_cast<int>(output_size / 6), word_labels, SCORE_THRESHOLD, output_image);
   return output_image;
 }
 
 int main(int argc, char **argv) {
-  if (argc < 2) {
+  if (argc != 3 && argc != 5) {
     printf(
         "Usage: \n"
-        "./yolov3_detection_demo model_dir [input_image_path] [output_image_path]"
+        "./yolov3_detection_demo model_dir label_path [input_image_path] [output_image_path]"
         "use images from camera if input_image_path and output_image_path are not provided.");
     return -1;
   }
 
   std::string model_path = argv[1];
+  std::string label_path = argv[2];
+
+  std::vector<std::string> word_labels = load_labels(label_path);
 
   paddle::lite_api::MobileConfig config;
   config.set_model_from_file(model_path);
@@ -269,13 +254,13 @@ int main(int argc, char **argv) {
   std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor =
       paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(config);
 
-  if (argc > 3) {
+  if (argc == 5) {
     WARMUP_COUNT = 1;
     REPEAT_COUNT = 5;
-    std::string input_image_path = argv[2];
-    std::string output_image_path = argv[3];
+    std::string input_image_path = argv[3];
+    std::string output_image_path = argv[4];
     cv::Mat input_image = cv::imread(input_image_path);
-    cv::Mat output_image = process(input_image, predictor);
+    cv::Mat output_image = process(input_image, word_labels, predictor);
     cv::imwrite(output_image_path, output_image);
     cv::imshow("Object Detection Demo", output_image);
     cv::waitKey(0);
@@ -289,7 +274,7 @@ int main(int argc, char **argv) {
     while (1) {
       cv::Mat input_image;
       cap >> input_image;
-      cv::Mat output_image = process(input_image, predictor);
+      cv::Mat output_image = process(input_image, word_labels, predictor);
       cv::imshow("Object Detection Demo", output_image);
       if (cv::waitKey(1) == char('q')) {
         break;

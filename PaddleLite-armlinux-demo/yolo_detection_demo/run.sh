@@ -16,4 +16,4 @@ cmake -DPADDLE_LITE_DIR=${PADDLE_LITE_DIR} -DTARGET_ARCH_ABI=${TARGET_ARCH_ABI} 
 make
 
 #run
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${PADDLE_LITE_DIR}/libs/${TARGET_ARCH_ABI} ./yolo_detection_demo ../models/yolov3_mobilenet_v3_for_cpu/model.nb ../images/dog.jpg ./result.jpg
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${PADDLE_LITE_DIR}/libs/${TARGET_ARCH_ABI} ./yolo_detection_demo ../models/yolov3_mobilenet_v3_for_cpu/model.nb ../labels/coco-labels-2014_2017.txt ../images/dog.jpg ./result.jpg
