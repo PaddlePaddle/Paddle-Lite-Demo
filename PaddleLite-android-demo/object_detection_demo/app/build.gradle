@@ -31,7 +31,7 @@ dependencies {
     implementation files('libs/PaddlePredictor.jar')
 }
 
-def paddleLiteLibs = 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_9_1.tar.gz'
+def paddleLiteLibs = 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_10_rc.tar.gz'
 task downloadAndExtractPaddleLiteLibs(type: DefaultTask) {
     doFirst {
         println "Downloading and extracting Paddle Lite libs"
@@ -82,7 +82,7 @@ preBuild.dependsOn downloadAndExtractPaddleLiteLibs
 
 def paddleLiteModels = [
     [
-     'src' : 'https://paddlelite-demo.bj.bcebos.com/models/ssd_mobilenet_v1_pascalvoc_fp32_300_for_cpu_v2_9_1.tar.gz',
+     'src' : 'https://paddlelite-demo.bj.bcebos.com/models/ssd_mobilenet_v1_pascalvoc_fp32_300_for_cpu_v2_10_rc.tar.gz',
      'dest' : 'src/main/assets/models/ssd_mobilenet_v1_pascalvoc_for_cpu'
     ]
 ]
