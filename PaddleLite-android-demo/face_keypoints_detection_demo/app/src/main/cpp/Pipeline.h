@@ -31,6 +31,8 @@ struct Face {
   cv::Rect roi;
   // Face keypoints detection result: keypoint coordiate
   std::vector<cv::Point2d> keypoints;
+  // Score
+  float score;
 };
 
 class FaceDetector {
@@ -46,6 +48,7 @@ public:
                double *postprocessTime);
 
 private:
+  void HardNms(std::vector<Face> *input, std::vector<Face> *output, float iou_threshold);
   void Preprocess(const cv::Mat &rgbaImage);
   void Postprocess(const cv::Mat &rgbaImage, std::vector<Face> *faces);
 

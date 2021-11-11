@@ -4,11 +4,13 @@ set -e
 
 DETECTION_MODEL_DIR="$(pwd)/object_detection_demo/models/ssd_mobilenet_v1_pascalvoc_for_cpu"
 CLASSIFICATION_MODEL_DIR="$(pwd)/image_classification_demo/models/mobilenet_v1_for_cpu"
+YOLO_DETECTION_MODEL_DIR="$(pwd)/yolo_detection_demo/models/yolov3_mobilenet_v3_for_cpu"
 LIBS_DIR="$(pwd)/Paddle-Lite"
 
-CLASSIFICATION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_cpu_v2_6_0.tar.gz"
-DETECTION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ssd_mobilenet_v1_pascalvoc_fp32_300_for_cpu_v2_6_0.tar.gz"
-LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/armlinux/paddle_lite_libs_v2_6_0.tar.gz"
+CLASSIFICATION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_cpu_v2_10_rc.tar.gz"
+DETECTION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ssd_mobilenet_v1_pascalvoc_fp32_300_for_cpu_v2_10_rc.tar.gz"
+YOLO_DETECTION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/yolov3_mobilenet_v3_prune86_FPGM_320_fp32_for_cpu_v2_10_rc.tar.gz"
+LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/armlinux/paddle_lite_libs_v2_10_rc.tar.gz"
 
 download_and_uncompress() {
   local url="$1"
@@ -24,6 +26,7 @@ download_and_uncompress() {
 
 download_and_uncompress "${DETECTION_MODEL_URL}" "${DETECTION_MODEL_DIR}"
 download_and_uncompress "${CLASSIFICATION_MODEL_URL}" "${CLASSIFICATION_MODEL_DIR}"
+download_and_uncompress "${YOLO_DETECTION_MODEL_URL}" "${YOLO_DETECTION_MODEL_DIR}"
 download_and_uncompress "${LIBS_URL}" "${LIBS_DIR}"
 
 echo "Download successful!"
