@@ -103,7 +103,6 @@ public class Predictor {
             // Read model files from custom path if the first character of mode path is '/'
             // otherwise copy model to cache from assets
             realPath = appCtx.getCacheDir() + "/" + modelPath;
-            // push model to mobile
             Utils.copyDirectoryFromAssets(appCtx, modelPath, realPath);
         }
         if (realPath.isEmpty()) {
