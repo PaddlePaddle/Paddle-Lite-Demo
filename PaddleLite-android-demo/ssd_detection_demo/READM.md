@@ -1,4 +1,5 @@
 # 目标检测 C++ API Demo 使用指南
+在 Android 上实现实时的目标检测功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
 本文主要介绍目标检测 Demo 运行方法和如何在更新模型/输入/输出处理下，保证图像分类 demo 仍可继续运行。
 ## 如何运行目标检测 Demo
 ### 环境准备
@@ -29,9 +30,30 @@ Paddle Lite 预测库版本一样的 NDK
 
 <p align="center"><img width="300" height="450"  src="./images/app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="300" height="450"  src="./images/app_run_res.jpg"/></p>
 
-## 目标检测 Demo 结构解析
+## 更新预测库
 
-Android 示例的代码结构如下图所示：
+* Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
+ * 参考 [Paddle Lite 源码编译文档](https://paddle-lite.readthedocs.io/zh/latest/source_compile/compile_env.html)，编译 Android 预测库
+ * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
+    * 替换 java 库
+        * jar 包
+          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar` 替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/ssd_detection_demo/app/PaddleLite/java/PaddlePredictor.jar`
+        * Java so
+            * armeabi-v7a
+              将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/ssd_detection_demo/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so`
+            * arm64-v8a
+              将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/ssd_detection_demo/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so`
+    * 替换 c++ 库
+        * 头文件
+          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/ssd_detection_demo/app/PaddleLite/cxx/include`
+        * armeabi-v7a
+          将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/ssd_detection_demo/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
+        * arm64-v8a
+          将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/ssd_detection_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
+
+## Demo 内容介绍
+
+先整体介绍下目标检测 Demo 的代码结构，如下图所示：
 <p align="center"><img width="600" height="450"  src="./images/predict.jpg"/></p>
 
  1. `Native.java`： Java 预测代码
@@ -86,6 +108,68 @@ ssd_detection_demo/app/build.gradle
 ssd_detection_demo/app/cpp/CMakeLists.txt
 # 如果有cmake 编译选项更新，可以在 CMakeLists.txt 进行修改即可
 ```
+### Java 端
+
+* 模型存放，将下载好的模型解压存放在 `app/src/assets/models` 目录下
+ * common Java 包
+   在 `app/src/java/com/baidu/paddle/lite/demo/common` 目录下，实现摄像头和框架的公共处理，一般不用修改。其中，Utils.java 用于存放一些公用的且与 Java 基类无关的功能，例如模型拷贝、字符串类型转换等
+ * ssd_detection Java 包
+   在 `app/src/java/com/baidu/paddle/lite/demo/ssd_detection` 目录下，实现 APP 界面消息事件和 Java/C++ 端代码互传的桥梁功能
+ * MainActivity
+     实现 APP 的创建、运行、释放功能
+     重点关注 `checkAndUpdateSettings` 函数，实现 APP 界面值向 C++ 端值互传
+     
+     ```
+     public void checkAndUpdateSettings() {
+             if (SettingsActivity.checkAndUpdateSettings(this)) {
+                 String realModelDir = getCacheDir() + "/" + SettingsActivity.modelDir;
+                 Utils.copyDirectoryFromAssets(this, SettingsActivity.modelDir, realModelDir);
+                 String realLabelPath = getCacheDir() + "/" + SettingsActivity.labelPath;
+                 Utils.copyFileFromAssets(this, SettingsActivity.labelPath, realLabelPath);
+                 predictor.init(
+                         realModelDir,
+                         realLabelPath,
+                         SettingsActivity.cpuThreadNum,
+                         SettingsActivity.cpuPowerMode,
+                         SettingsActivity.inputWidth,
+                         SettingsActivity.inputHeight,
+                         SettingsActivity.inputMean,
+                         SettingsActivity.inputStd,
+                         SettingsActivity.scoreThreshold);
+             }
+         }
+     ```java
+   
+ * SettingActivity
+     实现设置界面各个元素的更新与显示，如果新增/删除界面的某个元素，均在这个类里面实现
+     备注：
+         每个元素的 ID 和 value 是与 `res/values/string.xml` 中的字符串一一对应，便于更新元素的 value
+
+ * Native
+     实现 Java 与 C++ 端代码互传的桥梁功能
+     备注：
+         Java 的 native 方法和 C++ 的 native 方法要一一对应
+     
+ ### C++ 端（native）
+ * Native
+   实现 Java 与 C++ 端代码互传的桥梁功能，将 Java 数值转换为 c++ 数值，调用 c++ 端的完成人脸关键点检测功能
+   **注意：**
+   Native 文件生成方法：
+   ```
+   cd app/src/java/com/baidu/paddle/lite/demo/face_keypoints_detection
+   # 在当前目录会生成包含 Native 方法的头文件，用户可以将其内容拷贝至 `cpp/Native.cc` 中
+   javac -classpath D:\dev\android-sdk\platforms\android-29\android.jar -encoding utf8 -h . Native.java 
+   ```
+
+ * Pipeline
+   实现输入预处理、推理执行和输出后处理的流水线处理，支持多个模型的串行处理
+
+ * Utils
+   实现其他辅助功能，如 `NHWC` 格式转 `NCHW` 格式、字符串处理等
+
+ * 新增模型支持
+   - 在 Pipeline 文件中新增模型的预测类，实现图像预处理、预测和图像后处理功能
+   - 在 Pipeline 文件中 `Pipeline` 类添加该模型预测类的调用和处理
 
 ## 代码讲解 （使用 Paddle Lite `C++ API` 执行预测）
 
