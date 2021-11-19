@@ -1,0 +1,348 @@
+# 目标检测 C++ API Demo 使用指南
+本文主要介绍目标检测 Demo 运行方法和如何在更新模型/输入/输出处理下，保证图像分类 demo 仍可继续运行。
+## 如何运行目标检测 Demo
+### 环境准备
+
+1. 在本地环境安装好 Android Studio 工具，详细安装方法请见[Android Stuido 官网](https://developer.android.com/studio)。
+2. 准备一部 Android 手机，并开启 USB 调试模式。开启方法: `手机设置 -> 查找开发者选项 -> 打开开发者选项和 USB 调试模式`
+
+**注意**：如果您的 Android Studio 尚未配置 NDK ，请根据 Android Studio 用户指南中的[安装及配置 NDK 和 CMake ](https://developer.android.com/studio/projects/install-ndk)内容，预先配置好 NDK 。您可以选择最新的 NDK 版本，或者使用
+Paddle Lite 预测库版本一样的 NDK
+
+### 部署步骤
+
+1. 目标检测 Demo 位于 `Paddle-Lite-Demo/PaddleLite-android-demo/ssd_detection_demo` 目录
+2. 用 Android Studio 打开 ssd_detection_demo 工程
+3. 手机连接电脑，打开 USB 调试和文件传输模式，并在 Android Studio 上连接自己的手机设备（手机需要开启允许从 USB 安装软件权限）
+<p align="center">
+<img width="600" height="450"  src="./images/run_app.jpg"/>
+
+![ run_app ](./images/run_app.jpg)
+</p>
+
+> **注意：**
+>> 如果您在导入项目、编译或者运行过程中遇到 NDK 配置错误的提示，请打开 ` File > Project Structure > SDK Location`，修改 `Andriod NDK location` 为您本机配置的 NDK 所在路径。
+>> 如果您是通过 Andriod Studio 的 SDK Tools 下载的 NDK (见本章节"环境准备")，可以直接点击下拉框选择默认路径。
+>> 还有一种 NDK 配置方法，你可以在 `ssd_detection_demo/local.properties` 文件中手动完成 NDK 路径配置，如下图所示
+>> 如果以上步骤仍旧无法解决 NDK 配置错误，请尝试根据 Andriod Studio 官方文档中的[更新 Android Gradle 插件](https://developer.android.com/studio/releases/gradle-plugin?hl=zh-cn#updating-plugin)章节，尝试更新Android Gradle plugin版本。
+
+4. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
+成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动识别图片中的物体并标记
+
+<p align="center"><img width="300" height="450"  src="./images/app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="300" height="450"  src="./images/app_run_res.jpg"/></p>
+
+## 目标检测 Demo 结构解析
+
+Android 示例的代码结构如下图所示：
+<p align="center"><img width="600" height="450"  src="./images/predict.jpg"/></p>
+
+ 1. `Native.java`： Java 预测代码
+
+```shell
+# 位置：
+ssd_detection_demo/app/src/main/java/com/baidu/paddle/lite/demo/ssd_detection/Native.java
+```
+
+ 2. `Native.cc`： Jni 预测代码用于 Java 与 C++ 语言传递信息
+
+```shell
+# 位置：
+ssd_detection_demo/app/src/main/cpp/Native.cc
+```
+
+ 3. `Pipeline.cc`： C++ 预测代码
+
+```shell
+# 位置：
+ssd_detection_demo/app/src/main/cpp/Pipeline.cc
+```
+
+ 4. `model.nb` : 模型文件 (opt 工具转化后 Paddle Lite 模型), `pascalvoc_label_list`：训练模型时的 `labels` 文件
+
+```shell
+# 位置：
+ssd_detection_demo/app/src/main/assets/models/ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb
+ssd_detection_demo/app/src/main/assets/labels/pascalvoc_label_list
+```
+
+ 5. `libpaddle_lite_api_shared.so`：Paddle Lite C++ 预测库
+
+```shell
+# 位置
+ssd_detection_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so
+# 如果要替换动态库 so，则将新的动态库 so 更新到此目录下
+```
+
+ 6. `build.gradle` : 定义编译过程的 gradle 脚本。（不用改动，定义了自动下载 Paddle Lite 预测和模型的过程）
+
+```shell
+# 位置
+ssd_detection_demo/app/build.gradle
+# 如果需要手动更新模型和预测库，则可将 gradle 脚本中的 `download*` 接口注释即可
+```
+
+7. `CMakeLists.txt` : C++ 预测库代码的编译脚本，用于生成 jni 的动态库 `lib_Native.so`
+
+```shell
+# 位置
+ssd_detection_demo/app/cpp/CMakeLists.txt
+# 如果有cmake 编译选项更新，可以在 CMakeLists.txt 进行修改即可
+```
+
+## 代码讲解 （使用 Paddle Lite `C++ API` 执行预测）
+
+Android 示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://paddle-lite.readthedocs.io/zh/latest/api_reference/c++_api_doc.html)。
+
+```c++
+#include <iostream>
+// 引入 C++ API
+#include "include/paddle_api.h"
+#include "include/paddle_use_ops.h"
+#include "include/paddle_use_kernels.h"
+
+// 1. 设置 MobileConfig
+MobileConfig config;
+config.set_model_from_file(<modelPath>); // 设置 NaiveBuffer 格式模型路径
+config.set_power_mode(LITE_POWER_NO_BIND); // 设置 CPU 运行模式
+config.set_threads(4); // 设置工作线程数
+
+// 2. 创建 PaddlePredictor
+std::shared_ptr<PaddlePredictor> predictor = CreatePaddlePredictor<MobileConfig>(config);
+
+// 3. 设置输入数据
+std::unique_ptr<Tensor> input_tensor(std::move(predictor->GetInput(0)));
+input_tensor->Resize({1, 3, 224, 224});
+auto* data = input_tensor->mutable_data<float>();
+for (int i = 0; i < ShapeProduction(input_tensor->shape()); ++i) {
+  data[i] = 1;
+}
+// 如果输入是图片，则可在第三步时将预处理后的图像数据赋值给输入 Tensor
+
+// 4. 执行预测
+predictor->run();
+
+// 5. 获取输出数据
+std::unique_ptr<const Tensor> output_tensor(std::move(predictor->GetOutput(0)));
+std::cout << "Output shape " << output_tensor->shape()[1] << std::endl;
+for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
+  std::cout << "Output[" << i << "]: " << output_tensor->data<float>()[i]
+            << std::endl;
+}
+
+// 例如目标检测：输出后处理，输出检测结果=
+auto outputData = outputTensor->data<float>();
+auto outputShape = outputTensor->shape();
+int outputSize = ShapeProduction(outputShape);
+for (int i = 0; i < outputSize; i += 6) {
+  // Class id
+  auto class_id = static_cast<int>(round(outputData[i]));
+  // Confidence score
+  auto score = outputData[i + 1];
+  if (score < scoreThreshold_)
+    continue;
+  RESULT object;
+  object.class_name = class_id >= 0 && class_id < labelList_.size()
+                          ? labelList_[class_id]
+                          : "Unknow";
+  object.fill_color = class_id >= 0 && class_id < colorMap_.size()
+                            ? colorMap_[class_id]
+                            : cv::Scalar(0, 0, 0);
+  object.score = score;
+  object.x = MIN(MAX(outputData[i + 2], 0.0f), 1.0f);
+  object.y = MIN(MAX(outputData[i + 3], 0.0f), 1.0f);
+  object.w = MIN(MAX(outputData[i + 4] - outputData[i + 2], 0.0f), 1.0f);
+  object.h = MIN(MAX(outputData[i + 5] - outputData[i + 3], 0.0f), 1.0f);
+  results->push_back(object);
+}
+```
+
+## 如何更新模型和输入/输出预处理
+
+### 更新模型
+1. 将优化后的模型存放到目录 `ssd_detection_demo/app/src/main/assets/models/` 下；
+2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `ssd_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.ssd_detection/MainActivity.java` 中代码：
+<p align="centet">
+<img width="600" height="450"  src="./images/model_change.jpg"/>
+</p>
+
+以更新 ssd_mobilenet_v3 模型为例，则先将优化后的模型存放到 `ssd_detection_demo/app/src/main/assets/models/ssd_mobilenet_v3_for_cpu/ssd_mv3.nb` 下，然后更新代码
+
+```c++
+// 代码文件 `ssd_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.ssd_detection/MainActivity.java`
+public void checkAndUpdateSettings() {
+        if (SettingsActivity.checkAndUpdateSettings(this)) {
+            // String realModelDir = getCacheDir() + "/" + SettingsActivity.modelDir;
+            String realModelDir = getCacheDir() + "/" + "models/ssd_mobilenet_v3_for_cpu/"; // change modelDir
+            Utils.copyDirectoryFromAssets(this, SettingsActivity.modelDir, realModelDir);
+            String realLabelPath = getCacheDir() + "/" + SettingsActivity.labelPath;
+            Utils.copyFileFromAssets(this, SettingsActivity.labelPath, realLabelPath);
+            predictor.init(
+                    realModelDir,
+                    realLabelPath,
+                    SettingsActivity.cpuThreadNum,
+                    SettingsActivity.cpuPowerMode,
+                    SettingsActivity.inputWidth,
+                    SettingsActivity.inputHeight,
+                    SettingsActivity.inputMean,
+                    SettingsActivity.inputStd,
+                    SettingsActivity.scoreThreshold);
+        }
+}
+```
+**注意：**
+
+- 如果优化后的模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc` 中代码
+<p align="centet">
+<img width="600" height="450"  src="./images/model_name.jpg"/>
+</p>
+
+```c++
+// 代码文件 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc`
+Detector::Detector(const std::string &modelDir, const std::string &labelPath,
+                   const int cpuThreadNum, const std::string &cpuPowerMode,
+                   int inputWidth, int inputHeight,
+                   const std::vector<float> &inputMean,
+                   const std::vector<float> &inputStd, float scoreThreshold)
+    : inputWidth_(inputWidth), inputHeight_(inputHeight), inputMean_(inputMean),
+      inputStd_(inputStd), scoreThreshold_(scoreThreshold) {
+  paddle::lite_api::MobileConfig config;
+//   config.set_model_from_file(modelDir + "/model.nb");
+  config.set_model_from_file(modelDir + "/ssd_mv3.nb"); // change model_name
+  config.set_threads(cpuThreadNum);
+  config.set_power_mode(ParsePowerMode(cpuPowerMode));
+  predictor_ =
+      paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(
+          config);
+  labelList_ = LoadLabelList(labelPath);
+  colorMap_ = GenerateColorMap(labelList_.size());
+}
+```
+
+- 如果需要更新 `pascalvoc_label_list` 标签文件，则需要将新的标签文件存放在目录 `ssd_detection_demo/app/src/main/assets/labels/` 下，并参考模型更新方法更新 `ssd_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.ssd_detection/MainActivity.java` 代码文件
+
+```c++
+// 代码文件 `ssd_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.ssd_detection/MainActivity.java`
+public void checkAndUpdateSettings() {
+        if (SettingsActivity.checkAndUpdateSettings(this)) {
+            String realModelDir = getCacheDir() + "/" + SettingsActivity.modelDir;
+            Utils.copyDirectoryFromAssets(this, SettingsActivity.modelDir, realModelDir);
+//             String realLabelPath = getCacheDir() + "/" + SettingsActivity.labelPath;
+            String realLabelPath = getCacheDir() + "/" + "new_label_path.txt";
+            Utils.copyFileFromAssets(this, SettingsActivity.labelPath, realLabelPath);
+            predictor.init(
+                    realModelDir,
+                    realLabelPath,
+                    SettingsActivity.cpuThreadNum,
+                    SettingsActivity.cpuPowerMode,
+                    SettingsActivity.inputWidth,
+                    SettingsActivity.inputHeight,
+                    SettingsActivity.inputMean,
+                    SettingsActivity.inputStd,
+                    SettingsActivity.scoreThreshold);
+        }
+}
+```
+
+### 更新输入/输出预处理
+1. 更新输入数据
+
+- 将更新的图片存放在 `ssd_detection_demo/app/src/main/assets/images/` 下；
+- 更新文件 `ssd_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.ssd_detection/MainActivity.java` 中的代码
+
+以更新 `cat.jpg` 为例，则先将 `cat.jpg` 存放在 `ssd_detection_demo/app/src/main/assets/images/` 下，然后更新代码
+
+
+<p align="centet">
+<img width="600" height="450"  src="./images/image_change.jpg"/>
+</p>
+
+```c++
+// 代码文件 `ssd_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.ssd_detection/MainActivity.java`
+public boolean onTextureChanged(Bitmap ARGB8888ImageBitmap) {
+        String savedImagePath = "";
+        synchronized (this) {
+            savedImagePath = MainActivity.this.savedImagePath;
+        }
+        // change image
+        Bitmap new_bit;
+        ARGB8888ImageBitmap = new_bit;
+        boolean modified = predictor.process(ARGB8888ImageBitmap, savedImagePath);
+        if (!savedImagePath.isEmpty()) {
+            synchronized (this) {
+                MainActivity.this.savedImagePath = "";
+            }
+        }
+        lastFrameIndex++;
+        if (lastFrameIndex >= 30) {
+            final int fps = (int) (lastFrameIndex * 1e9 / (System.nanoTime() - lastFrameTime));
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    tvStatus.setText(Integer.toString(fps) + "fps");
+                }
+            });
+            lastFrameIndex = 0;
+            lastFrameTime = System.nanoTime();
+        }
+        return modified;
+    }
+
+```
+
+**注意** 本 Demo 是以视频流做输入数据，如果要用图片，可以通过摄像头将图片输入，不用修改代码；或者修改输入 image 参数，将图片以cv::mat 或 Bitmap 方式传进去
+
+
+2. 更新输入预处理
+此处需要更新 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `Detector::Preprocess(const cv::Mat &rgbaImage)` 方法
+<p align="centet">
+<img width="600" height="450"  src="./images/input_change.jpg"/>
+</p>
+
+3. 更新输出预处理
+此处需要更新 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `Detector::Postprocess(std::vector<RESULT> *results)` 方法
+<p align="centet">
+<img width="600" height="450"  src="./images/output_change.jpg"/>
+</p>
+
+**注意**
+如果需要更新输出显示效果，可以更新 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc`中的 `Pipeline::VisualizeStatus(double preprocessTime, double predictTime, double postprocessTime, cv::Mat *rgbaImage)` 方法 和 `Pipeline::VisualizeResults(const std::vector<RESULT> &results, cv::Mat *rgbaImage)` 方法即可。
+
+## 介绍 Pipeline 文件中的方法
+代码文件：`ssd_detection_demo/app/src/main/cpp/Pipeline.cc`
+`Pipeline.cc` 包含两个类：Detector 和 Pipeline 类
+
+- Detector 用于检测模型的全流程处理，即输入图片预处理、预测处理和输出图片后处理
+- Pipeline 用于检测 Demo 全流程处理，即初始化赋值、模型间信息交换、输出结果的显示处理（将结果返回Java/如何在界面回显）
+
+```c++
+// 检测类的构造函数
+Detector::Detector(const std::string &modelDir, const std::string &labelPath,
+                   const int cpuThreadNum, const std::string &cpuPowerMode,
+                   int inputWidth, int inputHeight,
+                   const std::vector<float> &inputMean,
+                   const std::vector<float> &inputStd, float scoreThreshold)；
+// 检测类的输入预处理函数
+void Detector::Preprocess(const cv::Mat &rgbaImage)；
+
+// 检测类的输出预处理函数
+void Detector::Postprocess(std::vector<RESULT> *results)；
+
+// 检测类的预测函数
+void Detector::Predict(const cv::Mat &rgbaImage, std::vector<RESULT> *results,
+                       double *preprocessTime, double *predictTime,
+                       double *postprocessTime)；
+// Pipeline 的构造函数
+Pipeline::Pipeline(const std::string &modelDir, const std::string &labelPath,
+                   const int cpuThreadNum, const std::string &cpuPowerMode,
+                   int inputWidth, int inputHeight,
+                   const std::vector<float> &inputMean,
+                   const std::vector<float> &inputStd, float scoreThreshold)；
+// Pipeline 的输出结果显示函数
+void Pipeline::VisualizeResults(const std::vector<RESULT> &results,
+                                cv::Mat *rgbaImage)；
+// Pipeline 的预测时间、前后处理时间等状态显示函数
+void Pipeline::VisualizeStatus(double preprocessTime, double predictTime,
+                               double postprocessTime, cv::Mat *rgbaImage)；
+// Pipeline 的处理函数，用于模型间前后处理衔接
+bool Pipeline::Process(cv::Mat &rgbaImage, std::string savedImagePath)；
+```
+
