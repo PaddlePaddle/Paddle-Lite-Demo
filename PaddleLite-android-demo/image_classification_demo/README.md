@@ -1,4 +1,5 @@
 # 图像分类 Java API Demo 使用指南
+在 Android 上实现实图像分类功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等.
 本文主要介绍图像分类 Demo 运行方法和如何在更新模型/输入/输出处理下，保证图像分类 demo 仍可继续运行。
 ## 如何运行图像分类 Demo
 ### 环境准备
@@ -29,9 +30,31 @@ Paddle Lite 预测库版本一样的 NDK
 
 <p align="center"><img width="300" height="450"  src="./images/app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="300" height="450"  src="./images/app_run_res.jpg"/></p>
 
-## 图像分类 Demo 结构解析
+## 更新预测库
 
-Android 示例的代码结构如下图所示：
+* Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
+ * 参考 [Paddle Lite 源码编译文档](https://paddle-lite.readthedocs.io/zh/latest/source_compile/compile_env.html)，编译 Android 预测库
+ * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
+    * 替换 java 库
+        * jar 包
+          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar` 替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/image_classifiction_demo/app/PaddleLite/java/PaddlePredictor.jar`
+        * Java so
+            * armeabi-v7a
+              将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/image_classifiction_demo/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so`
+            * arm64-v8a
+              将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/image_classifiction_demo/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so`
+    * 替换 c++ 库
+        * 头文件
+          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/image_classifiction_demo/app/PaddleLite/cxx/include`
+        * armeabi-v7a
+          将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/image_classifiction_demo/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
+        * arm64-v8a
+          将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/image_classifiction_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
+
+## Demo 内容介绍
+
+先整体介绍下目标检测 Demo 的代码结构，然后介绍 Java 各功能模块的功能。
+
 <p align="center"><img width="600" height="450"  src="./images/predict.jpg"/></p>
 
  1. `Predictor.java`： 预测代码
@@ -66,6 +89,46 @@ image_classifiction_demo/app/build.gradle
 # 如果需要手动更新模型和预测库，则可将 gradle 脚本中的 `download*` 接口注释即可
 ```
 
+### Java 端
+
+* 模型存放，将下载好的模型解压存放在 `app/src/assets/models` 目录下
+ * image_classifications Java 包
+   在 `app/src/java/com/baidu/paddle/lite/demo/image_classifications` 目录下，实现 APP 界面消息事件
+ * MainActivity
+     实现 APP 的创建、运行、释放功能
+     重点关注 `onLoadModel` 和 `onRunModel` 函数，实现 APP 界面值传递和推理处理
+     
+     ```
+     public boolean onLoadModel() {
+             return predictor.init(MainActivity.this, modelPath, labelPath, cpuThreadNum,
+                     cpuPowerMode,
+                     inputColorFormat,
+                     inputShape, inputMean,
+                     inputStd);
+     }
+     
+     public boolean onRunModel() {
+             return predictor.isLoaded() && predictor.runModel();
+     }
+     ```java
+   
+ * SettingActivity
+     实现设置界面各个元素的更新与显示，如果新增/删除界面的某个元素，均在这个类里面实现
+     备注：
+         每个元素的 ID 和 value 是与 `res/values/string.xml` 中的字符串一一对应，便于更新元素的 value
+
+ * Predictor
+     使用 Java API 实现图像分类模型的预测功能
+     重点关注 `init` 和 `runModel` 函数，实现 Paddle Lite 端侧推理功能
+     
+     ```
+     public boolean init(Context appCtx, String modelPath, String labelPath, int cpuThreadNum, String cpuPowerMode,
+                             String inputColorFormat,
+                             long[] inputShape, float[] inputMean,
+                             float[] inputStd)；
+     public boolean runModel()；
+     ```java
+  
 ## 代码讲解 （使用 Paddle Lite `Java API` 执行预测）
 
 Android 示例基于 Java API 开发，调用 Paddle Lite `Java API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite Java API ](https://paddle-lite.readthedocs.io/zh/latest/api_reference/java_api_doc.html)。
