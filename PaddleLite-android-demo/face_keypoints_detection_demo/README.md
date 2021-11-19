@@ -4,8 +4,8 @@
   * 人脸关键点检测
   * 美妆特效
   
-  另外，此Demo具有很好的易用性和开放性。如在demo中跑自己训练好的模型，新增美妆处理功能。
-  本文将主要介绍人脸关键点检测 Demo 运行方法和如何在更新模型/输入/输出处理下，保证人脸关键点检测 demo 仍可继续运行。
+  另外，此 Demo 具有很好的易用性和开放性, 如在 Demo 中跑自己训练好的模型，新增美妆处理功能等。
+  本文将主要介绍人脸关键点检测 Demo 运行方法和如何在更新模型/输入/输出处理下，保证人脸关键点检测 Demo 仍可继续运行。
   
 ## 如何运行人脸关键点检测 Demo
 
@@ -41,26 +41,25 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     
 ## 更新到最新的预测库
 
-* Paddle-Lite项目：https://github.com/PaddlePaddle/Paddle-Lite
-* 参考 [Paddle-Lite文档](https://github.com/PaddlePaddle/Paddle-Lite/wiki)，编译Android预测库
+* Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
+* 参考 [Paddle Lite 源码编译文档](https://paddle-lite.readthedocs.io/zh/latest/source_compile/compile_env.html)，编译 Android 预测库
 * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
-    * 替换java 库
-        * jar包
-          将生成的build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/PaddlePredictor.jar
+    * 替换 java 库
+        * jar 包
+          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar` 替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/PaddlePredictor.jar`
         * Java so
             * armeabi-v7a
-              将生成的build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so
+              将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so`
             * arm64-v8a
-              将生成的build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so
+              将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so`
     * 替换c++ 库
         * 头文件
-          将生成的build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/cxx/include文件夹替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/include
+          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/include`
         * armeabi-v7a
-          将生成的build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so
+          将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
         * arm64-v8a
-          将生成的build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so
+          将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
    
-
 ## 效果展示
 
 先用人脸检测模型检测出人脸，然后用人脸关键点模型检测出人脸 68 个关键点
@@ -109,8 +108,8 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
 ## Demo 内容介绍
 
-主要从 Java 和 C++两部分简要的介绍 Demo 每部分功能，更多详细的内容请见：[Demo 使用指南](https://paddlelite-demo.bj.bcebos.com/doc/Introduction_to_face_keypoints_detection_demo.docx)
-先整体介绍下人脸关键点检测 Demo 的代码结构，如下图所示：
+先整体介绍下人脸关键点检测 Demo 的代码结构，然后再从 Java 和 C++两部分简要的介绍 Demo 每部分功能，更多详细的内容请见：[Demo 使用指南](https://paddlelite-demo.bj.bcebos.com/doc/Introduction_to_face_keypoints_detection_demo.docx)
+
 <p align="center"><img width="600" height="450"  src="./images/predict.jpg"/></p>
 
  1. `Native.java`： Java 预测代码
@@ -167,6 +166,7 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
 ```
 
 ### Java 端
+
 * 模型存放，将下载好的模型解压存放在 `app/src/assets/models` 目录下
 * common Java 包
   在 `app/src/java/com/baidu/paddle/lite/demo/common` 目录下，实现摄像头和框架的公共处理，一般不用修改。其中，Utils.java 用于存放一些公用的且与 Java 基类无关的功能，例如模型拷贝、字符串类型转换等
@@ -218,8 +218,8 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
   Native 文件生成方法：
   ```
   cd app/src/java/com/baidu/paddle/lite/demo/face_keypoints_detection
-  javac -classpath D:\dev\android-sdk\platforms\android-29\android.jar -encoding utf8 -h . Native.java 
   # 在当前目录会生成包含 Native 方法的头文件，用户可以将其内容拷贝至 `cpp/Native.cc` 中
+  javac -classpath D:\dev\android-sdk\platforms\android-29\android.jar -encoding utf8 -h . Native.java 
   ```
 
 * Pipeline
