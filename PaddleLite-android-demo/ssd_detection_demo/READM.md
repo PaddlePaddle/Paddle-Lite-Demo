@@ -16,8 +16,6 @@ Paddle Lite 预测库版本一样的 NDK
 3. 手机连接电脑，打开 USB 调试和文件传输模式，并在 Android Studio 上连接自己的手机设备（手机需要开启允许从 USB 安装软件权限）
 <p align="center">
 <img width="600" height="450"  src="./images/run_app.jpg"/>
-
-![ run_app ](./images/run_app.jpg)
 </p>
 
 > **注意：**
