@@ -1,6 +1,6 @@
-# 图像分类 Java Demo 使用指南
-本文主要介绍图像分类 Demo 运行方法和如何更新模型/输入数据，保证 分类 demo 仍可继续运行。
-## 如何运行分类 Demo
+# 图像分类 Java API Demo 使用指南
+本文主要介绍图像分类 Demo 运行方法和如何在更新模型/输入/输出处理下，保证图像分类 demo 仍可继续运行。
+## 如何运行图像分类 Demo
 ### 环境准备
 
 1. 在本地环境安装好 Android Studio 工具，详细安装方法请见[Android Stuido 官网](https://developer.android.com/studio)。
@@ -25,9 +25,6 @@ Paddle Lite 预测库版本一样的 NDK
 >> 如果您是通过 Andriod Studio 的 SDK Tools 下载的 NDK (见本章节"环境准备")，可以直接点击下拉框选择默认路径。
 >> 还有一种 NDK 配置方法，你可以在 `image_classifiction_demo/local.properties` 文件中手动完成 NDK 路径配置，如下图所示
 >> 如果以上步骤仍旧无法解决 NDK 配置错误，请尝试根据 Andriod Studio 官方文档中的[更新 Android Gradle 插件](https://developer.android.com/studio/releases/gradle-plugin?hl=zh-cn#updating-plugin)章节，尝试更新Android Gradle plugin版本。
-<p align="center">
-<img width="600" height="450"  src="./images/ndk1.jpg"/>
-</p>
 
 4. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
 成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动识别图片中的物体并标记
@@ -52,7 +49,6 @@ image_classifiction_demo/app/src/main/java/com/baidu/paddle/lite/demo/image_clas
 # 位置：
 image_classifiction_demo/app/src/main/assets/models/mobilenet_v1_for_cpu/model.nb
 image_classifiction_demo/app/src/main/assets/labels/synset_words.txt
-# 如果要替换模型，可以将新模型放到 `image_classifiction_demo/app/src/main/assets/models/mobilenet_v1_for_cpu/` 目录下
 ```
 
   3. `libpaddle_lite_jni.so、PaddlePredictor.jar`：Paddle Lite Java 预测库与 Jar 包
@@ -113,7 +109,7 @@ for (int i = 0; i < 1001; ++i) {
     System.out.println(output[i]);
 }
 
-// 例如图像分类：输出后处理，输出检测结果
+// 例如图像分类：输出后处理，输出分类结果
 // Fetch output tensor
 Tensor outputTensor = getOutput(0);
 
@@ -160,7 +156,7 @@ public boolean onLoadModel() {
   return predictor.init(MainActivity.this, modelPath, labelPath, cpuThreadNum,
                 cpuPowerMode, inputColorFormat, inputShape, inputMean,
                 inputStd);
-    }
+}
 ```
 **注意：**
 
@@ -185,21 +181,23 @@ public boolean onLoadModel() {
   return predictor.init(MainActivity.this, modelPath, labelPath, cpuThreadNum,
                 cpuPowerMode, inputColorFormat, inputShape, inputMean,
                 inputStd);
-    }
+}
 ```
 
 ### 更新输入/输出预处理
 1. 更新输入数据
 
 - 将更新的图片存放在 `image_classifiction_demo/app/src/main/assets/images/` 下；
-- 更新 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/MainActivity.java`  中的代码
+- 更新文件 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/MainActivity.java`  中的代码
+
 以更新 `dog.jpg` 为例，则先将 `dog.jpg` 存放在 `image_classifiction_demo/app/src/main/assets/images/` 下，然后更新代码
 
 <p align="centet">
 <img width="600" height="450"  src="./images/image_change.jpg"/>
 </p>
+
 ```c++
-// 代码文件 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/MainActivity.java` 中 init 方法的模型路径值
+// 代码文件 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/MainActivity.java` 中 init 方法的图片路径
 public void onLoadModelSuccessed() {
         // Load test image from path and run model
         imagePath = "images/dog.jpg"; // change image_path
