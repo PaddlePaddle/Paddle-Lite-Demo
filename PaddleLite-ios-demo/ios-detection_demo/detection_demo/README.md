@@ -8,7 +8,7 @@
  1. 在本地环境安装好 Xcode 工具，详细安装方法请见[Xcode 官网](https://developer.apple.com/cn/xcode/resources/)。
  2. 准备一部 Iphone 手机，并在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
- <p align="center"><img width="600" height="250"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/Xcode-phone.jpg"/>
+ <p align="center"><img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/Xcode-phone.jpg"/>
 
  ### 部署步骤
 
@@ -30,13 +30,13 @@
 
  4.  IPhone 手机连接电脑，在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
- <p align="center"><img width="600" height="250"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/Xcode-phone.jpg"/>
+ <p align="center"><img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/Xcode-phone.jpg"/>
 
  5. 按下左上角的 Run 按钮，自动编译 APP 并安装到手机。在苹果手机中设置信任该 APP（进入 `设置->通用->设备管理`，选中新安装的 APP 并 `验证该应用`）
 
  成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
 
- <p align="center"><img width="300" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS2.jpeg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="300" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS3.jpeg"/></p>
+ <p align="center"><img width="350" height="500"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS2.jpeg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS3.jpeg"/></p>
 
  ## 更新预测库
 
@@ -58,7 +58,7 @@
 
  先整体介绍下目标检测 Demo 的代码结构，然后再介绍 Demo 每部分功能.
 
- <p align="center"><img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS-struct.png"/>
+ <p align="center"><img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS-struct.png"/>
 
  ### 整体结构介绍
  1.  `mobilenetv1-ssd`： 模型文件( opt 工具转化后 Paddle Lite 模型)
@@ -169,11 +169,11 @@
  2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `detection_demo/models/mobilenetv1-ssd/model.nb`，则代码不需更新；否则话，需要修改 `detection_demo/ViewController.mm` 中代码和将新模型路径添加到 `Build Phases-> Copy Bundle Resource` 中
 
  <p align="centet">
- <img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_change_0.png"/>
+ <img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_change_0.png"/>
  </p>
 
  <p align="centet">
- <img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_change_1.png"/>
+ <img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_change_1.png"/>
  </p>
 
  以更新 ssd_mobilenet_v3 模型为例，则先将优化后的模型存放到 `detection_demo/models/ssd_mobilenet_v3_for_cpu/ssd_mv3.nb` 下，然后更新代码
@@ -196,7 +196,7 @@
 - 如果模型的输入和输出个数、shape、数据类型有更新，也需要更新 `detection_demo/ViewController.mm` 文件中 `viewDidLoad` 方法
 
 <p align="centet">
-<img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_inpute_change.png"/>
+<img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_inpute_change.png"/>
 </p>
 
  - 如果需要更新 `label`，则需要修改代码文件 `detection_demo/ViewController.mm` 中的  `class_names`  常量
@@ -238,11 +238,11 @@
  以更新 `dog.jpg` 为例，则先将 `dog.jpg` 存放在 `detection_demo/images/` 下，然后更新代码
 
  <p align="centet">
- <img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/input_change_pic.png"/>
+ <img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/input_change_pic.png"/>
  </p>
 
  <p align="centet">
- <img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/input_change_0.png"/>
+ <img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/input_change_0.png"/>
  </p>
 
  ```c++
@@ -268,7 +268,7 @@
  此处需要更新 `detection_demo/ViewController.mm` 中的输入预处理方法
 
  <p align="centet">
- <img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/input_process.png"/>
+ <img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/input_process.png"/>
  </p>
 
  3. 更新输出预处理
