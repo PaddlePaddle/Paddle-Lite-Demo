@@ -191,6 +191,13 @@
  ...
  }
  ```
+**注意：**
+
+- 如果模型的输入和输出个数、shape、数据类型有更新，也需要更新 `detection_demo/ViewController.mm` 文件中 `viewDidLoad` 方法
+
+<p align="centet">
+<img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_inpute_change.png"/>
+</p>
 
  - 如果需要更新 `label`，则需要修改代码文件 `detection_demo/ViewController.mm` 中的  `class_names`  常量
 
@@ -231,11 +238,11 @@
  以更新 `dog.jpg` 为例，则先将 `dog.jpg` 存放在 `detection_demo/images/` 下，然后更新代码
 
  <p align="centet">
- <img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/input_change_0.png"/>
+ <img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/input_change_pic.png"/>
  </p>
 
  <p align="centet">
- <img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/input_change_1.png"/>
+ <img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/input_change_0.png"/>
  </p>
 
  ```c++
