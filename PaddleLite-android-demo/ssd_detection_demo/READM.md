@@ -15,8 +15,9 @@ Paddle Lite 预测库版本一样的 NDK
 1. 目标检测 Demo 位于 `Paddle-Lite-Demo/PaddleLite-android-demo/ssd_detection_demo` 目录
 2. 用 Android Studio 打开 ssd_detection_demo 工程
 3. 手机连接电脑，打开 USB 调试和文件传输模式，并在 Android Studio 上连接自己的手机设备（手机需要开启允许从 USB 安装软件权限）
+
 <p align="center">
-<img width="600" height="450"  src="./images/run_app.jpg"/>
+<img src="./images/run_app.jpg"/>
 </p>
 
 > **注意：**
@@ -28,7 +29,7 @@ Paddle Lite 预测库版本一样的 NDK
 4. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
 成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动识别图片中的物体并标记
 
-<p align="center"><img width="300" height="450"  src="./images/app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="300" height="450"  src="./images/app_run_res.jpg"/></p>
+<p align="center"><img width="350" height="500"  src="./images/app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="./images/app_run_res.jpg"/></p>
 
 ## 更新预测库
 
@@ -54,7 +55,8 @@ Paddle Lite 预测库版本一样的 NDK
 ## Demo 内容介绍
 
 先整体介绍下目标检测 Demo 的代码结构，然后再从 Java 和 C++ 两部分简要的介绍 Demo 每部分功能.
-<p align="center"><img width="600" height="450"  src="./images/predict.jpg"/></p>
+
+<p align="center"><img src="./images/predict.jpg"/></p>
 
  1. `Native.java`： Java 预测代码
 
@@ -243,8 +245,9 @@ for (int i = 0; i < outputSize; i += 6) {
 ### 更新模型
 1. 将优化后的模型存放到目录 `ssd_detection_demo/app/src/main/assets/models/` 下；
 2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `ssd_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.ssd_detection/MainActivity.java` 中代码：
+
 <p align="centet">
-<img width="600" height="450"  src="./images/model_change.jpg"/>
+<img src="./images/model_change.jpg"/>
 </p>
 
 以更新 ssd_mobilenet_v3 模型为例，则先将优化后的模型存放到 `ssd_detection_demo/app/src/main/assets/models/ssd_mobilenet_v3_for_cpu/ssd_mv3.nb` 下，然后更新代码
@@ -274,8 +277,9 @@ public void checkAndUpdateSettings() {
 **注意：**
 
 - 如果优化后的模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc` 中代码
+
 <p align="centet">
-<img width="600" height="450"  src="./images/model_name.jpg"/>
+<img src="./images/model_name.jpg"/>
 </p>
 
 ```c++
@@ -335,7 +339,7 @@ public void checkAndUpdateSettings() {
 
 
 <p align="centet">
-<img width="600" height="450"  src="./images/image_change.jpg"/>
+<img src="./images/image_change.jpg"/>
 </p>
 
 ```c++
@@ -377,20 +381,20 @@ public boolean onTextureChanged(Bitmap ARGB8888ImageBitmap) {
 此处需要更新 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `Detector::Preprocess(const cv::Mat &rgbaImage)` 方法
 
 <p align="centet">
-<img width="600" height="450"  src="./images/input_change.jpg"/>
+<img src="./images/input_change.jpg"/>
 </p>
 
 **注意：** 如果模型的的输入 tensor 个数、输入 shape 和数据类型 Dtype 有更新，可以在 `Detector::Preprocess(const cv::Mat &rgbaImage)` 方法中更新模型的输入
 
 <p align="centet">
-<img width="600" height="450"  src="./images/input_model_change.jpg"/>
+<img src="./images/input_model_change.jpg"/>
 </p>
 
 3. 更新输出预处理
 此处需要更新 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `Detector::Postprocess(std::vector<RESULT> *results)` 方法
 
 <p align="centet">
-<img width="600" height="450"  src="./images/output_change.jpg"/>
+<img src="./images/output_change.jpg"/>
 </p>
 
 **注意：**
@@ -399,7 +403,7 @@ public boolean onTextureChanged(Bitmap ARGB8888ImageBitmap) {
 - 如果模型的的输出 tensor 个数、输出 shape 和数据类型 Dtype 有更新，可以在 `Detector::Postprocess(std::vector<RESULT> *results)` 方法中更新模型的输出
 
 <p align="centet">
-<img width="600" height="450"  src="./images/output_model_change.jpg"/>
+<img src="./images/output_model_change.jpg"/>
 </p>
 
 ## 介绍 Pipeline 文件中的方法

@@ -16,7 +16,7 @@ Paddle Lite 预测库版本一样的 NDK
 2. 用 Android Studio 打开 image_classifiction_demo 工程
 3. 手机连接电脑，打开 USB 调试和文件传输模式，并在 Android Studio 上连接自己的手机设备（手机需要开启允许从 USB 安装软件权限）
 <p align="center">
-<img width="600" height="450"  src="./images/run_app.jpg"/>
+<img src="./images/run_app.jpg"/>
 </p>
 
 > **注意：**
@@ -28,7 +28,7 @@ Paddle Lite 预测库版本一样的 NDK
 4. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
 成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动识别图片中的物体并标记
 
-<p align="center"><img width="300" height="450"  src="./images/app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="300" height="450"  src="./images/app_run_res.jpg"/></p>
+<p align="center"><img width="350" height="500"  src="./images/app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="./images/app_run_res.jpg"/></p>
 
 ## 更新预测库
 
@@ -55,7 +55,9 @@ Paddle Lite 预测库版本一样的 NDK
 
 先整体介绍下目标检测 Demo 的代码结构，然后介绍 Java 各功能模块的功能。
 
-<p align="center"><img width="600" height="450"  src="./images/predict.jpg"/></p>
+<p align="center">
+<img src="./images/predict.jpg"/>
+</p>
 
  1. `Predictor.java`： 预测代码
 
@@ -204,8 +206,9 @@ for (int i = 0; i < outputSize; i++) {
 ### 更新模型
 1. 将优化后的模型存放到目录 `image_classifiction_demo/app/src/main/assets/models/` 下；
 2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `mobilenet_v1_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/MainActivity.java` 中代码：
+
 <p align="centet">
-<img width="600" height="450"  src="./images/model_change.jpg"/>
+<img src="./images/model_change.jpg"/>
 </p>
 
 以更新 mobilenet_v2 模型为例，则先将优化后的模型存放到 `image_classifiction_demo/app/src/main/assets/models/mobilenet_v2_for_cpu/mv2.nb` 下，然后更新代码
@@ -222,8 +225,9 @@ public boolean onLoadModel() {
 **注意：**
 
 - 如果优化后的模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/Predictor.java` 中代码
+
 <p align="centet">
-<img width="600" height="450"  src="./images/model_name.jpg"/>
+<img src="./images/model_name.jpg"/>
 </p>
 
 ```c++
@@ -236,11 +240,11 @@ config.setModelFromFile(realPath + File.separator + "model.nb");
 - 如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/Predictor.java` 的代码，详细更新代码内容如下图所示。
 
 <p align="centet">
-<img width="600" height="450"  src="./images/input_model_change.jpg"/>
+<img src="./images/input_model_change.jpg"/>
 </p>
 
 <p align="centet">
-<img width="600" height="450"  src="./images/output_model_change.jpg"/>
+<img src="./images/output_model_change.jpg"/>
 </p>
 
 - 如果需要更新 `synset_words.txt` 标签文件，则需要将新的标签文件存放在目录 `image_classifiction_demo/app/src/main/assets/labels/` 下，并更新 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/MainActivity.java` 中 init 方法的标签文件路径名。
@@ -264,7 +268,7 @@ public boolean onLoadModel() {
 以更新 `dog.jpg` 为例，则先将 `dog.jpg` 存放在 `image_classifiction_demo/app/src/main/assets/images/` 下，然后更新代码
 
 <p align="centet">
-<img width="600" height="450"  src="./images/image_change.jpg"/>
+<img src="./images/image_change.jpg"/>
 </p>
 
 ```c++
@@ -301,17 +305,21 @@ public void onLoadModelSuccessed() {
 
 2. 更新输入预处理
 此处需要更新 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/Predictor.java` 中的输入预处理代码实现。
+
 <p align="centet">
-<img width="600" height="450"  src="./images/input_change.jpg"/>
+<img src="./images/input_change.jpg"/>
 </p>
+
 **注意：**
 根据需求，可将输入预处理代码封装成一个方法，通过调用不同预处理方法进行赋值
 
 3. 更新输出预处理
 此处需要更新 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/Predictor.java` 中的输出预处理代码实现。
+
 <p align="centet">
-<img width="600" height="450"  src="./images/output_change.jpg"/>
+<img src="./images/output_change.jpg"/>
 </p>
+
 **注意：**
 根据需求，可将输出预处理代码封装成一个方法，通过调用不同预处理方法进行处理
 

@@ -30,7 +30,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     * 如果库和模型下载失败，建议手动下载并拷贝到相应目录下
     
     <p align="center">
-    <img width="600" height="450"  src="./images/run_app.jpg"/>
+    <img src="./images/run_app.jpg"/>
     </p>
     
     > **注意：**
@@ -110,7 +110,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
 先整体介绍下人脸关键点检测 Demo 的代码结构，然后再从 Java 和 C++两部分简要的介绍 Demo 每部分功能，更多详细的内容请见：[Demo 使用指南](https://paddlelite-demo.bj.bcebos.com/doc/Introduction_to_face_keypoints_detection_demo.docx)
 
-<p align="center"><img width="600" height="450"  src="./images/predict.jpg"/></p>
+<p align="center"><img src="./images/predict.jpg"/></p>
 
  1. `Native.java`： Java 预测代码
 
@@ -244,8 +244,9 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
   ### 更新模型
   1. 将优化后的模型存放到目录 `face_keypoints_detection_demo/app/src/main/assets/models/` 下；
   2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `face_detector_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `face_keypoints_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.face_keypoints_detection/MainActivity.java` 中代码：
+
   <p align="centet">
-  <img width="600" height="450"  src="./images/model_change.jpg"/>
+  <img src="./images/model_change.jpg"/>
   </p>
   
   以将 `face_detector_for_cpu` 模型更新 `ssd_mobilenet_v3` 为例，则先将优化后的模型存放到 `face_keypoints_detection_demo/app/src/main/assets/models/ssd_mobilenet_v3_for_cpu/ssd_mv3.nb` 下，然后更新代码
@@ -275,10 +276,12 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
           }
       }
   ```
+
   **注意：**
   如果优化后的模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中代码
+
   <p align="centet">
-  <img width="600" height="450"  src="./images/model_name.jpg"/>
+  <img src="./images/model_name.jpg"/>
   </p>
   
   ```c++
@@ -312,14 +315,14 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
     此处需要更新 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `FaceDetector::Preprocess(const cv::Mat &rgbaImage)` 方法
     
     <p align="centet">
-    <img width="600" height="450"  src="./images/input_change_det.jpg"/>
+    <img src="./images/input_change_det.jpg"/>
     </p>
     
   * 更新人脸关键点模型的输入预处理
     此处需要更新 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `FaceKeypointsDetector::Preprocess(const cv::Mat &rgbaImage, const std::vector<Face> &faces, std::vector<cv::Rect> *adjustedFaceROIs)` 方法
     
     <p align="centet">
-    <img width="600" height="450"  src="./images/input_change_key.jpg"/>
+    <img src="./images/input_change_key.jpg"/>
     </p>
   
   3. 更新输出预处理
@@ -328,14 +331,14 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
   此处需要更新 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `FaceDetector::Postprocess(const cv::Mat &rgbaImage, std::vector<Face> *faces)` 方法
   
   <p align="centet">
-  <img width="600" height="450"  src="./images/output_change_det.jpg"/>
+  <img src="./images/output_change_det.jpg"/>
   </p>
   
   * 更新人脸关键点模型的输出预处理
   此处需要更新 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `FaceKeypointsDetector::Postprocess(const std::vector<cv::Rect> &adjustedFaceROIs, std::vector<Face> *faces)` 方法
   
   <p align="centet">
-  <img width="600" height="450"  src="./images/output_change_key.jpg"/>
+  <img src="./images/output_change_key.jpg"/>
   </p>
   
   
