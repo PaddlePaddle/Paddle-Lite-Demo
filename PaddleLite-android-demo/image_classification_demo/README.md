@@ -233,6 +233,16 @@ config.setModelFromFile(realPath + File.separator + "model.nb");
 
 ```
 
+- 如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/Predictor.java` 的代码，详细更新代码内容如下图所示。
+
+<p align="centet">
+<img width="600" height="450"  src="./images/input_model_change.jpg"/>
+</p>
+
+<p align="centet">
+<img width="600" height="450"  src="./images/output_model_change.jpg"/>
+</p>
+
 - 如果需要更新 `synset_words.txt` 标签文件，则需要将新的标签文件存放在目录 `image_classifiction_demo/app/src/main/assets/labels/` 下，并更新 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/MainActivity.java` 中 init 方法的标签文件路径名。
 
 ```c++

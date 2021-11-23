@@ -370,23 +370,37 @@ public boolean onTextureChanged(Bitmap ARGB8888ImageBitmap) {
 
 ```
 
-**注意** 本 Demo 是以视频流做输入数据，如果要用图片，可以通过摄像头将图片输入，不用修改代码；或者修改输入 image 参数，将图片以cv::mat 或 Bitmap 方式传进去
+**注意：** 本 Demo 是以视频流做输入数据，如果要用图片，可以通过摄像头将图片输入，不用修改代码；或者修改输入 image 参数，将图片以cv::mat 或 Bitmap 方式传进去
 
 
 2. 更新输入预处理
 此处需要更新 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `Detector::Preprocess(const cv::Mat &rgbaImage)` 方法
+
 <p align="centet">
 <img width="600" height="450"  src="./images/input_change.jpg"/>
 </p>
 
+**注意：** 如果模型的的输入 tensor 个数、输入 shape 和数据类型 Dtype 有更新，可以在 `Detector::Preprocess(const cv::Mat &rgbaImage)` 方法中更新模型的输入
+
+<p align="centet">
+<img width="600" height="450"  src="./images/input_model_change.jpg"/>
+</p>
+
 3. 更新输出预处理
 此处需要更新 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `Detector::Postprocess(std::vector<RESULT> *results)` 方法
+
 <p align="centet">
 <img width="600" height="450"  src="./images/output_change.jpg"/>
 </p>
 
-**注意**
-如果需要更新输出显示效果，可以更新 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc`中的 `Pipeline::VisualizeStatus(double preprocessTime, double predictTime, double postprocessTime, cv::Mat *rgbaImage)` 方法 和 `Pipeline::VisualizeResults(const std::vector<RESULT> &results, cv::Mat *rgbaImage)` 方法即可。
+**注意：**
+
+- 如果需要更新输出显示效果，可以更新 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc`中的 `Pipeline::VisualizeStatus(double preprocessTime, double predictTime, double postprocessTime, cv::Mat *rgbaImage)` 方法 和 `Pipeline::VisualizeResults(const std::vector<RESULT> &results, cv::Mat *rgbaImage)` 方法即可。
+- 如果模型的的输出 tensor 个数、输出 shape 和数据类型 Dtype 有更新，可以在 `Detector::Postprocess(std::vector<RESULT> *results)` 方法中更新模型的输出
+
+<p align="centet">
+<img width="600" height="450"  src="./images/output_model_change.jpg"/>
+</p>
 
 ## 介绍 Pipeline 文件中的方法
 代码文件：`ssd_detection_demo/app/src/main/cpp/Pipeline.cc`
