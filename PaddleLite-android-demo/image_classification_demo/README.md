@@ -1,7 +1,10 @@
 # 图像分类 Java API Demo 使用指南
+
 在 Android 上实现实图像分类功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等.
 本文主要介绍图像分类 Demo 运行方法和如何在更新模型/输入/输出处理下，保证图像分类 demo 仍可继续运行。
+
 ## 如何运行图像分类 Demo
+
 ### 环境准备
 
 1. 在本地环境安装好 Android Studio 工具，详细安装方法请见[Android Stuido 官网](https://developer.android.com/studio)。
