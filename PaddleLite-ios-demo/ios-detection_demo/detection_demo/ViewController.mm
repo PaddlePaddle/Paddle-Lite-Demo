@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <arm_neon.h>
 #include <mutex>
 #include "include/paddle_api.h"
 #include "include/paddle_use_ops.h"
@@ -88,7 +89,7 @@ void neon_mean_scale(const float* din, float* dout, int size, std::vector<float>
 
 
 // fill tensor with mean and scale, neon speed up
-void fill_tensor_with_cvmat(const Mat& img_in, Tensor& tout, int width, int height,
+void preprocess(const Mat& img_in, Tensor& tout, int width, int height,
                             std::vector<float> mean, std::vector<float> scale, bool is_scale) {
     if (img_in.channels() == 4) {
         cv::cvtColor(img_in, img_in, CV_RGBA2RGB);
@@ -176,9 +177,10 @@ std::vector<Object> detect_object(const float* data,
 @property (nonatomic) bool flag_cap_photo;
 @property (nonatomic) std::vector<float> scale;
 @property (nonatomic) std::vector<float> mean;
+@property (nonatomic) long input_height;
+@property (nonatomic) long input_width;
 @property (nonatomic) std::vector<std::string> labels;
 @property (nonatomic) cv::Mat cvimg;
-@property (nonatomic,strong) UIImage* ui_img_test;
 @end
 
 @implementation ViewController
@@ -194,12 +196,6 @@ std::vector<Object> detect_object(const float* data,
     if (_image != nil) {
         printf("load image successed\n");
         imageView.image = _image;
-    } else {
-        printf("load image failed\n");
-    }
-    self.ui_img_test =[UIImage imageNamed:@"face.jpg"];
-    if (self.ui_img_test != nil) {
-        printf("load test image successed\n");
     } else {
         printf("load image failed\n");
     }
@@ -223,16 +219,18 @@ std::vector<Object> detect_object(const float* data,
     net_mbv1 = CreatePaddlePredictor<MobileConfig>(config);
     self.mean = {0.5f, 0.5f, 0.5f};
     self.scale = {0.5f, 0.5f, 0.5f};
+    self.input_height = 300;
+    self.input_width = 300;
     cv::Mat img_cat;
     UIImageToMat(self.image, img_cat);
     std::unique_ptr<Tensor> input_tensor(net_mbv1->GetInput(0));
-    input_tensor->Resize({1, 3, 300, 300});
+    input_tensor->Resize({1, 3, self.input_height, self.input_width});
     input_tensor->mutable_data<float>();
     cv::Mat img;
     if (img_cat.channels() == 4) {
         cv::cvtColor(img_cat, img, CV_RGBA2RGB);
     }
-    fill_tensor_with_cvmat(img, *(input_tensor.get()), 300, 300, self.mean, self.scale, true);
+    preprocess(img, *(input_tensor.get()), self.input_height, self.input_width, self.mean, self.scale, true);
     tic.start();
     net_mbv1->Run();
     tic.end();
@@ -312,8 +310,8 @@ std::vector<Object> detect_object(const float* data,
                         cvtColor(image, self->_cvimg, CV_RGBA2RGB);
                     }
                     std::unique_ptr<Tensor> input_tensor(net_mbv1->GetInput(0));
-                    input_tensor->Resize({1, 3, 300, 300});
-                    fill_tensor_with_cvmat(self->_cvimg, *(input_tensor.get()), 300, 300, self.mean, self.scale, true);
+                    input_tensor->Resize({1, 3, self.input_height, self.input_width});
+                    preprocess(self->_cvimg, *(input_tensor.get()), self.input_height, self.input_width, self.mean, self.scale, true);
                     tic.start();
                     net_mbv1->Run();
                     tic.end();

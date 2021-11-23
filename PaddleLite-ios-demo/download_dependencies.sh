@@ -2,9 +2,9 @@
 set -e
 tempdir=$(mktemp -d)
 
-CLASSIFICATION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_cpu_v2_8_0.tar.gz"
-DETECTION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ssd_mobilenet_v1_pascalvoc_fp32_300_for_cpu_v2_8_0.tar.gz"
-PADDLE_LITE_LIB_URL="https://paddlelite-demo.bj.bcebos.com/libs/ios/paddle_lite_libs_v2_8_0.tar.gz"
+CLASSIFICATION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_cpu_v2_10_rc.tar.gz"
+ DETECTION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ssd_mobilenet_v1_pascalvoc_fp32_300_for_cpu_v2_10_rc.tar.gz"
+ PADDLE_LITE_LIB_URL="https://paddlelite-demo.bj.bcebos.com/libs/ios/paddle_lite_libs_v2_10_rc.tar.gz"
 OPENCV_FRAMEWORK_URL="https://paddlelite-demo.bj.bcebos.com/libs/ios/opencv2.framework.tar.gz"
 
 
