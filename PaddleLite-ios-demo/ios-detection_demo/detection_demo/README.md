@@ -1,45 +1,46 @@
 # 目标检测 C++ API Demo 使用指南
- 在 IOS 上实现实时的目标检测功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
- 本文主要介绍目标检测 Demo 运行方法和如何在更新模型/输入/输出处理下，保证目标检测 Demo 仍可继续运行。
+在 IOS 上实现实时的目标检测功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
+本文主要介绍目标检测 Demo 运行方法和如何在更新模型/输入/输出处理下，保证目标检测 Demo 仍可继续运行。
 
- ## 如何运行目标检测 Demo
+## 如何运行目标检测 Demo
  
- ### 环境准备
+### 环境准备
 
- 1. 在本地环境安装好 Xcode 工具，详细安装方法请见[Xcode 官网](https://developer.apple.com/cn/xcode/resources/)。
- 2. 准备一部 Iphone 手机，并在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
+1. 在本地环境安装好 Xcode 工具，详细安装方法请见[Xcode 官网](https://developer.apple.com/cn/xcode/resources/)。
+ 
+2. 准备一部 Iphone 手机，并在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
  ### 部署步骤
 
- 1. 目标检测 Demo 位于 `Paddle-Lite-Demo/PaddleLite-ios-demo/ios-detection_demo`  目录
- 2. 在终端中执行  `download_dependencies.sh`  脚本自动下载模型和 Paddle Lite 预测库
+1. 目标检测 Demo 位于 `Paddle-Lite-Demo/PaddleLite-ios-demo/ios-detection_demo`  目录
+2. 在终端中执行  `download_dependencies.sh`  脚本自动下载模型和 Paddle Lite 预测库
 
- ```shell
+```shell
  cd PaddleLite-ios-demo          # 1. 终端中进入 Paddle-Lite-Demo\PaddleLite-ios-demo
  sh download_dependencies.sh     # 2. 执行脚本下载依赖项 （需要联网）
- ```
+```
 
- 下载完成后会出现提示： `Extract done `
+下载完成后会出现提示： `Extract done `
 
- 3. 用 Xcode 打开  `ios-detection_demo/detection_demo.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和 `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
+3. 用 Xcode 打开  `ios-detection_demo/detection_demo.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和 `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
 
  ![Xcode1](https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/Xcode1.png)
 
  ![Xcode2](https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/Xcode2.png)
 
- 4.  IPhone 手机连接电脑，在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
+4.  IPhone 手机连接电脑，在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
  <p align="center"><img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/Xcode-phone.jpg"/>
 
- 5. 按下左上角的 Run 按钮，自动编译 APP 并安装到手机。在苹果手机中设置信任该 APP（进入 `设置->通用->设备管理`，选中新安装的 APP 并 `验证该应用`）
+5. 按下左上角的 Run 按钮，自动编译 APP 并安装到手机。在苹果手机中设置信任该 APP（进入 `设置->通用->设备管理`，选中新安装的 APP 并 `验证该应用`）
 
- 成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
+成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
 
  <p align="center"><img width="350" height="500"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS2.jpeg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS3.jpeg"/></p>
 
- ## 更新预测库
+## 更新预测库
 
- * Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
+* Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
   * 参考 [Paddle Lite 源码编译文档](https://paddle-lite.readthedocs.io/zh/latest/source_compile/compile_env.html)，编译 IOS 预测库
   * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
     * 替换 c++ 库
@@ -167,11 +168,11 @@
  1. 将优化后的模型存放到目录 `detection_demo/models/` 下；
  2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `detection_demo/models/mobilenetv1-ssd/model.nb`，则代码不需更新；否则话，需要修改 `detection_demo/ViewController.mm` 中代码和将新模型路径添加到 `Build Phases-> Copy Bundle Resource` 中
 
- <p align="centet">
+ <p align="center">
  <img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_change_0.png"/>
  </p>
 
- <p align="centet">
+ <p align="center">
  <img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_change_1.png"/>
  </p>
 
@@ -190,15 +191,16 @@
  ...
  }
  ```
+
 **注意：**
 
 - 如果模型的输入和输出个数、shape、数据类型有更新，也需要更新 `detection_demo/ViewController.mm` 文件中 `viewDidLoad` 方法
 
-<p align="centet">
+<p align="center">
 <img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_inpute_change.png"/>
 </p>
 
- - 如果需要更新 `label`，则需要修改代码文件 `detection_demo/ViewController.mm` 中的  `class_names`  常量
+- 如果需要更新 `label`，则需要修改代码文件 `detection_demo/ViewController.mm` 中的  `class_names`  常量
 
  ```c++
  // 代码文件 `sdetection_demo/ViewController.mm`
@@ -227,8 +229,8 @@
  };
  ```
 
- ### 更新输入/输出预处理
- 1. 更新输入数据
+### 更新输入/输出预处理
+1. 更新输入数据
 
  - 将更新的图片存放在 `detection_demo/images/` 下；
  - 将新图片的路径添加到 `Build Phases-> Copy Bundle Resource` 中
@@ -236,11 +238,11 @@
 
  以更新 `dog.jpg` 为例，则先将 `dog.jpg` 存放在 `detection_demo/images/` 下，然后更新代码
 
- <p align="centet">
+ <p align="center">
  <img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/input_change_pic.png"/>
  </p>
 
- <p align="centet">
+ <p align="center">
  <img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/input_change_0.png"/>
  </p>
 
@@ -260,18 +262,19 @@
  }
  ```
 
- **注意：** 本 Demo 是支持图片/视频流/拍照三种输入方式，如果需更新输入图片建议通过 APP 的拍照或视频流方式进行更新，这样不用修改代码，则能正常推理。
+**注意：** 本 Demo 是支持图片/视频流/拍照三种输入方式，如果需更新输入图片建议通过 APP 的拍照或视频流方式进行更新，这样不用修改代码，则能正常推理。
 
 
- 2. 更新输入预处理
- 此处需要更新 `detection_demo/ViewController.mm` 中的输入预处理方法
+2. 更新输入预处理
+此处需要更新 `detection_demo/ViewController.mm` 中的输入预处理方法
 
- <p align="centet">
+ <p align="center">
  <img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/input_process.png"/>
  </p>
 
- 3. 更新输出预处理
- 此处需要更新 `detection_demo/ViewController.mm` 中的 `detect_object(const float* data, int count,const std::vector<std::vector<uint64_t>>& lod, const float thresh,Mat& image)` 方法
+3. 更新输出预处理
+此处需要更新 `detection_demo/ViewController.mm` 中的 `detect_object(const float* data, int count,const std::vector<std::vector<uint64_t>>& lod, const float thresh,Mat& image)` 方法
 
- ### 其他文件
- * `time.h` 包含常见的计时处理函数，用于计时处理
+### 其他文件
+
+* `time.h` 包含常见的计时处理函数，用于计时处理

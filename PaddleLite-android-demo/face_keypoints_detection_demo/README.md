@@ -20,8 +20,6 @@ Paddle Lite 预测库版本一样的 NDK
 
 ## 安装
 
-$ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
-
  * Android
     * 打开 Android Studio，在 "Welcome to  Android Studio" 窗口点击 "Open an existing Android Studio project"，在弹出的路径选择窗口中进入 "face_keypoints_detection_demo" 目录，然后点击右下角的 "Open" 按钮即可导入工程
     * 通过 USB 连接 Android 手机或开发板；
@@ -39,6 +37,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     >> 还有一种 NDK 配置方法，你可以在 `face_keypoints_detection_demo/local.properties` 文件中手动完成 NDK 路径配置，如下图所示
     >> 如果以上步骤仍旧无法解决 NDK 配置错误，请尝试根据 Andriod Studio 官方文档中的[更新 Android Gradle 插件](https://developer.android.com/studio/releases/gradle-plugin?hl=zh-cn#updating-plugin)章节，尝试更新Android Gradle plugin版本。
     
+
 ## 更新到最新的预测库
 
 * Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
@@ -112,28 +111,28 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
 <p align="center"><img src="./images/predict.jpg"/></p>
 
- 1. `Native.java`： Java 预测代码
+1. `Native.java`： Java 预测代码
 
 ```shell
 # 位置：
 face_keypoints_detection_demo/app/src/main/java/com/baidu/paddle/lite/demo/face_keypoints_detection/Native.java
 ```
 
- 2. `Native.cc`： Jni 预测代码用于 Java 与 C++ 语言传递信息
+2. `Native.cc`： Jni 预测代码用于 Java 与 C++ 语言传递信息
 
 ```shell
 # 位置：
 face_keypoints_detection_demo/app/src/main/cpp/Native.cc
 ```
 
- 3. `Pipeline.cc`： C++ 预测代码
+3. `Pipeline.cc`： C++ 预测代码
 
 ```shell
 # 位置：
 face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc
 ```
 
- 4. `model.nb` : 模型文件 (opt 工具转化后 Paddle Lite 模型)
+4. `model.nb` : 模型文件 (opt 工具转化后 Paddle Lite 模型)
 
 ```shell
 # 位置：
@@ -141,7 +140,7 @@ face_keypoints_detection_demo/app/src/main/assets/models/face_detector_for_cpu/m
 face_keypoints_detection_demo/app/src/main/assets/models/facekeypointd_detector_for_cpu/model.nb
 ```
 
- 5. `libpaddle_lite_api_shared.so`：Paddle Lite C++ 预测库
+5. `libpaddle_lite_api_shared.so`：Paddle Lite C++ 预测库
 
 ```shell
 # 位置
@@ -149,7 +148,7 @@ face_keypoints_detection_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_a
 # 如果要替换动态库 so，则将新的动态库 so 更新到此目录下
 ```
 
- 6. `build.gradle` : 定义编译过程的 gradle 脚本。（不用改动，定义了自动下载 Paddle Lite 预测和模型的过程）
+6. `build.gradle` : 定义编译过程的 gradle 脚本。（不用改动，定义了自动下载 Paddle Lite 预测和模型的过程）
 
 ```shell
 # 位置
@@ -214,6 +213,7 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
 ### C++ 端（native）
 * Native
   实现 Java 与 C++ 端代码互传的桥梁功能，将 Java 数值转换为 c++ 数值，调用 c++ 端的完成人脸关键点检测功能
+  
   **注意：**
   Native 文件生成方法：
   ```
@@ -241,11 +241,12 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
 
 ## 如何更新模型和输入/输出预处理
   
-  ### 更新模型
+### 更新模型
+
   1. 将优化后的模型存放到目录 `face_keypoints_detection_demo/app/src/main/assets/models/` 下；
   2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `face_detector_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `face_keypoints_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.face_keypoints_detection/MainActivity.java` 中代码：
 
-  <p align="centet">
+  <p align="center">
   <img src="./images/model_change.jpg"/>
   </p>
   
@@ -280,7 +281,7 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
   **注意：**
   如果优化后的模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中代码
 
-  <p align="centet">
+  <p align="center">
   <img src="./images/model_name.jpg"/>
   </p>
   
@@ -304,7 +305,8 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
   }
   ```
   
-  ### 更新输入/输出预处理
+### 更新输入/输出预处理
+
   1. 更新输入数据
   由于本 Demo 是以视频流做输入数据，如果需用图片，可以通过摄像头将图片输入，不用修改代码；或者修改输入图片参数，将图片以 cv::mat 或 Bitmap 方式传进去
   
@@ -314,14 +316,14 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
   * 更新人脸检测模型的输入预处理
     此处需要更新 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `FaceDetector::Preprocess(const cv::Mat &rgbaImage)` 方法
     
-    <p align="centet">
+    <p align="center">
     <img src="./images/input_change_det.jpg"/>
     </p>
     
   * 更新人脸关键点模型的输入预处理
     此处需要更新 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `FaceKeypointsDetector::Preprocess(const cv::Mat &rgbaImage, const std::vector<Face> &faces, std::vector<cv::Rect> *adjustedFaceROIs)` 方法
     
-    <p align="centet">
+    <p align="center">
     <img src="./images/input_change_key.jpg"/>
     </p>
   
@@ -330,14 +332,14 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
   * 更新人脸检测模型的输出预处理
   此处需要更新 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `FaceDetector::Postprocess(const cv::Mat &rgbaImage, std::vector<Face> *faces)` 方法
   
-  <p align="centet">
+  <p align="center">
   <img src="./images/output_change_det.jpg"/>
   </p>
   
   * 更新人脸关键点模型的输出预处理
   此处需要更新 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `FaceKeypointsDetector::Postprocess(const std::vector<cv::Rect> &adjustedFaceROIs, std::vector<Face> *faces)` 方法
   
-  <p align="centet">
+  <p align="center">
   <img src="./images/output_change_key.jpg"/>
   </p>
   

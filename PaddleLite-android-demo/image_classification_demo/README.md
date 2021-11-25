@@ -62,14 +62,14 @@ Paddle Lite 预测库版本一样的 NDK
 <img src="./images/predict.jpg"/>
 </p>
 
- 1. `Predictor.java`： 预测代码
+1. `Predictor.java`： 预测代码
 
 ```shell
 # 位置：
 image_classifiction_demo/app/src/main/java/com/baidu/paddle/lite/demo/image_classifiction/Predictor.java
 ```
 
-  2. `model.nb` : 模型文件 (opt 工具转化后 Paddle Lite 模型), `synset_words.txt`：训练模型时的 `labels` 文件
+2. `model.nb` : 模型文件 (opt 工具转化后 Paddle Lite 模型), `synset_words.txt`：训练模型时的 `labels` 文件
 
 ```shell
 # 位置：
@@ -77,7 +77,7 @@ image_classifiction_demo/app/src/main/assets/models/mobilenet_v1_for_cpu/model.n
 image_classifiction_demo/app/src/main/assets/labels/synset_words.txt
 ```
 
-  3. `libpaddle_lite_jni.so、PaddlePredictor.jar`：Paddle Lite Java 预测库与 Jar 包
+3. `libpaddle_lite_jni.so、PaddlePredictor.jar`：Paddle Lite Java 预测库与 Jar 包
 
 ```shell
 # 位置
@@ -86,7 +86,7 @@ image_classifiction_demo/app/libs/PaddlePredictor.jar
 # 如果要替换动态库 so 和 jar 文件，则将新的动态库 so 更新到 `image_classifiction_demo/app/src/main/jniLibs/arm64-v8a/` 目录下，新的 jar 文件更新至 `image_classifiction_demo/app/libs/` 目录下
 ```
 
-  4. `build.gradle` : 定义编译过程的 gradle 脚本。（不用改动，定义了自动下载 Paddle Lite 预测和模型的过程）
+4. `build.gradle` : 定义编译过程的 gradle 脚本。（不用改动，定义了自动下载 Paddle Lite 预测和模型的过程）
 
 ```shell
 # 位置
@@ -201,7 +201,6 @@ for (int i = 0; i < outputSize; i++) {
      }
   }
 }
-
 ```
 
 ## 如何更新模型和输入/输出预处理
@@ -210,7 +209,7 @@ for (int i = 0; i < outputSize; i++) {
 1. 将优化后的模型存放到目录 `image_classifiction_demo/app/src/main/assets/models/` 下；
 2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `mobilenet_v1_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/MainActivity.java` 中代码：
 
-<p align="centet">
+<p align="center">
 <img src="./images/model_change.jpg"/>
 </p>
 
@@ -229,7 +228,7 @@ public boolean onLoadModel() {
 
 - 如果优化后的模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/Predictor.java` 中代码
 
-<p align="centet">
+<p align="center">
 <img src="./images/model_name.jpg"/>
 </p>
 
@@ -242,11 +241,11 @@ config.setModelFromFile(realPath + File.separator + "model.nb");
 
 - 如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/Predictor.java` 的代码，详细更新代码内容如下图所示。
 
-<p align="centet">
+<p align="center">
 <img src="./images/input_model_change.jpg"/>
 </p>
 
-<p align="centet">
+<p align="center">
 <img src="./images/output_model_change.jpg"/>
 </p>
 
@@ -270,7 +269,7 @@ public boolean onLoadModel() {
 
 以更新 `dog.jpg` 为例，则先将 `dog.jpg` 存放在 `image_classifiction_demo/app/src/main/assets/images/` 下，然后更新代码
 
-<p align="centet">
+<p align="center">
 <img src="./images/image_change.jpg"/>
 </p>
 
@@ -309,7 +308,7 @@ public void onLoadModelSuccessed() {
 2. 更新输入预处理
 此处需要更新 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/Predictor.java` 中的输入预处理代码实现。
 
-<p align="centet">
+<p align="center">
 <img src="./images/input_change.jpg"/>
 </p>
 
@@ -319,7 +318,7 @@ public void onLoadModelSuccessed() {
 3. 更新输出预处理
 此处需要更新 `image_classifiction_demo/app/src/main/java/com.baidu.paddle.lite.demo.image_classifiction/Predictor.java` 中的输出预处理代码实现。
 
-<p align="centet">
+<p align="center">
 <img src="./images/output_change.jpg"/>
 </p>
 

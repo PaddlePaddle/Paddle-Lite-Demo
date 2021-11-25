@@ -1,7 +1,10 @@
 # 目标检测 C++ API Demo 使用指南
+
 在 Android 上实现实时的目标检测功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
 本文主要介绍目标检测 Demo 运行方法和如何在更新模型/输入/输出处理下，保证目标检测 demo 仍可继续运行。
+
 ## 如何运行目标检测 Demo
+
 ### 环境准备
 
 1. 在本地环境安装好 Android Studio 工具，详细安装方法请见[Android Stuido 官网](https://developer.android.com/studio)。
@@ -58,28 +61,28 @@ Paddle Lite 预测库版本一样的 NDK
 
 <p align="center"><img src="./images/predict.jpg"/></p>
 
- 1. `Native.java`： Java 预测代码
+1. `Native.java`： Java 预测代码
 
 ```shell
 # 位置：
 ssd_detection_demo/app/src/main/java/com/baidu/paddle/lite/demo/ssd_detection/Native.java
 ```
 
- 2. `Native.cc`： Jni 预测代码用于 Java 与 C++ 语言传递信息
+2. `Native.cc`： Jni 预测代码用于 Java 与 C++ 语言传递信息
 
 ```shell
 # 位置：
 ssd_detection_demo/app/src/main/cpp/Native.cc
 ```
 
- 3. `Pipeline.cc`： C++ 预测代码
+3. `Pipeline.cc`： C++ 预测代码
 
 ```shell
 # 位置：
 ssd_detection_demo/app/src/main/cpp/Pipeline.cc
 ```
 
- 4. `model.nb` : 模型文件 (opt 工具转化后 Paddle Lite 模型), `pascalvoc_label_list`：训练模型时的 `labels` 文件
+4. `model.nb` : 模型文件 (opt 工具转化后 Paddle Lite 模型), `pascalvoc_label_list`：训练模型时的 `labels` 文件
 
 ```shell
 # 位置：
@@ -87,7 +90,7 @@ ssd_detection_demo/app/src/main/assets/models/ssd_mobilenet_v1_pascalvoc_for_cpu
 ssd_detection_demo/app/src/main/assets/labels/pascalvoc_label_list
 ```
 
- 5. `libpaddle_lite_api_shared.so`：Paddle Lite C++ 预测库
+5. `libpaddle_lite_api_shared.so`：Paddle Lite C++ 预测库
 
 ```shell
 # 位置
@@ -95,7 +98,7 @@ ssd_detection_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.s
 # 如果要替换动态库 so，则将新的动态库 so 更新到此目录下
 ```
 
- 6. `build.gradle` : 定义编译过程的 gradle 脚本。（不用改动，定义了自动下载 Paddle Lite 预测和模型的过程）
+6. `build.gradle` : 定义编译过程的 gradle 脚本。（不用改动，定义了自动下载 Paddle Lite 预测和模型的过程）
 
 ```shell
 # 位置
@@ -246,7 +249,7 @@ for (int i = 0; i < outputSize; i += 6) {
 1. 将优化后的模型存放到目录 `ssd_detection_demo/app/src/main/assets/models/` 下；
 2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `ssd_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.ssd_detection/MainActivity.java` 中代码：
 
-<p align="centet">
+<p align="center">
 <img src="./images/model_change.jpg"/>
 </p>
 
@@ -278,7 +281,7 @@ public void checkAndUpdateSettings() {
 
 - 如果优化后的模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc` 中代码
 
-<p align="centet">
+<p align="center">
 <img src="./images/model_name.jpg"/>
 </p>
 
@@ -338,7 +341,7 @@ public void checkAndUpdateSettings() {
 以更新 `cat.jpg` 为例，则先将 `cat.jpg` 存放在 `ssd_detection_demo/app/src/main/assets/images/` 下，然后更新代码
 
 
-<p align="centet">
+<p align="center">
 <img src="./images/image_change.jpg"/>
 </p>
 
@@ -380,20 +383,20 @@ public boolean onTextureChanged(Bitmap ARGB8888ImageBitmap) {
 2. 更新输入预处理
 此处需要更新 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `Detector::Preprocess(const cv::Mat &rgbaImage)` 方法
 
-<p align="centet">
+<p align="center">
 <img src="./images/input_change.jpg"/>
 </p>
 
 **注意：** 如果模型的的输入 tensor 个数、输入 shape 和数据类型 Dtype 有更新，可以在 `Detector::Preprocess(const cv::Mat &rgbaImage)` 方法中更新模型的输入
 
-<p align="centet">
+<p align="center">
 <img src="./images/input_model_change.jpg"/>
 </p>
 
 3. 更新输出预处理
 此处需要更新 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `Detector::Postprocess(std::vector<RESULT> *results)` 方法
 
-<p align="centet">
+<p align="center">
 <img src="./images/output_change.jpg"/>
 </p>
 
@@ -402,7 +405,7 @@ public boolean onTextureChanged(Bitmap ARGB8888ImageBitmap) {
 - 如果需要更新输出显示效果，可以更新 `ssd_detection_demo/app/src/main/cpp/Pipeline.cc`中的 `Pipeline::VisualizeStatus(double preprocessTime, double predictTime, double postprocessTime, cv::Mat *rgbaImage)` 方法 和 `Pipeline::VisualizeResults(const std::vector<RESULT> &results, cv::Mat *rgbaImage)` 方法即可。
 - 如果模型的的输出 tensor 个数、输出 shape 和数据类型 Dtype 有更新，可以在 `Detector::Postprocess(std::vector<RESULT> *results)` 方法中更新模型的输出
 
-<p align="centet">
+<p align="center">
 <img src="./images/output_model_change.jpg"/>
 </p>
 
