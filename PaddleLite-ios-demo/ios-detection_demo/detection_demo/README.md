@@ -54,11 +54,11 @@
  >> * armeabi-v7a
  >>  将生成的 `build.lite.ios.ios.armv7/inference_lite_lib.ios.armv7/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-ios-demo/ios-detection_demo/detection_demo/lib/libpaddle_api_light_bundled.a`
    
- ## Demo 内容介绍
+## Demo 内容介绍
 
  先整体介绍下目标检测 Demo 的代码结构，然后再介绍 Demo 每部分功能.
 
- <p align="center"><img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS-struct.png"/>
+ <p align="center"><img src="./doc_images/IOS-struct.png"/>
 
  ### 整体结构介绍
  1.  `mobilenetv1-ssd`： 模型文件( opt 工具转化后 Paddle Lite 模型)
@@ -169,11 +169,11 @@
  2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `detection_demo/models/mobilenetv1-ssd/model.nb`，则代码不需更新；否则话，需要修改 `detection_demo/ViewController.mm` 中代码和将新模型路径添加到 `Build Phases-> Copy Bundle Resource` 中
 
  <p align="center">
- <img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_change_0.png"/>
+ <img src="./doc_images/model_change_0.png"/>
  </p>
 
  <p align="center">
- <img src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_change_1.png"/>
+ <img src="./doc_images/model_change_1.png"/>
  </p>
 
  以更新 ssd_mobilenet_v3 模型为例，则先将优化后的模型存放到 `detection_demo/models/ssd_mobilenet_v3_for_cpu/ssd_mv3.nb` 下，然后更新代码
