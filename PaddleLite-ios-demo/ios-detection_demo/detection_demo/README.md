@@ -58,7 +58,7 @@
 
  先整体介绍下目标检测 Demo 的代码结构，然后再介绍 Demo 每部分功能.
 
- <p align="center"><img src="./doc_images/IOS-struct.jpeg"/>
+ <p align="center"><img src="./doc_images/IOS_struct.jpeg"/>
 
  ### 整体结构介绍
  1.  `mobilenetv1-ssd`： 模型文件( opt 工具转化后 Paddle Lite 模型)
