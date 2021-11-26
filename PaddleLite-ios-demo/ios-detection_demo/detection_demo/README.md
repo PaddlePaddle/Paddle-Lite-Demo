@@ -36,7 +36,7 @@
 
 成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
 
- <p align="center"><img width="350" height="500"  src="./doc_images/IOS2.jpeg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="./doc_images/IOS3.jpeg"/></p>
+ <p align="center"><img width="350" height="500"  src="./doc_images/IOS_app.jpeg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="./doc_images/IOS_run.jpeg"/></p>
 
 ## 更新预测库
 
@@ -58,7 +58,7 @@
 
  先整体介绍下目标检测 Demo 的代码结构，然后再介绍 Demo 每部分功能.
 
- <p align="center"><img src="./doc_images/IOS-struct.png"/>
+ <p align="center"><img src="./doc_images/IOS-struct.jpeg"/>
 
  ### 整体结构介绍
  1.  `mobilenetv1-ssd`： 模型文件( opt 工具转化后 Paddle Lite 模型)
@@ -169,11 +169,11 @@
  2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `detection_demo/models/mobilenetv1-ssd/model.nb`，则代码不需更新；否则话，需要修改 `detection_demo/ViewController.mm` 中代码和将新模型路径添加到 `Build Phases-> Copy Bundle Resource` 中
 
  <p align="center">
- <img src="./doc_images/model_change_0.png"/>
+ <img src="./doc_images/model_change_0.jpeg"/>
  </p>
 
  <p align="center">
- <img src="./doc_images/model_change_1.png"/>
+ <img src="./doc_images/model_change_1.jpeg"/>
  </p>
 
  以更新 ssd_mobilenet_v3 模型为例，则先将优化后的模型存放到 `detection_demo/models/ssd_mobilenet_v3_for_cpu/ssd_mv3.nb` 下，然后更新代码
@@ -197,7 +197,7 @@
 - 如果模型的输入和输出个数、shape、数据类型有更新，也需要更新 `detection_demo/ViewController.mm` 文件中 `viewDidLoad` 方法
 
 <p align="center">
-<img src="./doc_images/model_input_change.png"/>
+<img src="./doc_images/model_input_change.jpeg"/>
 </p>
 
 - 如果需要更新 `label`，则需要修改代码文件 `detection_demo/ViewController.mm` 中的  `class_names`  常量
@@ -239,11 +239,11 @@
  以更新 `dog.jpg` 为例，则先将 `dog.jpg` 存放在 `detection_demo/images/` 下，然后更新代码
 
  <p align="center">
- <img src="./doc_images/input_change_pic.png"/>
+ <img src="./doc_images/input_change_pic.jpeg"/>
  </p>
 
  <p align="center">
- <img src="./doc_images/input_change_0.png"/>
+ <img src="./doc_images/input_change_0.jpeg"/>
  </p>
 
  ```c++
@@ -269,7 +269,7 @@
 此处需要更新 `detection_demo/ViewController.mm` 中的输入预处理方法
 
  <p align="center">
- <img src="./doc_images/input_process.png"/>
+ <img src="./doc_images/input_process.jpeg"/>
  </p>
 
 3. 更新输出预处理
