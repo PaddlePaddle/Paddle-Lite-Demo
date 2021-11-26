@@ -275,6 +275,10 @@
 3. 更新输出预处理
 此处需要更新 `detection_demo/ViewController.mm` 中的 `detect_object(const float* data, int count,const std::vector<std::vector<uint64_t>>& lod, const float thresh,Mat& image)` 方法
 
+ <p align="center">
+ <img src="./doc_images/output_process.jpeg"/>
+ </p>
+
 ### 其他文件
 
 * `time.h` 包含常见的计时处理函数，用于计时处理
