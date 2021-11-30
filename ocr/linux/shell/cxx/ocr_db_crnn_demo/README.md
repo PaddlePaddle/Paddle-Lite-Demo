@@ -43,14 +43,22 @@
 ### 部署步骤
 
 1. OCR 文字识别 Demo 位于 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo` 目录
-2. cd `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo` 目录，运行 `prepare.sh` 脚本，下载所需要的 Paddle Lite 预测库、OPT 优化后模型，并完成可执行文件的编译
-3. 在当前目录运行 `run.sh` 脚本，进行推理，推理结果将会在当前窗口显示和结果写回图片（在当前目录可找到）。其效果如下图所示：
+2. cd `Paddle-Lite-Demo/libs/` 目录，运行 `download.sh` 脚本，下载每个 OS 端的 Paddle Lite 预测库和 Opencv 库
+3. cd `Paddle-Lite-Demo/ocr/` 目录，运行 `download.sh` 脚本，下载测试图片、OPT 优化后的模型和 Label 标签文件
+4. cd `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo` 目录，运行 `build.sh` 脚本，完成可执行文件的编译
+5. 在当前目录运行 `run.sh` 脚本，进行推理，推理结果将会在当前窗口显示和结果写回图片（在当前目录可找到）。其效果如下图所示：
 <p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_result.jpg"/></p>
 
 ```shell
+cd Paddle-Lite-Demo/libs/
+# 下载每个 OS 端的 Paddle Lite 预测库和 Opencv 库
+sh download.sh 
+cd Paddle-Lite-Demo/ocr/
+# 下载下载测试图片、OPT 优化后的模型和 Label 标签文件
+sh download.sh
 cd Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo
-# 下载所需要的 Paddle Lite 预测库、OPT 优化后模型，并完成可执行文件的编译
-sh prepare.sh
+# 完成可执行文件的编译
+sh build.sh
 # 进行推理，推理结果将会在当前窗口显示，并将结果写回图片（在当前目录可找到）
 sh run.sh
 ```
@@ -62,11 +70,11 @@ sh run.sh
  * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
     * 替换 c++ 库
         * 头文件
-          将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo/PaddleLite/cxx/include`
+          将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/libs/android/cxx/include`
         * armeabi-v7a
-          将生成的 `build.lite.android.armv7.clang/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
+          将生成的 `build.lite.android.armv7.clang/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/libs/android/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
         * arm64-v8a
-          将生成的 `build.lite.android.armv8.clang/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
+          将生成的 `build.lite.android.armv8.clang/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/libs/android/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
 
 注意：
 如果预测库有版本升级，建议同步更新 OPT 优化后的模型。例如，预测库升级至 2.10—rc 版本，需要做以下操作：
@@ -101,22 +109,22 @@ Demo 的整体目录结构如下图所示：
 
 ```shell
 # 位置：
-ocr_db_crnn_demo/ocr_db_crnn_code
+Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo/ocr_db_crnn_code
 ```
 
-3. `images/` : 测试图片目录，用于存放测试图片
+3. `images` : 测试图片目录，用于存放测试图片
 
 ```shell
 # 位置：
-ocr_db_crnn_demo/images
+Paddle-Lite-Demo/ocr/assets/images
 ```
 
-4. `models/` : 模型文件目录 (存放 opt 工具转化后 Paddle Lite 模型), `labels/ppocr_keys_v1.txt`：训练模型时的 `labels` 文件
+4. `models` : 模型文件目录 (存放 opt 工具转化后 Paddle Lite 模型), `labels/ppocr_keys_v1.txt`：训练模型时的 `labels` 文件
 
 ```shell
 # 位置：
-ocr_db_crnn_demo/models/
-ocr_db_crnn_demo/labels/ppocr_keys_v1.txt
+Paddle-Lite-Demo/ocr/assets/models/
+Paddle-Lite-Demo/ocr/assets/labels/ppocr_keys_v1.txt
 # ppocr_keys_v1.txt是中文字典文件，如果使用的 nb 模型是英文数字或其他语言的模型，需要更换为对应语言的字典.
 # 其他语言的字典文件，可从 PaddleOCR 仓库下载：https://github.com/PaddlePaddle/PaddleOCR/tree/release/2.3/ppocr/utils
 # 其他语言的字典内容：
@@ -132,16 +140,16 @@ ppocr_keys_v1.txt   # 中文字典
 
 ```shell
 # 位置
-ocr_db_crnn_demo/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so
-ocr_db_crnn_demo/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so
+Paddle-Lite-Demo/libs/android/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so
+Paddle-Lite-Demo/libs/android/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so
 # 如果要替换动态库 so，则将新的动态库 so 更新到此目录下
 ```
 
-6. `prepare.sh` : 下载 Paddle Lite 预测库、OPT 优化后模型脚本，并完成可执行文件的编译
+6. `build.sh` : 下载 Paddle Lite 预测库、OPT 优化后模型脚本，并完成可执行文件的编译
 
 ```shell
 # 位置
-ocr_db_crnn_demo/prepare.sh # 脚本默认编译 armv8 可执行文件
+Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo/build.sh # 脚本默认编译 armv8 可执行文件
 # 如果要编译 armv7 可执行文件，可以将 prepare.sh 脚本中的 ARM_ABI 变量改为 armeabi-v7a 即可
 ```
 
@@ -149,7 +157,7 @@ ocr_db_crnn_demo/prepare.sh # 脚本默认编译 armv8 可执行文件
 
 ```shell
 # 位置
-ocr_db_crnn_demo/run.sh
+Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo/run.sh
 # 脚本中可执行文件的参数含义：
 adb shell "cd ${ocr_demo_path} \
            && chmod +x ./ocr_db_crnn \
@@ -175,7 +183,7 @@ adb shell "cd ${ocr_demo_path} \
 
 ```shell
 # 位置
-ocr_db_crnn_demo/config.txt
+Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo/config.txt
 # 具体参数 List：
 max_side_len  960         # 输入图像长宽大于 960 时，等比例缩放图像，使得图像最长边为 960
 det_db_thresh  0.3        # 用于过滤 DB 预测的二值化图像，设置为 0.3 对结果影响不明显
@@ -230,10 +238,10 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 
 ### 更新模型
 
-1. 将优化后的新模型存放到目录 `ocr_db_crnn_demo/models/` 下；
-2. 如果模型名字跟工程中模型名字一模一样，则 `run.sh` 脚本不需更新；否则话，需要修改 `ocr_db_crnn_demo/run.sh` 中执行命令；
+1. 将优化后的新模型存放到目录 `Paddle-Lite-Demo/ocr/assets/models/` 下；
+2. 如果模型名字跟工程中模型名字一模一样，则 `run.sh` 脚本不需更新；否则话，需要修改 `./ocr_db_crnn_demo/run.sh` 中执行命令；
 
-以将检测模型更新为例，则先将优化后的模型存放到 `ocr_db_crnn_demo/models/ssd_mv3.nb` 下，然后更新执行脚本
+以将检测模型更新为例，则先将优化后的模型存放到 `Paddle-Lite-Demo/ocr/assets/models/ssd_mv3.nb` 下，然后更新执行脚本
 
 ```shell
 # 代码文件 `ocr_db_crnn_demo/run.sh`
@@ -299,10 +307,10 @@ adb shell "cd ${ocr_demo_path} \
 
 1. 更新输入数据
 
-- 将更新的图片存放在 `ocr_db_crnn_demo/images/` 下；
+- 将更新的图片存放在 `Paddle-Lite-Demo/ocr/assets/images/` 下；
 - 更新文件 `ocr_db_crnn_demo/rush.sh` 中执行命令；
 
-以更新 `new_pics.jpg` 为例，则先将 `new_pics.jpg` 存放在 `ocr_db_crnn_demo/images/` 下，然后更新脚本
+以更新 `new_pics.jpg` 为例，则先将 `new_pics.jpg` 存放在 `Paddle-Lite-Demo/ocr/assets/images/` 下，然后更新脚本
 
 ```shell
 # 代码文件 `ocr_db_crnn_demo/rush.sh`

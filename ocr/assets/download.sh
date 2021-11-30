@@ -1,7 +1,9 @@
 #!/bin/bash
-MODELS_URL="https://paddlelite-demo.bj.bcebos.com/models/ch_ppocr_mobile_v2.0_rec_slim_opt_for_cpu_v2_10_rc.tar.gz"
 IMAGES_URL="https://paddlelite-demo.bj.bcebos.com/images/OCR/images.tar.gz"
 LABELS_URL="https://paddlelite-demo.bj.bcebos.com/labels/OCR/labels.tar.gz"
+CLS_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ch_ppocr_mobile_v2.0_cls_slim_opt_for_cpu_v2_10_rc.tar.gz"
+DET_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ch_ppocr_mobile_v2.0_det_slim_opt_for_cpu_v2_10_rc.tar.gz"
+REC_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ch_ppocr_mobile_v2.0_rec_slim_opt_for_cpu_v2_10_rc.tar.gz"
 tempdir=$(mktemp -d)
 
 MODELS_DIR="$(pwd)/models/"
@@ -21,7 +23,9 @@ download_and_uncompress() {
   cd ..
 }
 
-download_and_uncompress "${MODELS_URL}" "${MODELS_DIR}"
+download_and_uncompress "${CLS_MODEL_URL}" "${MODELS_DIR}"
+download_and_uncompress "${DET_MODEL_URL}" "${MODELS_DIR}"
+download_and_uncompress "${REC_MODEL_URL}" "${MODELS_DIR}"
 download_and_uncompress "${IMAGES_URL}" "${IMAGES_DIR}"
 download_and_uncompress "${LABELS_URL}" "${LABELS_DIR}"
 
