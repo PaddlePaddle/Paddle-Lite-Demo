@@ -13,26 +13,26 @@
 // limitations under the License.
 
 #pragma once
-
-#include <cstring>
-#include <fstream>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <vector>
-
-#include "math.h" //NOLINT
+#include "utils.h"
 #include "opencv2/core.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
+#include "paddle_api.h"
+using namespace paddle::lite_api; // NOLINT
 
-cv::Mat CrnnResizeImg(cv::Mat img, float wh_ratio);
+class ClsPredictor {
+public:
+  explicit ClsPredictor(const std::string &modelDir, const int cpuThreadNum,
+                        const std::string &cpuPowerMode);
 
-std::vector<std::string> ReadDict(std::string path);
+  cv::Mat Predict(const cv::Mat &rgbImage,
+               double *preprocessTime, double *predictTime,
+               double *postprocessTime, const float thresh);
 
-cv::Mat GetRotateCropImage(cv::Mat srcimage, std::vector<std::vector<int>> box);
+private:
+  void Preprocess(const cv::Mat &rgbaImage);
+  cv::Mat Postprocess(const cv::Mat &img, const float thresh);
 
-template <class ForwardIterator>
-inline size_t Argmax(ForwardIterator first, ForwardIterator last) {
-  return std::distance(first, std::max_element(first, last));
-}
+private:
+  std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor_;
+};

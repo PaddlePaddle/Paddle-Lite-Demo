@@ -42,22 +42,22 @@
 
 ### 部署步骤
 
-1. OCR 文字识别 Demo 位于 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo` 目录
-2. cd `Paddle-Lite-Demo/libs/` 目录，运行 `download.sh` 脚本，下载每个 OS 端的 Paddle Lite 预测库和 Opencv 库
-3. cd `Paddle-Lite-Demo/ocr/` 目录，运行 `download.sh` 脚本，下载测试图片、OPT 优化后的模型和 Label 标签文件
-4. cd `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo` 目录，运行 `build.sh` 脚本，完成可执行文件的编译
+1. OCR 文字识别 Demo 位于 `Paddle-Lite-Demo/ocr/android/shell/ocr_demo` 目录
+2. cd `Paddle-Lite-Demo/libs` 目录，运行 `download.sh` 脚本，下载所需要的 Paddle Lite 预测库
+3. cd `Paddle-Lite-Demo/ocr/assets` 目录，运行 `download.sh` 脚本，下载OPT 优化后模型、测试图片和标签文件
+4. cd `Paddle-Lite-Demo/ocr/android/shell/ocr_demo` 目录，运行 `build.sh` 脚本， 完成可执行文件的编译
 5. 在当前目录运行 `run.sh` 脚本，进行推理，推理结果将会在当前窗口显示和结果写回图片（在当前目录可找到）。其效果如下图所示：
 <p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_result.jpg"/></p>
 
 ```shell
-cd Paddle-Lite-Demo/libs/
-# 下载每个 OS 端的 Paddle Lite 预测库和 Opencv 库
-sh download.sh 
-cd Paddle-Lite-Demo/ocr/
-# 下载下载测试图片、OPT 优化后的模型和 Label 标签文件
+cd Paddle-Lite-Demo/libs
+# 下载所需要的 Paddle Lite 预测库
 sh download.sh
-cd Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo
-# 完成可执行文件的编译
+cd ../ocr/assets
+# 下载OPT 优化后模型、测试图片、标签文件及 config 文件
+sh download.sh
+cd ../android/shell/ocr_demo
+# 完成可执行文件的编译, 默认编译 V8 可执行文件； 如需 V7 可执行文件，可修改 build.sh 脚本中 ARM_ABI 变量即可
 sh build.sh
 # 进行推理，推理结果将会在当前窗口显示，并将结果写回图片（在当前目录可找到）
 sh run.sh
@@ -98,93 +98,63 @@ wget https://github.com/PaddlePaddle/Paddle-Lite/releases/download/v2.10-rc/opt_
 
 Demo 的整体目录结构如下图所示：
 
-<p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/predict.jpg"/></p>
+<p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/android/predict_android_shell.jpg"/></p>
 
-1. `ocr_db_crnn_code` : 存放预测代码
-    - `cls_process.cc` : 方向分类器的预处理文件
-    - `crnn_process.cc` : 识别模型 CRNN 的预处理和后处理文件
-    - `db_post_process` : 检测模型 DB 的后处理文件
-    - `ocr_db_crnn.cc` : OCR 文字识别 Demo 预测处理代码
+1. `Paddle-Lite-Demo/libs/` : 存放不同端的预测库和OpenCL库，如android、iOS等
+
+**备注：**
+  如需更新预测库，例如更新 Android CXX v8 动态库 so，则将新的动态库 so 更新到 `Paddle-Lite-Demo/libs/android/cxx/libs/arm64-v8a` 目录
+
+2. `Paddle-Lite-Demo/ocr/assets/` : 存放 OCR demo 的模型、测试图片、标签文件及 config 文件
+
+**备注：**
+
+ - `Paddle-Lite-Demo/ocr/assets/labels/ppocr_keys_v1.txt` 是中文字典文件，如果使用的 nb 模型是英文数字或其他语言的模型，需要更换为对应语言的字典.
+ - 其他语言的字典文件，可从 PaddleOCR 仓库下载：https://github.com/PaddlePaddle/PaddleOCR/tree/release/2.3/ppocr/utils
+
+3. `Paddle-Lite-Demo/ocr/android/shell/ocr_demo/ocr_db_crnn_code` : 存放预测代码
+    - `cls_process.cc` : 方向分类器的推理全流程，包含预处理、预测和后处理三部分
+    - `rec_process.cc` : 识别模型 CRNN 的推理全流程，包含预处理、预测和后处理三部分
+    - `det_process.cc` : 检测模型 CRNN 的推理全流程，包含预处理、预测和后处理三部分
+    - `det_post_process` : 检测模型 DB 的后处理文件
+    - `pipeline.cc` : OCR 文字识别 Demo 推理全流程代码
     - `MakeFile` : 预测代码的 MakeFile 文件
 
-```shell
-# 位置：
-Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo/ocr_db_crnn_code
-```
-
-3. `images` : 测试图片目录，用于存放测试图片
-
-```shell
-# 位置：
-Paddle-Lite-Demo/ocr/assets/images
-```
-
-4. `models` : 模型文件目录 (存放 opt 工具转化后 Paddle Lite 模型), `labels/ppocr_keys_v1.txt`：训练模型时的 `labels` 文件
-
-```shell
-# 位置：
-Paddle-Lite-Demo/ocr/assets/models/
-Paddle-Lite-Demo/ocr/assets/labels/ppocr_keys_v1.txt
-# ppocr_keys_v1.txt是中文字典文件，如果使用的 nb 模型是英文数字或其他语言的模型，需要更换为对应语言的字典.
-# 其他语言的字典文件，可从 PaddleOCR 仓库下载：https://github.com/PaddlePaddle/PaddleOCR/tree/release/2.3/ppocr/utils
-# 其他语言的字典内容：
-dict/french_dict.txt     # 法语字典
-dict/german_dict.txt     # 德语字典
-ic15_dict.txt       # 英文字典
-dict/japan_dict.txt      # 日语字典
-dict/korean_dict.txt     # 韩语字典
-ppocr_keys_v1.txt   # 中文字典
-```
-
-5. `libpaddle_lite_api_shared.so`：Paddle Lite C++ 预测库
+4. `Paddle-Lite-Demo/ocr/android/shell/ocr_demo/build.sh` : 用于可执行文件的编译
 
 ```shell
 # 位置
-Paddle-Lite-Demo/libs/android/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so
-Paddle-Lite-Demo/libs/android/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so
-# 如果要替换动态库 so，则将新的动态库 so 更新到此目录下
+Paddle-Lite-Demo/ocr/android/shell/ocr_demo/build.sh # 脚本默认编译 armv8 可执行文件
+# 如果要编译 armv7 可执行文件，可以将 build.sh 脚本中的 ARM_ABI 变量改为 armeabi-v7a 即可
 ```
 
-6. `build.sh` : 下载 Paddle Lite 预测库、OPT 优化后模型脚本，并完成可执行文件的编译
+7. `Paddle-Lite-Demo/ocr/android/shell/ocr_demo/run.sh` : 预测脚本，获取返回结果
 
 ```shell
 # 位置
-Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo/build.sh # 脚本默认编译 armv8 可执行文件
-# 如果要编译 armv7 可执行文件，可以将 prepare.sh 脚本中的 ARM_ABI 变量改为 armeabi-v7a 即可
-```
-
-7. `run.sh` : 预测脚本，获取返回结果
-
-```shell
-# 位置
-Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo/run.sh
+Paddle-Lite-Demo/ocr/android/shell/ocr_demo/run.sh
 # 脚本中可执行文件的参数含义：
 adb shell "cd ${ocr_demo_path} \
-           && chmod +x ./ocr_db_crnn \
+           && chmod +x ./pipeline \
            && export LD_LIBRARY_PATH=${ocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./ocr_db_crnn \
+           && ./pipeline \
                 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
                 ./images/test.jpg \
                 ./test_img_result.jpg \
-                ./labels/ppocr_keys_v1.txt"
+                ./labels/ppocr_keys_v1.txt \
+                ./config.txt"
 
-第一个参数：ocr_db_crnn 可执行文件
+第一个参数：pipeline 可执行文件
 第二个参数：./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb 优化后的检测模型文件
 第三个参数：./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb 优化后的识别模型文件
 第四个参数：./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb 优化后的文字方向分类器模型文件
 第五个参数：./images/test.jpg  测试图片
 第六个参数：./test_img_result.jpg  结果保存文件
 第七个参数：./labels/ppocr_keys_v1.txt  label 文件，中文字典文件
-```
-
-8. `config.txt` : 超参数配置文件，包含了检测器、分类器的超参数
-
-```shell
-# 位置
-Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_db_crnn_demo/config.txt
-# 具体参数 List：
+第八个参数：./config.txt  配置文件，模型的超参数配置文件，包含了检测器、分类器的超参数
+# config.txt 具体参数 List：
 max_side_len  960         # 输入图像长宽大于 960 时，等比例缩放图像，使得图像最长边为 960
 det_db_thresh  0.3        # 用于过滤 DB 预测的二值化图像，设置为 0.3 对结果影响不明显
 det_db_box_thresh  0.5    # DB 后处理过滤 box 的阈值，如果检测存在漏框情况，可酌情减小
@@ -239,68 +209,81 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 ### 更新模型
 
 1. 将优化后的新模型存放到目录 `Paddle-Lite-Demo/ocr/assets/models/` 下；
-2. 如果模型名字跟工程中模型名字一模一样，则 `run.sh` 脚本不需更新；否则话，需要修改 `./ocr_db_crnn_demo/run.sh` 中执行命令；
+2. 如果模型名字跟工程中模型名字一模一样，则 `run.sh` 脚本不需更新；否则话，需要修改 `Paddle-Lite-Demo/ocr/android/shell/ocr_demo/run.sh` 中执行命令；
 
-以将检测模型更新为例，则先将优化后的模型存放到 `Paddle-Lite-Demo/ocr/assets/models/ssd_mv3.nb` 下，然后更新执行脚本
+以将检测模型更新为例，则先将优化后的模型存放到 `Paddle-Lite-Demo/ocr/assetss/models/ssd_mv3.nb` 下，然后更新执行脚本
 
 ```shell
-# 代码文件 `ocr_db_crnn_demo/run.sh`
+# 代码文件 `Paddle-Lite-Demo/ocr/android/shell/ocr_demo/run.sh`
 # old
 adb shell "cd ${ocr_demo_path} \
-           && chmod +x ./ocr_db_crnn \
+           && chmod +x ./pipeline \
            && export LD_LIBRARY_PATH=${ocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./ocr_db_crnn \
+           && ./pipeline \
                 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
                 ./images/test.jpg \
                 ./test_img_result.jpg \
-                ./labels/ppocr_keys_v1.txt"
+                ./labels/ppocr_keys_v1.txt \
+                ./config.txt"
 # update
 adb shell "cd ${ocr_demo_path} \
-           && chmod +x ./ocr_db_crnn \
+           && chmod +x ./pipeline \
            && export LD_LIBRARY_PATH=${ocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./ocr_db_crnn \
+           && ./pipeline \
                 ./models/ssd_mv3.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
                 ./images/test.jpg \
                 ./test_img_result.jpg \
-                ./labels/ppocr_keys_v1.txt"
+                ./labels/ppocr_keys_v1.txt \
+                ./config.txt"
 ```
 
 **注意：**
-- 如果更新模型中的输入 tensor、shape、和 Dtype 发生更新，需要更新 `ocr_db_crnn_demo/ocr_db_crnn_code/ocr_db_crnn.cc` 中各模型的输入 tensor 数据处理；
 
-- 如果更新模型中的输出 tensor 和 Dtype 发生更新，需要更新 `ocr_db_crnn_demo/ocr_db_crnn_code/ocr_db_crnn.cc` 中各模型的输出 tensor 处理；
+- 如果更新模型中的输入 Tensor、Shape、和 Dtype 发生更新:
+
+  - 更新文字方向分类器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
+  - 更新检测模型，则需要更新 `ocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Preprocss` 函数
+  - 更新识别器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
+
+- 如果更新模型中的输出 Tensor 和 Dtype 发生更新:
+
+  - 更新文字方向分类器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
+  - 更新检测模型，则需要更新 `ocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Postprocss` 函数
+  - 更新识别器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
 
 
-- 如果需要更新 `ppocr_keys_v1.txt` 标签文件，则需要将新的标签文件存放在目录 `ocr_db_crnn_demo/labels/` 下，并参考模型更新方法更新 `ocr_db_crnn_demo/rush.sh` 中执行命令；
+- 如果需要更新 `ppocr_keys_v1.txt` 标签文件，则需要将新的标签文件存放在目录 `Paddle-Lite-Demo/ocr/assets/labels/` 下，并参考模型更新方法更新 `Paddle-Lite-Demo/ocr/android/shell/ocr_demo/rush.sh` 中执行命令；
 
 ```shell
-# 代码文件 `ocr_db_crnn_demo/run.sh`
+# 代码文件 `Paddle-Lite-Demo/ocr/android/shell/ocr_demo/run.sh`
 # old
 adb shell "cd ${ocr_demo_path} \
-           && chmod +x ./ocr_db_crnn \
+           && chmod +x ./pipeline \
            && export LD_LIBRARY_PATH=${ocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./ocr_db_crnn \
+           && ./pipeline \
                 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
                 ./images/test.jpg \
                 ./test_img_result.jpg \
-                ./labels/ppocr_keys_v1.txt"
+                ./labels/ppocr_keys_v1.txt \
+                ./config.txt"
 # update
 adb shell "cd ${ocr_demo_path} \
-           && chmod +x ./ocr_db_crnn \
+           && chmod +x ./pipeline \
            && export LD_LIBRARY_PATH=${ocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./ocr_db_crnn \
+           && ./pipeline \
                 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
                 ./images/test.jpg \
                 ./test_img_result.jpg \
-                ./labels/new_labels.txt"
+                ./labels/new_labels.txt \
+                ./config.txt"
 ```
 
 ### 更新输入/输出预处理
@@ -308,81 +291,82 @@ adb shell "cd ${ocr_demo_path} \
 1. 更新输入数据
 
 - 将更新的图片存放在 `Paddle-Lite-Demo/ocr/assets/images/` 下；
-- 更新文件 `ocr_db_crnn_demo/rush.sh` 中执行命令；
+- 更新文件 `Paddle-Lite-Demo/ocr/android/shell/ocr_demo/rush.sh` 中执行命令；
 
 以更新 `new_pics.jpg` 为例，则先将 `new_pics.jpg` 存放在 `Paddle-Lite-Demo/ocr/assets/images/` 下，然后更新脚本
 
 ```shell
-# 代码文件 `ocr_db_crnn_demo/rush.sh`
+# 代码文件 `Paddle-Lite-Demo/ocr/assets/images/run.sh`
 ## old
 adb shell "cd ${ocr_demo_path} \
-           && chmod +x ./ocr_db_crnn \
+           && chmod +x ./pipeline \
            && export LD_LIBRARY_PATH=${ocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./ocr_db_crnn \
+           && ./pipeline \
                 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
                 ./images/test.jpg \
                 ./test_img_result.jpg \
-                ./labels/ppocr_keys_v1.txt"
+                ./labels/ppocr_keys_v1.txt \
+                ./config.txt"
 # update
 adb shell "cd ${ocr_demo_path} \
-           && chmod +x ./ocr_db_crnn \
+           && chmod +x ./pipeline \
            && export LD_LIBRARY_PATH=${ocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./ocr_db_crnn \
+           && ./pipeline \
                 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
                 ./images/new_pics.jpg \
                 ./test_img_result.jpg \
-                ./labels/ppocr_keys_v1.txt"
+                ./labels/ppocr_keys_v1.txt \
+                ./config.txt"
 ```
 
 2. 更新输入预处理
-
-- 更新方向分类器的输入预处理
-  更新 `ocr_db_crnn_demo/ocr_db_crnn_code/cls_process.cc` 中的 `ClsResizeImg` 方法即可
-- 识别模型 CRNN 的输入预处理
-  更新 `ocr_db_crnn_demo/ocr_db_crnn_code/crnn_process.cc` 中的 `CrnnResizeImg` 方法即可
-- 检测模型 DB 的输入预处理
-  更新 `ocr_db_crnn_demo/ocr_db_crnn_code/ocr_db_crnn.cc` 中的 `DetResizeImg` 方法即可
+  - 更新文字方向分类器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
+  - 更新检测模型，则需要更新 `ocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Preprocss` 函数
+  - 更新识别器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
 
 3. 更新输出预处理
 
-- 更新方向分类器的输出预处理
- 更新 `ocr_db_crnn_demo/ocr_db_crnn_code/ocr_db_crnn.cc` 中的 `RunClsModel` 方法中 `std::unique_ptr<const Tensor> softmax_out(std::move(predictor_cls->GetOutput(0)));` 改行代码之后实现即可
-- 识别模型 CRNN 的输出预处理
-  更新 `ocr_db_crnn_demo/ocr_db_crnn_code/ocr_db_crnn.cc` 中的 `RunRecModel` 方法中 `std::unique_ptr<const Tensor> output_tensor0(std::move(predictor_crnn->GetOutput(0)));` 改行代码之后实现即可
-- 检测模型 DB 的输出预处理
-  更新 `ocr_db_crnn_demo/ocr_db_crnn_code/ocr_db_crnn.cc` 中的 `RunDetModel` 方法中 `std::unique_ptr<const Tensor> output_tensor(std::move(predictor->GetOutput(0)));` 改行代码之后实现即可
+  - 更新文字方向分类器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
+  - 更新检测模型，则需要更新 `ocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Postprocss` 函数
+  - 更新识别器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
 
 ## OCR 文字识别 Demo 工程详解
 
 OCR 文字识别 Demo 由三个模型一起完成 OCR 文字识别功能，对输入图片先通过 `ch_ppocr_mobile_v2.0_det_slim_opt.nb` 模型做检测处理，然后通过 `ch_ppocr_mobile_v2.0_cls_slim_opt.nb` 模型做文字方向分类处理，最后通过 `ch_ppocr_mobile_v2.0_rec_slim_opt.nb` 模型完成文字识别处理。
 
-1. `ocr_db_crnn.cc` : OCR 文字识别 Demo 预测处理代码
+1. `pipeline.cc` : OCR 文字识别 Demo 预测全流程代码
   该文件完成了三个模型串行推理的全流程控制处理，包含整个处理过程的调度处理。
 
-  - `cv::Mat process(...)` 方法是 Demo 的主入口，完成整个预测过程的调度处理。
-  - `std::shared_ptr<PaddlePredictor> loadModel(std::string model_file)` 方法用于完成模型加载和线程数、绑核处理及 predictor 创建处理
-  - `std::map<std::string, double> LoadConfigTxt(std::string config_path)` 方法用于读取超参数配置文件
-  - `void RunDetModel(...)` 方法是检测模型预测处理，包含输入预处理、预测和输出预处理
-  - `void RunRecModel(...)` 方法是文字分类模型和文字识别模型的预测处理，包含两个的模型串连处理、输入预处理、预测和输出预处理
-  - `void RunClsModel(...)` 方法是文字分类模型预测处理，包含输入预处理、预测和输出预处理
+  - `Pipeline::Pipeline(...)` 方法完成调用三个模型类构造函数，完成模型加载和线程数、绑核处理及 predictor 创建处理
+  - `Pipeline::Process(...)` 方法用于完成这三个模型串行推理的全流程控制处理
+  
+2. `cls_process.cc` 方向分类器的预测文件
+  该文件完成了方向分类器的预处理、预测和后处理过程
 
-2. `cls_process.cc` 方向分类器的预处理文件
-  该文件完成了方向分类器的预处理
+  - `ClsPredictor::ClsPredictor()`  方法用于完成模型加载和线程数、绑核处理及 predictor 创建处理
+  - `ClsPredictor::Preprocess()` 方法用于模型的预处理
+  - `ClsPredictor::Postprocess()` 方法用于模型的后处理
 
-  - `cv::Mat ClsResizeImg(cv::Mat img)`  方法是方向分类器的预处理，完成输入图片的 resize 处理
+3. `rec_process.cc` 识别模型 CRNN 的预测文件
+  该文件完成了识别模型 CRNN 的预处理、预测和后处理过程
 
-3. `crnn_process.cc` 识别模型 CRNN 的预处理文件
-  该文件完成了识别模型 CRNN 的预处理
+  - `RecPredictor::RecPredictor()`  方法用于完成模型加载和线程数、绑核处理及 predictor 创建处理
+  - `RecPredictor::Preprocess()` 方法用于模型的预处理
+  - `RecPredictor::Postprocess()` 方法用于模型的后处理
 
-  - `cv::Mat CrnnResizeImg(cv::Mat img, float wh_ratio)`  方法是方向分类器的预处理，完成输入图片的 resize 处理
-  - `cv::Mat GetRotateCropImage(cv::Mat srcimage, std::vector<std::vector<int>> box)`  方法是方向分类器的预处理，完成输入图片的 `rotate` 和 `crop` 处理
+4. `det_process.cc` 检测模型 DB 的预测文件
+  该文件完成了检测模型 DB 的预处理、预测和后处理过程
 
-4. `db_post_process` 检测模型 DB 的后处理文件
-  该文件完成了检测模型 DB 的后处理文件，包含多个后处理操作
+  - `DetPredictor::DetPredictor()`  方法用于完成模型加载和线程数、绑核处理及 predictor 创建处理
+  - `DetPredictor::Preprocess()` 方法用于模型的预处理
+  - `DetPredictor::Postprocess()` 方法用于模型的后处理
+
+5. `db_post_process` 检测模型 DB 的后处理函数，包含 clipper 库的调用
+  该文件完成了检测模型 DB 的第三方库调用和其他后处理方法实现
 
   - `std::vector<std::vector<std::vector<int>>> BoxesFromBitmap(...)` 方法从 Bitmap 图中获取检测框
   - `std::vector<std::vector<std::vector<int>>> FilterTagDetRes(...)` 方法根据识别结果获取目标框位置
