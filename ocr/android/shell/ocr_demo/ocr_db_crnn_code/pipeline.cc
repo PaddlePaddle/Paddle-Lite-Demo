@@ -177,32 +177,32 @@ bool Pipeline::Process(std::string img_path, std::string output_img_path) {
   rgbaImage.copyTo(img);
   cv::Mat crop_img;
 
-    std::vector<std::string> rec_text;
-    std::vector<float> rec_text_score;
-    for (int i = boxes.size() - 1; i >= 0; i--) {
-      crop_img = GetRotateCropImage(img, boxes[i]);
-      if (use_direction_classify >= 1) {
-        crop_img = clsPredictor_->Predict(crop_img, nullptr, nullptr, nullptr, 0.9);
-      }
-      auto res = recPredictor_->Predict(crop_img, nullptr, nullptr, nullptr, charactor_dict_);
-      rec_text.push_back(res.first);
-      rec_text_score.push_back(res.second);
+  std::vector<std::string> rec_text;
+  std::vector<float> rec_text_score;
+  for (int i = boxes.size() - 1; i >= 0; i--) {
+    crop_img = GetRotateCropImage(img, boxes[i]);
+    if (use_direction_classify >= 1) {
+      crop_img = clsPredictor_->Predict(crop_img, nullptr, nullptr, nullptr, 0.9);
     }
-    auto end = std::chrono::system_clock::now();
-    auto duration =
-        std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    //// visualization
-    auto img_vis = Visualization(rgbaImage, boxes, output_img_path);
-    // print recognized text
-    for (int i = 0; i < rec_text.size(); i++) {
-      std::cout << i << "\t" << rec_text[i] << "\t" << rec_text_score[i]
-                << std::endl;
-    }
-    std::cout << "花费了"
-            << double(duration.count()) *
+    auto res = recPredictor_->Predict(crop_img, nullptr, nullptr, nullptr, charactor_dict_);
+    rec_text.push_back(res.first);
+    rec_text_score.push_back(res.second);
+  }
+  auto end = std::chrono::system_clock::now();
+  auto duration =
+  std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+  //// visualization
+  auto img_vis = Visualization(rgbaImage, boxes, output_img_path);
+  // print recognized text
+  for (int i = 0; i < rec_text.size(); i++) {
+    std::cout << i << "\t" << rec_text[i] << "\t" << rec_text_score[i]
+              << std::endl;
+  }
+  std::cout << "花费了"
+          << double(duration.count()) *
                    std::chrono::microseconds::period::num /
                    std::chrono::microseconds::period::den
-            << "秒" << std::endl;
+          << "秒" << std::endl;
   return true;
 }
 
