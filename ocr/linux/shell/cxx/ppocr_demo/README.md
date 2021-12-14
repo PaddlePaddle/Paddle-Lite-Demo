@@ -24,12 +24,15 @@ $ sudo make install
 
 ### 部署步骤
 
-1. OCR 文字识别 Demo 位于 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo` 目录
+1. OCR 文字识别 Demo 位于 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ppocr_demo` 目录
 2. cd `Paddle-Lite-Demo/libs` 目录，运行 `download.sh` 脚本，下载所需要的 Paddle Lite 预测库
 3. cd `Paddle-Lite-Demo/ocr/assets` 目录，运行 `download.sh` 脚本，下载OPT 优化后模型、测试图片和标签文件
-4. cd `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo` 目录，运行 `build.sh` 脚本， 完成可执行文件的编译
+4. cd `Paddle-Lite-Demo/ocr/linux/shell/cxx/ppocr_demo` 目录，运行 `build.sh` 脚本， 完成可执行文件的编译
 5. 在当前目录运行 `run.sh` 脚本，进行推理，推理结果将会在当前窗口显示和结果写回图片（在当前目录可找到）。其效果如下图所示：
 <p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_result.jpg"/></p>
+
+**注意：**
+  这些操作均在 ARMLinux 设备上运行，且保证设备可联网（用于预测库和模型下载）
 
 ```shell
 cd Paddle-Lite-Demo/libs
@@ -38,7 +41,7 @@ sh download.sh
 cd ../ocr/assets
 # 下载OPT 优化后模型、测试图片、标签文件及 config 文件
 sh download.sh
-cd ../linux/shell/cxx/ocr_demo
+cd ../linux/shell/cxx/ppocr_demo
 # 完成可执行文件的编译, 默认编译 V8 可执行文件； 如需 V7 可执行文件，可修改 build.sh 脚本中 ARM_ABI 变量即可
 sh build.sh
 # 进行推理，推理结果将会在当前窗口显示，并将结果写回图片（在当前目录可找到）
@@ -94,29 +97,29 @@ Demo 的整体目录结构如下图所示：
  - `Paddle-Lite-Demo/ocr/assets/labels/ppocr_keys_v1.txt` 是中文字典文件，如果使用的 nb 模型是英文数字或其他语言的模型，需要更换为对应语言的字典.
  - 其他语言的字典文件，可从 PaddleOCR 仓库下载：https://github.com/PaddlePaddle/PaddleOCR/tree/release/2.3/ppocr/utils
 
-3. `Paddle-Lite-Demo/ocr/android/shell/ocr_demo/ocr_db_crnn_code` : 存放预测代码
+3. `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/src` : 存放预测代码
     - `cls_process.cc` : 方向分类器的推理全流程，包含预处理、预测和后处理三部分
     - `rec_process.cc` : 识别模型 CRNN 的推理全流程，包含预处理、预测和后处理三部分
     - `det_process.cc` : 检测模型 CRNN 的推理全流程，包含预处理、预测和后处理三部分
     - `det_post_process` : 检测模型 DB 的后处理文件
     - `pipeline.cc` : OCR 文字识别 Demo 推理全流程代码
-    - `MakeFile` : 预测代码的 MakeFile 文件
+    - `CMakeLists.txt` : 预测代码的 MakeFile 文件
 
-4. `Paddle-Lite-Demo/ocr/liunx/shell/cxx/ocr_demo/build.sh` : 用于可执行文件的编译
+4. `Paddle-Lite-Demo/ocr/liunx/shell/cxx/ppocr_demo/build.sh` : 用于可执行文件的编译
 
 ```shell
 # 位置
-Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo/build.sh # 脚本默认编译 armv8 可执行文件
+Paddle-Lite-Demo/ocr/linux/shell/cxx/ppocr_demo/build.sh # 脚本默认编译 armv8 可执行文件
 # 如果要编译 armv7 可执行文件，可以将 build.sh 脚本中的 ARM_ABI 变量改为 armv7hf 即可
 ```
 
-7. `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo/run.sh` : 预测脚本，获取返回结果
+7. `Paddle-Lite-Demo/ocr/linux/shell/cxx/ppocr_demo/run.sh` : 预测脚本，获取返回结果
 
 ```shell
 # 位置
 Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo/run.sh
 # 脚本中可执行文件的参数含义：
-"./pipeline \
+"./ppocr_demo \
 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
@@ -125,7 +128,7 @@ Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo/run.sh
 ./labels/ppocr_keys_v1.txt \
 ./config.txt"
 
-第一个参数：pipeline 可执行文件
+第一个参数：ppocr_demo 可执行文件
 第二个参数：./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb 优化后的检测模型文件
 第三个参数：./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb 优化后的识别模型文件
 第四个参数：./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb 优化后的文字方向分类器模型文件
@@ -193,9 +196,9 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 以将检测模型更新为例，则先将优化后的模型存放到 `Paddle-Lite-Demo/ocr/assetss/models/ssd_mv3.nb` 下，然后更新执行脚本
 
 ```shell
-# 代码文件 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo/run.sh`
+# 代码文件 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ppocr_demo/run.sh`
 # old
-"./pipeline \
+"./ppocr_demo \
 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
@@ -204,7 +207,7 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 ./labels/ppocr_keys_v1.txt \
 ./config.txt"
 # update
-"./pipeline \
+"./ppocr_demo \
 ./models/ssd_mv3.nb \
 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
@@ -218,23 +221,23 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 
 - 如果更新模型中的输入 Tensor、Shape、和 Dtype 发生更新:
 
-  - 更新文字方向分类器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
-  - 更新检测模型，则需要更新 `ocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Preprocss` 函数
-  - 更新识别器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
+  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
+  - 更新检测模型，则需要更新 `ppocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Preprocss` 函数
+  - 更新识别器模型，则需要更新 `ppocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
 
 - 如果更新模型中的输出 Tensor 和 Dtype 发生更新:
 
-  - 更新文字方向分类器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
-  - 更新检测模型，则需要更新 `ocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Postprocss` 函数
-  - 更新识别器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
+  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
+  - 更新检测模型，则需要更新 `ppocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Postprocss` 函数
+  - 更新识别器模型，则需要更新 `ppocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
 
 
-- 如果需要更新 `ppocr_keys_v1.txt` 标签文件，则需要将新的标签文件存放在目录 `Paddle-Lite-Demo/ocr/assets/labels/` 下，并参考模型更新方法更新 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo/rush.sh` 中执行命令；
+- 如果需要更新 `ppocr_keys_v1.txt` 标签文件，则需要将新的标签文件存放在目录 `Paddle-Lite-Demo/ocr/assets/labels/` 下，并参考模型更新 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo/rush.sh` 中执行命令；
 
 ```shell
-# 代码文件 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo/run.sh`
+# 代码文件 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ppocr_demo/run.sh`
 # old
-"./pipeline \
+"./ppocr_demo \
 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
@@ -243,7 +246,7 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 ./labels/ppocr_keys_v1.txt \
 ./config.txt"
 # update
-"./pipeline \
+"./ppocr_demo \
 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
@@ -265,7 +268,7 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 ```shell
 # 代码文件 `Paddle-Lite-Demo/ocr/assets/images/run.sh`
 ## old
-"./pipeline \
+"./ppocr_demo \
 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
@@ -274,7 +277,7 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 ./labels/ppocr_keys_v1.txt \
 ./config.txt"
 # update
-"./pipeline \
+"./ppocr_demo \
 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \

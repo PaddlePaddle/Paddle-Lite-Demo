@@ -13,7 +13,7 @@ else()
     return()
 endif()
 
-project(ocr_demo)
+project(ppocr_demo)
 message(STATUS "TARGET ARCH ABI: ${ARM_ABI}")
 message(STATUS "PADDLE LITE DIR: ${PADDLE_LITE_DIR}")
 
@@ -53,5 +53,5 @@ else()
     return()
 endif()
 
-add_executable(ocr_db_crnn_demo Pipeline.cc Uitls.cc cls.cc ret.cc det.cc clipper.cpp db_post_process.cc)
-target_link_libraries(ocr_demo paddle_light_api_shared ${OpenCV_LIBS})
+add_executable(ppocr_demo Pipeline.cc Uitls.cc cls.cc ret.cc det.cc clipper.cpp db_post_process.cc)
+target_link_libraries(ppocr_demo paddle_light_api_shared ${OpenCV_LIBS})
