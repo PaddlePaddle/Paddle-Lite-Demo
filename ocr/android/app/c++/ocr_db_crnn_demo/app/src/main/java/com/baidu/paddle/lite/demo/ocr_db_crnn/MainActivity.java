@@ -154,8 +154,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Came
         btnSwitch.setOnClickListener(this);
         btnShutter = (ImageButton) findViewById(R.id.btn_shutter);
         btnShutter.setOnClickListener(this);
-//        btnSettings = (ImageButton) findViewById(R.id.btn_settings);
-//        btnSettings.setOnClickListener(this);
+        btnSettings = (ImageButton) findViewById(R.id.btn_settings);
+        btnSettings.setOnClickListener(this);
     }
 
     public void initSettings() {
@@ -166,17 +166,18 @@ public class MainActivity extends Activity implements View.OnClickListener, Came
     }
 
     public void checkAndUpdateSettings() {
-        if (true) { // SettingsActivity.checkAndUpdateSettings(this)
-            String detRealModelDir = getCacheDir() + "/" + detModelPath;
-            Utils.copyDirectoryFromAssets(this, detModelPath, detRealModelDir);
-            String clsRealModelDir = getCacheDir() + "/" + clsModelPath;
-            Utils.copyDirectoryFromAssets(this, clsModelPath, clsRealModelDir);
-            String recRealModelDir = getCacheDir() + "/" + recModelPath;
-            Utils.copyDirectoryFromAssets(this, recModelPath, recRealModelDir);
+        if (SettingsActivity.checkAndUpdateSettings(this)) {
             String labelRealDir = getCacheDir() + "/" + labelPath;
-            Utils.copyDirectoryFromAssets(this, labelPath, labelRealDir);
+//            Utils.copyFileFromAssets(this, labelPath, labelRealDir);
             String configRealDir = getCacheDir() + "/" + configPath;
-            Utils.copyDirectoryFromAssets(this, configPath, configRealDir);
+//            Utils.copyFileFromAssets(this, configPath, configRealDir);
+            String detRealModelDir = getCacheDir() + "/" + detModelPath;
+//            Utils.copyFileFromAssets(this, detModelPath, detRealModelDir);
+            String clsRealModelDir = getCacheDir() + "/" + clsModelPath;
+//            Utils.copyFileFromAssets(this, clsModelPath, clsRealModelDir);
+            String recRealModelDir = getCacheDir() + "/" + recModelPath;
+//            Utils.copyFileFromAssets(this, recModelPath, recRealModelDir);
+
             predictor.init(
                     detRealModelDir,
                     clsRealModelDir,

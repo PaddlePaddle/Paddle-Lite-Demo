@@ -76,16 +76,16 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/btn_shutter" />
 
-<!--                <ImageButton-->
-<!--                    android:id="@+id/btn_settings"-->
-<!--                    android:layout_width="@dimen/small_button_width"-->
-<!--                    android:layout_height="@dimen/small_button_height"-->
-<!--                    android:layout_alignParentRight="true"-->
-<!--                    android:layout_centerVertical="true"-->
-<!--                    android:layout_marginRight="@dimen/bottom_bar_left_right_margin"-->
-<!--                    android:background="@null"-->
-<!--                    android:scaleType="fitXY"-->
-<!--                    android:src="@drawable/btn_settings" />-->
+                <ImageButton
+                    android:id="@+id/btn_settings"
+                    android:layout_width="@dimen/small_button_width"
+                    android:layout_height="@dimen/small_button_height"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/bottom_bar_left_right_margin"
+                    android:background="@null"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/btn_settings" />
 
             </RelativeLayout>
 
