@@ -221,15 +221,15 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 
 - 如果更新模型中的输入 Tensor、Shape、和 Dtype 发生更新:
 
-  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
-  - 更新检测模型，则需要更新 `ppocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Preprocss` 函数
-  - 更新识别器模型，则需要更新 `ppocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
+  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/src/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
+  - 更新检测模型，则需要更新 `ppocr_demo/src/det_process.cc` 中 `DetPredictor::Preprocss` 函数
+  - 更新识别器模型，则需要更新 `ppocr_demo/src/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
 
 - 如果更新模型中的输出 Tensor 和 Dtype 发生更新:
 
-  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
-  - 更新检测模型，则需要更新 `ppocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Postprocss` 函数
-  - 更新识别器模型，则需要更新 `ppocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
+  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/src/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
+  - 更新检测模型，则需要更新 `ppocr_demo/src/det_process.cc` 中 `DetPredictor::Postprocss` 函数
+  - 更新识别器模型，则需要更新 `ppocr_demo/src/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
 
 
 - 如果需要更新 `ppocr_keys_v1.txt` 标签文件，则需要将新的标签文件存放在目录 `Paddle-Lite-Demo/ocr/assets/labels/` 下，并参考模型更新 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo/run.sh` 中执行命令；
@@ -288,15 +288,15 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 ```
 
 2. 更新输入预处理
-  - 更新文字方向分类器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
-  - 更新检测模型，则需要更新 `ocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Preprocss` 函数
-  - 更新识别器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
+  - 更新文字方向分类器模型，则需要更新 `ocr_demo/src/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
+  - 更新检测模型，则需要更新 `ocr_demo/src/det_process.cc` 中 `DetPredictor::Preprocss` 函数
+  - 更新识别器模型，则需要更新 `ocr_demo/src/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
 
 3. 更新输出预处理
 
-  - 更新文字方向分类器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
-  - 更新检测模型，则需要更新 `ocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Postprocss` 函数
-  - 更新识别器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
+  - 更新文字方向分类器模型，则需要更新 `ocr_demo/src/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
+  - 更新检测模型，则需要更新 `ocr_demo/src/det_process.cc` 中 `DetPredictor::Postprocss` 函数
+  - 更新识别器模型，则需要更新 `ocr_demo/src/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
 
 ## OCR 文字识别 Demo 工程详解
 
