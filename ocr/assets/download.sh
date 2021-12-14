@@ -5,7 +5,6 @@ CLS_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ch_ppocr_mobile_v2.0
 DET_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ch_ppocr_mobile_v2.0_det_slim_opt_for_cpu_v2_10_rc.tar.gz"
 REC_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ch_ppocr_mobile_v2.0_rec_slim_opt_for_cpu_v2_10_rc.tar.gz"
 CONFIG_TXT_URL="https://paddlelite-demo.bj.bcebos.com/labels/OCR/config.tar.gz"
-tempdir=$(mktemp -d)
 
 MODELS_DIR="$(pwd)/models/"
 IMAGES_DIR="$(pwd)/images/"
