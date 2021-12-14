@@ -4,7 +4,6 @@ IOS_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/ios/paddle_lite_libs_v2
 ARMLINUX_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/armlinux/paddle_lite_libs_v2_10_rc.tar.gz"
 OPENCV_ANDROID_URL="https://paddle-inference-dist.bj.bcebos.com/opencv4.1.0.tar.gz"
 OPENCV_IOS_URL="https://paddlelite-demo.bj.bcebos.com/libs/ios/opencv-4.5.5-ios-framework.tar.gz"
-tempdir=$(mktemp -d)
 
 ANDROID_DIR="$(pwd)/android"
 IOS_DIR="$(pwd)/ios"
