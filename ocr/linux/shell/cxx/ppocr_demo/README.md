@@ -232,7 +232,7 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
   - 更新识别器模型，则需要更新 `ppocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
 
 
-- 如果需要更新 `ppocr_keys_v1.txt` 标签文件，则需要将新的标签文件存放在目录 `Paddle-Lite-Demo/ocr/assets/labels/` 下，并参考模型更新 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo/rush.sh` 中执行命令；
+- 如果需要更新 `ppocr_keys_v1.txt` 标签文件，则需要将新的标签文件存放在目录 `Paddle-Lite-Demo/ocr/assets/labels/` 下，并参考模型更新 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo/run.sh` 中执行命令；
 
 ```shell
 # 代码文件 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ppocr_demo/run.sh`
@@ -261,7 +261,7 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 1. 更新输入数据
 
 - 将更新的图片存放在 `Paddle-Lite-Demo/ocr/assets/images/` 下；
-- 更新文件 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo/rush.sh` 中执行命令；
+- 更新文件 `Paddle-Lite-Demo/ocr/linux/shell/cxx/ocr_demo/run.sh` 中执行命令；
 
 以更新 `new_pics.jpg` 为例，则先将 `new_pics.jpg` 存放在 `Paddle-Lite-Demo/ocr/assets/images/` 下，然后更新脚本
 
