@@ -9,16 +9,16 @@
 #import <opencv2/opencv.hpp>
 #import "ViewController.h"
 #import <sys/timeb.h>
-#import <opencv2/highgui/ios.h>
-#import <opencv2/highgui/cap_ios.h>
+#import <opencv2/imgcodecs/ios.h>
+#import <opencv2/videoio/cap_ios.h>
 #include <iostream>
 #include <vector>
 #include <string>
 #include <arm_neon.h>
 #include <mutex>
-#include "include/paddle_api.h"
-#include "include/paddle_use_ops.h"
-#include "include/paddle_use_kernels.h"
+#include <paddle_api.h>
+#include <paddle_use_ops.h>
+#include <paddle_use_kernels.h>
 #include "timer.h"
 #include "pipeline.h"
 

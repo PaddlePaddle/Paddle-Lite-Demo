@@ -1,5 +1,5 @@
 # OCR 文字识别 Demo 使用指南
-在 IOS 上实现实时的 OCR 文字识别功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
+在 iOS 上实现实时的 OCR 文字识别功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
 本文主要介绍 OCR 文字识别 Demo 运行方法和如何在更新模型/输入/输出处理下，保证 OCR 文字识别 Demo 仍可继续运行。
 
 ## 如何运行目标检测 Demo
@@ -12,9 +12,10 @@
 
 ### 部署步骤
 
-1.  OCR 文字识别 Demo 位于 `Paddle-Lite-Demo/ocr/iOS/ocr_db_crnn_demo`  目录
+1.  OCR 文字识别 Demo 位于 `Paddle-Lite-Demo/ocr/ios/ppocr_demo`  目录
 2.  cd `Paddle-Lite-Demo/libs` 目录，运行 `download.sh` 脚本，下载所需要的 Paddle Lite 预测库
 3.  cd `Paddle-Lite-Demo/ocr/assets` 目录，运行 `download.sh` 脚本，下载 OPT 优化后模型、测试图片和标签文件
+4. cd  `Paddle-Lite-Demo/ocr/ios/ppocr_demo/` 目录，运行 `prepare.sh` 脚本，将工程所需的资源拷贝至当前工程目录下
 
 ```shell
 cd Paddle-Lite-Demo/libs
@@ -23,16 +24,17 @@ sh download.sh
 cd ../ocr/assets
 # 下载OPT 优化后模型、测试图片、标签文件及 config 文件
 sh download.sh
-
+cd ../ios/ppocr_demo
+# 将工程所需的资源拷贝至当前工程目录下
+sh prepare.sh
 ```
 
-4. 用 Xcode 打开  `ocr_db_crnn_demo/cr_db_crnn_demo.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和  `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
+5. 用 Xcode 打开  `ppocr_demo/ppocr_demo.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和  `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
 
 ![Xcode1](https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/Xcode1.png)
 
 ![Xcode2](https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/Xcode2.png)
 
-5. 右击工程名，选择 `Add File to ocr_db_crnn_demo` 选项，将工程所需要的预测库、OpenCV 库和 assets （模型、测试图片等）内容加载到工程中
 6.  IPhone 手机连接电脑，在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
 <p align="center"><img width="600" height="250"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/Xcode-phone.jpg"/>
@@ -41,23 +43,25 @@ sh download.sh
 
 成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
 
-<p align="center"><img width="300" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS2.jpeg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="300" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS3.jpeg"/></p>
+<p align="center"><img width="300" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS2.jpeg"/>
+&#8194;&#8194;&#8194;&#8194;&#8194; <img width="300" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS3.jpeg"/>
+</p>
 
 ## 更新预测库
 
 * Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
- * 参考 [Paddle Lite 源码编译文档](https://paddle-lite.readthedocs.io/zh/latest/source_compile/compile_env.html)，编译 IOS 预测库
+ * 参考 [Paddle Lite 源码编译文档](https://paddle-lite.readthedocs.io/zh/latest/source_compile/compile_env.html)，编译 iOS 预测库
  * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
    * 替换 c++ 库
         * 头文件
-          将生成的 `build.lite.ios.xxx.clang/inference_lite_lib.ios64.xxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/ocr/iOS/ocr_db_crnn_demo/ocr_db_crnn_demo/include`
+          将生成的 `build.lite.ios.xxx.clang/inference_lite_lib.ios64.xxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/ocr/iOS/ppocr_demo/ppocr_demo/include`
         * 替换 arm64-v8a 库
-          将生成的 `build.lite.ios.ios64.armv8/inference_lite_lib.ios64.armv8/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/ocr/iOS/ocr_db_crnn_demo/ocr_db_crnn_demo/lib/libpaddle_api_light_bundled.a`
+          将生成的 `build.lite.ios.ios64.armv8/inference_lite_lib.ios64.armv8/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/ocr/iOS/ppocr_demo/ppocr_demo/lib/libpaddle_api_light_bundled.a`
 
 >**注意：**
 >> 如果要使用 armv7 库，则可将 armv7 库替换至相应目录下：
 >> * armeabi-v7a
->>  将生成的 `build.lite.ios.ios.armv7/inference_lite_lib.ios.armv7/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/ocr/iOS/ocr_db_crnn_demo/ocr_db_crnn_demo/lib/libpaddle_api_light_bundled.a`
+>>  将生成的 `build.lite.ios.ios.armv7/inference_lite_lib.ios.armv7/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/ocr/iOS/ppocr_demo/ppocr_demo/lib/libpaddle_api_light_bundled.a`
   
 ## Demo 内容介绍
 
@@ -65,17 +69,17 @@ Demo 的整体目录结构如下图所示：
 
 <p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/android/predict_android_shell.jpg"/></p>
 
-1. `ocr_db_crnn_demo/lib` : 存放编译好的预测库
+1. `ppocr_demo/lib` : 存放编译好的预测库
 
 **备注：**
-  如需更新预测库，例如更新 IOS v8 预测库 ，则将新的预测库更新到 `ocr_db_crnn_demo/lib` 目录
+  如需更新预测库，例如更新 iOS v8 预测库 ，则将新的预测库更新到 `ppocr_demo/lib` 目录
 
-2. `ocr_db_crnn_demo/assets` : 存放 OCR demo 的模型、测试图片、标签文件及 config 文件
+2. `ppocr_demo/assets` : 存放 OCR demo 的模型、测试图片、标签文件及 config 文件
 
 **备注：**
 
  - `./assets/labels/ppocr_keys_v1.txt` 是中文字典文件，如果使用的 模型是英文数字或其他语言的模型，需要更换为对应语言的字典.
- - 其他语言的字典文件，可从 PaddleOCR 仓库下载：https://github.com/PaddlePaddle/PaddleOCR/tree/release/2.3/ppocr/utils
+ - 其他语言的字典文件，可从 PaddleOCR 仓库下载：`https://github.com/PaddlePaddle/PaddleOCR/tree/release/2.3/ppocr/utils`
  - `./assets/labels/config.txt` 字段含义:
  
 ```shell
@@ -86,7 +90,7 @@ Demo 的整体目录结构如下图所示：
  use_direction_classify  0  # 是否使用方向分类器，0 表示不使用，1 表示使用
 ```
 
-3. `./ocr_db_crnn_demo/` :  存放预测代码
+3. `./ppocr_demo/` :  存放预测代码
     - `cls_process.cc` :  方向分类器的推理全流程，包含预处理、预测和后处理三部分
     - `rec_process.cc` :  识别模型 CRNN 的推理全流程，包含预处理、预测和后处理三部分
     - `det_process.cc` :  检测模型 CRNN 的推理全流程，包含预处理、预测和后处理三部分
@@ -99,7 +103,7 @@ Demo 的整体目录结构如下图所示：
 
 ## 代码讲解 （使用 Paddle Lite `C++ API` 执行预测）
 
-IOS 示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://paddle-lite.readthedocs.io/zh/latest/api_reference/c++_api_doc.html)。
+iOS 示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://paddle-lite.readthedocs.io/zh/latest/api_reference/c++_api_doc.html)。
 
 ```c++
 #include <iostream>
@@ -167,8 +171,8 @@ for (int i = 0; i < outputSize; i += 6) {
 ## 如何更新模型和输入/输出预处理
 
 ### 更新模型
-1. 将优化后的模型存放到目录 `detection_demo/models/` 下；
-2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `ocr_db_crnn_demo/assets/models/***.nb`，则代码不需更新；否则话，需要修改 `ocr_db_crnn_demo/ViewController.mm` 中代码和将新模型路径添加到 `Build Phases-> Copy Bundle Resource` 中
+1. 将优化后的模型存放到目录 `ppocr_demo/assets/models/` 下；
+2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `ppocr_demo/assets/models/***.nb`，则代码不需更新；否则话，需要修改 `ppocr_demo/ViewController.mm` 中代码和将新模型路径添加到 `Build Phases-> Copy Bundle Resource` 中
 
 <p align="centet">
 <img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_change_0.png"/>
@@ -178,7 +182,7 @@ for (int i = 0; i < outputSize; i += 6) {
 <img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_change_1.png"/>
 </p>
 
-以更新 ssd_mobilenet_v3 模型为例，则先将优化后的模型存放到 `ocr_db_crnn_demo/assets/models/ssd_mv3.nb` 下，然后更新代码
+以更新 ssd_mobilenet_v3 模型为例，则先将优化后的模型存放到 `ppocr_demo/assets/models/ssd_mv3.nb` 下，然后更新代码
 
 ```c++
 // 代码文件 `detection_demo/ViewController.mm`
@@ -195,24 +199,24 @@ std::string det_model_file = paddle_dir + "/ssd_mv3.nb";
 
 - 如果更新模型中的输入 Tensor、Shape、和 Dtype 发生更新:
 
-  - 更新文字方向分类器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
-  - 更新检测模型，则需要更新 `ocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Preprocss` 函数
-  - 更新识别器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
+  - 更新文字方向分类器模型，则需要更新  `ppocr_demo/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
+  - 更新检测模型，则需要更新  `ppocr_demo/det_process.cc` 中 `DetPredictor::Preprocss` 函数
+  - 更新识别器模型，则需要更新 `ppocr_demo/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
 
 - 如果更新模型中的输出 Tensor 和 Dtype 发生更新:
 
-  - 更新文字方向分类器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
-  - 更新检测模型，则需要更新 `ocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Postprocss` 函数
-  - 更新识别器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
+  - 更新文字方向分类器模型，则需要更新  `ppocr_demo/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
+  - 更新检测模型，则需要更新  `ppocr_demo/det_process.cc` 中 `DetPredictor::Postprocss` 函数
+  - 更新识别器模型，则需要更新  `ppocr_demorec_process.cc` 中 `RecPredictor::Postprocss` 函数
 
-- 如果需要更新 `ppocr_keys_v1.txt` 标签文件，则需要将新的标签文件存放在目录 `./assets/labels/` 下
+- 如果需要更新  `ppocr_keys_v1.txt` 标签文件，则需要将新的标签文件存放在目录 `./assets/labels/` 下
 
 ### 更新输入/输出预处理
 1. 更新输入数据
 
-- 将更新的图片存放在 `./ocr_db_crnn_demo/assets/images/` 下；
+- 将更新的图片存放在 `./ppocr_demo/assets/images/` 下；
 - 将新图片的路径添加到 `Build Phases-> Copy Bundle Resource` 中
-- 更新文件 `./ocr_db_crnn_demo/ViewController.mm` 中的代码
+- 更新文件 `./ppocr_demo/ViewController.mm` 中的代码
 
 ```c++
 // 代码文件 `detection_demo/ViewController.mm`
@@ -234,15 +238,15 @@ if (_image != nil) {
 
 
 2. 更新输入预处理
-  - 更新文字方向分类器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
-  - 更新检测模型，则需要更新 `ocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Preprocss` 函数
-  - 更新识别器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
+  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/cls_process.cc` 中 `ClsPredictor::Preprocss` 函数
+  - 更新检测模型，则需要更新 `ppocr_demo/det_process.cc` 中 `DetPredictor::Preprocss` 函数
+  - 更新识别器模型，则需要更新 `ppocr_demo/rec_process.cc` 中 `RecPredictor::Preprocss` 函数
 
 3. 更新输出预处理
 
-  - 更新文字方向分类器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
-  - 更新检测模型，则需要更新 `ocr_demo/ocr_db_crnn_code/det_process.cc` 中 `DetPredictor::Postprocss` 函数
-  - 更新识别器模型，则需要更新 `ocr_demo/ocr_db_crnn_code/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
+  - 更新文字方向分类器模型，则需要更新 `ppocr_demo/cls_process.cc` 中 `ClsPredictor::Postprocss` 函数
+  - 更新检测模型，则需要更新 `ppocr_demo/det_process.cc` 中 `DetPredictor::Postprocss` 函数
+  - 更新识别器模型，则需要更新 `ppocr_demo/rec_process.cc` 中 `RecPredictor::Postprocss` 函数
 
 ## OCR 文字识别 Demo 工程详解
 

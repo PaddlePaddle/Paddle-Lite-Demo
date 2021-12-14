@@ -250,8 +250,8 @@ BoxesFromBitmap(const cv::Mat pred, const cv::Mat bitmap,
   std::vector<std::vector<cv::Point>> contours;
   std::vector<cv::Vec4i> hierarchy;
 
-  cv::findContours(bitmap, contours, hierarchy, cv::RETR_LIST,
-                   cv::CHAIN_APPROX_SIMPLE);
+//  cv::findContours(bitmap, contours, hierarchy, cv::RETR_LIST,
+//                   cv::CHAIN_APPROX_SIMPLE);
 
   int num_contours =
       contours.size() >= max_candidates ? max_candidates : contours.size();
