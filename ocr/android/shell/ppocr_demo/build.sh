@@ -3,13 +3,11 @@
 export NDK_ROOT=/opt/android-ndk-r17c
 # export NDK_ROOT=/disk/android-ndk-r23
 echo "NDK_ROOT is ${NDK_ROOT}"
- [ ! -d "$(pwd)/models" ]; then
-
 # build
 cd $(pwd)/src
 # configure
-ARM_ABI=arm64-v8a
-# ARM_ABI=armeabi-v7a
+#ARM_ABI=arm64-v8a
+ARM_ABI=armeabi-v7a
 # ARM_TARGET_LANG=gcc
 ARM_TARGET_LANG=clang
 PADDLE_LITE_DIR="$(pwd)/../../../../../libs/android/cxx"
@@ -33,8 +31,8 @@ echo "OPENCV_LITE_DIR is ${OPENCV_LITE_DIR}"
 # cd build
 # cmake -DPADDLE_LITE_DIR=${PADDLE_LITE_DIR} -DARM_ABI=${ARM_ABI} -DARM_TARGET_LANG=${ARM_TARGET_LANG} -DOPENCV_LITE_DIR=${OPENCV_LITE_DIR} ..
 # make
-# make clean
-make ARM_TARGET_LANG=${ARM_TARGET_LANG} ARM_ABI=${ARM_ABI} PADDLE_LITE_DIR=${PADDLE_LITE_DIR} OPENCV_LITE_DIR=${OPENCV_LITE_DIR} 
+make clean
+make ARM_TARGET_LANG=${ARM_TARGET_LANG} ARM_ABI=${ARM_ABI} PADDLE_LITE_DIR=${PADDLE_LITE_DIR} OPENCV_LITE_DIR=${OPENCV_LITE_DIR}
 
 echo "make successful!"
 
@@ -52,4 +50,4 @@ cp -r ../../../assets/images ./ppocr_demo
 cp ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libc++_shared.so ./ppocr_demo
 cp ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so ./ppocr_demo
 
-echo "copy successful!"
+echo "copy successful!
