@@ -1,12 +1,12 @@
 #!/bin/bash
 # push
-adb push ./ocr_demo_exec /data/local/tmp/
-ocr_demo_path="/data/local/tmp/ocr_demo_exec"
+adb push ./ppocr_demo /data/local/tmp/
+ppocr_demo_path="/data/local/tmp/ppocr_demo"
 
 # run
-adb shell "cd ${ocr_demo_path} \
+adb shell "cd ${ppocr_demo_path} \
            && chmod +x ./pipeline \
-           && export LD_LIBRARY_PATH=${ocr_demo_path}:${LD_LIBRARY_PATH} \
+           && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
            && ./pipeline \
                 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
@@ -16,4 +16,4 @@ adb shell "cd ${ocr_demo_path} \
                 ./labels/ppocr_keys_v1.txt \
                 ./config.txt"
 
-adb pull ${ocr_demo_path}/test_img_result.jpg .
+adb pull ${ppocr_demo_path}/test_img_result.jpg .

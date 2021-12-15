@@ -6,7 +6,7 @@ echo "NDK_ROOT is ${NDK_ROOT}"
  [ ! -d "$(pwd)/models" ]; then
 
 # build
-cd $(pwd)/ocr_db_crnn_code
+cd $(pwd)/src
 # configure
 ARM_ABI=arm64-v8a
 # ARM_ABI=armeabi-v7a
@@ -40,16 +40,16 @@ echo "make successful!"
 
 # mkdir
 cd ..
-if [ ! -d "./ocr_demo_exec" ]; then
-mkdir ocr_demo_exec
+if [ ! -d "./ppocr_demo" ]; then
+mkdir ppocr_demo
 fi
 
-cp ./ocr_db_crnn_code/pipeline ./ocr_demo_exec
-cp -r ../../../assets/config.txt ./ocr_demo_exec
-cp -r ../../../assets/models ./ocr_demo_exec
-cp -r ../../../assets/labels ./ocr_demo_exec
-cp -r ../../../assets/images ./ocr_demo_exec
-cp ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libc++_shared.so ./ocr_demo_exec
-cp ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so ./ocr_demo_exec
+cp ./src/pipeline ./ppocr_demo
+cp -r ../../../assets/config.txt ./ppocr_demo
+cp -r ../../../assets/models ./ppocr_demo
+cp -r ../../../assets/labels ./ppocr_demo
+cp -r ../../../assets/images ./ppocr_demo
+cp ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libc++_shared.so ./ppocr_demo
+cp ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so ./ppocr_demo
 
 echo "copy successful!"
