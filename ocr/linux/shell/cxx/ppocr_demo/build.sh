@@ -27,7 +27,7 @@ if [ ! -d "./ppocr_demo" ]; then
 mkdir ppocr_demo
 fi
 
-cp ./ocr_db_crnn_code/ppocr_demo ./ppocr_demo
+cp ./src/ppocr_demo ./ppocr_demo
 cp -r ../../../assets/config.txt ./ppocr_demo
 cp -r ../../../assets/models ./ppocr_demo
 cp -r ../../../assets/labels ./ppocr_demo
