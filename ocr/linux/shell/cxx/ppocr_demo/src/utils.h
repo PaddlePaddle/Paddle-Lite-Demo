@@ -15,17 +15,10 @@
 #pragma once
 
 #include "paddle_api.h"
-#include <android/log.h>
 #include <fstream>
 #include <string>
 #include <vector>
-
-#define TAG "JNI"
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__)
-#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, TAG, __VA_ARGS__)
-#define LOGW(...) __android_log_print(ANDROID_LOG_WARN, TAG, __VA_ARGS__)
-#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, TAG, __VA_ARGS__)
-#define LOGF(...) __android_log_print(ANDROID_LOG_FATAL, TAG, __VA_ARGS__)
+#include <sys/time.h>
 
 int64_t ShapeProduction(const std::vector<int64_t> &shape);
 
@@ -35,14 +28,14 @@ bool ReadFile(const std::string &path, std::vector<T> *data) {
   if (file) {
     file.seekg(0, file.end);
     int size = file.tellg();
-    LOGD("file size=%lld\n", size);
+    printf("file size=%lld\n", size);
     data->resize(size / sizeof(T));
     file.seekg(0, file.beg);
     file.read(reinterpret_cast<char *>(data->data()), size);
     file.close();
     return true;
   } else {
-    LOGE("Can't read file from %s\n", path.c_str());
+    printf("Can't read file from %s\n", path.c_str());
   }
   return false;
 }
@@ -51,7 +44,7 @@ template <typename T>
 bool WriteFile(const std::string &path, const std::vector<T> &data) {
   std::ofstream file{path, std::ios::binary};
   if (!file.is_open()) {
-    LOGE("Can't write file to %s\n", path.c_str());
+    printf("Can't write file to %s\n", path.c_str());
     return false;
   }
   file.write(reinterpret_cast<const char *>(data.data()),
