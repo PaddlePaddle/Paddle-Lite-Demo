@@ -54,4 +54,4 @@ else()
 endif()
 
 add_executable(ppocr_demo pipeline.cc utils.cc cls_process.cc rec_process.cc det_process.cc clipper.cpp db_post_process.cc)
-target_link_libraries(ppocr_demo paddle_light_api_shared ${OpenCV_LIBS})
+target_link_libraries(ppocr_demo paddle_light_api_shared)
