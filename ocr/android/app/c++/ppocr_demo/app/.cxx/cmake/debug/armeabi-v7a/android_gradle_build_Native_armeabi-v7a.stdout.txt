@@ -1,0 +1,2 @@
+ninja: Entering directory `/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/armeabi-v7a'
+ninja: no work to do.

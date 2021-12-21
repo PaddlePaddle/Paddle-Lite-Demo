@@ -1,0 +1,27 @@
+{
+  "buildFiles": [
+    "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/src/main/cpp/CMakeLists.txt",
+    "/Users/chenjiao04/Documents/android-ndk-r20b/build/cmake/android.toolchain.cmake",
+    "/Users/chenjiao04/Documents/android-ndk-r20b/build/cmake/platforms.cmake",
+    "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/OpenCV/sdk/native/jni/OpenCVConfig-version.cmake",
+    "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/OpenCV/sdk/native/jni/OpenCVConfig.cmake",
+    "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/OpenCV/sdk/native/jni/abi-arm64-v8a/OpenCVConfig.cmake",
+    "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/OpenCV/sdk/native/jni/abi-arm64-v8a/OpenCVModules.cmake",
+    "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/OpenCV/sdk/native/jni/abi-arm64-v8a/OpenCVModules-release.cmake"
+  ],
+  "cleanCommands": [
+    "/Users/chenjiao04/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/arm64-v8a\" clean"
+  ],
+  "buildTargetsCommand": "/Users/chenjiao04/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja  -C \"/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/arm64-v8a\" {LIST_OF_TARGETS_TO_BUILD}",
+  "libraries": {
+    "Native-Debug-arm64-v8a": {
+      "artifactName": "Native",
+      "buildCommand": "/Users/chenjiao04/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/arm64-v8a\" Native",
+      "abi": "arm64-v8a",
+      "output": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/build/intermediates/cmake/debug/obj/arm64-v8a/libNative.so",
+      "runtimeFiles": [
+        "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_light_api_shared.so"
+      ]
+    }
+  }
+}

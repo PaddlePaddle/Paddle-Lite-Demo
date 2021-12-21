@@ -1,0 +1,216 @@
+{
+  "abi": "ARM64_V8A",
+  "abiPlatformVersion": 16,
+  "buildSettings": {
+    "environmentVariables": []
+  },
+  "cmake": {
+    "cmakeArtifactsBaseFolder": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/arm64-v8a",
+    "cmakeServerLogFile": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/arm64-v8a/cmake_server_log.txt",
+    "cmakeWrappingBaseFolder": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cxx/debug/arm64-v8a",
+    "effectiveConfiguration": {
+      "name": "traditional-android-studio-cmake-environment",
+      "description": "Composite reified CMakeSettings configuration",
+      "generator": "Ninja",
+      "inheritEnvironments": [
+        "ndk"
+      ],
+      "buildRoot": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/arm64-v8a",
+      "cmakeToolchain": "/Users/chenjiao04/Documents/android-ndk-r20b/build/cmake/android.toolchain.cmake",
+      "cmakeExecutable": "/Users/chenjiao04/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake",
+      "variables": [
+        {
+          "name": "CMAKE_CXX_FLAGS",
+          "value": "-std\u003dc++11 -mfpu\u003dneon"
+        },
+        {
+          "name": "CMAKE_FIND_ROOT_PATH",
+          "value": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/prefab/arm64-v8a/prefab"
+        },
+        {
+          "name": "CMAKE_BUILD_TYPE",
+          "value": "Debug"
+        },
+        {
+          "name": "CMAKE_TOOLCHAIN_FILE",
+          "value": "/Users/chenjiao04/Documents/android-ndk-r20b/build/cmake/android.toolchain.cmake"
+        },
+        {
+          "name": "ANDROID_ABI",
+          "value": "arm64-v8a"
+        },
+        {
+          "name": "ANDROID_NDK",
+          "value": "/Users/chenjiao04/Documents/android-ndk-r20b"
+        },
+        {
+          "name": "CMAKE_ANDROID_ARCH_ABI",
+          "value": "arm64-v8a"
+        },
+        {
+          "name": "CMAKE_ANDROID_NDK",
+          "value": "/Users/chenjiao04/Documents/android-ndk-r20b"
+        },
+        {
+          "name": "CMAKE_EXPORT_COMPILE_COMMANDS",
+          "value": "ON"
+        },
+        {
+          "name": "CMAKE_LIBRARY_OUTPUT_DIRECTORY",
+          "value": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/build/intermediates/cmake/debug/obj/arm64-v8a"
+        },
+        {
+          "name": "CMAKE_MAKE_PROGRAM",
+          "value": "/Users/chenjiao04/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja"
+        },
+        {
+          "name": "CMAKE_SYSTEM_NAME",
+          "value": "Android"
+        },
+        {
+          "name": "CMAKE_SYSTEM_VERSION",
+          "value": "16"
+        },
+        {
+          "name": "ANDROID_PLATFORM",
+          "value": "android-23"
+        },
+        {
+          "name": "ANDROID_STL",
+          "value": "c++_shared"
+        }
+      ]
+    }
+  },
+  "cxxBuildFolder": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/arm64-v8a",
+  "info": {
+    "abi": "ARM64_V8A",
+    "bitness": 64,
+    "deprecated": false,
+    "default": true
+  },
+  "originalCxxBuildFolder": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/arm64-v8a",
+  "variant": {
+    "buildSystemArgumentList": [
+      "-DANDROID_PLATFORM\u003dandroid-23",
+      "-DANDROID_STL\u003dc++_shared",
+      "-DANDROID_TOOLCHAIN\u003d"
+    ],
+    "buildTargetSet": [],
+    "implicitBuildTargetSet": [],
+    "cFlagsList": [],
+    "cmakeSettingsConfiguration": "android-gradle-plugin-predetermined-name",
+    "cppFlagsList": [
+      "-std\u003dc++11 -mfpu\u003dneon"
+    ],
+    "isDebuggableEnabled": true,
+    "module": {
+      "buildSystem": "CMAKE",
+      "cmake": {
+        "cmakeExe": "/Users/chenjiao04/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake",
+        "minimumCmakeVersion": "3.10.2",
+        "ninjaExe": "/Users/chenjiao04/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja"
+      },
+      "cmakeToolchainFile": "/Users/chenjiao04/Documents/android-ndk-r20b/build/cmake/android.toolchain.cmake",
+      "cxxFolder": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx",
+      "gradleModulePathName": ":app",
+      "intermediatesFolder": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/build/intermediates",
+      "makeFile": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/src/main/cpp/CMakeLists.txt",
+      "moduleBuildFile": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/build.gradle",
+      "moduleRootFolder": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app",
+      "ndkDefaultAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "ndkFolder": "/Users/chenjiao04/Documents/android-ndk-r20b",
+      "ndkMetaAbiList": [
+        {
+          "abi": "ARMEABI_V7A",
+          "bitness": 32,
+          "deprecated": false,
+          "default": true
+        },
+        {
+          "abi": "ARM64_V8A",
+          "bitness": 64,
+          "deprecated": false,
+          "default": true
+        },
+        {
+          "abi": "X86",
+          "bitness": 32,
+          "deprecated": false,
+          "default": true
+        },
+        {
+          "abi": "X86_64",
+          "bitness": 64,
+          "deprecated": false,
+          "default": true
+        }
+      ],
+      "ndkMetaPlatforms": {
+        "min": 16,
+        "max": 29,
+        "aliases": {
+          "20": 19,
+          "25": 24,
+          "J": 16,
+          "J-MR1": 17,
+          "J-MR2": 18,
+          "K": 19,
+          "L": 21,
+          "L-MR1": 22,
+          "M": 23,
+          "N": 24,
+          "N-MR1": 24,
+          "O": 26,
+          "O-MR1": 27,
+          "P": 28,
+          "Q": 29
+        }
+      },
+      "ndkSupportedAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "ndkDefaultStl": "LIBCXX_STATIC",
+      "ndkVersion": "20.1.5948944",
+      "project": {
+        "compilerSettingsCacheFolder": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/.cxx",
+        "cxxFolder": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/.cxx",
+        "ideBuildTargetAbi": "arm64-v8a,armeabi-v7a,armeabi",
+        "isBuildOnlyTargetAbiEnabled": true,
+        "isCmakeBuildCohabitationEnabled": false,
+        "isNativeCompilerSettingsCacheEnabled": false,
+        "rootBuildGradleFolder": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo",
+        "sdkFolder": "/Users/chenjiao04/Library/Android/sdk",
+        "isPrefabEnabled": false
+      },
+      "splitsAbiFilterSet": [],
+      "stlSharedObjectMap": {
+        "LIBCXX_SHARED": {
+          "ARMEABI_V7A": "/Users/chenjiao04/Documents/android-ndk-r20b/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so",
+          "ARM64_V8A": "/Users/chenjiao04/Documents/android-ndk-r20b/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so",
+          "X86": "/Users/chenjiao04/Documents/android-ndk-r20b/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/i686-linux-android/libc++_shared.so",
+          "X86_64": "/Users/chenjiao04/Documents/android-ndk-r20b/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/libc++_shared.so"
+        },
+        "LIBCXX_STATIC": {},
+        "NONE": {},
+        "SYSTEM": {}
+      }
+    },
+    "objFolder": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/build/intermediates/cmake/debug/obj",
+    "variantName": "debug",
+    "validAbiList": [
+      "ARM64_V8A"
+    ],
+    "prefabDirectory": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/prefab",
+    "prefabPackageDirectoryList": []
+  },
+  "prefabFolder": "/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/prefab/arm64-v8a"
+}

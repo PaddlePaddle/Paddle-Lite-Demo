@@ -1,0 +1,10 @@
+# ninja log v5
+1	1551	1640079164	CMakeFiles/Native.dir/utils.cc.o	6db480071052febc
+0	2336	1640079165	CMakeFiles/Native.dir/Native.cc.o	fe2a5b650f9353ed
+1	2557	1640079165	CMakeFiles/Native.dir/cls_process.cc.o	8ab5a92fe1bfb0cf
+1	2601	1640079165	CMakeFiles/Native.dir/rec_process.cc.o	bca636fa77e3bf98
+2	2991	1640079165	CMakeFiles/Native.dir/det_process.cc.o	622ad82abd86b3c1
+3	3135	1640079166	CMakeFiles/Native.dir/clipper.cpp.o	49b00b2d32d6574f
+2	3173	1640079166	CMakeFiles/Native.dir/db_post_process.cc.o	64759a0a55ae151c
+1	3349	1640079166	CMakeFiles/Native.dir/pipeline.cc.o	23d92f23a521fe72
+3349	4477	1640079167	/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libNative.so	b222f8b6965ce395
