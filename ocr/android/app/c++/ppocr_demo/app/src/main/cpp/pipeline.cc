@@ -138,8 +138,9 @@ cv::Mat Visualization(cv::Mat srcimg,
     int npt[] = {4};
     cv::polylines(img_vis, ppt, npt, 1, 1, CV_RGB(0, 255, 0), 2, 8, 0);
   }
-
-  cv::imwrite(output_image_path, img_vis);
+  cv::Mat img_vis_bgr;
+  cv::cvtColor(img_vis, img_vis_bgr, cv::COLOR_RGBA2BGR);
+  cv::imwrite(output_image_path, img_vis_bgr);
   return img_vis;
 }
 
@@ -162,8 +163,7 @@ void Pipeline::VisualizeResults(std::vector<std::string> rec_text,
               thickness);
   
   for (int i = 0; i < rec_text.size(); i++) {
-      std::cout << i << "\t" << rec_text[i] << "\t" << rec_text_score[i]
-                << std::endl;
+    LOGD("debug=== line %d %s, %f", i, rec_text[i].c_str(), rec_text_score[i]);
     sprintf(text, "line: %d %s  %f", i, rec_text[i].c_str(), rec_text_score[i]);
     offset.y += text_size.height;
     cv::putText(*rgbaImage, text, offset, font_face, font_scale, color,
@@ -216,23 +216,30 @@ Pipeline::Pipeline(const std::string &detModelDir, const std::string &clsModelDi
         detModelDir, cPUThreadNum, cPUPowerMode));
   recPredictor_.reset(new RecPredictor(
         recModelDir, cPUThreadNum, cPUPowerMode));
-  Config_ = LoadConfigTxt("/data/local/tmp/cj/config.txt");//(config_path);
-  charactor_dict_ = ReadDict("/data/local/tmp/cj/labels/ppocr_keys_v1.txt"); //(dict_path);
+  Config_ = LoadConfigTxt(config_path);
+  charactor_dict_ = ReadDict(dict_path);
   charactor_dict_.insert(charactor_dict_.begin(), "#"); // blank char for ctc
   charactor_dict_.push_back(" ");
 }
 
-bool Pipeline::Process(int inTextureId, int outTextureId, int textureWidth,
+bool Pipeline::Process_val(int inTextureId, int outTextureId, int textureWidth,
                int textureHeight, std::string savedImagePath) {
   double readGLFBOTime = 0, writeGLTextureTime = 0;
   double visualizeResultsTime = 0, predictTime = 0;
-  cv::Mat rgbaImage1;
-  CreateRGBAImageFromGLFBOTexture(textureWidth, textureHeight, &rgbaImage1,
+  int height = 448;
+  int width = 448;
+  cv::Mat rgbaImage;
+  CreateRGBAImageFromGLFBOTexture(textureWidth, textureHeight, &rgbaImage,
                                   &readGLFBOTime);
-  cv::Mat rgbaImage = cv::imread("/data/local/tmp/cj/images/test.jpg", cv::IMREAD_COLOR);
+  // change to 3-channel
+  cv::Mat bgrImage;
+  cv::cvtColor(rgbaImage, bgrImage, cv::COLOR_RGBA2BGR);
+  cv::Mat bgrImage_resize;
+  cv::resize(bgrImage, bgrImage_resize, cv::Size(width, height));
+
   int use_direction_classify = int(Config_["use_direction_classify"]);
   cv::Mat srcimg;
-  rgbaImage.copyTo(srcimg);
+  bgrImage_resize.copyTo(srcimg);
   // Stage1: rec
   auto t = GetCurrentTime();
   // det predict
@@ -242,11 +249,12 @@ bool Pipeline::Process(int inTextureId, int outTextureId, int textureWidth,
   std::vector<float> scale = {1 / 0.5f, 1 / 0.5f, 1 / 0.5f};
 
   cv::Mat img;
-  rgbaImage.copyTo(img);
+  bgrImage_resize.copyTo(img);
   cv::Mat crop_img;
 
   std::vector<std::string> rec_text;
   std::vector<float> rec_text_score;
+  LOGD("debug===boxes: %d", boxes.size());
   for (int i = boxes.size() - 1; i >= 0; i--) {
     crop_img = GetRotateCropImage(img, boxes[i]);
     if (use_direction_classify >= 1) {
@@ -258,10 +266,14 @@ bool Pipeline::Process(int inTextureId, int outTextureId, int textureWidth,
   }
   predictTime = GetElapsedTime(t);
   //// visualization
-  auto img_vis = Visualization(rgbaImage, boxes, savedImagePath);
-  VisualizeResults(rec_text, rec_text_score, &rgbaImage1, &visualizeResultsTime);
+  auto img_res = Visualization(bgrImage_resize, boxes, savedImagePath);
+  cv::Mat img_vis;
+  cv::resize(img_res, img_vis, cv::Size(textureWidth, textureHeight));
+  cv::cvtColor(img_vis, img_vis, cv::COLOR_BGR2RGBA);
+  // show ocr results on image
+  //  VisualizeResults(rec_text, rec_text_score, &img_vis, &visualizeResultsTime);
   VisualizeStatus(readGLFBOTime, writeGLTextureTime, predictTime, rec_text, rec_text_score, visualizeResultsTime,
-                  &rgbaImage1);
+                  &img_vis);
 
   WriteRGBAImageBackToGLTexture(img_vis, outTextureId, &writeGLTextureTime);
   return true;

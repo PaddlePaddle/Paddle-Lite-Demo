@@ -1,9 +1,12 @@
 package com.baidu.paddle.lite.demo.common;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.hardware.Camera;
 import android.opengl.GLES20;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Surface;
@@ -215,5 +218,81 @@ public class Utils {
     public static boolean isSupportedNPU() {
         String hardware = android.os.Build.HARDWARE;
         return hardware.equalsIgnoreCase("kirin810") || hardware.equalsIgnoreCase("kirin990");
+    }
+    public static void checkFile(String nnFileName) throws
+            SDKExceptions.PathNotExist {
+
+        File file = new File(nnFileName);
+        if (!file.exists()) {
+            throw new SDKExceptions.PathNotExist();
+        }
+
+    }
+
+    public static void copyAssets(Context ctx, String nnFileName) throws
+            SDKExceptions.NoSDCardPermission,
+            SDKExceptions.MissingModleFileInAssetFolder {
+        AssetManager assetManager = ctx.getAssets();
+        InputStream is = null;
+//        检查模型文件是否存在于assets中
+        try {
+            is = assetManager.open(nnFileName);
+//        File exists so do something with it
+        } catch (IOException ex) {
+//        file does not exist
+            throw new SDKExceptions.MissingModleFileInAssetFolder();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+//        检查SD卡权限
+        int perm = ctx.checkCallingOrSelfPermission("android.permission.WRITE_EXTERNAL_STORAGE");
+        if (!(perm == PackageManager.PERMISSION_GRANTED)) {
+//            Log.e(TAG, "please grant permission for SD storeage.");
+            throw new SDKExceptions.NoSDCardPermission();
+        }
+//        检查模型文件是否已经拷贝到SD上
+        File fileInSD = new File(ctx.getExternalFilesDir(null), nnFileName);
+
+        if (fileInSD.exists()) {
+            Log.d("debug===", "NN model on SD card " + fileInSD);
+            return;
+        }
+//        拷贝模型文件到指定APP文件夹
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = assetManager.open(nnFileName);
+            File outFile = new File(ctx.getExternalFilesDir(null), nnFileName);
+            out = new FileOutputStream(outFile);
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+        } catch (IOException e) {
+            Log.e("tag", "Failed to copy asset file: " + nnFileName, e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+//                     NOOP
+                }
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+//                     NOOP
+                }
+            }
+        }
     }
 }

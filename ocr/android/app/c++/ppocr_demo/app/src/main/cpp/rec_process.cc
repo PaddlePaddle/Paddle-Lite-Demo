@@ -36,7 +36,7 @@ inline size_t Argmax(ForwardIterator first, ForwardIterator last) {
 RecPredictor::RecPredictor(const std::string &modelDir, const int cpuThreadNum,
                            const std::string &cpuPowerMode) {
   paddle::lite_api::MobileConfig config;
-  config.set_model_from_file("/data/local/tmp/cj/models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb"); //(modelDir);
+  config.set_model_from_file(modelDir);
   config.set_threads(cpuThreadNum);
   config.set_power_mode(ParsePowerMode(cpuPowerMode));
   predictor_ =

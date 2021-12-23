@@ -1,4 +1,0 @@
-ninja: Entering directory `/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/arm64-v8a'
-[1/2] Building CXX object CMakeFiles/Native.dir/pipeline.cc.o
-clang++: warning: argument unused during compilation: '-mfpu=neon' [-Wunused-command-line-argument]
-[2/2] Linking CXX shared library /Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/build/intermediates/cmake/debug/obj/arm64-v8a/libNative.so

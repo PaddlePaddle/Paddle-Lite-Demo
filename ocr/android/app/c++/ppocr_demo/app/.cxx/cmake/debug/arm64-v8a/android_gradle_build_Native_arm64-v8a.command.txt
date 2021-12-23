@@ -1,7 +1,0 @@
-Executable : /Users/chenjiao04/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja
-arguments : 
--C
-/Users/chenjiao04/Downloads/Paddle-Lite-Demo/ocr/android/app/c++/ppocr_demo/app/.cxx/cmake/debug/arm64-v8a
-Native
-jvmArgs : 
-

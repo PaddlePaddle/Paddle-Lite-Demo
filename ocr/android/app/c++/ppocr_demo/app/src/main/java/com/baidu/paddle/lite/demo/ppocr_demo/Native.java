@@ -1,5 +1,11 @@
 package com.baidu.paddle.lite.demo.ppocr_demo;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.baidu.paddle.lite.demo.common.SDKExceptions;
+import com.baidu.paddle.lite.demo.common.Utils;
+
 public class Native {
     static {
         System.loadLibrary("Native");
@@ -7,7 +13,9 @@ public class Native {
 
     private long ctx = 0;
     private boolean run_status = false;
-    public boolean init(String detModelPath,
+
+    public boolean init(Context mContext,
+                        String detModelPath,
                         String clsModelPath,
                         String recModelPath,
                         String configPath,
@@ -39,6 +47,7 @@ public class Native {
         run_status = nativeProcess(ctx, inTextureId, outTextureId, textureWidth, textureHeight, savedImagePath);
         return run_status;
     }
+
 
     public static native long nativeInit(String detModelPath,
                                          String clsModelPath,

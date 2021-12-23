@@ -34,7 +34,7 @@ public:
            const int cPUThreadNum,
            const std::string &config_path, const std::string &dict_path);
 
-  bool Process(int inTextureId, int outTextureId, int textureWidth,
+  bool Process_val(int inTextureId, int outTextureId, int textureWidth,
                int textureHeight, std::string savedImagePath);
 private:
   // Read pixels from FBO texture to CV image
@@ -48,15 +48,14 @@ private:
     *readGLFBOTime = GetElapsedTime(t);
     LOGD("Read from FBO texture costs %f ms", *readGLFBOTime);
   }
-
   // Write back to texture2D
   void WriteRGBAImageBackToGLTexture(const cv::Mat &rgbaImage, int textureId,
                                      double *writeGLTextureTime) {
     auto t = GetCurrentTime();
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureId);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rgbaImage.cols, rgbaImage.rows,
-                    GL_RGBA, GL_UNSIGNED_BYTE, rgbaImage.data);
+      glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rgbaImage.cols, rgbaImage.rows,
+                      GL_RGBA, GL_UNSIGNED_BYTE, rgbaImage.data);
     *writeGLTextureTime = GetElapsedTime(t);
     LOGD("Write back to texture2D costs %f ms", *writeGLTextureTime);
   }

@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 
+
 inline std::string jstring_to_cpp_string(JNIEnv *env, jstring jstr) {
   // In java, a unicode char will be encoded using 2 bytes (utf16).
   // so jstring will contain characters utf16. std::string in c++ is

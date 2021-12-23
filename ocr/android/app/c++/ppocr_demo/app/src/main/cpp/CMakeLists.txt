@@ -69,4 +69,5 @@ target_link_libraries(
   ${OpenCV_LIBS}
   GLESv2
   EGL
+  jnigraphics
   ${log-lib})

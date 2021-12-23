@@ -45,7 +45,7 @@ cv::Mat DetResizeImg(const cv::Mat img, int max_size_len,
 DetPredictor::DetPredictor(const std::string &modelDir, const int cpuThreadNum,
                            const std::string &cpuPowerMode) {
   paddle::lite_api::MobileConfig config;
-  config.set_model_from_file("/data/local/tmp/cj/models/ch_ppocr_mobile_v2.0_det_slim_opt.nb"); //(modelDir);
+  config.set_model_from_file(modelDir);
   config.set_threads(cpuThreadNum);
   config.set_power_mode(ParsePowerMode(cpuPowerMode));
   predictor_ =
@@ -66,6 +66,7 @@ void DetPredictor::Preprocess(const cv::Mat &srcimg, const int max_side_len){
    std::vector<float> mean = {0.485f, 0.456f, 0.406f};
    std::vector<float> scale = {1 / 0.229f, 1 / 0.224f, 1 / 0.225f};
    const float *dimg = reinterpret_cast<const float *>(img_fp.data);
+
    NHWC3ToNC3HW(dimg, data0, img_fp.rows * img_fp.cols, mean, scale);
 }
 
@@ -81,10 +82,6 @@ std::vector<std::vector<std::vector<int>>> DetPredictor::Postprocess(
   int out_size = shape_out[2] * shape_out[3];
   float pred[out_size];
   unsigned char cbuf[out_size];
-  auto sum = 0.f;
-  for (int i = 0; i < out_size; i++) {
-    sum += outptr[i];
-  }
 
   for (int i = 0; i < out_size; i++) {
     pred[i] = static_cast<float>(outptr[i]);

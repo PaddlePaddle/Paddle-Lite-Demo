@@ -41,23 +41,4 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-//    implementation files('libs/PaddlePredictor.jar')
 }
-boolean run_sh = true;
-task copyResource(type: DefaultTask) {
-    // Copy PaddlePredictor.jar
-    doLast {
-        if (run_sh) {
-            try {
-                println("run prepare")
-                Runtime.getRuntime().exec("sh ./prepare.sh").waitFor();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-//            run_sh = false;
-        }
-    }
-}
-preBuild.dependsOn copyResource
