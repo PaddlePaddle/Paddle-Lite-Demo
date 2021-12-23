@@ -25,14 +25,12 @@ echo "ARM_TARGET_LANG is ${ARM_TARGET_LANG}"
 echo "ARM_ABI is ${ARM_ABI}"
 echo "PADDLE_LITE_DIR is ${PADDLE_LITE_DIR}"
 echo "OPENCV_LITE_DIR is ${OPENCV_LITE_DIR}"
-# rm -rf build
-# mkdir build
-# make clean
-# cd build
-# cmake -DPADDLE_LITE_DIR=${PADDLE_LITE_DIR} -DARM_ABI=${ARM_ABI} -DARM_TARGET_LANG=${ARM_TARGET_LANG} -DOPENCV_LITE_DIR=${OPENCV_LITE_DIR} ..
-# make
+rm -rf build
+mkdir build
 make clean
-make ARM_TARGET_LANG=${ARM_TARGET_LANG} ARM_ABI=${ARM_ABI} PADDLE_LITE_DIR=${PADDLE_LITE_DIR} OPENCV_LITE_DIR=${OPENCV_LITE_DIR}
+cd build
+cmake -DPADDLE_LITE_DIR=${PADDLE_LITE_DIR} -DARM_ABI=${ARM_ABI} -DARM_TARGET_LANG=${ARM_TARGET_LANG} -DOPENCV_LITE_DIR=${OPENCV_LITE_DIR} ..
+make
 
 echo "make successful!"
 

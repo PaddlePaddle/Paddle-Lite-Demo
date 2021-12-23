@@ -26,9 +26,8 @@ message(STATUS "PADDLE LITE DIR: ${PADDLE_LITE_DIR}")
 message(STATUS "PADDLE LITE DIR: ${OPENCV_LITE_DIR}")
 
 include_directories(${PADDLE_LITE_DIR}/include)
-include_directories(${OPENCV_LITE_DIR}/${ARM_ABI}/include)
 link_directories(${PADDLE_LITE_DIR}/libs/${ARM_ABI})
-set(OPENCV_VERSION "opencv4.1.0")
+
 set(OPENCV_PATH "${OPENCV_LITE_DIR}/${ARM_ABI}")
 message(STATUS "OPENCV_PATH: ${OPENCV_PATH}")
 set(OPENCV_INCLUDE_DIRS "${OPENCV_PATH}/include/")

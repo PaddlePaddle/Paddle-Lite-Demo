@@ -191,6 +191,7 @@ for (int i = 0; i < ShapeProduction(input_tensor->shape()); ++i) {
   data[i] = 1;
 }
 // 如果输入是图片，则可在第三步时将预处理后的图像数据赋值给输入 Tensor
+// image_data -> input_tensor->mutable_data<float>();
 
 // 4. 执行预测
 predictor->run();
