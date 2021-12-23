@@ -17,8 +17,6 @@
 #include "rec_process.h"
 #include "det_process.h"
 #include "paddle_api.h"
-#include <EGL/egl.h>
-#include <GLES2/gl2.h>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
