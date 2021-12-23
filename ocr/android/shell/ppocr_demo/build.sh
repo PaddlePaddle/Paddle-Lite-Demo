@@ -6,7 +6,7 @@ echo "NDK_ROOT is ${NDK_ROOT}"
 # build
 cd $(pwd)/src
 # configure
-#ARM_ABI=arm64-v8a
+# ARM_ABI=arm64-v8a
 ARM_ABI=armeabi-v7a
 # ARM_TARGET_LANG=gcc
 ARM_TARGET_LANG=clang
@@ -29,18 +29,18 @@ rm -rf build
 mkdir build
 make clean
 cd build
-cmake -DPADDLE_LITE_DIR=${PADDLE_LITE_DIR} -DARM_ABI=${ARM_ABI} -DARM_TARGET_LANG=${ARM_TARGET_LANG} -DOPENCV_LITE_DIR=${OPENCV_LITE_DIR} ..
-make
+cmake -DANDROID_PLATFORM=android-21 -DPADDLE_LITE_DIR=${PADDLE_LITE_DIR} -DARM_ABI=${ARM_ABI} -DARM_TARGET_LANG=${ARM_TARGET_LANG} -DOPENCV_LITE_DIR=${OPENCV_LITE_DIR} -DNDK_ROOT=${NDK_ROOT} ..
+make -j10
 
 echo "make successful!"
 
 # mkdir
-cd ..
+cd ../../
 if [ ! -d "./ppocr_demo" ]; then
 mkdir ppocr_demo
 fi
 
-cp ./src/pipeline ./ppocr_demo
+cp ./src/build/pipeline ./ppocr_demo
 cp -r ../../../assets/config.txt ./ppocr_demo
 cp -r ../../../assets/models ./ppocr_demo
 cp -r ../../../assets/labels ./ppocr_demo
@@ -48,4 +48,4 @@ cp -r ../../../assets/images ./ppocr_demo
 cp ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libc++_shared.so ./ppocr_demo
 cp ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so ./ppocr_demo
 
-echo "copy successful!
+echo "copy successful!"

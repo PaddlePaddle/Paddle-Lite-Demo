@@ -19,7 +19,7 @@ if(ARM_TARGET_LANG STREQUAL "clang")
     set(CMAKE_CXX_FLAGS clang++)
 endif()
 
-project(ocr_demo)
+project(ppocr_demo)
 message(STATUS "TARGET ARM LANG: ${ARM_TARGET_LANG}")
 message(STATUS "TARGET ARCH ABI: ${ARM_ABI}")
 message(STATUS "PADDLE LITE DIR: ${PADDLE_LITE_DIR}")
