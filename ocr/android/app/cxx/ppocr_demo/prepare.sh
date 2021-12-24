@@ -11,10 +11,10 @@ mkdir ./app/src/main/assets
 fi
 
 # copy paddle lite cxx
-#cp -r ../../../../../libs/android/cxx ./app/PaddleLite
+cp -r ../../../../../libs/android/cxx ./app/PaddleLite
 echo "copy paddle-lite lib successed"
 # copy opencv
-#cp -r ../../../../../libs/android/sdk ./app/OpenCV
+cp -r ../../../../../libs/android/sdk ./app/OpenCV
 echo "copy opencv lib successed"
 # copy model
 cp -r ../../../../assets/models/ ./app/src/main/assets/

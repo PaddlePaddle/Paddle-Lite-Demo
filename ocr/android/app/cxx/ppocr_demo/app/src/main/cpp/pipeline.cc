@@ -265,7 +265,7 @@ bool Pipeline::Process_val(int inTextureId, int outTextureId, int textureWidth,
     rec_text_score.push_back(res.second);
   }
   predictTime = GetElapsedTime(t);
-  //// visualization
+  // visualization
   auto img_res = Visualization(bgrImage_resize, boxes, savedImagePath);
   cv::Mat img_vis;
   cv::resize(img_res, img_vis, cv::Size(textureWidth, textureHeight));

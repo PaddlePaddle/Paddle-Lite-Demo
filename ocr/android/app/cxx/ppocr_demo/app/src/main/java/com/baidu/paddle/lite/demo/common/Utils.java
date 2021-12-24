@@ -234,12 +234,10 @@ public class Utils {
             SDKExceptions.MissingModleFileInAssetFolder {
         AssetManager assetManager = ctx.getAssets();
         InputStream is = null;
-//        检查模型文件是否存在于assets中
         try {
             is = assetManager.open(nnFileName);
-//        File exists so do something with it
         } catch (IOException ex) {
-//        file does not exist
+            // file does not exist
             throw new SDKExceptions.MissingModleFileInAssetFolder();
         } finally {
             if (is != null) {
@@ -251,20 +249,20 @@ public class Utils {
             }
         }
 
-//        检查SD卡权限
+        // check SD card power
         int perm = ctx.checkCallingOrSelfPermission("android.permission.WRITE_EXTERNAL_STORAGE");
         if (!(perm == PackageManager.PERMISSION_GRANTED)) {
-//            Log.e(TAG, "please grant permission for SD storeage.");
+            // Log.e(TAG, "please grant permission for SD storeage.");
             throw new SDKExceptions.NoSDCardPermission();
         }
-//        检查模型文件是否已经拷贝到SD上
+        // check whether file on SD card
         File fileInSD = new File(ctx.getExternalFilesDir(null), nnFileName);
 
         if (fileInSD.exists()) {
             Log.d("debug===", "NN model on SD card " + fileInSD);
             return;
         }
-//        拷贝模型文件到指定APP文件夹
+        // copy file to app
         InputStream in = null;
         OutputStream out = null;
         try {
@@ -283,14 +281,12 @@ public class Utils {
                 try {
                     in.close();
                 } catch (IOException e) {
-//                     NOOP
                 }
             }
             if (out != null) {
                 try {
                     out.close();
                 } catch (IOException e) {
-//                     NOOP
                 }
             }
         }
