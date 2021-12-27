@@ -57,6 +57,6 @@ set(CMAKE_SHARED_LINKER_FLAGS
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-add_executable(pipeline pipeline.cc utils.cc cls_process.cc rec_process.cc det_process.cc clipper.cpp db_post_process.cc)
-target_link_libraries(pipeline paddle_light_api_shared ${OPENCV_LIBS} -lz -llog)
+add_executable(ppocr_demo pipeline.cc utils.cc cls_process.cc rec_process.cc det_process.cc clipper.cpp db_post_process.cc)
+target_link_libraries(ppocr_demo paddle_light_api_shared ${OPENCV_LIBS} -lz -llog)
     

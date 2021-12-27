@@ -40,7 +40,7 @@ if [ ! -d "./ppocr_demo" ]; then
 mkdir ppocr_demo
 fi
 
-cp ./src/build/pipeline ./ppocr_demo
+cp ./src/build/ppocr_demo ./ppocr_demo
 cp -r ../../../assets/config.txt ./ppocr_demo
 cp -r ../../../assets/models ./ppocr_demo
 cp -r ../../../assets/labels ./ppocr_demo

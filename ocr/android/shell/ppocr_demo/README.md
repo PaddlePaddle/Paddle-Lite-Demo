@@ -135,9 +135,9 @@ Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/build.sh # 脚本默认编译 armv
 Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/run.sh
 # 脚本中可执行文件的参数含义：
 adb shell "cd ${ppocr_demo_path} \
-           && chmod +x ./pipeline \
+           && chmod +x ./ppocr_demo \
            && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./pipeline \
+           && ./ppocr_demo \
                 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
@@ -146,7 +146,7 @@ adb shell "cd ${ppocr_demo_path} \
                 ./labels/ppocr_keys_v1.txt \
                 ./config.txt"
 
-第一个参数：pipeline 可执行文件
+第一个参数：ppocr_demo 可执行文件
 第二个参数：./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb 优化后的检测模型文件
 第三个参数：./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb 优化后的识别模型文件
 第四个参数：./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb 优化后的文字方向分类器模型文件
@@ -212,15 +212,15 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 1. 将优化后的新模型存放到目录 `Paddle-Lite-Demo/ocr/assets/models/` 下；
 2. 如果模型名字跟工程中模型名字一模一样，则 `run.sh` 脚本不需更新；否则话，需要修改 `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/run.sh` 中执行命令；
 
-以将检测模型更新为例，则先将优化后的模型存放到 `Paddle-Lite-Demo/ocr/assetss/models/ssd_mv3.nb` 下，然后更新执行脚本
+以将检测模型更新为例，则先将优化后的模型存放到 `Paddle-Lite-Demo/ocr/assets/models/ssd_mv3.nb` 下，然后更新执行脚本
 
 ```shell
 # 代码文件 `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/run.sh`
 # old
 adb shell "cd ${ppocr_demo_path} \
-           && chmod +x ./pipeline \
+           && chmod +x ./ppocr_demo \
            && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./pipeline \
+           && ./ppocr_demo \
                 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
@@ -230,9 +230,9 @@ adb shell "cd ${ppocr_demo_path} \
                 ./config.txt"
 # update
 adb shell "cd ${ppocr_demo_path} \
-           && chmod +x ./pipeline \
+           && chmod +x ./ppocr_demo \
            && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./pipeline \
+           && ./ppocr_demo \
                 ./models/ssd_mv3.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
@@ -263,9 +263,9 @@ adb shell "cd ${ppocr_demo_path} \
 # 代码文件 `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/run.sh`
 # old
 adb shell "cd ${ppocr_demo_path} \
-           && chmod +x ./pipeline \
+           && chmod +x ./ppocr_demo \
            && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./pipeline \
+           && ./ppocr_demo \
                 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
@@ -275,9 +275,9 @@ adb shell "cd ${ppocr_demo_path} \
                 ./config.txt"
 # update
 adb shell "cd ${ppocr_demo_path} \
-           && chmod +x ./pipeline \
+           && chmod +x ./ppocr_demo \
            && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./pipeline \
+           && ./ppocr_demo \
                 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
@@ -300,9 +300,9 @@ adb shell "cd ${ppocr_demo_path} \
 # 代码文件 `Paddle-Lite-Demo/ocr/assets/images/run.sh`
 ## old
 adb shell "cd ${ppocr_demo_path} \
-           && chmod +x ./pipeline \
+           && chmod +x ./ppocr_demo \
            && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./pipeline \
+           && ./ppocr_demo \
                 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
@@ -312,9 +312,9 @@ adb shell "cd ${ppocr_demo_path} \
                 ./config.txt"
 # update
 adb shell "cd ${ppocr_demo_path} \
-           && chmod +x ./pipeline \
+           && chmod +x ./ppocr_demo \
            && export LD_LIBRARY_PATH=${ppocr_demo_path}:${LD_LIBRARY_PATH} \
-           && ./pipeline \
+           && ./ppocr_demo \
                 ./models/ch_ppocr_mobile_v2.0_det_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_rec_slim_opt.nb \
                 ./models/ch_ppocr_mobile_v2.0_cls_slim_opt.nb \
