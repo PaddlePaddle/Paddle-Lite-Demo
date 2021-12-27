@@ -3568,8 +3568,7 @@ bool Clipper::JoinPoints(Join *j, OutRec* outRec1, OutRec* outRec2)
     }
     j->OutPt1 = op1; j->OutPt2 = op2;
     return JoinHorz(op1, op1b, op2, op2b, Pt, DiscardLeftSide);
-  } else
-  {
+  } else {
     //nb: For non-horizontal joins ...
     //    1. Jr.OutPt1.Pt.Y == Jr.OutPt2.Pt.Y
     //    2. Jr.OutPt1.Pt > Jr.OffPt.Y
@@ -3601,8 +3600,7 @@ bool Clipper::JoinPoints(Join *j, OutRec* outRec1, OutRec* outRec2)
     if ((op1b == op1) || (op2b == op2) || (op1b == op2b) ||
       ((outRec1 == outRec2) && (Reverse1 == Reverse2))) return false;
 
-    if (Reverse1)
-    {
+    if (Reverse1) {
       op1b = DupOutPt(op1, false);
       op2b = DupOutPt(op2, true);
       op1->Prev = op2;
@@ -3612,8 +3610,7 @@ bool Clipper::JoinPoints(Join *j, OutRec* outRec1, OutRec* outRec2)
       j->OutPt1 = op1;
       j->OutPt2 = op1b;
       return true;
-    } else
-    {
+    } else {
       op1b = DupOutPt(op1, true);
       op2b = DupOutPt(op2, false);
       op1->Next = op2;
@@ -3747,9 +3744,7 @@ void Clipper::JoinCommonEdges()
 
         if ((outRec1->IsHole ^ m_ReverseOutput) == (Area(*outRec1) > 0))
           ReversePolyPtLinks(outRec1->Pts);
-      } 
-      else
-      {
+      } else {
         //the 2 polygons are completely separate ...
         outRec2->IsHole = outRec1->IsHole;
         outRec2->FirstLeft = outRec1->FirstLeft;
@@ -3758,8 +3753,7 @@ void Clipper::JoinCommonEdges()
         if (m_UsingPolyTree) FixupFirstLefts1(outRec1, outRec2);
       }
      
-    } else
-    {
+    } else {
       //joined 2 polygons together ...
 
       outRec2->Pts = 0;
@@ -3886,8 +3880,7 @@ void ClipperOffset::FixOrientations()
         (node.m_endtype == etClosedLine && Orientation(node.Contour)))
           ReversePath(node.Contour);
     }
-  } else
-  {
+  } else {
     for (int i = 0; i < m_polyNodes.ChildCount(); ++i)
     {
       PolyNode& node = *m_polyNodes.Childs[i];
@@ -3911,8 +3904,7 @@ void ClipperOffset::Execute(Paths& solution, double delta)
   {
     clpr.Execute(ctUnion, solution, pftPositive, pftPositive);
   }
-  else
-  {
+  else {
     IntRect r = clpr.GetBounds();
     Path outer(4);
     outer[0] = IntPoint(r.left - 10, r.bottom + 10);
@@ -3941,8 +3933,7 @@ void ClipperOffset::Execute(PolyTree& solution, double delta)
   {
     clpr.Execute(ctUnion, solution, pftPositive, pftPositive);
   }
-  else
-  {
+  else {
     IntRect r = clpr.GetBounds();
     Path outer(4);
     outer[0] = IntPoint(r.left - 10, r.bottom + 10);
@@ -3962,8 +3953,7 @@ void ClipperOffset::Execute(PolyTree& solution, double delta)
       solution.Childs[0]->Parent = outerNode->Parent;
       for (int i = 1; i < outerNode->ChildCount(); ++i)
         solution.AddChild(*outerNode->Childs[i]);
-    }
-    else
+    } else
       solution.Clear();
   }
 }
@@ -4030,9 +4020,7 @@ void ClipperOffset::DoOffset(double delta)
           X = X * m_cos - m_sin * Y;
           Y = X2 * m_sin + Y * m_cos;
         }
-      }
-      else
-      {
+      } else {
         double X = -1.0, Y = -1.0;
         for (int j = 0; j < 4; ++j)
         {
@@ -4063,9 +4051,7 @@ void ClipperOffset::DoOffset(double delta)
       for (int j = 0; j < len; ++j)
         OffsetPoint(j, k, node.m_jointype);
       m_destPolys.push_back(m_destPoly);
-    }
-    else if (node.m_endtype == etClosedLine)
-    {
+    } else if (node.m_endtype == etClosedLine) {
       int k = len - 1;
       for (int j = 0; j < len; ++j)
         OffsetPoint(j, k, node.m_jointype);
@@ -4080,9 +4066,7 @@ void ClipperOffset::DoOffset(double delta)
       for (int j = len - 1; j >= 0; j--)
         OffsetPoint(j, k, node.m_jointype);
       m_destPolys.push_back(m_destPoly);
-    }
-    else
-    {
+    } else {
       int k = 0;
       for (int j = 1; j < len - 1; ++j)
         OffsetPoint(j, k, node.m_jointype);
@@ -4126,9 +4110,7 @@ void ClipperOffset::DoOffset(double delta)
         pt1 = IntPoint((cInt)Round(m_srcPoly[0].X + m_normals[0].X * delta),
           (cInt)Round(m_srcPoly[0].Y + m_normals[0].Y * delta));
         m_destPoly.push_back(pt1);
-      }
-      else
-      {
+      } else {
         k = 1;
         m_sinA = 0;
         if (node.m_endtype == etOpenSquare)
@@ -4168,10 +4150,7 @@ void ClipperOffset::OffsetPoint(int j, int& k, JoinType jointype)
     m_destPoly.push_back(m_srcPoly[j]);
     m_destPoly.push_back(IntPoint(Round(m_srcPoly[j].X + m_normals[j].X * m_delta),
       Round(m_srcPoly[j].Y + m_normals[j].Y * m_delta)));
-  }
-  else
-    switch (jointype)
-    {
+  } else switch (jointype) {
       case jtMiter:
         {
           double r = 1 + (m_normals[j].X * m_normals[k].X +
@@ -4265,19 +4244,14 @@ void Clipper::DoSimplePolygons()
             outrec2->IsHole = !outrec->IsHole;
             outrec2->FirstLeft = outrec;
             if (m_UsingPolyTree) FixupFirstLefts2(outrec2, outrec);
-          }
-          else
-            if (Poly2ContainsPoly1(outrec->Pts, outrec2->Pts))
-          {
+          } else if (Poly2ContainsPoly1(outrec->Pts, outrec2->Pts)) {
             //OutRec1 is contained by OutRec2 ...
             outrec2->IsHole = outrec->IsHole;
             outrec->IsHole = !outrec2->IsHole;
             outrec2->FirstLeft = outrec->FirstLeft;
             outrec->FirstLeft = outrec2;
             if (m_UsingPolyTree) FixupFirstLefts2(outrec, outrec2);
-            }
-            else
-          {
+            } else {
             //the 2 polygons are separate ...
             outrec2->IsHole = outrec->IsHole;
             outrec2->FirstLeft = outrec->FirstLeft;
@@ -4343,10 +4317,10 @@ double DistanceFromLineSqrd(
   const IntPoint& pt, const IntPoint& ln1, const IntPoint& ln2)
 {
   //The equation of a line in general form (Ax + By + C = 0)
-  //given 2 points (x�,y�) & (x�,y�) is ...
-  //(y� - y�)x + (x� - x�)y + (y� - y�)x� - (x� - x�)y� = 0
-  //A = (y� - y�); B = (x� - x�); C = (y� - y�)x� - (x� - x�)y�
-  //perpendicular distance of point (x�,y�) = (Ax� + By� + C)/Sqrt(A� + B�)
+  //given 2 points (x0,y0) & (x1,y1) is ...
+  //(y0 - y0)x + (x1 - x1)y + (y0 - y1)x0 - (x0 - x1)y1 = 0
+  //A = (y0 - y1); B = (x0 - x1); C = (y0 - y1)x0 - (x0 - x1)y0
+  //perpendicular distance of point (x0,y0) = (Ax0 + By0 + C)/Sqrt(A0 + B0)
   //see http://en.wikipedia.org/wiki/Perpendicular_distance
   double A = double(ln1.Y - ln2.Y);
   double B = double(ln2.X - ln1.X);
@@ -4431,20 +4405,14 @@ void CleanPolygon(const Path& in_poly, Path& out_poly, double distance)
     {
       op = ExcludeOp(op);
       size--;
-    } 
-    else if (PointsAreClose(op->Prev->Pt, op->Next->Pt, distSqrd))
-    {
+    } else if (PointsAreClose(op->Prev->Pt, op->Next->Pt, distSqrd)) {
       ExcludeOp(op->Next);
       op = ExcludeOp(op);
       size -= 2;
-    }
-    else if (SlopesNearCollinear(op->Prev->Pt, op->Pt, op->Next->Pt, distSqrd))
-    {
+    } else if (SlopesNearCollinear(op->Prev->Pt, op->Pt, op->Next->Pt, distSqrd)) {
       op = ExcludeOp(op);
       size--;
-    }
-    else
-    {
+    } else {
       op->Idx = 1;
       op = op->Next;
     }
