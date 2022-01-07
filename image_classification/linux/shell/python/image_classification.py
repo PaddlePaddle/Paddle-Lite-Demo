@@ -74,7 +74,7 @@ def Init(model_dir, threads):
     predictor = create_paddle_predictor(config)
     return predictor
 
-def PreProcss(predictor, input_shape, has_img, image_path, means, scales):
+def Preprocss(predictor, input_shape, has_img, image_path, means, scales):
     # 3. Set input data
     input_tensor = predictor.get_input(0)
     if has_img:
@@ -103,7 +103,7 @@ def PreProcss(predictor, input_shape, has_img, image_path, means, scales):
     else:
         input_tensor.from_numpy(np.ones(input_shape).astype("float32"))
 
-def PostProcss(predictor, labels, topk):
+def Postprocss(predictor, labels, topk):
     #5. Get output data
     output_tensor = predictor.get_output(0)
     output_data = output_tensor.numpy()
@@ -139,7 +139,7 @@ def RunModel(args):
     if args.repeats:
         repeat_num = args.repeats
     model_dir = args.model_dir
-    predictor = init(model_dir, thread_num)
+    predictor = Init(model_dir, thread_num)
     has_img = False
     image_path = ""
     if args.image_path:
@@ -156,7 +156,7 @@ def RunModel(args):
     input_shape = parse_shape(args.input_shape)
     means = [0.485, 0.456, 0.406]
     scales = [0.229, 0.224, 0.225]
-    preprocss(predictor, input_shape, has_img, image_path, means, scales)
+    Preprocss(predictor, input_shape, has_img, image_path, means, scales)
     # warmup
     for i in range(0, warmup_num):
         predictor.run()
@@ -174,7 +174,7 @@ def RunModel(args):
     print("================== Speed Report ===================")
     print("model: " + model_dir + ", run avg_time: ", sum /repeat_num , "ms, min_time: ", min(time_val), "ms")
     # 5. postprocess
-    postprocss(predictor, labels, topk)
+    Postprocss(predictor, labels, topk)
 
 
 if __name__ == '__main__':

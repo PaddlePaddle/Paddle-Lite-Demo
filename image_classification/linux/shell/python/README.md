@@ -59,9 +59,9 @@ i: 2, index: 282, name: n02123159 tiger cat
 
 * `Init` 初始化函数
 功能：完成模型初始化和推理引擎创建
-* `PreProcss` 预处理函数
+* `Preprocss` 预处理函数
 功能：完成模型输入的预处理操作
-* `PostProcss` 后处理函数
+* `Postprocss` 后处理函数
 功能：完成模型输出的预处理操作
 * `RunModel` 预测函数
 功能：完成模型预测全流程的控制和调度
