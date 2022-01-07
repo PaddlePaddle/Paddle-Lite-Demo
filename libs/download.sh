@@ -5,6 +5,17 @@ ARMLINUX_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/armlinux/paddle_li
 OPENCV_ANDROID_URL="https://paddle-inference-dist.bj.bcebos.com/opencv4.1.0.tar.gz"
 OPENCV_IOS_URL="https://paddlelite-demo.bj.bcebos.com/libs/ios/opencv-4.5.5-ios-framework.tar.gz"
 
+if [ ! -d "$(pwd)/android" ]; then
+  mkdir $(pwd)/android
+fi
+if [ ! -d "$(pwd)/ios" ]; then
+  mkdir $(pwd)/ios
+fi
+
+if [ ! -d "$(pwd)/linux" ]; then
+  mkdir $(pwd)/linux
+fi
+
 ANDROID_DIR="$(pwd)/android"
 IOS_DIR="$(pwd)/ios"
 LINUX_DIR="$(pwd)/linux"
