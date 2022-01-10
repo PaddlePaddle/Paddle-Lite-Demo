@@ -6,14 +6,14 @@ OPENCV_ANDROID_URL="https://paddle-inference-dist.bj.bcebos.com/opencv4.1.0.tar.
 OPENCV_IOS_URL="https://paddlelite-demo.bj.bcebos.com/libs/ios/opencv-4.5.5-ios-framework.tar.gz"
 
 if [ ! -d "$(pwd)/android" ]; then
- mkdir $(pwd)/android
+  mkdir $(pwd)/android
 fi
 if [ ! -d "$(pwd)/ios" ]; then
- mkdir $(pwd)/ios
+  mkdir $(pwd)/ios
 fi
 
 if [ ! -d "$(pwd)/linux" ]; then
- mkdir $(pwd)/linux
+  mkdir $(pwd)/linux
 fi
 
 ANDROID_DIR="$(pwd)/android"
