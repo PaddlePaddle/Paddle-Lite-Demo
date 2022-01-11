@@ -29,7 +29,7 @@ $ sudo make install
 3. cd `Paddle-Lite-Demo/ocr/assets` 目录，运行 `download.sh` 脚本，下载OPT 优化后模型、测试图片和标签文件
 4. cd `Paddle-Lite-Demo/ocr/linux/shell/cxx/ppocr_demo` 目录，运行 `build.sh` 脚本， 完成可执行文件的编译
 5. 在当前目录运行 `run.sh` 脚本，进行推理，推理结果将会在当前窗口显示和结果写回图片（在当前目录可找到）。其效果如下图所示：
-<p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_result.jpg"/></p>
+<p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/linux/run_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/linux/run_result.jpg"/></p>
 
 **注意：**
   这些操作均在 ARMLinux 设备上运行，且保证设备可联网（用于预测库和模型下载）
@@ -83,7 +83,7 @@ wget https://github.com/PaddlePaddle/Paddle-Lite/releases/download/v2.10-rc/opt_
 
 Demo 的整体目录结构如下图所示：
 
-<p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/android/predict_android_shell.jpg"/></p>
+<p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/predict_android_shell.jpg"/></p>
 
 1. `Paddle-Lite-Demo/libs/` : 存放不同端的预测库和OpenCL库，如android、iOS等
 

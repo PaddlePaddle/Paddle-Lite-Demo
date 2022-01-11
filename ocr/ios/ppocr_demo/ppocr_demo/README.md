@@ -8,7 +8,7 @@
 1. 在本地环境安装好 Xcode 工具，详细安装方法请见[Xcode 官网](https://developer.apple.com/cn/xcode/resources/)。
 2. 准备一部 Iphone 手机，并在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
-<p align="center"><img width="600" height="250"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/Xcode-phone.jpg"/>
+<p align="center"><img width="600" height="250"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/Xcode-phone.jpg"/>
 
 ### 部署步骤
 
@@ -37,14 +37,14 @@ sh prepare.sh
 
 6.  IPhone 手机连接电脑，在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
-<p align="center"><img width="600" height="250"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/Xcode-phone.jpg"/>
+<p align="center"><img width="600" height="250"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/Xcode-phone.jpg"/>
 
 7. 按下左上角的 Run 按钮，自动编译 APP 并安装到手机。在苹果手机中设置信任该 APP（进入 `设置->通用->设备管理`，选中新安装的 APP 并 `验证该应用`）
 
 成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
 
-<p align="center"><img width="300" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS2.jpeg"/>
-&#8194;&#8194;&#8194;&#8194;&#8194; <img width="300" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/IOS3.jpeg"/>
+<p align="center"><img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/IOS2.jpeg"/>
+&#8194;&#8194;&#8194;&#8194;&#8194; <img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/IOS3.jpeg"/>
 </p>
 
 ## 更新预测库
@@ -67,7 +67,7 @@ sh prepare.sh
 
 Demo 的整体目录结构如下图所示：
 
-<p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/android/predict_android_shell.jpg"/></p>
+<p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/predict_android_shell.jpg"/></p>
 
 1. `ppocr_demo/lib` : 存放编译好的预测库
 
@@ -175,11 +175,11 @@ for (int i = 0; i < outputSize; i += 6) {
 2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `ppocr_demo/assets/models/***.nb`，则代码不需更新；否则话，需要修改 `ppocr_demo/ViewController.mm` 中代码和将新模型路径添加到 `Build Phases-> Copy Bundle Resource` 中
 
 <p align="centet">
-<img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_change_0.png"/>
+<img width="600" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/model_change_0.png"/>
 </p>
 
 <p align="centet">
-<img width="600" height="450"  src="https://paddlelite-data.bj.bcebos.com/doc_images/Android_iOS_demo/iOS/model_change_1.png"/>
+<img width="600" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/model_change_1.png"/>
 </p>
 
 以更新 ssd_mobilenet_v3 模型为例，则先将优化后的模型存放到 `ppocr_demo/assets/models/ssd_mv3.nb` 下，然后更新代码
