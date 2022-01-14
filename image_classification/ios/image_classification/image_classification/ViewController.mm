@@ -143,6 +143,7 @@ std::string postprocess(const int topk, const std::vector<std::string> &labels) 
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (weak, nonatomic) IBOutlet UISwitch *flag_process;
 @property (weak, nonatomic) IBOutlet UISwitch *flag_video;
+@property (weak, nonatomic) IBOutlet UISwitch *flag_gpu;
 @property (weak, nonatomic) IBOutlet UIImageView *preView;
 @property (weak, nonatomic) IBOutlet UISwitch *flag_back_cam;
 @property (weak, nonatomic) IBOutlet UILabel *result;
@@ -150,6 +151,8 @@ std::string postprocess(const int topk, const std::vector<std::string> &labels) 
 @property (nonatomic,strong) UIImage* image;
 @property (nonatomic) bool flag_init;
 @property (nonatomic) bool flag_cap_photo;
+@property (nonatomic) bool change_gpu;
+@property (nonatomic) bool use_gpu;
 @property (nonatomic) std::vector<float> scale;
 @property (nonatomic) std::vector<float> mean;
 @property (nonatomic) long input_height;
@@ -169,6 +172,7 @@ std::string postprocess(const int topk, const std::vector<std::string> &labels) 
     _flag_back_cam.on = NO;
     _flag_video.on = NO;
     _flag_cap_photo = false;
+    _flag_gpu.on = NO;
     _image = [UIImage imageNamed:@"third-party/assets/images/tabby_cat.jpg"];
     if (_image != nil) {
         printf("load image successed\n");
@@ -179,6 +183,7 @@ std::string postprocess(const int topk, const std::vector<std::string> &labels) 
     
     [_flag_process addTarget:self action:@selector(PSwitchValueChanged:) forControlEvents:UIControlEventValueChanged];
     [_flag_back_cam addTarget:self action:@selector(CSwitchValueChanged:) forControlEvents:UIControlEventValueChanged];
+    [_flag_gpu addTarget:self action:@selector(GSwitchValueChanged:) forControlEvents:UIControlEventValueChanged];
     
     self.videoCamera = [[CvVideoCamera alloc] initWithParentView:self.preView];
     self.videoCamera.delegate = self;
@@ -196,10 +201,11 @@ std::string postprocess(const int topk, const std::vector<std::string> &labels) 
     self.input_height = 224;
     self.input_width = 224;
     self.topk = 1;
+    self.use_gpu = false;
     std::string label_file_str = app_dir+"/labels/labels.txt";
     self.labels = [self load_labels:label_file_str];
     MobileConfig config;
-    config.set_model_from_file(app_dir+ "/models/mobilenet_v1_for_cpu/model.nb");
+    config.set_model_from_file(app_dir+ "/models/mobilenet_v1_for_cpu_metal/mv1_cpu.nb");
     predictor = CreatePaddlePredictor<MobileConfig>(config);
     cv::Mat img_cat;
     UIImageToMat(self.image, img_cat);
@@ -272,6 +278,16 @@ std::string postprocess(const int topk, const std::vector<std::string> &labels) 
     }
 }
 
+- (void)GSwitchValueChanged:(UISwitch *) sender {
+    NSLog(@"%@", sender.isOn ? @"gpu ON" : @"gpu OFF");
+    if (self.flag_gpu.isOn) {
+        self.use_gpu = true;
+    } else {
+        self.use_gpu = false;
+    }
+    self.change_gpu = true;
+}
+
 - (void)CSwitchValueChanged:(UISwitch *) sender {
     NSLog(@"%@", sender.isOn ? @"back ON" : @"back OFF");
     if (sender.isOn) {
@@ -296,7 +312,23 @@ std::string postprocess(const int topk, const std::vector<std::string> &labels) 
 - (void)processImage:(cv::Mat &)image {
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        NSString *path = [[NSBundle mainBundle] bundlePath];
+        std::string app_dir = std::string([path UTF8String]) + "/third-party/assets";
+        MobileConfig config;
+        
         if (self.flag_process.isOn) {
+            if (self.change_gpu) {
+                if (self.use_gpu) {
+                    config.set_model_from_file(app_dir+ "/models/mobilenet_v1_for_cpu_metal/mv1_metal.nb");
+                    config.set_metal_lib_path(std::string([path UTF8String])+ "/third-party/PaddleLite/metal/lite.metallib");
+                    config.set_metal_use_mps(true);
+                        predictor = CreatePaddlePredictor<MobileConfig>(config);
+                } else {
+                    config.set_model_from_file(app_dir+ "/models/mobilenet_v1_for_cpu_metal/mv1_cpu.nb");
+                    predictor = CreatePaddlePredictor<MobileConfig>(config);
+                }
+                self.change_gpu = false;
+            }
             if (self.flag_init) {
                 if (self.flag_video.isOn || self.flag_cap_photo) {
                     self.flag_cap_photo = false;
@@ -307,14 +339,6 @@ std::string postprocess(const int topk, const std::vector<std::string> &labels) 
                     tic.start();
                     predictor->Run();
                     tic.end();
-                    std::unique_ptr<const Tensor> output_tensor(predictor->GetOutput(0));
-                    auto ptr = output_tensor->mutable_data<float>();
-                    auto shape_out = output_tensor->shape();
-                    int64_t cnt = 1;
-                    for (auto& i : shape_out) {
-                        cnt *= i;
-                    }
-                    std::cout << "cnt: " << cnt << std::endl;
                     std::ostringstream result;
                     std::string out_class = postprocess(self.topk, self.labels);
                     result << out_class << "\ntime: " << tic.get_average_ms() << " ms";
@@ -324,6 +348,25 @@ std::string postprocess(const int topk, const std::vector<std::string> &labels) 
                     self.imageView.image = MatToUIImage(self->_cvimg);
                 }
             }
+        } else {
+            // first predict
+            cv::Mat img_cat;
+            UIImageToMat(self.image, img_cat);
+            cv::Mat img;
+            if (img_cat.channels() == 4) {
+                cv::cvtColor(img_cat, img, CV_RGBA2RGB);
+            }
+            preprocess(img, self.input_height, self.input_width, self.mean, self.scale, true);
+            tic.start();
+            predictor->Run();
+            tic.end();
+
+            std::ostringstream result;
+            std::string out_class = postprocess(self.topk, self.labels);
+            result << out_class << "\ntime: " << tic.get_average_ms() << " ms";
+            self.result.numberOfLines = 0;
+            self.result.text = [NSString stringWithUTF8String:result.str().c_str()];
+            self.imageView.image = MatToUIImage(img);
         }
     });
 }

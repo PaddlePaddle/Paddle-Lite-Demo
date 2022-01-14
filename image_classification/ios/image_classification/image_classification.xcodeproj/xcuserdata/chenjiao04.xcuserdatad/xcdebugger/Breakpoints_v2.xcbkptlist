@@ -7,64 +7,48 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "807F8E63-F542-42FC-887E-1306BA65FDFF"
+            uuid = "E6460849-D5B0-4395-994A-ACE4121721DF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "image_classification/ViewController.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "193"
-            endingLineNumber = "193"
-            landmarkName = "-viewDidLoad"
+            startingLineNumber = "319"
+            endingLineNumber = "319"
+            landmarkName = "-processImage:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "BC1716CC-F448-4DA8-B4DA-49A8320574F7"
+            uuid = "791BDF39-4AF0-478E-B4B7-6D5EC83B2D1C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "image_classification/ViewController.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "199"
-            endingLineNumber = "199"
-            landmarkName = "-viewDidLoad"
+            startingLineNumber = "333"
+            endingLineNumber = "333"
+            landmarkName = "-processImage:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "4C7D738B-B777-4EF3-87A1-1654F6E2D5C9"
+            uuid = "75456E01-5DBE-4A34-9552-6780F7D783D0"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "image_classification/ViewController.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "172"
-            endingLineNumber = "172"
-            landmarkName = "-viewDidLoad"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9FBB751C-91F5-44B8-8F43-B60AFFF13E3D"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "image_classification/ViewController.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "203"
-            endingLineNumber = "203"
-            landmarkName = "-viewDidLoad"
+            startingLineNumber = "334"
+            endingLineNumber = "334"
+            landmarkName = "-processImage:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
