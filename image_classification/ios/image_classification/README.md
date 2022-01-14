@@ -71,7 +71,7 @@ cd ..
 
 成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
 
-<p align="center"><img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_app_run.jpg"/></p>
+<p align="center"><img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_app_run_gpu.jpg"/></p>
 
 
 ## 更新预测库
@@ -82,7 +82,7 @@ cd ..
   * 替换 c++ 库
        * 头文件
          将生成的 `build.lite.ios.xxx.clang/inference_lite_lib.ios64.xxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/image_classification/iOS/image_classification/image_classification/third-party/PaddleLite/include`
-       * 替换 arm64-v8a 库
+       * 替换 arm64-v8a 库（以替换 CPU 预测库为例）
          将生成的 `build.lite.ios.ios64.armv8/inference_lite_lib.ios64.armv8/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/iOS/image_classification/image_classification/third-party/PaddleLite/lib/libpaddle_api_light_bundled.a`
 
 >**注意：**
@@ -104,8 +104,9 @@ cd ..
         - images：测试图片
         - labels：标签文件
       * `PaddleLite`：存放 Paddle Lite 预测库和头文件
-        - lib
-        - include
+        - lib: 预测库
+        - Metal：Metal 库(如果使用GPU话，需要将    `lite.metalib`  放在此目录)
+        - include：头文件
       * `opencv2.framework`：opencv  库和头文件
 
     ```shell
@@ -114,6 +115,8 @@ cd ..
     example：
     # IOS 预测库
     image_classification/third-party/PaddleLite/lib/libpaddle_api_light_bundled.a
+    # IOS  GPU 预测库
+    image_classification/third-party/PaddleLite/metal/lite.metalib
     # 预测库头文件
     image_classification/third-party/PaddleLite/include/paddle_api.h
     image_classification/third-party/PaddleLite/include/paddle_use_kernels.h
@@ -133,7 +136,8 @@ cd ..
     APP 界面初始化、推理引擎 predictor 创建和运行方法，这个方法包含界面参数获取、predictor 构建和运行、图像前/后处理等内容
    
  * `processImage` 方法
-   实现图像输入变化时，进行新的推理，并获取相应的输出结果
+    - 实现图像输入变化时，进行新的推理，并获取相应的输出结果
+    - GPU 开关打开时，将使用 GPU 进行推理（默认使用 CPU 推理）
 
 * `preprocess` 方法
    输入预处理操作
@@ -186,9 +190,9 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 
 ### 更新模型
 1. 将优化后的模型存放到目录 `third-party/assets/models/` 下；
-2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `third-party/assets/models/mobilenet_v1_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `./ViewController.mm` 中代码
+2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `third-party/assets/models/mobilenet_v1_for_cpu_metal/mv1_cpu.nb`，则代码不需更新；否则话，需要修改 `./ViewController.mm` 中代码
 
-  以更新 mobilenet_v2 模型为例，则先将优化后的模型存放到 `third-party/assets/models/mobilenet_v2_for_cpu/mv2.nb` 下，然后更新代码
+  以更新 mobilenet_v2 模型为例，则先将优化后的模型存放到 `third-party/assets/models/mobilenet_v2_for_cpu/mv2_cpu.nb` 下，然后更新代码
 
 ```c++
 // 代码文件 `image_classifictaion/ViewController.mm`
@@ -196,9 +200,9 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 ...
 MobileConfig config;
 // old
-// config.set_model_from_file(app_dir+ "/models/mobilenet_v1_for_cpu/model.nb");
+// config.set_model_from_file(app_dir+ "/models/mobilenet_v1_for_cpu_metal/mv1_cpu.nb");
 // update now
-config.set_model_from_file(app_dir+ "/models/mobilenet_v2_for_cpu/mv2.nb");
+config.set_model_from_file(app_dir+ "/models/mobilenet_v2_for_cpu/mv2_cpu.nb");
 predictor = CreatePaddlePredictor<MobileConfig>(config);
 ...
 }
@@ -206,6 +210,7 @@ predictor = CreatePaddlePredictor<MobileConfig>(config);
 
 **注意：**
 
+-  更新的模型前需确认Paddle Lite 是否支持CPU和GPU 的推理，如果只支持 CPU 推理，运行时**请不要打开`开启GPU`**  选项；如果均支持，责请同步更新 GPU 模型，并修改 `./ViewController.mm` 中代码 GPU 模型路径。
  - 如果更新后模型的输入信息如Shape、Tensor个数等发生改变，需要更新 `ViewController.mm` 文件中 `preprocess(...)` 输入预处理方法，完成模型输入更新
  - 如果更新后模型的输出信息发生改变，需要更新 `ViewController.mm` 文件中 `postprocess(...)` 输出后处理方法，完成模型输出更新即可
  
