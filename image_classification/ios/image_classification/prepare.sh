@@ -10,6 +10,7 @@ if [ ! -d "./ppocr_demo/third-party/PaddleLite" ]; then
 fi
 # copy paddle lite
 cp -r ../../../libs/ios/inference_lite_lib.ios64.armv8/ ./image_classification/third-party/PaddleLite
+cp -r ../../../libs/ios/inference_lite_lib.ios64.armv8.metal/ ./image_classification/third-party/PaddleLite
 # copy opencv
 cp -r ../../../libs/ios/opencv2.framework ./image_classification/third-party
 
