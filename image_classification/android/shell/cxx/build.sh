@@ -7,8 +7,8 @@ echo "NDK_ROOT is ${NDK_ROOT}"
 # configure
 # ARM_ABI=arm64-v8a
 ARM_ABI=armeabi-v7a
-# ARM_TARGET_LANG=gcc
-ARM_TARGET_LANG=clang
+ARM_TARGET_LANG=gcc
+# ARM_TARGET_LANG=clang
 PADDLE_LITE_DIR="$(pwd)/../../../../libs/android/cxx"
 OPENCV_LITE_DIR="$(pwd)/../../../../libs/android/opencv4.1.0"
 
@@ -32,3 +32,4 @@ make -j10
 cd ..
 
 echo "make successful!"
+sh run.sh ${ARM_ABI}
