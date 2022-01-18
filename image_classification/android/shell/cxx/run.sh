@@ -3,6 +3,7 @@ PADDLE_LITE_DIR="$(pwd)/../../../../libs/android/cxx"
 OPENCV_LITE_DIR="$(pwd)/../../../../libs/android/opencv4.1.0"
 ASSETS_DIR="$(pwd)/../../../assets"
 ADB_DIR =="/data/local/tmp/image_classify"
+ARM_ABI=$1 # arm64-v8a or armeabi-v7a
 
 echo "PADDLE_LITE_DIR is ${PADDLE_LITE_DIR}"
 echo "OPENCV_LITE_DIR is ${OPENCV_LITE_DIR}"
@@ -23,10 +24,9 @@ adb shell "cd ${ADB_DIR} \
            && chmod +x ./image_classification \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            && ./image_classification \
-                ./models/mobilenet_v1_for_cpu/model.nb \
-                ./images/tabby_cat.jpg \
-                ./labels/labels.txt \
-                3 224 224 \
-                0 1 100 10 \
-                "
-
+              ./models/mobilenet_v1_for_cpu/model.nb \
+              ./images/tabby_cat.jpg \
+              ./labels/labels.txt \
+               3 224 224 \
+               0 1 100 10 \
+               "
