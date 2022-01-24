@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_SYSTEM_NAME Linux)
-# set(CMAKE_SYSTEM_NAME Draw) mac build
+# set(CMAKE_SYSTEM_NAME Draw) # mac build
 if(ARM_TARGET_LANG STREQUAL "gcc")
     set(ANDROID_ARM_NEON True)
     set(CMAKE_NDK_ROOT_TOOLCHAIN_VERSION ${ARM_TARGET_LANG})
@@ -58,4 +58,3 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 add_executable(image_classification image_classification.cc)
 target_link_libraries(image_classification ${PaddleLite_LIBS} ${OPENCV_LIBS} -lz -llog)
-
