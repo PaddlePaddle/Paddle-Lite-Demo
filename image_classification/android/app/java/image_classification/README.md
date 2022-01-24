@@ -60,6 +60,8 @@ Paddle Lite 预测库版本一样的 NDK
 <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/android/predict.jpg"/>
 </p>
 
+### 重点关注内容
+
 1. `Predictor.java`： 预测代码
 
 ```shell
