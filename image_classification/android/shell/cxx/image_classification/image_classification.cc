@@ -81,9 +81,9 @@ void neon_mean_scale(
     dout_c2 += 4;
   }
   for (; i < size; i++) {
-    *(dout_c0++) = (*(din++) - mean[0]) * scale[0];
-    *(dout_c0++) = (*(din++) - mean[1]) * scale[1];
-    *(dout_c0++) = (*(din++) - mean[2]) * scale[2];
+    *(dout_c0++) = (*(din++) - mean[0]) / scale[0];
+    *(dout_c0++) = (*(din++) - mean[1]) / scale[1];
+    *(dout_c0++) = (*(din++) - mean[2]) / scale[2];
   }
 }
 
@@ -143,7 +143,7 @@ void post_process(std::shared_ptr<PaddlePredictor> predictor,
   }
 }
 
-void RunModel(std::string model_file,
+void run_model(std::string model_file,
               std::string img_path,
               const std::vector<std::string>& labels,
               const int topk,
@@ -167,7 +167,6 @@ void RunModel(std::string model_file,
   pre_process(predictor, img_path, width, height);
 
   // 4. Run predictor
-  // predictor->Run();
   double first_duration{-1};
   for (size_t widx = 0; widx < warmup; ++widx) {
     if (widx == 0) {
@@ -196,6 +195,7 @@ void RunModel(std::string model_file,
       first_duration = duration;
     }
   }
+
   avg_duration = sum_duration / static_cast<float>(repeats);
   std::cout << "\n======= benchmark summary =======\n"
             << "input_shape(s) (NCHW): {1, 3, " << height << ", " << width  << "}\n"
@@ -210,15 +210,16 @@ void RunModel(std::string model_file,
             << "min_duration:" << min_duration << "\n"
             << "avg_duration:" << avg_duration << "\n";
 
-  // 5. Get output
+  // 5. Get output and post process
   std::cout << "\n====== output summary ====== " << std::endl;
 
-  // 5. Get output and post process
   post_process(predictor, topk, labels);
 }
 
 int main(int argc, char** argv) {
+  printf("main\n");
   if (argc < 4) {
+    printf("error\n");
     std::cerr << "[ERROR] usage: " << argv[0]
               << " model_file image_path label_file\n";
     exit(1);
@@ -240,7 +241,7 @@ int main(int argc, char** argv) {
   std::string label_file = argv[3];
   std::vector<std::string> labels;
   load_labels(label_file, &labels);
-  int topk = 5;
+  int topk = 1;
   int height = 224;
   int width = 224;
   if (argc > 4) {
@@ -267,6 +268,6 @@ int main(int argc, char** argv) {
     warmup = atoi(argv[10]);
   }
 
-  RunModel(model_file, img_path, labels, topk, width, height, power_mode, thread_num, repeats, warmup);
+  run_model(model_file, img_path, labels, topk, width, height, power_mode, thread_num, repeats, warmup);
   return 0;
 }
