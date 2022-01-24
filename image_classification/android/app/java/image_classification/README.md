@@ -19,9 +19,6 @@ Paddle Lite 预测库版本一样的 NDK
 1. 图像分类 Demo 位于 `Paddle-Lite-Demo/image_classification/android/app/java/image_classification` 目录
 2. 用 Android Studio 打开 image_classification 工程
 3. 手机连接电脑，打开 USB 调试和文件传输模式，并在 Android Studio 上连接自己的手机设备（手机需要开启允许从 USB 安装软件权限）
-<p align="center">
-<img src="./images/run_app.jpg"/>
-</p>
 
 > **注意：**
 >> 如果您在导入项目、编译或者运行过程中遇到 NDK 配置错误的提示，请打开 ` File > Project Structure > SDK Location`，修改 `Andriod NDK location` 为您本机配置的 NDK 所在路径。
@@ -41,19 +38,19 @@ Paddle Lite 预测库版本一样的 NDK
  * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
     * 替换 java 库
         * jar 包
-          将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar` 替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/image_classification/app/PaddleLite/java/PaddlePredictor.jar`
+          将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar` 替换 Demo 中的 `Paddle-Lite-Demo/image_classification/android/java/image_classification/app/PaddleLite/java/PaddlePredictor.jar`
         * Java so
             * armeabi-v7a
-              将生成的 `build.lite.android.armv7.clang/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/image_classification/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so`
+              将生成的 `build.lite.android.armv7.clang/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/android/java/image_classification/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so`
             * arm64-v8a
-              将生成的 `build.lite.android.armv8.clang/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/image_classification/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so`
+              将生成的 `build.lite.android.armv8.clang/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/android/java/image_classification/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so`
     * 替换 c++ 库
         * 头文件
-          将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/image_classification/app/PaddleLite/cxx/include`
+          将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/Pimage_classification/android/java/image_classification/app/PaddleLite/cxx/include`
         * armeabi-v7a
-          将生成的 `build.lite.android.armv7.clang/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/image_classification/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
+          将生成的 `build.lite.android.armv7.clang/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/android/java/image_classification/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
         * arm64-v8a
-          将生成的 `build.lite.android.armv8.clang/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/image_classification/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
+          将生成的 `build.lite.android.armv8.clang/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/android/java/image_classification/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
 
 ## Demo 内容介绍
 
@@ -98,9 +95,9 @@ image_classification/app/build.gradle
 ### Java 端
 
 * 模型存放，将下载好的模型解压存放在 `app/src/assets/models` 目录下
- * image_classification Java 包
+* image_classification Java 包
    在 `app/src/java/com/baidu/paddle/lite/demo/image_classification` 目录下，实现 APP 界面消息事件
- * MainActivity
+* MainActivity
      实现 APP 的创建、运行、释放功能
      重点关注 `onLoadModel` 和 `onRunModel` 函数，实现 APP 界面值传递和推理处理
      
@@ -118,14 +115,14 @@ image_classification/app/build.gradle
      }
      ```java
    
- * SettingActivity
+* SettingActivity
      实现设置界面各个元素的更新与显示如模型地址、线程数、输入shape大小等，如果新增/删除界面的某个元素，均在这个类里面实现
      备注：
          - 参数的默认值可在 `app/src/main/res/values/strings.xml` 查看
          - 每个元素的 ID 和 value 是对应 `app/src/main/res/xml/settings.xml` 和 `app/src/main/res/values/string.xml` 文件中的值
          - 这部分内容不建议修改，如果有新增属性，可以按照此格式进行添加
 
- * Predictor
+* Predictor
      使用 Java API 实现图像分类模型的预测功能
      重点关注 `init`、 `preProcess`、`postProcess`和 `runModel` 函数，实现 Paddle Lite 端侧推理功能
      
