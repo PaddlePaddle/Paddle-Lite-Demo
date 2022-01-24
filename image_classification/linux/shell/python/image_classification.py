@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 '''
 image classfiy python api demo
 '''
@@ -31,21 +30,26 @@ import time
 # Command arguments
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--model_dir", default="", type=str, required=True, help="Opt Model dir path")
+    "--model_dir",
+    default="",
+    type=str,
+    required=True,
+    help="Opt Model dir path")
 parser.add_argument(
-    "--input_shape", default=[], type=str, required=True, help="Model input shape, eg: 1,3,224,224")
+    "--input_shape",
+    default=[],
+    type=str,
+    required=True,
+    help="Model input shape, eg: 1,3,224,224")
 parser.add_argument(
     "--image_path", default="", type=str, help="Test image path")
-parser.add_argument(
-    "--label_path", default="", type=str, help="Label path")
-parser.add_argument(
-    "--topk", default=1, type=int, help="Topk")
-parser.add_argument(
-    "--threads", default=1, type=int, help="Test thread num")
-parser.add_argument(
-    "--warmup", default=0, type=int, help="Test warmup num")
-parser.add_argument(
-    "--repeats", default=1, type=int, help="Test repeats num")
+parser.add_argument("--label_path", default="", type=str, help="Label path")
+parser.add_argument("--topk", default=1, type=int, help="Topk")
+parser.add_argument("--threads", default=1, type=int, help="Test thread num")
+parser.add_argument("--warmup", default=0, type=int, help="Test warmup num")
+parser.add_argument("--repeats", default=1, type=int, help="Test repeats num")
+
+
 def parse_shape(shape_val):
     str_val = shape_val.split(",")
     input_shape = []
@@ -54,15 +58,18 @@ def parse_shape(shape_val):
         input_shape.append(val)
     return input_shape
 
+
 def load_labels(label_path):
     labels = []
     fp_r = open(label_path, 'r')
     data = fp_r.readline()
     while data:
-        labels.append(data)
+        res_val = data.split(' ')[-1]
+        labels.append(res_val)
         data = fp_r.readline()
     fp_r.close()
     return labels
+
 
 def Init(model_dir, threads):
     # 1. Set config information
@@ -74,15 +81,18 @@ def Init(model_dir, threads):
     predictor = create_paddle_predictor(config)
     return predictor
 
+
 def Preprocss(predictor, input_shape, has_img, image_path, means, scales):
     # 3. Set input data
     input_tensor = predictor.get_input(0)
     if has_img:
         img = cv2.imread(image_path, cv2.COLOR_BGR2RGB)
-        resize_img = cv2.resize(img, [input_shape[2], input_shape[3]], interpolation = cv2.INTER_AREA)
+        resize_img = cv2.resize(
+            img, [input_shape[2], input_shape[3]],
+            interpolation=cv2.INTER_AREA)
         arr = np.array(resize_img)
         rows = resize_img.shape[0]
-        cols =resize_img.shape[1]
+        cols = resize_img.shape[1]
         dst_data = []
         for i in range(rows):
             for j in range(cols):
@@ -99,21 +109,24 @@ def Preprocss(predictor, input_shape, has_img, image_path, means, scales):
                 val = arr[i][j][2] / 255.0
                 val = (val - means[2]) / scales[2]
                 dst_data.append(val)
-        input_tensor.from_numpy(np.array(dst_data).reshape(input_shape).astype(np.float32))
+        input_tensor.from_numpy(
+            np.array(dst_data).reshape(input_shape).astype(np.float32))
     else:
         input_tensor.from_numpy(np.ones(input_shape).astype("float32"))
+
 
 def Postprocss(predictor, labels, topk):
     #5. Get output data
     output_tensor = predictor.get_output(0)
     output_data = output_tensor.numpy()
     # print("output_data: ", output_data)
-    
+
     size = len(output_data[0])
     scores_dict = {}
     for i in range(size):
         scores_dict[i] = float(output_data[0][i])
-    res_val = sorted(scores_dict.items(), key = lambda kv:(kv[1], kv[0]), reverse=True)
+    res_val = sorted(
+        scores_dict.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)
     # print("--out: ", res_val)
 
     # print topk
@@ -127,7 +140,8 @@ def Postprocss(predictor, labels, topk):
         res_str = res_str + ", score: " + str(score)
         print(res_str)
     print("================== Report End ===================")
- 
+
+
 def RunModel(args):
     thread_num = 1
     warmup_num = 0
@@ -172,7 +186,8 @@ def RunModel(args):
         time_val.append(elapse)
         sum = sum + elapse
     print("================== Speed Report ===================")
-    print("model: " + model_dir + ", run avg_time: ", sum /repeat_num , "ms, min_time: ", min(time_val), "ms")
+    print("model: " + model_dir + ", run avg_time: ", sum / repeat_num,
+          "ms, min_time: ", min(time_val), "ms")
     # 5. postprocess
     Postprocss(predictor, labels, topk)
 
