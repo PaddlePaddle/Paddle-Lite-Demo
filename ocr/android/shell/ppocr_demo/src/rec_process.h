@@ -14,27 +14,32 @@
 
 #pragma once
 
-#include "utils.h"
-#include "opencv2/core.hpp"
-#include "opencv2/imgcodecs.hpp"
-#include "opencv2/imgproc.hpp"
-#include "paddle_api.h"
+#include "opencv2/core.hpp"       // NOLINT
+#include "opencv2/imgcodecs.hpp"  // NOLINT
+#include "opencv2/imgproc.hpp"    // NOLINT
+#include "paddle_api.h"           // NOLINT
+#include "utils.h"                // NOLINT
+#include <memory>                 // NOLINT
+#include <string>                 // NOLINT
+#include <utility>                // NOLINT
+#include <vector>                 // NOLINT
 using namespace paddle::lite_api; // NOLINT
 
 class RecPredictor {
-public:
+public: // NOLINT
   explicit RecPredictor(const std::string &modelDir, const int cpuThreadNum,
                         const std::string &cpuPowerMode);
 
-  std::pair<std::string, float> Predict(const cv::Mat &rgbaImage, double *preprocessTime,
-                           double *predictTime, double *postprocessTime, std::vector<std::string> charactor_dict);
+  std::pair<std::string, float>
+  Predict(const cv::Mat &rgbaImage, double *preprocessTime, double *predictTime,
+          double *postprocessTime, std::vector<std::string> charactor_dict);
 
-private:
+private: // NOLINT
   void Preprocess(const cv::Mat &rgbaImage);
-  std::pair<std::string, float> Postprocess(const cv::Mat &rgbaImage, std::vector<std::string> charactor_dict);
+  std::pair<std::string, float>
+  Postprocess(const cv::Mat &rgbaImage,
+              std::vector<std::string> charactor_dict);
 
-private:
+private: // NOLINT
   std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor_;
 };
-
-

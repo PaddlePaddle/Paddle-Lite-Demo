@@ -13,32 +13,32 @@
 // limitations under the License.
 
 #pragma once
-#include "cls_process.h"
-#include "rec_process.h"
-#include "det_process.h"
-#include "paddle_api.h"
-#include <EGL/egl.h>
-#include <GLES2/gl2.h>
-#include <opencv2/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc.hpp>
-#include <string>
-#include <vector>
-using namespace paddle::lite_api; // NOLINT
+#include "cls_process.h"               // NOLINT
+#include "det_process.h"               // NOLINT
+#include "paddle_api.h"                // NOLINT
+#include "rec_process.h"               // NOLINT
+#include <EGL/egl.h>                   // NOLINT
+#include <GLES2/gl2.h>                 // NOLINT
+#include <map>                         // NOLINT
+#include <memory>                      // NOLINT
+#include <opencv2/core.hpp>            // NOLINT
+#include <opencv2/highgui/highgui.hpp> // NOLINT
+#include <opencv2/imgcodecs.hpp>       // NOLINT
+#include <opencv2/imgproc.hpp>         // NOLINT
+#include <string>                      // NOLINT
+#include <vector>                      // NOLINT
+using namespace paddle::lite_api;      // NOLINT
 
 class Pipeline {
-public:
+public: // NOLINT
   Pipeline(const std::string &detModelDir, const std::string &clsModelDir,
            const std::string &recModelDir, const std::string &cPUPowerMode,
-           const int cPUThreadNum,
-           const std::string &config_path, const std::string &dict_path);
+           const int cPUThreadNum, const std::string &config_path,
+           const std::string &dict_path);
 
-  // bool Process(int inTextureId, int outTextureId, int textureWidth,
-              //  int textureHeight, std::string savedImagePath);
   bool Process(std::string img_path, std::string output_img_path);
 
-private:
+private: // NOLINT
   std::map<std::string, double> Config_;
   std::vector<std::string> charactor_dict_;
   std::shared_ptr<ClsPredictor> clsPredictor_;

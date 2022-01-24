@@ -14,16 +14,16 @@
 
 #pragma once
 
-#include <math.h>
+#include <iostream> // NOLINT
+#include <map>      // NOLINT
+#include <math.h>   // NOLINT
+#include <string>   // NOLINT
+#include <vector>   // NOLINT
 
-#include <iostream>
-#include <map>
-#include <vector>
-
-#include "clipper.hpp"
-#include "opencv2/core.hpp"
-#include "opencv2/imgcodecs.hpp"
-#include "opencv2/imgproc.hpp"
+#include "clipper.hpp"           // NOLINT
+#include "opencv2/core.hpp"      // NOLINT
+#include "opencv2/imgcodecs.hpp" // NOLINT
+#include "opencv2/imgproc.hpp"   // NOLINT
 
 template <class T> T clamp(T x, T min, T max) {
   if (x > max)
@@ -36,7 +36,7 @@ template <class T> T clamp(T x, T min, T max) {
 std::vector<std::vector<float>> Mat2Vector(cv::Mat mat);
 
 void GetContourArea(std::vector<std::vector<float>> box, float unclip_ratio,
-                    float &distance);
+                    float &distance); // NOLINT
 
 cv::RotatedRect Unclip(std::vector<std::vector<float>> box, float unclip_ratio);
 
@@ -49,7 +49,8 @@ bool XsortInt(std::vector<int> a, std::vector<int> b);
 std::vector<std::vector<int>>
 OrderPointsClockwise(std::vector<std::vector<int>> pts);
 
-std::vector<std::vector<float>> GetMiniBoxes(cv::RotatedRect box, float &ssid);
+std::vector<std::vector<float>> GetMiniBoxes(cv::RotatedRect box,
+                                             float &ssid); // NOLINT
 
 float BoxScoreFast(std::vector<std::vector<float>> box_array, cv::Mat pred);
 

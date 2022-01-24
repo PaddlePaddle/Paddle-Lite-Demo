@@ -14,29 +14,37 @@
 
 #pragma once
 
-#include "utils.h"
-#include "opencv2/core.hpp"
-#include "opencv2/imgcodecs.hpp"
-#include "opencv2/imgproc.hpp"
-#include "paddle_api.h"
+#include "opencv2/core.hpp"      // NOLINT
+#include "opencv2/imgcodecs.hpp" // NOLINT
+#include "opencv2/imgproc.hpp"   // NOLINT
+#include "paddle_api.h"          // NOLINT
+#include "utils.h"               // NOLINT
+#include <map>                   // NOLINT
+#include <memory>                // NOLINT
+#include <string>                // NOLINT
+#include <vector>                // NOLINT
+
 using namespace paddle::lite_api; // NOLINT
 
 class DetPredictor {
-public:
-  explicit DetPredictor(const std::string &modelDir, const int cpuThreadNum,
-                        const std::string &cpuPowerMode);
+public: // NOLINT
+  explicit DetPredictor(const std::string &modelDir,
+                        const int cpuThreadNum,           // NOLINT
+                        const std::string &cpuPowerMode); // NOLINT
 
-  std::vector<std::vector<std::vector<int>>> Predict(cv::Mat &rgbImage,
-               std::map<std::string, double> Config,
-               double *preprocessTime, double *predictTime,
-               double *postprocessTime);
+  std::vector<std::vector<std::vector<int>>>
+  Predict(cv::Mat &rgbImage, std::map<std::string, double> Config, // NOLINT
+          double *preprocessTime, double *predictTime,
+          double *postprocessTime); // NOLINT
 
-private:
-  void Preprocess(const cv::Mat &img, const int max_side_len);
-  std::vector<std::vector<std::vector<int>>> Postprocess(const cv::Mat srcimg, std::map<std::string, double> Config, int det_db_use_dilate);
+private:                                                       // NOLINT
+  void Preprocess(const cv::Mat &img, const int max_side_len); // NOLINT
+  std::vector<std::vector<std::vector<int>>>
+  Postprocess(const cv::Mat srcimg,
+              std::map<std::string, double> Config, // NOLINT
+              int det_db_use_dilate);
 
-private:
+private: // NOLINT
   std::vector<float> ratio_hw_;
   std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor_;
 };
-

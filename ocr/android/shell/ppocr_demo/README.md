@@ -45,8 +45,8 @@
 1. OCR 文字识别 Demo 位于 `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo` 目录
 2. cd `Paddle-Lite-Demo/libs` 目录，运行 `download.sh` 脚本，下载所需要的 Paddle Lite 预测库
 3. cd `Paddle-Lite-Demo/ocr/assets` 目录，运行 `download.sh` 脚本，下载OPT 优化后模型、测试图片和标签文件
-4. cd `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo` 目录，运行 `build.sh` 脚本， 完成可执行文件的编译
-5. 在当前目录运行 `run.sh` 脚本，进行推理，推理结果将会在当前窗口显示和结果写回图片（在当前目录可找到）。其效果如下图所示：
+4. cd `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo` 目录，运行 `build.sh` 脚本， 完成可执行文件的编译和运行。其推理结果将会在当前窗口显示和结果写回图片（在当前目录可找到），其效果如下图所示：
+
 <p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_result.jpg"/></p>
 
 ```shell
@@ -58,9 +58,8 @@ cd ../ocr/assets
 sh download.sh
 cd ../android/shell/ppocr_demo
 # 完成可执行文件的编译, 默认编译 V8 可执行文件； 如需 V7 可执行文件，可修改 build.sh 脚本中 ARM_ABI 变量即可
-sh build.sh
 # 进行推理，推理结果将会在当前窗口显示，并将结果写回图片（在当前目录可找到）
-sh run.sh
+sh build.sh
 ```
 
 ## 如何更新预测库
@@ -120,17 +119,13 @@ Demo 的整体目录结构如下图所示：
     - `pipeline.cc` : OCR 文字识别 Demo 推理全流程代码
     - `MakeFile` : 预测代码的 MakeFile 文件
 
-4. `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/build.sh` : 用于可执行文件的编译
+4. `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/build.sh` : 用于可执行文件的编译和运行
 
 ```shell
 # 位置
 Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/build.sh # 脚本默认编译 armv8 可执行文件
 # 如果要编译 armv7 可执行文件，可以将 build.sh 脚本中的 ARM_ABI 变量改为 armeabi-v7a 即可
-```
-
-7. `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/run.sh` : 预测脚本，获取返回结果
-
-```shell
+# 包含 run.sh 运行脚本，用于可执行文件的运行
 # 位置
 Paddle-Lite-Demo/ocr/android/shell/ppocr_demo/run.sh
 # 脚本中可执行文件的参数含义：

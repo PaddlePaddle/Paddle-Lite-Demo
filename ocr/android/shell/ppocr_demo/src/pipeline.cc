@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "pipeline.h"
-#include <iostream>
+#include "pipeline.h" // NOLINT
+#include <algorithm>  // NOLINT
+#include <iostream>   // NOLINT
 
 cv::Mat GetRotateCropImage(cv::Mat srcimage,
                            std::vector<std::vector<int>> box) {
@@ -23,10 +24,10 @@ cv::Mat GetRotateCropImage(cv::Mat srcimage,
 
   int x_collect[4] = {box[0][0], box[1][0], box[2][0], box[3][0]};
   int y_collect[4] = {box[0][1], box[1][1], box[2][1], box[3][1]};
-  int left = int(*std::min_element(x_collect, x_collect + 4));
-  int right = int(*std::max_element(x_collect, x_collect + 4));
-  int top = int(*std::min_element(y_collect, y_collect + 4));
-  int bottom = int(*std::max_element(y_collect, y_collect + 4));
+  int left = static_cast<int>(*std::min_element(x_collect, x_collect + 4));
+  int right = static_cast<int>(*std::max_element(x_collect, x_collect + 4));
+  int top = static_cast<int>(*std::min_element(y_collect, y_collect + 4));
+  int bottom = static_cast<int>(*std::max_element(y_collect, y_collect + 4));
 
   cv::Mat img_crop;
   image(cv::Rect(left, top, right - left, bottom - top)).copyTo(img_crop);
@@ -95,10 +96,10 @@ std::vector<std::string> split(const std::string &str,
   if ("" == str)
     return res;
   char *strs = new char[str.length() + 1];
-  std::strcpy(strs, str.c_str());
+  std::strcpy(strs, str.c_str()); // NOLINT
 
   char *d = new char[delim.length() + 1];
-  std::strcpy(d, delim.c_str());
+  std::strcpy(d, delim.c_str()); // NOLINT
 
   char *p = std::strtok(strs, d);
   while (p) {
@@ -140,35 +141,40 @@ cv::Mat Visualization(cv::Mat srcimg,
   }
 
   cv::imwrite(output_image_path, img_vis);
-  std::cout << "The detection visualized image saved in " << output_image_path.c_str() << std::endl;
+  std::cout << "The detection visualized image saved in "
+            << output_image_path.c_str() << std::endl;
   return img_vis;
 }
 
-Pipeline::Pipeline(const std::string &detModelDir, const std::string &clsModelDir,
-                    const std::string &recModelDir, const std::string &cPUPowerMode,
-                    const int cPUThreadNum,
-                    const std::string &config_path, const std::string &dict_path) {
-  clsPredictor_.reset(new ClsPredictor(
-      clsModelDir, cPUThreadNum, cPUPowerMode));
-  detPredictor_.reset(new DetPredictor(
-        detModelDir, cPUThreadNum, cPUPowerMode));
-  recPredictor_.reset(new RecPredictor(
-        recModelDir, cPUThreadNum, cPUPowerMode));
+Pipeline::Pipeline(const std::string &detModelDir,
+                   const std::string &clsModelDir,
+                   const std::string &recModelDir,
+                   const std::string &cPUPowerMode, const int cPUThreadNum,
+                   const std::string &config_path,
+                   const std::string &dict_path) {
+  clsPredictor_.reset(
+      new ClsPredictor(clsModelDir, cPUThreadNum, cPUPowerMode));
+  detPredictor_.reset(
+      new DetPredictor(detModelDir, cPUThreadNum, cPUPowerMode));
+  recPredictor_.reset(
+      new RecPredictor(recModelDir, cPUThreadNum, cPUPowerMode));
   Config_ = LoadConfigTxt(config_path);
   charactor_dict_ = ReadDict(dict_path);
-  charactor_dict_.insert(charactor_dict_.begin(), "#"); // blank char for ctc
+  charactor_dict_.insert(charactor_dict_.begin(), "#"); // NOLINT
   charactor_dict_.push_back(" ");
 }
 
 bool Pipeline::Process(std::string img_path, std::string output_img_path) {
   cv::Mat rgbaImage = cv::imread(img_path, cv::IMREAD_COLOR);
-  int use_direction_classify = int(Config_["use_direction_classify"]);
+  int use_direction_classify =
+      static_cat<int>(Config_["use_direction_classify"]);
   cv::Mat srcimg;
   rgbaImage.copyTo(srcimg);
-  // Stage1: rec
+
   auto start = std::chrono::system_clock::now();
   // det predict
-  auto boxes = detPredictor_->Predict(srcimg, Config_, nullptr, nullptr, nullptr);
+  auto boxes =
+      detPredictor_->Predict(srcimg, Config_, nullptr, nullptr, nullptr);
 
   std::vector<float> mean = {0.5f, 0.5f, 0.5f};
   std::vector<float> scale = {1 / 0.5f, 1 / 0.5f, 1 / 0.5f};
@@ -182,15 +188,17 @@ bool Pipeline::Process(std::string img_path, std::string output_img_path) {
   for (int i = boxes.size() - 1; i >= 0; i--) {
     crop_img = GetRotateCropImage(img, boxes[i]);
     if (use_direction_classify >= 1) {
-      crop_img = clsPredictor_->Predict(crop_img, nullptr, nullptr, nullptr, 0.9);
+      crop_img =
+          clsPredictor_->Predict(crop_img, nullptr, nullptr, nullptr, 0.9);
     }
-    auto res = recPredictor_->Predict(crop_img, nullptr, nullptr, nullptr, charactor_dict_);
+    auto res = recPredictor_->Predict(crop_img, nullptr, nullptr, nullptr,
+                                      charactor_dict_);
     rec_text.push_back(res.first);
     rec_text_score.push_back(res.second);
   }
   auto end = std::chrono::system_clock::now();
   auto duration =
-  std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+      std::chrono::duration_cast<std::chrono::microseconds>(end - start);
   //// visualization
   auto img_vis = Visualization(rgbaImage, boxes, output_img_path);
   // print recognized text
@@ -199,17 +207,18 @@ bool Pipeline::Process(std::string img_path, std::string output_img_path) {
               << std::endl;
   }
   std::cout << "花费了"
-          << double(duration.count()) *
+            << double(duration.count()) *
                    std::chrono::microseconds::period::num /
                    std::chrono::microseconds::period::den
-          << "秒" << std::endl;
+            << "秒" << std::endl;
   return true;
 }
 
 int main(int argc, char **argv) {
   if (argc < 7) {
     std::cerr << "[ERROR] usage: "
-              << " ./ocr_db_crnn_demo det_model_file cls_model_file rec_model_file image_path"
+              << " ./ocr_db_crnn_demo det_model_file cls_model_file "
+                 "rec_model_file image_path"
                  " output_image_path charactor_dict config\n";
     exit(1);
   }
@@ -222,8 +231,9 @@ int main(int argc, char **argv) {
   std::string config_path = argv[7];
   std::string cPUPowerMode = "";
   int cPUThreadNum = 1;
-  Pipeline* pipe = new Pipeline(det_model_file, cls_model_file, rec_model_file,
-                               cPUPowerMode, cPUThreadNum, config_path,  dict_path);
+  Pipeline *pipe =
+      new Pipeline(det_model_file, cls_model_file, rec_model_file, cPUPowerMode,
+                   cPUThreadNum, config_path, dict_path);
   pipe->Process(img_path, output_img_path);
   return 0;
 }
