@@ -33,4 +33,3 @@ cd ..
 
 echo "make successful!"
 sh run.sh ${ARM_ABI}
-
