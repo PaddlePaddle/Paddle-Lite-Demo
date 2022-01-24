@@ -27,6 +27,9 @@ message(STATUS "PADDLE LITE DIR: ${OPENCV_LITE_DIR}")
 
 include_directories(${PADDLE_LITE_DIR}/include)
 link_directories(${PADDLE_LITE_DIR}/libs/${ARM_ABI})
+set(PADDLELITE_LIBS ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so
+                    ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libc++_shared.so)
+message(STATUS "PADDLELITE_LIBS is ${PADDLELITE_LIBS}")
 
 set(OPENCV_PATH "${OPENCV_LITE_DIR}/${ARM_ABI}")
 message(STATUS "OPENCV_PATH: ${OPENCV_PATH}")
@@ -58,5 +61,4 @@ set(CMAKE_SHARED_LINKER_FLAGS
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 add_executable(ppocr_demo pipeline.cc utils.cc cls_process.cc rec_process.cc det_process.cc clipper.cpp db_post_process.cc)
-target_link_libraries(ppocr_demo paddle_light_api_shared ${OPENCV_LIBS} -lz -llog)
-    
+target_link_libraries(ppocr_demo ${PADDLELITE_LIBS} ${OPENCV_LIBS} -lz -llog)

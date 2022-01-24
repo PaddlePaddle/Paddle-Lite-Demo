@@ -54,19 +54,19 @@ DetPredictor::DetPredictor(const std::string &modelDir, const int cpuThreadNum,
 }
 
 void DetPredictor::Preprocess(const cv::Mat &srcimg, const int max_side_len){
-   cv::Mat img = DetResizeImg(srcimg, max_side_len, ratio_hw_);
-   cv::Mat img_fp;
-   img.convertTo(img_fp, CV_32FC3, 1.0 / 255.f);
+  cv::Mat img = DetResizeImg(srcimg, max_side_len, ratio_hw_);
+  cv::Mat img_fp;
+  img.convertTo(img_fp, CV_32FC3, 1.0 / 255.f);
 
-   // Prepare input data from image
-   std::unique_ptr<Tensor> input_tensor0(std::move(predictor_->GetInput(0)));
-   input_tensor0->Resize({1, 3, img_fp.rows, img_fp.cols});
-   auto *data0 = input_tensor0->mutable_data<float>();
+  // Prepare input data from image
+  std::unique_ptr<Tensor> input_tensor0(std::move(predictor_->GetInput(0)));
+  input_tensor0->Resize({1, 3, img_fp.rows, img_fp.cols});
+  auto *data0 = input_tensor0->mutable_data<float>();
 
-   std::vector<float> mean = {0.485f, 0.456f, 0.406f};
-   std::vector<float> scale = {1 / 0.229f, 1 / 0.224f, 1 / 0.225f};
-   const float *dimg = reinterpret_cast<const float *>(img_fp.data);
-   NHWC3ToNC3HW(dimg, data0, img_fp.rows * img_fp.cols, mean, scale);
+  std::vector<float> mean = {0.485f, 0.456f, 0.406f};
+  std::vector<float> scale = {1 / 0.229f, 1 / 0.224f, 1 / 0.225f};
+  const float *dimg = reinterpret_cast<const float *>(img_fp.data);
+  NHWC3ToNC3HW(dimg, data0, img_fp.rows * img_fp.cols, mean, scale);
 }
 
 std::vector<std::vector<std::vector<int>>> DetPredictor::Postprocess(

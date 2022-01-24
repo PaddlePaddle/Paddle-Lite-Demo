@@ -1,10 +1,10 @@
 #!/bin/bash
-IMAGES_URL="https://paddlelite-demo.bj.bcebos.com/images/OCR/images.tar.gz"
-LABELS_URL="https://paddlelite-demo.bj.bcebos.com/labels/OCR/labels.tar.gz"
-CLS_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ch_ppocr_mobile_v2.0_cls_slim_opt_for_cpu_v2_10_rc.tar.gz"
-DET_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ch_ppocr_mobile_v2.0_det_slim_opt_for_cpu_v2_10_rc.tar.gz"
-REC_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/ch_ppocr_mobile_v2.0_rec_slim_opt_for_cpu_v2_10_rc.tar.gz"
-CONFIG_TXT_URL="https://paddlelite-demo.bj.bcebos.com/labels/OCR/config.tar.gz"
+IMAGES_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/images/images.tar.gz"
+LABELS_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/labels/labels.tar.gz"
+CLS_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/models/ch_ppocr_mobile_v2.0_cls_slim_opt_for_cpu_v2_10_rc.tar.gz"
+DET_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/models/ch_ppocr_mobile_v2.0_det_slim_opt_for_cpu_v2_10_rc.tar.gz"
+REC_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/models/ch_ppocr_mobile_v2.0_rec_slim_opt_for_cpu_v2_10_rc.tar.gz"
+CONFIG_TXT_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/config.tar.gz"
 
 MODELS_DIR="$(pwd)/models/"
 IMAGES_DIR="$(pwd)/images/"
@@ -18,7 +18,7 @@ download_and_uncompress() {
   echo "Start downloading ${url}"
   curl -L ${url} > ${dir}/download.tar.gz
   cd ${dir}
-  tar -zxvf download.tar.gz
+  tar -xvf download.tar.gz
   rm -f download.tar.gz
   
   cd ..
