@@ -97,7 +97,7 @@ i: 2,  index: 282,  name: n02123159 tiger cat,  score: 0.039779
 
 ## Demo 代码介绍
 
-1. `Paddle-Lite-Demo/libs/` : 存放不同端的预测库和OpenCV库，如android、iOS等
+1. `Paddle-Lite-Demo/libs/` : 存放不同端的预测库和 OpenCV 库，如 Android、iOS 等
 
 **备注：**
   如需更新预测库，例如更新 Android CXX v8 动态库 `so`，则将新的动态库 `so` 更新到 `Paddle-Lite-Demo/libs/android/cxx/libs/arm64-v8a` 目录
@@ -118,7 +118,7 @@ i: 2,  index: 282,  name: n02123159 tiger cat,  score: 0.039779
 ```shell
  # 位置
  Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/build.sh # 脚本默认编译 armv7 可执行文件
- # 如果要编译 armv7 可执行文件，可以将 build.sh 脚本中的 ARM_ABI 变量改为 arm64i-v8a 即可
+ # 如果要编译 armv8 可执行文件，可以将 build.sh 脚本中的 ARM_ABI 变量改为 arm64i-v8a 即可
  # build.sh 中包含了可执行文件的编译和运行功能，其中运行是调用run.sh 脚本进行完成
  # run.sh 脚本中可执行文件的参数含义：
  adb shell "cd ${ADB_DIR} \
