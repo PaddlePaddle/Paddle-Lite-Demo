@@ -21,6 +21,13 @@
 #include <sys/time.h>         // NOLINT
 #include <unistd.h>           // NOLINT
 #include <vector>             // NOLINT
+/////////////////////////////////////////////////////////////////////////
+// If this demo is linked to static library: libpaddle_api_light_bundled.a
+// , you should include `paddle_use_ops.h` and `paddle_use_kernels.h` to
+// avoid linking errors such as `unsupport ops or kernels`.
+/////////////////////////////////////////////////////////////////////////
+// #include "paddle_use_kernels.h"  // NOLINT
+// #include "paddle_use_ops.h"      // NOLINT
 
 int WARMUP_COUNT = 0;
 int REPEAT_COUNT = 1;
@@ -34,6 +41,7 @@ struct RESULT {
   int class_id;
   float score;
 };
+using namespace paddle::lite_api; // NOLINT
 
 inline int64_t get_current_us() {
   struct timeval time;
@@ -158,10 +166,10 @@ post_process(std::shared_ptr<PaddlePredictor> predictor, const int topk,
   return results;
 }
 
-cv::Mat process(
-    cv::Mat &input_image, std::vector<std::string> &word_labels, // NOLINT
-    const int topk,
-    std::shared_ptr<paddle::lite_api::PaddlePredictor> &predictor) { // NOLINT
+cv::Mat process(const std::string model_file, cv::Mat &input_image, // NOLINT
+                const std::vector<std::string> &word_labels,        // NOLINT
+                const int topk,
+                std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor) {
   // Preprocess image and fill the data of input tensor
   double preprocess_start_time = get_current_us();
   pre_process(predictor, input_image, INPUT_SHAPE[3], INPUT_SHAPE[2]);
@@ -192,20 +200,11 @@ cv::Mat process(
       min_duration = cur_time_cost;
     }
     sum_duration += cur_time_cost;
+    printf("iter %d cost: %f ms\n", i, cur_time_cost);
   }
   avg_duration = sum_duration / static_cast<float>(REPEAT_COUNT);
-  std::cout << "\n======= benchmark summary =======\n"
-            << "input_shape(s) (NCHW): {1, 3, " << height << ", " << width
-            << "}\n"
-            << "model_dir:" << model_file << "\n"
-            << "warmup:" << WARMUP_COUNT << "\n"
-            << "repeats:" << REPEAT_COUNT << "\n"
-            << "power_mode:" << CPU_POWER_MODE << "\n"
-            << "thread_num:" << CPU_THREAD_NUM << "\n"
-            << "*** time info(ms) ***\n"
-            << "max_duration:" << max_time_cost << "\n"
-            << "min_duration:" << min_time_cost << "\n"
-            << "avg_duration:" << avg_duration << "\n";
+  printf("warmup: %d repeat: %d, average: %f ms, max: %f ms, min: %f ms\n",
+         WARMUP_COUNT, REPEAT_COUNT, avg_duration, max_duration, min_duration);
 
   // 5. Get output and postprocess to output detected objects
   std::cout << "\n====== output summary ====== " << std::endl;
@@ -223,12 +222,12 @@ cv::Mat process(
            results[i].score);
   }
   printf("Preprocess time: %f ms\n", preprocess_time);
-  printf("Prediction time: %f ms\n", prediction_time);
+  printf("Prediction time: %f ms\n", avg_duration);
   printf("Postprocess time: %f ms\n\n", postprocess_time);
   return output_image;
 }
 
-void run_model(std::string model_file,
+void run_model(const std::string model_file,
                const std::vector<std::string> &word_labels, const int topk,
                bool use_cap, std::string input_image_path,
                std::string output_image_path) {
@@ -248,12 +247,13 @@ void run_model(std::string model_file,
     cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
     cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
     if (!cap.isOpened()) {
-      return -1;
+      return;
     }
     while (1) {
       cv::Mat input_image;
       cap >> input_image;
-      cv::Mat output_image = process(input_image, word_labels, topk, predictor);
+      cv::Mat output_image =
+          process(model_file, input_image, word_labels, topk, predictor);
       cv::imshow("image classification", output_image);
       if (cv::waitKey(1) == char('q')) { // NOLINT
         break;
@@ -263,7 +263,8 @@ void run_model(std::string model_file,
     cv::destroyAllWindows();
   } else {
     cv::Mat input_image = cv::imread(input_image_path, 1);
-    cv::Mat output_image = process(input_image, word_labels, topk, predictor);
+    cv::Mat output_image =
+        process(model_file, input_image, word_labels, topk, predictor);
     cv::imwrite(output_image_path, output_image);
     cv::imshow("image classification", output_image);
     cv::waitKey(0);
@@ -272,23 +273,11 @@ void run_model(std::string model_file,
 int main(int argc, char **argv) {
   if (argc < 3) {
     std::cerr << "[ERROR] usage: " << argv[0]
-              << " ./image_classification_demo model_dir label_path\n";
+              << " ./image_classification_demo model_dir label_path [top_k] "
+              << "[input_image_path] [output_image_path] \n"
+              << "use images from camera if input_image_path isn't provided \n";
     exit(1);
-    printf("Usage: \n"
-           "./image_classification_demo model_dir label_path [top_k] "
-           "[input_image_path] [output_image_path]"
-           "use images from camera if input_image_path and input_image_path "
-           "isn't provided.");
-    return -1;
   }
-  std::cout << "This parameters are necessary: \n"
-            << "<model_dir>, eg: model root \n"
-            << "<label_path>, eg:label root \n"
-            << "This parameters are optional: \n"
-            << " <topk>, eg: 1 \n"
-            << " <input_image_path>, eg: test.jpg \n"
-            << " <output_image_path>, eg: result.jpg \n"
-            << std::endl;
 
   std::string model_path = argv[1];
   std::string label_path = argv[2];
