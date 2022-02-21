@@ -50,49 +50,50 @@ ClsPredictor::ClsPredictor(const std::string &modelDir, const int cpuThreadNum,
 }
 
 void ClsPredictor::Preprocess(const cv::Mat &img) {
-    std::vector<float> mean = {0.5f, 0.5f, 0.5f};
-    std::vector<float> scale = {1 / 0.5f, 1 / 0.5f, 1 / 0.5f};
-    cv::Mat crop_img;
-    img.copyTo(crop_img);
-    cv::Mat resize_img;
+  std::vector<float> mean = {0.5f, 0.5f, 0.5f};
+  std::vector<float> scale = {1 / 0.5f, 1 / 0.5f, 1 / 0.5f};
+  cv::Mat crop_img;
+  img.copyTo(crop_img);
+  cv::Mat resize_img;
 
-    int index = 0;
-    float wh_ratio =
-        static_cast<float>(crop_img.cols) / static_cast<float>(crop_img.rows);
+  int index = 0;
+  float wh_ratio =
+      static_cast<float>(crop_img.cols) / static_cast<float>(crop_img.rows);
 
-    resize_img = ClsResizeImg(crop_img);
-    resize_img.convertTo(resize_img, CV_32FC3, 1 / 255.f);
+  resize_img = ClsResizeImg(crop_img);
+  resize_img.convertTo(resize_img, CV_32FC3, 1 / 255.f);
 
-    const float *dimg = reinterpret_cast<const float *>(resize_img.data);
+  const float *dimg = reinterpret_cast<const float *>(resize_img.data);
 
-    std::unique_ptr<Tensor> input_tensor0(std::move(predictor_->GetInput(0)));
-    input_tensor0->Resize({1, 3, resize_img.rows, resize_img.cols});
-    auto *data0 = input_tensor0->mutable_data<float>();
-    NHWC3ToNC3HW(dimg, data0, resize_img.rows * resize_img.cols, mean, scale);
+  std::unique_ptr<Tensor> input_tensor0(std::move(predictor_->GetInput(0)));
+  input_tensor0->Resize({1, 3, resize_img.rows, resize_img.cols});
+  auto *data0 = input_tensor0->mutable_data<float>();
+  NHWC3ToNC3HW(dimg, data0, resize_img.rows * resize_img.cols, mean, scale);
 }
 
 cv::Mat ClsPredictor::Postprocess(const cv::Mat &srcimg, const float thresh) {
   // Get output and run postprocess
-    std::unique_ptr<const Tensor> softmax_out(
-        std::move(predictor_->GetOutput(0)));
-    auto *softmax_scores = softmax_out->mutable_data<float>();
-    auto softmax_out_shape = softmax_out->shape();
-    float score = 0;
-    int label = 0;
-    for (int i = 0; i < softmax_out_shape[1]; i++) {
-      if (softmax_scores[i] > score) {
-        score = softmax_scores[i];
-        label = i;
-      }
+  std::unique_ptr<const Tensor> softmax_out(
+      std::move(predictor_->GetOutput(0)));
+  auto *softmax_scores = softmax_out->mutable_data<float>();
+  auto softmax_out_shape = softmax_out->shape();
+  float score = 0;
+  int label = 0;
+  for (int i = 0; i < softmax_out_shape[1]; i++) {
+    if (softmax_scores[i] > score) {
+      score = softmax_scores[i];
+      label = i;
     }
-    if (label % 2 == 1 && score > thresh) {
-      cv::rotate(srcimg, srcimg, 1);
-    }
-    return srcimg;
+  }
+  if (label % 2 == 1 && score > thresh) {
+    cv::rotate(srcimg, srcimg, 1);
+  }
+  return srcimg;
 }
 
-cv::Mat ClsPredictor::Predict(const cv::Mat &img, double *preprocessTime, double *predictTime,
-               double *postprocessTime, const float thresh) {
+cv::Mat ClsPredictor::Predict(const cv::Mat &img, double *preprocessTime,
+                              double *predictTime, double *postprocessTime,
+                              const float thresh) {
   cv::Mat src_img;
   img.copyTo(src_img);
   // auto t = GetCurrentTime();

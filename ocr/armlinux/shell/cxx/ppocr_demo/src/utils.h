@@ -17,8 +17,8 @@
 #include "paddle_api.h"
 #include <fstream>
 #include <string>
-#include <vector>
 #include <sys/time.h>
+#include <vector>
 
 int64_t ShapeProduction(const std::vector<int64_t> &shape);
 
