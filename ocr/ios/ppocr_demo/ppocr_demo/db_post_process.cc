@@ -14,10 +14,11 @@
 
 #include "db_post_process.h" // NOLINT
 #include <algorithm>
+#include <string>
 #include <utility>
 
 void GetContourArea(std::vector<std::vector<float>> box, float unclip_ratio,
-                    float &distance) {
+                    float &distance) { // NOLINT
   int pts_num = 4;
   float area = 0.0f;
   float dist = 0.0f;
@@ -29,7 +30,7 @@ void GetContourArea(std::vector<std::vector<float>> box, float unclip_ratio,
                   (box[i][1] - box[(i + 1) % pts_num][1]) *
                       (box[i][1] - box[(i + 1) % pts_num][1]));
   }
-  area = fabs(float(area / 2.0));
+  area = fabs(float(area / 2.0)); // NOLINT
 
   distance = area * unclip_ratio / dist;
 }
@@ -111,7 +112,8 @@ OrderPointsClockwise(std::vector<std::vector<int>> pts) {
   return rect;
 }
 
-std::vector<std::vector<float>> GetMiniBoxes(cv::RotatedRect box, float &ssid) {
+std::vector<std::vector<float>> GetMiniBoxes(cv::RotatedRect box,
+                                             float &ssid) { // NOLINT
   ssid = std::min(box.size.width, box.size.height);
 
   cv::Mat points;
@@ -200,18 +202,22 @@ float PolygonScoreAcc(std::vector<cv::Point> contour, cv::Mat pred) {
     box_y.push_back(contour[i].y);
   }
 
-  int xmin =
-      clamp(int(std::floor(*(std::min_element(box_x.begin(), box_x.end())))), 0,
-            width - 1);
-  int xmax =
-      clamp(int(std::ceil(*(std::max_element(box_x.begin(), box_x.end())))), 0,
-            width - 1);
-  int ymin =
-      clamp(int(std::floor(*(std::min_element(box_y.begin(), box_y.end())))), 0,
-            height - 1);
-  int ymax =
-      clamp(int(std::ceil(*(std::max_element(box_y.begin(), box_y.end())))), 0,
-            height - 1);
+  int xmin = clamp(int(std::floor(*(std::min_element(box_x.begin(),   // NOLINT
+                                                     box_x.end())))), // NOLINT
+                   0,                                                 // NOLINT
+                   width - 1);
+  int xmax = clamp(
+      int(std::ceil(*(std::max_element(box_x.begin(), box_x.end())))), // NOLINT
+      0,                                                               // NOLINT
+      width - 1);
+  int ymin = clamp(int(std::floor(*(std::min_element(box_y.begin(),   // NOLINT
+                                                     box_y.end())))), // NOLINT
+                   0,                                                 // NOLINT
+                   height - 1);
+  int ymax = clamp(
+      int(std::ceil(*(std::max_element(box_y.begin(), box_y.end())))), // NOLINT
+      0,                                                               // NOLINT
+      height - 1);
 
   cv::Mat mask;
   mask = cv::Mat::zeros(ymax - ymin + 1, xmax - xmin + 1, CV_8UC1);
@@ -219,10 +225,11 @@ float PolygonScoreAcc(std::vector<cv::Point> contour, cv::Mat pred) {
   cv::Point *rook_point = new cv::Point[contour.size()];
 
   for (int i = 0; i < contour.size(); ++i) {
-    rook_point[i] = cv::Point(int(box_x[i]) - xmin, int(box_y[i]) - ymin);
+    rook_point[i] =
+        cv::Point(int(box_x[i]) - xmin, int(box_y[i]) - ymin); // NOLINT
   }
   const cv::Point *ppt[1] = {rook_point};
-  int npt[] = {int(contour.size())};
+  int npt[] = {int(contour.size())}; // NOLINT
 
   cv::fillPoly(mask, ppt, npt, 1, cv::Scalar(1));
 
@@ -242,7 +249,8 @@ BoxesFromBitmap(const cv::Mat pred, const cv::Mat bitmap,
   const int max_candidates = 1000;
   const float box_thresh = static_cast<float>(Config["det_db_box_thresh"]);
   const float unclip_ratio = static_cast<float>(Config["det_db_unclip_ratio"]);
-  const int det_use_polygon_score = int(Config["det_use_polygon_score"]);
+  const int det_use_polygon_score =
+      int(Config["det_use_polygon_score"]); // NOLINT
 
   int width = bitmap.cols;
   int height = bitmap.rows;
@@ -250,8 +258,8 @@ BoxesFromBitmap(const cv::Mat pred, const cv::Mat bitmap,
   std::vector<std::vector<cv::Point>> contours;
   std::vector<cv::Vec4i> hierarchy;
 
-//  cv::findContours(bitmap, contours, hierarchy, cv::RETR_LIST,
-//                   cv::CHAIN_APPROX_SIMPLE);
+  cv::findContours(bitmap, contours, hierarchy, cv::RETR_LIST,
+                   cv::CHAIN_APPROX_SIMPLE);
 
   int num_contours =
       contours.size() >= max_candidates ? max_candidates : contours.size();
@@ -301,17 +309,20 @@ BoxesFromBitmap(const cv::Mat pred, const cv::Mat bitmap,
 
     for (int num_pt = 0; num_pt < 4; num_pt++) {
       std::vector<int> a{
-          static_cast<int>(clamp(
-              roundf(cliparray[num_pt][0] / float(width) * float(dest_width)),
-              float(0), float(dest_width))),
-          static_cast<int>(clamp(
-              roundf(cliparray[num_pt][1] / float(height) * float(dest_height)),
-              float(0), float(dest_height)))};
+          static_cast<int>(
+              clamp(roundf(cliparray[num_pt][0] / float(width) * // NOLINT
+                           float(dest_width)),                   // NOLINT
+                    float(0),                                    // NOLINT
+                    float(dest_width))),                         // NOLINT
+          static_cast<int>(
+              clamp(roundf(cliparray[num_pt][1] / float(height) * // NOLINT
+                           float(dest_height)),                   // NOLINT
+                    float(0),                                     // NOLINT
+                    float(dest_height)))};                        // NOLINT
       intcliparray.push_back(a);
     }
     boxes.push_back(intcliparray);
-
-  } // end for
+  }
   return boxes;
 }
 
