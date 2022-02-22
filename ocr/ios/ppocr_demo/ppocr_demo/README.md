@@ -44,7 +44,7 @@ sh prepare.sh
 成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
 
 <p align="center"><img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/IOS2.jpeg"/>
-&#8194;&#8194;&#8194;&#8194;&#8194; <img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/IOS3.jpeg"/>
+&#8194;&#8194;&#8194;&#8194;&#8194; <img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/run_app.jpeg"/>
 </p>
 
 ## 更新预测库
@@ -284,5 +284,3 @@ OCR 文字识别 Demo 由三个模型一起完成 OCR 文字识别功能，对�
 
   - `std::vector<std::vector<std::vector<int>>> BoxesFromBitmap(...)` 方法从 Bitmap 图中获取检测框
   - `std::vector<std::vector<std::vector<int>>> FilterTagDetRes(...)` 方法根据识别结果获取目标框位置
-
-

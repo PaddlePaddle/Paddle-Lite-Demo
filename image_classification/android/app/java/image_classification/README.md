@@ -17,8 +17,10 @@ Paddle Lite 预测库版本一样的 NDK
 ### 部署步骤
 
 1. 图像分类 Demo 位于 `Paddle-Lite-Demo/image_classification/android/app/java/image_classification` 目录
-2. 用 Android Studio 打开 image_classification 工程
-3. 手机连接电脑，打开 USB 调试和文件传输模式，并在 Android Studio 上连接自己的手机设备（手机需要开启允许从 USB 安装软件权限）
+2. cd `Paddle-Lite-Demo/libs` 目录，运行 `download.sh` 脚本，下载所需要的 Paddle Lite 预测库
+3. cd `Paddle-Lite-Demo/image_classification/assets` 目录，运行 `download.sh` 脚本，下载OPT 优化后模型、测试图片和标签文件
+4. 用 Android Studio 打开 image_classification 工程
+5. 手机连接电脑，打开 USB 调试和文件传输模式，并在 Android Studio 上连接自己的手机设备（手机需要开启允许从 USB 安装软件权限）
 
 > **注意：**
 >> 如果您在导入项目、编译或者运行过程中遇到 NDK 配置错误的提示，请打开 ` File > Project Structure > SDK Location`，修改 `Andriod NDK location` 为您本机配置的 NDK 所在路径。
@@ -26,7 +28,7 @@ Paddle Lite 预测库版本一样的 NDK
 >> 还有一种 NDK 配置方法，你可以在 `image_classification/local.properties` 文件中手动添加 NDK 路径配置 `nkd.dir=/root/android-ndk-r20b`
 >> 如果以上步骤仍旧无法解决 NDK 配置错误，请尝试根据 Andriod Studio 官方文档中的[更新 Android Gradle 插件](https://developer.android.com/studio/releases/gradle-plugin?hl=zh-cn#updating-plugin)章节，尝试更新Android Gradle plugin版本。
 
-4. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
+6. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
 成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动识别图片中的物体并标记
 
 <p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/android/app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/android/app_run_res.jpg"/></p>

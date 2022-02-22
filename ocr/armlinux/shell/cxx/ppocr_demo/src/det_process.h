@@ -13,26 +13,30 @@
 // limitations under the License.
 
 #pragma once
-#include "utils.h"
+
 #include "opencv2/core.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
 #include "paddle_api.h"
+#include "utils.h"
 using namespace paddle::lite_api; // NOLINT
 
-class ClsPredictor {
+class DetPredictor {
 public:
-  explicit ClsPredictor(const std::string &modelDir, const int cpuThreadNum,
+  explicit DetPredictor(const std::string &modelDir, const int cpuThreadNum,
                         const std::string &cpuPowerMode);
 
-  cv::Mat Predict(const cv::Mat &rgbImage,
-               double *preprocessTime, double *predictTime,
-               double *postprocessTime, const float thresh);
+  std::vector<std::vector<std::vector<int>>>
+  Predict(cv::Mat &rgbImage, std::map<std::string, double> Config,
+          double *preprocessTime, double *predictTime, double *postprocessTime);
 
 private:
-  void Preprocess(const cv::Mat &rgbaImage);
-  cv::Mat Postprocess(const cv::Mat &img, const float thresh);
+  void Preprocess(const cv::Mat &img, const int max_side_len);
+  std::vector<std::vector<std::vector<int>>>
+  Postprocess(const cv::Mat srcimg, std::map<std::string, double> Config,
+              int det_db_use_dilate);
 
 private:
+  std::vector<float> ratio_hw_;
   std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor_;
 };

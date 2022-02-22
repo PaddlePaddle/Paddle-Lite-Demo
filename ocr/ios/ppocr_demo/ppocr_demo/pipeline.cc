@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "pipeline.h"
-#include <iostream>
-#include "timer.h"
+#include "pipeline.h" // NOLINT
+#include "timer.h"    // NOLINT
+#include <algorithm>  // NOLINT
+#include <iostream>   // NOLINT
+#include <map>        // NOLINT
 
 cv::Mat GetRotateCropImage(cv::Mat srcimage,
                            std::vector<std::vector<int>> box) {
@@ -24,10 +26,10 @@ cv::Mat GetRotateCropImage(cv::Mat srcimage,
 
   int x_collect[4] = {box[0][0], box[1][0], box[2][0], box[3][0]};
   int y_collect[4] = {box[0][1], box[1][1], box[2][1], box[3][1]};
-  int left = int(*std::min_element(x_collect, x_collect + 4));
-  int right = int(*std::max_element(x_collect, x_collect + 4));
-  int top = int(*std::min_element(y_collect, y_collect + 4));
-  int bottom = int(*std::max_element(y_collect, y_collect + 4));
+  int left = int(*std::min_element(x_collect, x_collect + 4));   // NOLINT
+  int right = int(*std::max_element(x_collect, x_collect + 4));  // NOLINT
+  int top = int(*std::min_element(y_collect, y_collect + 4));    // NOLINT
+  int bottom = int(*std::max_element(y_collect, y_collect + 4)); // NOLINT
 
   cv::Mat img_crop;
   image(cv::Rect(left, top, right - left, bottom - top)).copyTo(img_crop);
@@ -96,10 +98,10 @@ std::vector<std::string> split(const std::string &str,
   if ("" == str)
     return res;
   char *strs = new char[str.length() + 1];
-  std::strcpy(strs, str.c_str());
+  std::strcpy(strs, str.c_str()); // NOLINT
 
   char *d = new char[delim.length() + 1];
-  std::strcpy(d, delim.c_str());
+  std::strcpy(d, delim.c_str()); // NOLINT
 
   char *p = std::strtok(strs, d);
   while (p) {
@@ -141,34 +143,39 @@ cv::Mat Visualization(cv::Mat srcimg,
   }
 
   cv::imwrite(output_image_path, img_vis);
-  std::cout << "The detection visualized image saved in " << output_image_path.c_str() << std::endl;
+  std::cout << "The detection visualized image saved in "
+            << output_image_path.c_str() << std::endl;
   return img_vis;
 }
 
-Pipeline::Pipeline(const std::string &detModelDir, const std::string &clsModelDir,
-                    const std::string &recModelDir, const std::string &cPUPowerMode,
-                    const int cPUThreadNum,
-                    const std::string &config_path, const std::string &dict_path) {
-  clsPredictor_.reset(new ClsPredictor(
-      clsModelDir, cPUThreadNum, cPUPowerMode));
-  detPredictor_.reset(new DetPredictor(
-        detModelDir, cPUThreadNum, cPUPowerMode));
-  recPredictor_.reset(new RecPredictor(
-        recModelDir, cPUThreadNum, cPUPowerMode));
+Pipeline::Pipeline(const std::string &detModelDir,
+                   const std::string &clsModelDir,
+                   const std::string &recModelDir,
+                   const std::string &cPUPowerMode, const int cPUThreadNum,
+                   const std::string &config_path,
+                   const std::string &dict_path) {
+  clsPredictor_.reset(
+      new ClsPredictor(clsModelDir, cPUThreadNum, cPUPowerMode));
+  detPredictor_.reset(
+      new DetPredictor(detModelDir, cPUThreadNum, cPUPowerMode));
+  recPredictor_.reset(
+      new RecPredictor(recModelDir, cPUThreadNum, cPUPowerMode));
   Config_ = LoadConfigTxt(config_path);
   charactor_dict_ = ReadDict(dict_path);
-  charactor_dict_.insert(charactor_dict_.begin(), "#"); // blank char for ctc
+  charactor_dict_.insert(charactor_dict_.begin(), "#"); // NOLINT
   charactor_dict_.push_back(" ");
 }
 
-cv::Mat Pipeline::Process(cv::Mat img, std::string output_img_path, std::vector<std::string> &res_txt) {
-//  Timer tic;
-//  tic.start();
-  int use_direction_classify = int(Config_["use_direction_classify"]);
+cv::Mat Pipeline::Process(cv::Mat img, std::string output_img_path,
+                          std::vector<std::string> &res_txt) {
+  //  Timer tic;
+  //  tic.start();
+  int use_direction_classify = int(Config_["use_direction_classify"]); // NOLINT
   cv::Mat srcimg;
-    img.copyTo(srcimg);
+  img.copyTo(srcimg);
   // det predict
-  auto boxes = detPredictor_->Predict(srcimg, Config_, nullptr, nullptr, nullptr);
+  auto boxes =
+      detPredictor_->Predict(srcimg, Config_, nullptr, nullptr, nullptr);
 
   std::vector<float> mean = {0.5f, 0.5f, 0.5f};
   std::vector<float> scale = {1 / 0.5f, 1 / 0.5f, 1 / 0.5f};
@@ -182,25 +189,27 @@ cv::Mat Pipeline::Process(cv::Mat img, std::string output_img_path, std::vector<
   for (int i = boxes.size() - 1; i >= 0; i--) {
     crop_img = GetRotateCropImage(img_copy, boxes[i]);
     if (use_direction_classify >= 1) {
-      crop_img = clsPredictor_->Predict(crop_img, nullptr, nullptr, nullptr, 0.9);
+      crop_img =
+          clsPredictor_->Predict(crop_img, nullptr, nullptr, nullptr, 0.9);
     }
-    auto res = recPredictor_->Predict(crop_img, nullptr, nullptr, nullptr, charactor_dict_);
+    auto res = recPredictor_->Predict(crop_img, nullptr, nullptr, nullptr,
+                                      charactor_dict_);
     rec_text.push_back(res.first);
     rec_text_score.push_back(res.second);
   }
-// tic.end();
-// *processTime = tic.get_average_ms();
-// std::cout << "pipeline predict costs" <<  *processTime;
+  // tic.end();
+  // *processTime = tic.get_average_ms();
+  // std::cout << "pipeline predict costs" <<  *processTime;
 
   //// visualization
   auto img_vis = Visualization(img, boxes, output_img_path);
   // print recognized text
+  res_txt.resize(rec_text.size() * 2);
   for (int i = 0; i < rec_text.size(); i++) {
-//    std::cout << i << "\t" << rec_text[i] << "\t" << rec_text_score[i]
-//              << std::endl;
-      res_txt[2*i] = rec_text[i];
-      rec_text[2*i + 1] = rec_text_score[i];
+    //    std::cout << i << "\t" << rec_text[i] << "\t" << rec_text_score[i]
+    //              << std::endl;
+    res_txt[2 * i] = rec_text[i];
+    res_txt[2 * i + 1] = rec_text_score[i];
   }
   return img_vis;
 }
-
