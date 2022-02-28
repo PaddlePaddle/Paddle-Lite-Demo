@@ -112,13 +112,19 @@ void Classifier::Predict(const cv::Mat &rgbaImage,
   *preprocessTime = GetElapsedTime(t);
   LOGD("Detector postprocess costs %f ms", *preprocessTime);
 
-  t = GetCurrentTime();
-  predictor_->Run();
-  *predictTime = GetElapsedTime(t);
+  double averageTime = 0.f;
+  for (int i = 0; i < 30; i++) {
+    t = GetCurrentTime();
+    predictor_->Run();
+    *predictTime = GetElapsedTime(t);
+    averageTime += *predictTime;
+  }
+  averageTime = averageTime / 30.f;
+
   LOGD("Detector predict costs %f ms", *predictTime);
 
   t = GetCurrentTime();
-  std::string infer_time = std::to_string(*predictTime);
+  std::string infer_time = std::to_string(averageTime);
   results->push_back(infer_time);
   Postprocess(topk_, labelList_, results);
   *postprocessTime = GetElapsedTime(t);
