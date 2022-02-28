@@ -113,13 +113,17 @@ void Classifier::Predict(const cv::Mat &rgbaImage,
   LOGD("Detector postprocess costs %f ms", *preprocessTime);
 
   double averageTime = 0.f;
-  for (int i = 0; i < 30; i++) {
+  // warmup
+  for (int i = 0; i < warmup_; i++) {
+    predictor_->Run();
+  }
+  for (int i = 0; i < repeats_; i++) {
     t = GetCurrentTime();
     predictor_->Run();
     *predictTime = GetElapsedTime(t);
     averageTime += *predictTime;
   }
-  averageTime = averageTime / 30.f;
+  averageTime = averageTime / repeats_;
 
   LOGD("Detector predict costs %f ms", *predictTime);
 

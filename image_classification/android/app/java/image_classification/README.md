@@ -76,6 +76,7 @@ image_classification/app/src/main/java/com/baidu/paddle/lite/demo/image_classifi
 ```shell
 # 位置：
 image_classification/app/src/main/assets/models/mobilenet_v1_for_cpu/model.nb
+image_classification/app/src/main/assets/models/mobilenet_v1_for_gpu/model.nb
 image_classification/app/src/main/assets/labels/synset_words.txt
 ```
 
@@ -95,6 +96,8 @@ image_classification/app/libs/PaddlePredictor.jar
 image_classification/app/build.gradle
 # 如果需要手动更新模型和预测库，则可将 gradle 脚本中的 `download*` 接口注释即可, 将新的预测库替换至相应目录下
 ```
+
+5. 如果想用 gpu 预测，点击界面的`是否使用GPU` 开关，当开关打开时，则用 GPU 推理；否则，使用 CPU 推理
 
 ### Java 端
 
