@@ -260,7 +260,9 @@ int main(int argc, char **argv) {
   }
   if (use_gpu) {
     // check model file name
-    std::string model_name = model_file.split("/")[1];
+    int start = model_file.find_first_of("/");
+    int end = model_file.find_last_of("/");
+    std::string model_name = model_file.substr(start + 1, end - start - 1);
     if (model_name.find("gpu") == model_name.npos) {
       std::cerr << "[ERROR] predicted-model should use gpu model when use_gpu "
                    "is true \n";
