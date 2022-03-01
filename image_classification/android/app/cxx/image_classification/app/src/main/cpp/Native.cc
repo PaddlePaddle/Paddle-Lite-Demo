@@ -100,12 +100,7 @@ Java_com_baidu_paddle_lite_demo_image_1classification_Native_nativeProcess(
   LOGD("Read from bitmap costs %f ms", GetElapsedTime(t));
 
   Pipeline *pipeline = reinterpret_cast<Pipeline *>(ctx);
-  //  bool modified = pipeline->Process(rgbaImage);
-  //  std::vector<std::string> res_str = pipeline->Process(rgbaImage);
-  //  jstring[] res;
-  //  jobjectArray res = cpp_array_to_jobjectarray(env, reinterpret_cast<const
-  //  std::string *>(&res_str), res_str.size());
-  //  return res;
+
   std::string res_str = pipeline->Process(rgbaImage);
   bool modified = res_str.empty();
   if (!modified) {

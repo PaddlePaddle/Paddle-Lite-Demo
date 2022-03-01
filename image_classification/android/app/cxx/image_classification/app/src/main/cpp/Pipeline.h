@@ -47,6 +47,8 @@ private: // NOLINT
 private: // NOLINT
   std::vector<int64_t> inputShape_;
   int topk_;
+  int warmup_{1};
+  int repeats_{1};
   std::vector<float> inputMean_;
   std::vector<float> inputStd_;
   std::vector<std::string> labelList_;

@@ -129,7 +129,7 @@ i: 2,  index: 282,  name: n02123159 tiger cat,  score: 0.039779
               ./images/tabby_cat.jpg \
               ./labels/labels.txt \
               3 224 224 \
-              0 1 100 10 \
+              0 1 100 10 0 \
            "
 
  第一个参数：image_classification 可执行文件，属于必选项
@@ -143,6 +143,7 @@ i: 2,  index: 282,  name: n02123159 tiger cat,  score: 0.039779
  第九个参数：1 线程数，属于可选项，默认是 1
  第十个参数：100 repeats 数目，属于可选项，默认是 1
  第十一个参数：10 warmup 数目，属于可选项，默认是 0
+ 第十二个参数：0 use_gpu 是否使用GPU， 属于可选项，默认是 0
 ```
 
 ## 代码讲解 （使用 Paddle Lite `C++ API` 执行预测）
@@ -232,7 +233,7 @@ adb shell "cd ${ADB_DIR} \
               ./images/tabby_cat.jpg \
               ./labels/labels.txt \
               3 224 224 \
-              0 1 100 10 \
+              0 1 100 10 0 \
           "
 # now
 adb shell "cd ${ADB_DIR} \
@@ -243,7 +244,7 @@ adb shell "cd ${ADB_DIR} \
               ./images/tabby_cat.jpg \
               ./labels/labels.txt \
               3 224 224 \
-              0 1 100 10 \
+              0 1 100 10 0 \
           "
 ```
 
@@ -263,7 +264,7 @@ adb shell "cd ${ADB_DIR} \
               ./images/tabby_cat.jpg \
               ./labels/labels.txt \
               3 224 224 \
-              0 1 100 10 \
+              0 1 100 10 0 \
           "
 # now
 adb shell "cd ${ADB_DIR} \
@@ -274,7 +275,19 @@ adb shell "cd ${ADB_DIR} \
               ./images/tabby_cat.jpg \
               ./labels/labels_new.txt \
               3 224 224 \
-              0 1 100 10 \
+              0 1 100 10 0 \
+          "
+- 如果想在 GPU 上推理，则将run.sh 中 use_gpu 设为True 即可：
+
+adb shell "cd ${ADB_DIR} \
+           && chmod +x ./image_classification \
+           && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
+           && ./image_classification \
+              ./models/mobilenet_v1_for_cpu/model.nb \
+              ./images/tabby_cat.jpg \
+              ./labels/labels_new.txt \
+              3 224 224 \
+              0 1 100 10 1 \
           "
 ```
 
@@ -297,7 +310,7 @@ adb shell "cd ${ADB_DIR} \
               ./images/tabby_cat.jpg \
               ./labels/labels.txt \
               3 224 224 \
-              0 1 100 10 \
+              0 1 100 10 0 \
           "
 # now
 adb shell "cd ${ADB_DIR} \
@@ -308,7 +321,7 @@ adb shell "cd ${ADB_DIR} \
               ./images/dog.jpg \
               ./labels/labels.txt \
               3 224 224 \
-              0 1 100 10 \
+              0 1 100 10 0 \
           "
 ```
 
