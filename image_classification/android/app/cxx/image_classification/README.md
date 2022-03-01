@@ -115,14 +115,14 @@ image_classification/app/cpp/CMakeLists.txt
 
 * 模型存放，将下载好的模型解压存放在 `app/src/assets/models` 目录下
 * common Java 包
-   在 `app/src/java/com/baidu/paddle/lite/demo/common` 目录下，实现一些公共处理内容，一般不用修改。其中，Utils.java 用于存放一些公用的且与 Java 基类无关的功能，例如模型拷贝、字符串类型转换等
+    在 `app/src/java/com/baidu/paddle/lite/demo/common` 目录下，实现一些公共处理内容，一般不用修改。其中，Utils.java 用于存放一些公用的且与 Java 基类无关的功能，例如模型拷贝、字符串类型转换等
 * image_classification Java 包
-   在 `app/src/java/com/baidu/paddle/lite/demo/image_classification` 目录下，实现 APP 界面消息事件和 Java/C++ 端代码互传的桥梁功能
+    在 `app/src/java/com/baidu/paddle/lite/demo/image_classification` 目录下，实现 APP 界面消息事件和 Java/C++ 端代码互传的桥梁功能
 * MainActivity
-     实现 APP 的创建、运行、释放功能
-     重点关注 `onLoadModel` 和 `onRunModel` 函数，实现 APP 界面值传递和推理处理
+    实现 APP 的创建、运行、释放功能
+    重点关注 `onLoadModel` 和 `onRunModel` 函数，实现 APP 界面值传递和推理处理
      
-     ```
+    ```java
      public boolean onLoadModel() {
         // push model to sdcard
         String realModelDir = getExternalFilesDir(null) + "/" + modelPath;
@@ -139,20 +139,21 @@ image_classification/app/cpp/CMakeLists.txt
     public boolean onRunModel() {
         return predictor.isLoaded() && predictor.process();
     }
-     ```java
+    ```
    
 * SettingActivity
-     实现设置界面各个元素的更新与显示，如果新增/删除界面的某个元素，均在这个类里面实现
-     备注：
-         - 参数的默认值可在 `app/src/main/res/values/strings.xml` 查看
-         - 每个元素的 ID 和 value 是对应 `app/src/main/res/xml/settings.xml` 和 `app/src/main/res/values/string.xml` 文件中的值
-         - 这部分内容不建议修改，如果有新增属性，可以按照此格式进行添加
+    实现设置界面各个元素的更新与显示，如果新增/删除界面的某个元素，均在这个类里面实现
+      备注：
+
+      - 参数的默认值可在 `app/src/main/res/values/strings.xml` 查看
+      - 每个元素的 ID 和 value 是对应 `app/src/main/res/xml/settings.xml` 和 `app/src/main/res/values/string.xml` 文件中的值
+      - 这部分内容不建议修改，如果有新增属性，可以按照此格式进行添加
 
 * Native
-     实现 Java 与 C++ 端代码互传的桥梁功能
-     包含三个功能：`init`初始化、 `process`预测处理 和 `release`释放
-     备注：
-         Java 的 native 方法和 C++ 的 native 方法要一一对应
+    实现 Java 与 C++ 端代码互传的桥梁功能
+    包含三个功能：`init`初始化、 `process`预测处理 和 `release`释放
+    备注：
+        Java 的 native 方法和 C++ 的 native 方法要一一对应
       
      ```
      // 初始化函数
@@ -174,24 +175,25 @@ image_classification/app/cpp/CMakeLists.txt
 ### C++ 端（native）
 
 * Native
-   实现 Java 与 C++ 端代码互传的桥梁功能，将 Java 数值转换为 c++ 数值，调用 c++ 端的完成人脸关键点检测功能
-   **注意：**
-   Native 文件生成方法：
-   ```
-   cd app/src/java/com/baidu/paddle/lite/demo/image_classification
-   # 在当前目录会生成包含 Native 方法的头文件，用户可以将其内容拷贝至 `cpp/Native.cc` 中
-   javac -classpath D:\dev\android-sdk\platforms\android-29\android.jar -encoding utf8 -h . Native.java 
-   ```
+  实现 Java 与 C++ 端代码互传的桥梁功能，将 Java 数值转换为 c++ 数值，调用 c++ 端的完成人脸关键点检测功能
+  **注意：**
+  Native 文件生成方法：
+  
+  ```shell
+    cd app/src/java/com/baidu/paddle/lite/demo/image_classification
+    # 在当前目录会生成包含 Native 方法的头文件，用户可以将其内容拷贝至 `cpp/Native.cc` 中
+    javac -classpath D:\dev\android-sdk\platforms\android-29\android.jar -encoding utf8 -h . Native.java 
+  ```
 
 * Pipeline
-   实现输入预处理、推理执行和输出后处理的流水线处理，支持单/多个模型的串行处理
+  实现输入预处理、推理执行和输出后处理的流水线处理，支持单/多个模型的串行处理
 
 * Utils
-   实现其他辅助功能，如 `NHWC` 格式转 `NCHW` 格式、字符串处理等
+  实现其他辅助功能，如 `NHWC` 格式转 `NCHW` 格式、字符串处理等
 
 * 新增模型支持
-   - 在 Pipeline 文件中新增模型的预测类，实现图像预处理、预测和图像后处理功能
-   - 在 Pipeline 文件中 `Pipeline` 类添加该模型预测类的调用和处理
+  - 在 Pipeline 文件中新增模型的预测类，实现图像预处理、预测和图像后处理功能
+  - 在 Pipeline 文件中 `Pipeline` 类添加该模型预测类的调用和处理
 
 ## 代码讲解 （使用 Paddle Lite `C++ API` 执行预测）
 
@@ -263,6 +265,7 @@ for (int i = 0; i < outputSize; i += 6) {
 ## 如何更新模型和输入/输出预处理
 
 ### 更新模型
+
 1. 将优化后的模型存放到目录 `image_classification/app/src/main/assets/models/` 下；
 2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `mobilenet_v1_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `image_classification/app/src/main/java/com.baidu.paddle.lite.demo.image_classification/MainActivity.java` 中代码：
 
@@ -431,9 +434,9 @@ bool Pipeline::Process(cv::Mat &rgbaImage);
 ## 通过 setting 界面更新图像分类的相关参数
 
 ### setting 界面参数介绍
-可通过APP上的 Settings 按钮，实现图像分类demo中些许参数的更新，目前支持以下参数的更新：
+可通过 APP 上的 Settings 按钮，实现图像分类 demo 中些许参数的更新，目前支持以下参数的更新：
 参数的默认值可在 `app/src/main/res/values/strings.xml` 查看
-- model setting：（需要提前将模型/图片/标签放在assets 目录，或者通过adb push 将其放置手机目录）
+- model setting：（需要提前将模型/图片/标签放在 assets 目录，或者通过 adb push 将其放置手机目录）
     - model_path 默认是 `models/mobilenet_v1_for_cpu`
     - image_path 默认是 `images/tabby_cat.jpg`
     - label_path 默认是 `labels/synset_words.txt`
@@ -442,7 +445,7 @@ bool Pipeline::Process(cv::Mat &rgbaImage);
     - power_mode 默认是 `LITE_POWER_HIGH`
     - thread_num 默认是 1
 - input setting：
-    -input_shape 默认是 `1, 3, 224, 224`
+    - input_shape 默认是 `1, 3, 224, 224`
     - input_image_format 默认是 `RGB`
     - input_mean 默认是 `0.485,0.456,0.406`
     - input_std  默认是 `0.229,0.224,0.225`
