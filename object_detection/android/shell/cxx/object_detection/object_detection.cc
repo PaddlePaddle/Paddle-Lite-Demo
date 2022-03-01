@@ -258,8 +258,8 @@ int main(int argc, char **argv) {
   }
   std::cout << "This parameters are optional: \n"
             << " <thresh>, eg: 0.5 \n"
-            << " <input_width>, eg: 224 \n"
-            << " <input_height>, eg: 224 \n"
+            << " <input_width>, eg: 300 \n"
+            << " <input_height>, eg: 300 \n"
             << "  <power_mode>, 0: big cluster, high performance\n"
                "                1: little cluster\n"
                "                2: all cores\n"
