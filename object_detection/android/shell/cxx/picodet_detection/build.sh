@@ -4,8 +4,8 @@ export NDK_ROOT=/disk/android-ndk-r20b
 echo "NDK_ROOT is ${NDK_ROOT}"
 
 # configure
-# ARM_ABI=arm64-v8a
-ARM_ABI=armeabi-v7a
+ARM_ABI=arm64-v8a
+# ARM_ABI=armeabi-v7a
 # ARM_TARGET_LANG=gcc
 ARM_TARGET_LANG=clang
 PADDLE_LITE_DIR="$(pwd)/../../../../../libs/android/cxx"
@@ -31,4 +31,4 @@ make -j10
 cd ..
 
 echo "make successful!"
-sh run.sh ${ARM_ABI}
+# sh run.sh ${ARM_ABI}

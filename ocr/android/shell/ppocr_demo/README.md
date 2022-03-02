@@ -45,7 +45,12 @@
 1. OCR 文字识别 Demo 位于 `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo` 目录
 2. cd `Paddle-Lite-Demo/libs` 目录，运行 `download.sh` 脚本，下载所需要的 Paddle Lite 预测库
 3. cd `Paddle-Lite-Demo/ocr/assets` 目录，运行 `download.sh` 脚本，下载OPT 优化后模型、测试图片和标签文件
-4. cd `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo` 目录，运行 `build.sh` 脚本， 完成可执行文件的编译和运行。其推理结果将会在当前窗口显示和结果写回图片（在当前目录可找到），其效果如下图所示：
+4. cd `Paddle-Lite-Demo/ocr/android/shell/ppocr_demo` 目录，先在 `build.sh` 脚本中，完成 NDK_ROOT 路径设置；然后运行 `build.sh` 脚本，完成可执行文件的编译和运行。
+> **注意事项：**
+>> - 如果是在 Linux 主机编译，请选择 Linux 版本的 NDK 进行设置
+>> - 如果是在 Mac 主机编译，请选择 Mac 版本的 NDK 进行设置；另外，同步更新 `CMakeList.txt` 里的 `CMAKE_SYSTEM_NAME` 变量，更新为 `drawn`
+
+5. 其推理结果将会在当前窗口显示和结果写回图片（在当前目录可找到），其效果如下图所示：
 
 <p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/doc/ocr/linux/shell/run_result.jpg"/></p>
 
@@ -59,7 +64,9 @@ sh download.sh
 cd ../android/shell/ppocr_demo
 # 完成可执行文件的编译, 默认编译 V8 可执行文件； 如需 V7 可执行文件，可修改 build.sh 脚本中 ARM_ABI 变量即可
 # 进行推理，推理结果将会在当前窗口显示，并将结果写回图片（在当前目录可找到）
+# 更新 NDK_ROOT 路径，然后完成可执行文件的编译和运行
 sh build.sh
+# CMakeList.txt 里的 System 默认设置是linux；如果在Mac 运行，则需将 CMAKE_SYSTEM_NAME 变量设置为 drawn
 ```
 
 ## 如何更新预测库
