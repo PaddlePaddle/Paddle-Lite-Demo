@@ -97,11 +97,18 @@ void neon_mean_scale(const float *din, float *dout, int size, float *mean,
 
 void pre_process(std::shared_ptr<PaddlePredictor> predictor, const cv::Mat img,
                  int width, int height) {
+  // Prepare scale data from image
+  std::unique_ptr<Tensor> input_tensor_scale(std::move(predictor->GetInput(1)));
+  input_tensor_scale->Resize({1, 2});
+  auto *scale_data = input_tensor_scale->mutable_data<float>();
+  scale_data[0] = static_cast<float>(height) / static_cast<float>(img.rows);
+  scale_data[1] = static_cast<float>(width) / static_cast<float>(img.cols);
+
   // Prepare input data from image
   std::unique_ptr<Tensor> input_tensor(std::move(predictor->GetInput(0)));
   input_tensor->Resize({1, 3, height, width});
-  float means[3] = {0.5f, 0.5f, 0.5f};
-  float scales[3] = {0.5f, 0.5f, 0.5f};
+  float means[3] = {0.485, 0.456, 0.406};
+  float scales[3] = {0.229, 0.224, 0.225};
   cv::Mat rgb_img;
   cv::cvtColor(img, rgb_img, cv::COLOR_BGR2RGB);
   cv::resize(rgb_img, rgb_img, cv::Size(width, height), 0.f, 0.f);
@@ -117,60 +124,69 @@ void post_process(std::shared_ptr<PaddlePredictor> predictor, float thresh,
                   cv::Mat &image) { // NOLINT
   std::unique_ptr<const Tensor> output_tensor(
       std::move(predictor->GetOutput(0)));
-  auto *data = output_tensor->data<float>();
+  std::unique_ptr<const Tensor> output_bbox_tensor(
+      std::move(predictor->GetOutput(1)));
   auto shape_out = output_tensor->shape();
-  int64_t size = 1;
+
+  int64_t output_size = 1;
   for (auto &i : shape_out) {
-    size *= i;
+    output_size *= i;
   }
-  for (int iw = 0; iw < size; iw += 6) {
+  if (output_size < 6) {
+    std::cerr << "[WARNING] No object detected." << std::endl;
+    return;
+  }
+
+  auto *data = output_tensor->data<float>();
+  auto *bbox_num = output_bbox_tensor->data<int>();
+  for (int i = 0; i < bbox_num[0]; i++) {
     int oriw = image.cols;
     int orih = image.rows;
     // Class id
-    auto class_id = static_cast<int>(round(data[0]));
+    auto class_id = static_cast<int>(round(data[i * 6]));
     // Confidence score
-    auto score = data[1];
-    if (score > thresh) {
-      Object obj;
-      int x = static_cast<int>(data[2] * oriw);
-      int y = static_cast<int>(data[3] * orih);
-      int w = static_cast<int>(data[4] * oriw) - x;
-      int h = static_cast<int>(data[5] * orih) - y;
-      cv::Rect rec_clip =
-          cv::Rect(x, y, w, h) & cv::Rect(0, 0, image.cols, image.rows);
-      obj.class_id = class_id;
-      obj.class_name = class_id >= 0 && class_id < class_names.size()
-                           ? class_names[class_id]
-                           : "Unknow";
-      obj.prob = score;
-      obj.rec = rec_clip;
-      if (w > 0 && h > 0 && obj.prob <= 1) {
-        cv::rectangle(image, rec_clip, cv::Scalar(0, 0, 255), 2, cv::LINE_AA);
-        std::string str_prob = std::to_string(obj.prob);
-        std::string text =
-            obj.class_name + ": " + str_prob.substr(0, str_prob.find(".") + 4);
-        int font_face = cv::FONT_HERSHEY_COMPLEX_SMALL;
-        double font_scale = 1.f;
-        int thickness = 2;
-        cv::Size text_size =
-            cv::getTextSize(text, font_face, font_scale, thickness, nullptr);
-        float new_font_scale = w * 0.35 * font_scale / text_size.width;
-        text_size = cv::getTextSize(text, font_face, new_font_scale, thickness,
-                                    nullptr);
-        cv::Point origin;
-        origin.x = x + 10;
-        origin.y = y + text_size.height + 10;
-        cv::putText(image, text, origin, font_face, new_font_scale,
-                    cv::Scalar(0, 255, 255), thickness, cv::LINE_AA);
+    auto score = data[1 + i * 6];
+    int xmin = static_cast<int>(data[2 + i * 6]);
+    int ymin = static_cast<int>(data[3 + i * 6]);
+    int xmax = static_cast<int>(data[4 + i * 6]);
+    int ymax = static_cast<int>(data[5 + i * 6]);
+    int w = xmax - xmin;
+    int h = ymax - ymin;
 
-        std::cout << "detection, image size: " << image.cols << ", "
-                  << image.rows << ", detect object: " << obj.class_name
-                  << ", score: " << obj.prob << ", location: x=" << x
-                  << ", y=" << y << ", width=" << w << ", height=" << h
-                  << std::endl;
-      }
+    cv::Rect rec_clip =
+        cv::Rect(xmin, ymin, w, h) & cv::Rect(0, 0, image.cols, image.rows);
+    Object obj;
+    obj.class_id = class_id;
+    obj.class_name = class_id >= 0 && class_id < class_names.size()
+                         ? class_names[class_id]
+                         : "Unknow";
+    obj.prob = score;
+    obj.rec = rec_clip;
+    if (w > 0 && h > 0 && obj.prob <= 1 && obj.prob > thresh) {
+      cv::rectangle(image, rec_clip, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+      std::string str_prob = std::to_string(obj.prob);
+      std::string text =
+          obj.class_name + ": " + str_prob.substr(0, str_prob.find(".") + 4);
+      int font_face = cv::FONT_HERSHEY_COMPLEX_SMALL;
+      double font_scale = 1.f;
+      int thickness = 2;
+      cv::Size text_size =
+          cv::getTextSize(text, font_face, font_scale, thickness, nullptr);
+      float new_font_scale = w * 0.35 * font_scale / text_size.width;
+      text_size =
+          cv::getTextSize(text, font_face, new_font_scale, thickness, nullptr);
+      cv::Point origin;
+      origin.x = xmin + 10;
+      origin.y = ymin + text_size.height + 10;
+      cv::putText(image, text, origin, font_face, new_font_scale,
+                  cv::Scalar(0, 255, 255), thickness, cv::LINE_AA);
+
+      std::cout << "detection, image size: " << image.cols << ", " << image.rows
+                << ", detect object: " << obj.class_name
+                << ", score: " << obj.prob << ", location: x=" << xmin
+                << ", y=" << ymin << ", width=" << w << ", height=" << h
+                << std::endl;
     }
-    data += 6;
   }
 }
 
@@ -245,7 +261,7 @@ void run_model(std::string model_file, std::string img_path,
   int start = img_path.find_last_of("/");
   int end = img_path.find_last_of(".");
   std::string img_name = img_path.substr(start + 1, end - start - 1);
-  std::string result_name = img_name + "_object_detection_result.jpg";
+  std::string result_name = img_name + "_picodet_detection_result.jpg";
   cv::imwrite(result_name, img);
 }
 
@@ -258,8 +274,8 @@ int main(int argc, char **argv) {
   }
   std::cout << "This parameters are optional: \n"
             << " <thresh>, eg: 0.5 \n"
-            << " <input_width>, eg: 300 \n"
-            << " <input_height>, eg: 300 \n"
+            << " <input_width>, eg: 320 \n"
+            << " <input_height>, eg: 320 \n"
             << "  <power_mode>, 0: big cluster, high performance\n"
                "                1: little cluster\n"
                "                2: all cores\n"
@@ -275,8 +291,8 @@ int main(int argc, char **argv) {
   std::vector<std::string> labels;
   load_labels(label_file, &labels);
   float thresh = 0.5f;
-  int height = 300;
-  int width = 300;
+  int height = 320;
+  int width = 320;
   if (argc > 4) {
     thresh = atof(argv[4]);
   }
