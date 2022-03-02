@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include "Pipeline.h"
-
 Detector::Detector(const std::string &modelDir, const std::string &labelPath,
                    const int cpuThreadNum, const std::string &cpuPowerMode,
                    int inputWidth, int inputHeight,
@@ -66,6 +65,14 @@ std::vector<cv::Scalar> Detector::GenerateColorMap(int numOfClasses) {
 
 void Detector::Preprocess(const cv::Mat &rgbaImage) {
   // Feed the input tensor with the data of the preprocessed image
+  auto input_tensor_scale = predictor_->GetInput(1);
+  input_tensor_scale->Resize({1, 2});
+  auto *scale_data = input_tensor_scale->mutable_data<float>();
+  scale_data[0] =
+      static_cast<float>(inputHeight_) / static_cast<float>(rgbaImage.rows);
+  scale_data[1] =
+      static_cast<float>(inputWidth_) / static_cast<float>(rgbaImage.cols);
+
   auto inputTensor = predictor_->GetInput(0);
   std::vector<int64_t> inputShape = {1, 3, inputHeight_, inputWidth_};
   inputTensor->Resize(inputShape);
@@ -83,16 +90,26 @@ void Detector::Preprocess(const cv::Mat &rgbaImage) {
 
 void Detector::Postprocess(std::vector<Object> *results) {
   auto outputTensor = predictor_->GetOutput(0);
+  auto output_bbox_tensor = predictor_->GetOutput(1);
   auto outputData = outputTensor->data<float>();
+  auto *bbox_num = output_bbox_tensor->data<int>();
   auto outputShape = outputTensor->shape();
   int outputSize = ShapeProduction(outputShape);
-  for (int i = 0; i < outputSize; i += 6) {
+
+  for (int i = 0; i < bbox_num[0]; i++) {
     // Class id
-    auto class_id = static_cast<int>(round(outputData[i]));
+    auto class_id = static_cast<int>(round(outputData[i * 6]));
     // Confidence score
-    auto score = outputData[i + 1];
+    auto score = outputData[1 + i * 6];
+    int xmin = static_cast<int>(outputData[2 + i * 6]);
+    int ymin = static_cast<int>(outputData[3 + i * 6]);
+    int xmax = static_cast<int>(outputData[4 + i * 6]);
+    int ymax = static_cast<int>(outputData[5 + i * 6]);
+    int w = xmax - xmin;
+    int h = ymax - ymin;
     if (score < scoreThreshold_)
       continue;
+
     Object object;
     object.class_name = class_id >= 0 && class_id < labelList_.size()
                             ? labelList_[class_id]
@@ -101,10 +118,10 @@ void Detector::Postprocess(std::vector<Object> *results) {
                             ? colorMap_[class_id]
                             : cv::Scalar(0, 0, 0);
     object.prob = score;
-    object.x = MIN(MAX(outputData[i + 2], 0.0f), 1.0f);
-    object.y = MIN(MAX(outputData[i + 3], 0.0f), 1.0f);
-    object.w = MIN(MAX(outputData[i + 4] - outputData[i + 2], 0.0f), 1.0f);
-    object.h = MIN(MAX(outputData[i + 5] - outputData[i + 3], 0.0f), 1.0f);
+    object.x = xmin;
+    object.y = ymin;
+    object.w = w;
+    object.h = h;
     results->push_back(object);
   }
 }
@@ -146,8 +163,7 @@ void Pipeline::VisualizeResults(const std::vector<Object> &results,
   int orih = rgbaImage->rows;
   for (int i = 0; i < results.size(); i++) {
     Object object = results[i];
-    cv::Rect boundingBox = cv::Rect(object.x * oriw, object.y * orih,
-                                    object.w * oriw, object.h * orih) &
+    cv::Rect boundingBox = cv::Rect(object.x, object.y, object.w, object.h) &
                            cv::Rect(0, 0, oriw - 1, orih - 1);
     // Configure text size
     std::string text = object.class_name + ": ";
