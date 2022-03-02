@@ -30,10 +30,10 @@ struct Object {
   std::string class_name;
   cv::Scalar fill_color;
   float prob;
-  int x;
-  int y;
-  int w;
-  int h;
+  float x;
+  float y;
+  float w;
+  float h;
 };
 
 class Detector {

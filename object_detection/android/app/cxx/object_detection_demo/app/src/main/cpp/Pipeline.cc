@@ -142,14 +142,13 @@ Pipeline::Pipeline(const std::string &modelDir, const std::string &labelPath,
 
 void Pipeline::VisualizeResults(const std::vector<Object> &results,
                                 cv::Mat *rgbaImage) {
-  int w = rgbaImage->cols;
-  int h = rgbaImage->rows;
-  LOGD("paddle-lite results: %d \n", results.size());
+  int oriw = rgbaImage->cols;
+  int orih = rgbaImage->rows;
   for (int i = 0; i < results.size(); i++) {
     Object object = results[i];
-    cv::Rect boundingBox =
-        cv::Rect(object.x * w, object.y * h, object.w * w, object.h * h) &
-        cv::Rect(0, 0, w - 1, h - 1);
+    cv::Rect boundingBox = cv::Rect(object.x * oriw, object.y * orih,
+                                    object.w * oriw, object.h * orih) &
+                           cv::Rect(0, 0, oriw - 1, orih - 1);
     // Configure text size
     std::string text = object.class_name + ": ";
     std::string str_prob = std::to_string(object.prob);
