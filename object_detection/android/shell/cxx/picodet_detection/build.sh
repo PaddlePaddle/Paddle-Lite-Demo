@@ -31,4 +31,4 @@ make -j10
 cd ..
 
 echo "make successful!"
-# sh run.sh ${ARM_ABI}
+sh run.sh ${ARM_ABI}
