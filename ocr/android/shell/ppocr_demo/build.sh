@@ -1,7 +1,6 @@
 #!/bin/bash
 # setting NDK_ROOT root
-export NDK_ROOT=/opt/android-ndk-r17c
-# export NDK_ROOT=/disk/android-ndk-r23
+export NDK_ROOT=/disk/android-ndk-r20b
 echo "NDK_ROOT is ${NDK_ROOT}"
 # build
 cd $(pwd)/src

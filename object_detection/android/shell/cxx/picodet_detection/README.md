@@ -44,43 +44,48 @@
 
 ### 部署步骤
 
-1. 目标检测 Demo 位于 `Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection` 目录
+1. 目标检测 Demo 位于 `Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection` 目录
 2. cd `Paddle-Lite-Demo/libs` 目录，运行 `download.sh` 脚本，下载所需要的 Paddle Lite 预测库
 3. cd `Paddle-Lite-Demo/object_detection/assets` 目录，运行 `download.sh` 脚本，下载OPT 优化后模型、测试图片和标签文件
-4. cd `Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection` 目录，运行 `build.sh` 脚本，完成可执行文件的编译和运行。
+4. cd `Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection` 目录，先在 `build.sh` 脚本中，完成 NDK_ROOT 路径设置；然后运行 `build.sh` 脚本，完成可执行文件的编译和运行。
+> **注意事项：**
+>> - 如果是在 Linux 主机编译，请选择 Linux 版本的 NDK 进行设置
+>> - 如果是在 Mac 主机编译，请选择 Mac 版本的 NDK 进行设置；另外，同步更新 `CMakeList.txt` 里的 `CMAKE_SYSTEM_NAME` 变量，更新为 `drawn`
+
 5. 运行结果如下所示：
 
 ```shell
 ======= benchmark summary =======
-input_shape(s) (NCHW): {1, 3, 300, 300}
-model_dir:./models/ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb
+input_shape(s) (NCHW): {1, 3, 320, 320}
+model_dir:./models/picodet_s_320_coco_for_cpu/model.nb
 warmup:5
 repeats:10
 power_mode:1
 thread_num:0
 *** time info(ms) ***
-1st_duration:650.467
-max_duration:509.682
-min_duration:504.914
-avg_duration:507.396
+1st_duration:181.42
+max_duration:163.87
+min_duration:161.61
+avg_duration:162.443
 
 ====== output summary ======
-post_process
-detection, image size: 768, 576, detect object: bicycle, score: 0.991505, location: x=105, y=129, width=456, height=308
-detection, image size: 768, 576, detect object: car, score: 0.963468, location: x=469, y=78, width=221, height=92
-detection, image size: 768, 576, detect object: dog, score: 0.985697, location: x=121, y=197, width=215, height=335
+detection, image size: 768, 576, detect object: bicycle, score: 0.589456, location: x=296, y=133, width=271, height=288
+detection, image size: 768, 576, detect object: bicycle, score: 0.545619, location: x=122, y=127, width=448, height=292
+detection, image size: 768, 576, detect object: car, score: 0.843923, location: x=467, y=80, width=224, height=88
+detection, image size: 768, 576, detect object: dog, score: 0.900129, location: x=130, y=210, width=201, height=333
 ``` 
 
 ```shell
  cd Paddle-Lite-Demo/libs
  # 下载所需要的 Paddle Lite 预测库
  sh download.sh
- cd ../object_detection/assets
+ cd ../picodet_detection/assets
  # 下载OPT 优化后模型、测试图片、标签文件
  sh download.sh
- cd ../android/app/shell/cxx/object_detection
- # 完成可执行文件的编译和运行
+ cd ../android/app/shell/cxx/picodet_detection
+ # 更新 NDK_ROOT 路径，然后完成可执行文件的编译和运行
  sh build.sh
+ # CMakeList.txt 里的 System 默认设置是linux；如果在Mac 运行，则需将 CMAKE_SYSTEM_NAME 变量设置为 drawn
 ```
 
 ## 如何更新预测库
@@ -105,35 +110,35 @@ detection, image size: 768, 576, detect object: dog, score: 0.985697, location: 
 
 2. `Paddle-Lite-Demo/object_detection/assets/` : 存放目标检测 demo 的模型、测试图片、标签文件
 
-3. `Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/object_detection.cc` : 目标检测的预测代码
+3. `Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/picodet_detection.cc` : 目标检测的预测代码
      - `pre_process(...)` : 完成目标检测的预处理功能
      - `post_process(...)` : 完成目标检测的后处理功能
      - `run_model(...)` : 完成目标检测的预测全流程功能
      - `load_labels(...)` : 完成标签文件读取功能
      - `neon_mean_scale(...)` : 完成图像数据赋值给Tensor的加速处理功能
 
-4. `Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/CMakeLists.txt` :  CMake 文件，约束可执行文件的编译方法
+4. `Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/CMakeLists.txt` :  CMake 文件，约束可执行文件的编译方法
 
-5. `Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/build.sh` : 用于可执行文件的编译和运行
+5. `Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/build.sh` : 用于可执行文件的编译和运行
 
 ```shell
  # 位置
- Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/build.sh # 脚本默认编译 armv7 可执行文件
+ Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/build.sh # 脚本默认编译 armv7 可执行文件
  # 如果要编译 armv8 可执行文件，可以将 build.sh 脚本中的 ARM_ABI 变量改为 arm64i-v8a 即可
  # build.sh 中包含了可执行文件的编译和运行功能，其中运行是调用run.sh 脚本进行完成
  # run.sh 脚本中可执行文件的参数含义：
  adb shell "cd ${ADB_DIR} \
-           && chmod +x ./object_detection \
+           && chmod +x ./picodet_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           &&  ./object_detection \
-               ./models/ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb \
+           &&  ./picodet_detection \
+               ./models/picodet_s_320_coco_for_cpu/model.nb \
                ./images/dog.jpg \
-               ./labels/pascalvoc_label_list \
-               0.5 300 300 \
+               ./labels/coco_label_list.txt \
+               0.5 320 320 \
                0 1 100 5 0 \
            "
 
- 第一个参数：object_detection 可执行文件，属于必选项
+ 第一个参数：picodet_detection 可执行文件，属于必选项
  第二个参数：./models/mobilenet_v1_for_cpu/model.nb 优化后的分类模型文件，属于必选项
  第三个参数：./images/tabby_cat.jpg  测试图片，属于必选项
  第四个参数：./labels/labels.txt  label 文件，属于必选项
@@ -219,63 +224,63 @@ for (int i = 0; i < outputSize; i += 6) {
 ### 更新模型
 
 1. 将优化后的模型存放到目录 `Paddle-Lite-Demo/object_detection/assets/models/` 下；
-2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/run.sh` 脚本。
+2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `picodet_s_320_coco_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/run.sh` 脚本。
 
-例子：假设更新 ssd_mobilenet_v3 模型为例，则先将优化后的模型存放到 `Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/run.sh` 下，然后更新脚本
+例子：假设更新 ssd_mobilenet_v3 模型为例，则先将优化后的模型存放到 `Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/run.sh` 下，然后更新脚本
 
 ```shell
-# path: Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/run.sh
+# path: Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/run.sh
 # old
 adb shell "cd ${ADB_DIR} \
-           && chmod +x ./object_detection \
+           && chmod +x ./picodet_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           &&  ./object_detection \
-               ./models/ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb \
+           &&  ./picodet_detection \
+               ./models/picodet_s_320_coco_for_cpu/model.nb \
                ./images/dog.jpg \
-               ./labels/pascalvoc_label_list \
-               0.5 300 300 \
+               ./labels/coco_label_list.txt \
+               0.5 320 320 \
                0 1 100 5 0 \
           "
 # now
 adb shell "cd ${ADB_DIR} \
-           && chmod +x ./object_detection \
+           && chmod +x ./picodet_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           &&  ./object_detection \
+           &&  ./picodet_detection \
                ./models/ssd_mobilenet_v3/model.nb \
                ./images/dog.jpg \
-               ./labels/pascalvoc_label_list \
-               0.5 300 300 \
+               ./labels/coco_label_list.txt \
+               0.5 320 320 \
                0 1 100 5 0 \
           "
 ```
 
 **注意：**
--  如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/object_detection.cc` 的 `pre_process` 预处理和 `pre_process` 后处理代码即可。
+-  如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/picodet_detection.cc` 的 `pre_process` 预处理和 `pre_process` 后处理代码即可。
 
-- 如果需要更新 `labels.txt` 标签文件，则需要将新的标签文件存放在目录 `Paddle-Lite-Demo/object_detection/assets/labels/` 下，并更新 `Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/run.sh` 脚本。
+- 如果需要更新 `labels.txt` 标签文件，则需要将新的标签文件存放在目录 `Paddle-Lite-Demo/object_detection/assets/labels/` 下，并更新 `Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/run.sh` 脚本。
 
 ```shell
-# path: Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/run.sh
+# path: Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/run.sh
 # old
 adb shell "cd ${ADB_DIR} \
-           && chmod +x ./object_detection \
+           && chmod +x ./picodet_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           &&  ./object_detection \
-               ./models/ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb \
+           &&  ./picodet_detection \
+              ./models/ssd_mobilenet_v3/model.nb \
                ./images/dog.jpg \
-               ./labels/pascalvoc_label_list \
-               0.5 300 300 \
+               ./labels/coco_label_list.txt \
+               0.5 320 320 \
                0 1 100 5 0 \
           "
 # now
 adb shell "cd ${ADB_DIR} \
-           && chmod +x ./object_detection \
+           && chmod +x ./picodet_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           &&  ./object_detection \
-               ./models/ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb \
+           &&  ./picodet_detection \
+               ./models/ssd_mobilenet_v3/model.nb \
                ./images/dog.jpg \
-               ./labels/new_labels.txt \
-               0.5 300 300 \
+               ./labels/new_label.txt \
+               0.5 320 320 \
                0 1 100 5 0 \
           "
 ```
@@ -284,13 +289,13 @@ adb shell "cd ${ADB_DIR} \
 
 ```shell
  "cd ${ADB_DIR} \
-           && chmod +x ./object_detection \
+           && chmod +x ./picodet_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           &&  ./object_detection \
-               ./models/ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb \
+           &&  ./picodet_detection \
+               ./models/ssd_mobilenet_v3/model.nb \
                ./images/dog.jpg \
-               ./labels/pascalvoc_label_list \
-               0.5 300 300 \
+               ./labels/coco_label_list.txt \
+               0.5 320 320 \
                0 1 100 5 1 \
           "
 ```
@@ -299,39 +304,39 @@ adb shell "cd ${ADB_DIR} \
 1. 更新输入数据
 
 - 将更新的图片存放在 `Paddle-Lite-Demo/object_detection/assets/images/` 下；
-- 更新文件 `Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/run.sh` 脚本
+- 更新文件 `Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/run.sh` 脚本
 
-以更新 `cat.jpg` 为例，则先将 `cat.jpg` 存放在 `Paddle-Lite-Demo/object_detection/assets/images/` 下，然后更新脚本
+以更新 `cat.jpg` 为例，则先将 `cat.jpg` 存放在 `Paddle-Lite-Demo/picodet_detection/assets/images/` 下，然后更新脚本
 
 ```shell
-# path: Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/run.sh
+# path: Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/run.sh
 # old
 "cd ${ADB_DIR} \
-           && chmod +x ./object_detection \
+           && chmod +x ./picodet_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           &&  ./object_detection \
-               ./models/ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb \
+           &&  ./picodet_detection \
+               ./models/ssd_mobilenet_v3/model.nb \
                ./images/dog.jpg \
-               ./labels/pascalvoc_label_list \
-               0.5 300 300 \
+               ./labels/coco_label_list.txt \
+               0.5 320 320 \
                0 1 100 5 0 \
           "
 # now
 "cd ${ADB_DIR} \
-           && chmod +x ./object_detection \
+           && chmod +x ./picodet_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           &&  ./object_detection \
-               ./models/ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb \
+           &&  ./picodet_detection \
+               ./models/ssd_mobilenet_v3/model.nb \
                ./images/cat.jpg \
-               ./labels/pascalvoc_label_list \
-               0.5 300 300 \
+               ./labels/coco_label_list.txt \
+               0.5 320 320 \
                0 1 100 5 0 \
           "
 ```
 
 
 2. 更新输入预处理
-此处需要更新 `Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/object_detection.cc` 的 `pre_process` 预处理实现就行。
+此处需要更新 `Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/picodet_detection.cc` 的 `pre_process` 预处理实现就行。
 
 3. 更新输出预处理
-此处需要更新 `Paddle-Lite-Demo/object_detection/android/shell/cxx/object_detection/object_detection.cc` 的 `post_process` 后处理代码实现就行。
+此处需要更新 `Paddle-Lite-Demo/object_detection/android/shell/cxx/picodet_detection/picodet_detection.cc` 的 `post_process` 后处理代码实现就行。
