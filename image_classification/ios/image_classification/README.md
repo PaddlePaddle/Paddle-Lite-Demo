@@ -93,14 +93,14 @@ cd ..
 * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
   * 替换 c++ 库
        * 头文件
-         将生成的 `build.lite.ios.xxx.clang/inference_lite_lib.ios64.xxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/image_classification/iOS/image_classification/image_classification/third-party/PaddleLite/include`
+         将生成的 `build.lite.ios.xxx.clang/inference_lite_lib.ios64.xxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/image_classification/ios/image_classification/image_classification/third-party/PaddleLite/include`
        * 替换 arm64-v8a 库
-         将生成的 `build.lite.ios.ios64.armv8/inference_lite_lib.ios64.armv8/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/iOS/image_classification/image_classification/third-party/PaddleLite/lib/libpaddle_api_light_bundled.a`
+         将生成的 `build.lite.ios.ios64.armv8/inference_lite_lib.ios64.armv8/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/ios/image_classification/image_classification/third-party/PaddleLite/lib/libpaddle_api_light_bundled.a`
 
 >**注意：**
 >> 如果要使用 armv7 库，则可将 armv7 库替换至相应目录下：
 >> * armeabi-v7a
->>  将生成的 `build.lite.ios.ios.armv7/inference_lite_lib.ios.armv7/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/iOS/image_classification/image_classification/third-party/PaddleLite/lib/libpaddle_api_light_bundled.a`
+>>  将生成的 `build.lite.ios.ios.armv7/inference_lite_lib.ios.armv7/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/ios/image_classification/image_classification/third-party/PaddleLite/lib/libpaddle_api_light_bundled.a`
   
   
 ## Demo 内容介绍
