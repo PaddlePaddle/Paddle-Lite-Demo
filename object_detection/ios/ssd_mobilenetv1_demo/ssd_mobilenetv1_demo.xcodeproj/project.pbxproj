@@ -332,10 +332,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "baidu.com.paddle-lite-demo1111";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/detection_demo/third-party/PaddleLite\"",
-					"\"$(SRCROOT)/detection_demo/third-party/opencv2.framework/Versions/A/Headers\"",
-				);
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/detection_demo/third-party/PaddleLite\"";
 			};
 			name = Debug;
 		};
@@ -360,10 +357,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "baidu.com.paddle-lite-demo1111";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/detection_demo/third-party/PaddleLite\"",
-					"\"$(SRCROOT)/detection_demo/third-party/opencv2.framework/Versions/A/Headers\"",
-				);
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/detection_demo/third-party/PaddleLite\"";
 			};
 			name = Release;
 		};
