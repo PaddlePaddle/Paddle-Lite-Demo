@@ -108,6 +108,7 @@ cd ..
 先整体介绍下目标检测 Demo 的代码结构，然后再介绍 Demo 每部分功能.
 
 ### 整体结构介绍
+
 1.  `third-party`： 存放预测库、模型、测试图片等相关信息
       * `assets`: 存放预测资源
         - models：模型文件，opt 工具转化后 Paddle Lite 模型
