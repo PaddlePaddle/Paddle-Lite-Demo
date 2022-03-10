@@ -39,4 +39,3 @@ private:
   std::vector<float> ratio_hw_;
   std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor_;
 };
-

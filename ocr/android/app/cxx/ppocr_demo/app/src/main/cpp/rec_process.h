@@ -36,5 +36,3 @@ private:
 private:
   std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor_;
 };
-
-
