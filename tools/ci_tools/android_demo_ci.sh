@@ -12,9 +12,7 @@ fi
 cd .. && rm -rf Paddle-Lite-Demo
 
 ####################################################################################################
-# 1. functions of prepare workspace before compiling
-####################################################################################################
-# 1.1 compile paddlelite android lib
+
 function compile_lib {
     git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo.git && cd Paddle-Lite-Demo
     git branch -a && git checkout develop
