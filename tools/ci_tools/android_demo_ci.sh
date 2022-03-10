@@ -25,13 +25,6 @@ function compile_lib {
     cd object_detection/android/shell/cxx/picodet_detection && bash build.sh
 }
 
-
-####################################################################################################
-# 4. main function
-#    $1: adb device index, eg. 0 1
-#    $2: adb workspace directory name
-####################################################################################################
-
 function main {
   # step1. compile paddle-lite-demo android lib
   compile_lib
