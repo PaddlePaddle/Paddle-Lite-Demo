@@ -161,20 +161,21 @@ void Pipeline::VisualizeResults(std::vector<std::string> rec_text,
   cv::Point2d offset(10, text_size.height + 15);
   cv::putText(*rgbaImage, text, offset, font_face, font_scale, color,
               thickness);
-  
+
   for (int i = 0; i < rec_text.size(); i++) {
     LOGD("debug=== line %d %s, %f", i, rec_text[i].c_str(), rec_text_score[i]);
     sprintf(text, "line: %d %s  %f", i, rec_text[i].c_str(), rec_text_score[i]);
     offset.y += text_size.height;
     cv::putText(*rgbaImage, text, offset, font_face, font_scale, color,
-              thickness);
+                thickness);
   }
   *visualizeResultsTime = GetElapsedTime(t);
   LOGD("VisualizeResults costs %f ms", *visualizeResultsTime);
 }
 
 void Pipeline::VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,
-                               double predictTime, std::vector<std::string> rec_text,
+                               double predictTime,
+                               std::vector<std::string> rec_text,
                                std::vector<float> rec_text_score,
                                double visualizeResultsTime,
                                cv::Mat *rgbaImage) {
@@ -206,16 +207,18 @@ void Pipeline::VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,
               thickness);
 }
 
-Pipeline::Pipeline(const std::string &detModelDir, const std::string &clsModelDir,
-                    const std::string &recModelDir, const std::string &cPUPowerMode,
-                    const int cPUThreadNum,
-                    const std::string &config_path, const std::string &dict_path) {
-  clsPredictor_.reset(new ClsPredictor(
-      clsModelDir, cPUThreadNum, cPUPowerMode));
-  detPredictor_.reset(new DetPredictor(
-        detModelDir, cPUThreadNum, cPUPowerMode));
-  recPredictor_.reset(new RecPredictor(
-        recModelDir, cPUThreadNum, cPUPowerMode));
+Pipeline::Pipeline(const std::string &detModelDir,
+                   const std::string &clsModelDir,
+                   const std::string &recModelDir,
+                   const std::string &cPUPowerMode, const int cPUThreadNum,
+                   const std::string &config_path,
+                   const std::string &dict_path) {
+  clsPredictor_.reset(
+      new ClsPredictor(clsModelDir, cPUThreadNum, cPUPowerMode));
+  detPredictor_.reset(
+      new DetPredictor(detModelDir, cPUThreadNum, cPUPowerMode));
+  recPredictor_.reset(
+      new RecPredictor(recModelDir, cPUThreadNum, cPUPowerMode));
   Config_ = LoadConfigTxt(config_path);
   charactor_dict_ = ReadDict(dict_path);
   charactor_dict_.insert(charactor_dict_.begin(), "#"); // blank char for ctc
@@ -223,7 +226,7 @@ Pipeline::Pipeline(const std::string &detModelDir, const std::string &clsModelDi
 }
 
 bool Pipeline::Process_val(int inTextureId, int outTextureId, int textureWidth,
-               int textureHeight, std::string savedImagePath) {
+                           int textureHeight, std::string savedImagePath) {
   double readGLFBOTime = 0, writeGLTextureTime = 0;
   double visualizeResultsTime = 0, predictTime = 0;
   int height = 448;
@@ -243,7 +246,8 @@ bool Pipeline::Process_val(int inTextureId, int outTextureId, int textureWidth,
   // Stage1: rec
   auto t = GetCurrentTime();
   // det predict
-  auto boxes = detPredictor_->Predict(srcimg, Config_, nullptr, nullptr, nullptr);
+  auto boxes =
+      detPredictor_->Predict(srcimg, Config_, nullptr, nullptr, nullptr);
 
   std::vector<float> mean = {0.5f, 0.5f, 0.5f};
   std::vector<float> scale = {1 / 0.5f, 1 / 0.5f, 1 / 0.5f};
@@ -258,9 +262,11 @@ bool Pipeline::Process_val(int inTextureId, int outTextureId, int textureWidth,
   for (int i = boxes.size() - 1; i >= 0; i--) {
     crop_img = GetRotateCropImage(img, boxes[i]);
     if (use_direction_classify >= 1) {
-      crop_img = clsPredictor_->Predict(crop_img, nullptr, nullptr, nullptr, 0.9);
+      crop_img =
+          clsPredictor_->Predict(crop_img, nullptr, nullptr, nullptr, 0.9);
     }
-    auto res = recPredictor_->Predict(crop_img, nullptr, nullptr, nullptr, charactor_dict_);
+    auto res = recPredictor_->Predict(crop_img, nullptr, nullptr, nullptr,
+                                      charactor_dict_);
     rec_text.push_back(res.first);
     rec_text_score.push_back(res.second);
   }
@@ -271,9 +277,10 @@ bool Pipeline::Process_val(int inTextureId, int outTextureId, int textureWidth,
   cv::resize(img_res, img_vis, cv::Size(textureWidth, textureHeight));
   cv::cvtColor(img_vis, img_vis, cv::COLOR_BGR2RGBA);
   // show ocr results on image
-  //  VisualizeResults(rec_text, rec_text_score, &img_vis, &visualizeResultsTime);
-  VisualizeStatus(readGLFBOTime, writeGLTextureTime, predictTime, rec_text, rec_text_score, visualizeResultsTime,
-                  &img_vis);
+  //  VisualizeResults(rec_text, rec_text_score, &img_vis,
+  //  &visualizeResultsTime);
+  VisualizeStatus(readGLFBOTime, writeGLTextureTime, predictTime, rec_text,
+                  rec_text_score, visualizeResultsTime, &img_vis);
 
   WriteRGBAImageBackToGLTexture(img_vis, outTextureId, &writeGLTextureTime);
   return true;

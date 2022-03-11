@@ -17,77 +17,73 @@
 #include <chrono>
 #include <list>
 class Timer final {
-    
+
 public:
-    Timer() {}
-    
-    ~Timer() {}
-    
-    void clear() {
-        ms_time.clear();
+  Timer() {}
+
+  ~Timer() {}
+
+  void clear() { ms_time.clear(); }
+
+  void start() { tstart = std::chrono::system_clock::now(); }
+
+  void end() {
+    tend = std::chrono::system_clock::now();
+    auto ts =
+        std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart);
+    float elapse_ms = 1000.f * float(ts.count()) *
+                      std::chrono::microseconds::period::num /
+                      std::chrono::microseconds::period::den;
+    ms_time.push_back(elapse_ms);
+  }
+
+  float get_average_ms() {
+    if (ms_time.size() == 0) {
+      return 0.f;
     }
-    
-    void start() {
-        tstart = std::chrono::system_clock::now();
+    float sum = 0.f;
+    for (auto i : ms_time) {
+      sum += i;
     }
-    
-    void end() {
-        tend = std::chrono::system_clock::now();
-        auto ts = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart);
-        float elapse_ms = 1000.f * float(ts.count()) * std::chrono::microseconds::period::num / \
-        std::chrono::microseconds::period::den;
-        ms_time.push_back(elapse_ms);
+    return sum / ms_time.size();
+  }
+
+  float get_sum_ms() {
+    if (ms_time.size() == 0) {
+      return 0.f;
     }
-    
-    float get_average_ms() {
-        if (ms_time.size() == 0) {
-            return 0.f;
-        }
-        float sum = 0.f;
-        for (auto i : ms_time){
-            sum += i;
-        }
-        return sum / ms_time.size();
+    float sum = 0.f;
+    for (auto i : ms_time) {
+      sum += i;
     }
-    
-    float get_sum_ms(){
-        if (ms_time.size() == 0) {
-            return 0.f;
-        }
-        float sum = 0.f;
-        for (auto i : ms_time){
-            sum += i;
-        }
-        return sum;
+    return sum;
+  }
+
+  // return tile (0-99) time.
+  float get_tile_time(float tile) {
+
+    if (tile < 0 || tile > 100) {
+      return -1.f;
     }
-    
-    // return tile (0-99) time.
-    float get_tile_time(float tile) {
-        
-        if (tile <0 || tile > 100) {
-            return -1.f;
-        }
-        int total_items = (int)ms_time.size();
-        if (total_items <= 0) {
-            return -2.f;
-        }
-        ms_time.sort();
-        int pos = (int)(tile * total_items / 100);
-        auto it = ms_time.begin();
-        for (int i = 0; i < pos; ++i) {
-            ++it;
-        }
-        return *it;
+    int total_items = (int)ms_time.size();
+    if (total_items <= 0) {
+      return -2.f;
     }
-    
-    const std::list<float> get_time_stat() {
-        return ms_time;
+    ms_time.sort();
+    int pos = (int)(tile * total_items / 100);
+    auto it = ms_time.begin();
+    for (int i = 0; i < pos; ++i) {
+      ++it;
     }
-    
+    return *it;
+  }
+
+  const std::list<float> get_time_stat() { return ms_time; }
+
 private:
-    std::chrono::time_point<std::chrono::system_clock> tstart;
-    std::chrono::time_point<std::chrono::system_clock> tend;
-    std::list<float> ms_time;
+  std::chrono::time_point<std::chrono::system_clock> tstart;
+  std::chrono::time_point<std::chrono::system_clock> tend;
+  std::list<float> ms_time;
 };
 
 #endif /* timer_h */
