@@ -13,11 +13,11 @@
 // limitations under the License.
 
 #pragma once
-#include "utils.h"
 #include "opencv2/core.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
 #include "paddle_api.h"
+#include "utils.h"
 using namespace paddle::lite_api; // NOLINT
 
 class ClsPredictor {
@@ -25,9 +25,9 @@ public:
   explicit ClsPredictor(const std::string &modelDir, const int cpuThreadNum,
                         const std::string &cpuPowerMode);
 
-  cv::Mat Predict(const cv::Mat &rgbImage,
-               double *preprocessTime, double *predictTime,
-               double *postprocessTime, const float thresh);
+  cv::Mat Predict(const cv::Mat &rgbImage, double *preprocessTime,
+                  double *predictTime, double *postprocessTime,
+                  const float thresh);
 
 private:
   void Preprocess(const cv::Mat &rgbaImage);

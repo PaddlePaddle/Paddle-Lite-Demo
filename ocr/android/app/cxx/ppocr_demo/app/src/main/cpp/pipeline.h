@@ -14,9 +14,9 @@
 
 #pragma once
 #include "cls_process.h"
-#include "rec_process.h"
 #include "det_process.h"
 #include "paddle_api.h"
+#include "rec_process.h"
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #include <opencv2/core.hpp>
@@ -31,11 +31,12 @@ class Pipeline {
 public:
   Pipeline(const std::string &detModelDir, const std::string &clsModelDir,
            const std::string &recModelDir, const std::string &cPUPowerMode,
-           const int cPUThreadNum,
-           const std::string &config_path, const std::string &dict_path);
+           const int cPUThreadNum, const std::string &config_path,
+           const std::string &dict_path);
 
   bool Process_val(int inTextureId, int outTextureId, int textureWidth,
-               int textureHeight, std::string savedImagePath);
+                   int textureHeight, std::string savedImagePath);
+
 private:
   // Read pixels from FBO texture to CV image
   void CreateRGBAImageFromGLFBOTexture(int textureWidth, int textureHeight,
@@ -54,22 +55,21 @@ private:
     auto t = GetCurrentTime();
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureId);
-      glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rgbaImage.cols, rgbaImage.rows,
-                      GL_RGBA, GL_UNSIGNED_BYTE, rgbaImage.data);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rgbaImage.cols, rgbaImage.rows,
+                    GL_RGBA, GL_UNSIGNED_BYTE, rgbaImage.data);
     *writeGLTextureTime = GetElapsedTime(t);
     LOGD("Write back to texture2D costs %f ms", *writeGLTextureTime);
   }
   // Visualize the results to image
   void VisualizeResults(std::vector<std::string> rec_text,
-                                std::vector<float> rec_text_score,
-                                cv::Mat *rgbaImage,
-                                double *visualizeResultsTime);
+                        std::vector<float> rec_text_score, cv::Mat *rgbaImage,
+                        double *visualizeResultsTime);
   // Visualize the status(performace data) to image
   void VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,
-                               double predictTime, std::vector<std::string> rec_text,
-                               std::vector<float> rec_text_score,
-                               double visualizeResultsTime,
-                               cv::Mat *rgbaImage);
+                       double predictTime, std::vector<std::string> rec_text,
+                       std::vector<float> rec_text_score,
+                       double visualizeResultsTime, cv::Mat *rgbaImage);
+
 private:
   std::map<std::string, double> Config_;
   std::vector<std::string> charactor_dict_;
