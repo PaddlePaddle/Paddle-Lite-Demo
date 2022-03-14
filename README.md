@@ -1,32 +1,27 @@
 # Paddle-Lite-Demo
 
-Paddle-Lite提供IOS、Android和ARMLinux的示例，具体如下：
-* iOS示例:
-    * 基于MobileNetV1的图像分类（支持视频流）；
-    * 基于MobileNetV1-SSD的目标检测（支持视频流）;
-* Android示例:
-    * 基于MobileNetV1的图像分类；
-    * 基于MobileNetV1-SSD的目标检测；
-    * 基于Ultra-Light-Fast-Generic-Face-Detector-1MB的人脸检测；
-    * 基于DeeplabV3+MobilNetV2的人像分割；
-    * 基于视频流的人脸检测+口罩识别；
-    * 基于YOLOV3-MobileNetV3的目标检测；
-* ARMLinux示例:
-    * 基于MobileNetV1的图像分类；
-    * 基于MobileNetV1-SSD的目标检测；
+Paddle-Lite 提供了多个应用场景的 demo，并支持 Android、iOS 和 ArmLinux 三个平台：
+* 基于 MobileNetV1 的图像分类（支持视频流）demo；
+    * Android 示例
+    * iOS 示例
+    * ArmLinux 示例
+*  基于 pp-ocr 的文字识别（支持视频流）demo
+    * Android 示例
+    * iOS 示例
+    * ArmLinux 示例
 
-关于Paddle-Lite和示例，请参考本文剩余章节和如下文档链接：
+关于 Paddle-Lite 更多示例，请参考如下文档链接：
 - [文档官网](https://paddle-lite.readthedocs.io/zh/latest/index.html)
-- [Android示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/android_app_demo.html) [[图像分类]](https://paddlelite-demo.bj.bcebos.com/apps/android/mobilenet_classification_demo.apk)  [[目标检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/yolo_detection_demo.apk) [[口罩检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/mask_detection_demo.apk)  [[人脸关键点]](https://paddlelite-demo.bj.bcebos.com/apps/android/face_keypoints_detection_demo.apk) [[人像分割]](https://paddlelite-demo.bj.bcebos.com/apps/android/human_segmentation_demo.apk)
-- [iOS示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/ios_app_demo.html)
-- [ARMLinux示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/linux_arm_demo.html)
-- [X86示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/x86.html)
-- [OpenCL示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/opencl.html)
-- [FPGA示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/fpga.html)
-- [华为NPU示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/huawei_kirin_npu.html)
-- [百度XPU示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/baidu_xpu.html)
-- [瑞芯微NPU示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/rockchip_npu.html)
-- [联发科APU示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/mediatek_apu.html)
+- [Android 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/android_app_demo.html) [[图像分类]](https://paddlelite-demo.bj.bcebos.com/apps/android/mobilenet_classification_demo.apk)  [[目标检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/yolo_detection_demo.apk) [[口罩检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/mask_detection_demo.apk)  [[人脸关键点]](https://paddlelite-demo.bj.bcebos.com/apps/android/face_keypoints_detection_demo.apk) [[人像分割]](https://paddlelite-demo.bj.bcebos.com/apps/android/human_segmentation_demo.apk)
+- [iOS 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/ios_app_demo.html)
+- [ARMLinux 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/linux_arm_demo.html)
+- [X86 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/x86.html)
+- [OpenCL 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/opencl.html)
+- [FPGA 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/fpga.html)
+- [华为 NPU 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/huawei_kirin_npu.html)
+- [百度 XPU 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/baidu_xpu.html)
+- [瑞芯微 NPU 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/rockchip_npu.html)
+- [联发科 APU 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/mediatek_apu.html)
 
 ## 要求
 
@@ -100,22 +95,6 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     $ ./run.sh armv7hf # 树莓派3B
     ```
     在终端打印预测结果和性能数据，同时在build目录中生成result.jpg。
-
-## 更新到最新的预测库
-* Paddle-Lite项目：https://github.com/PaddlePaddle/Paddle-Lite
-* 参考 [Paddle-Lite文档](https://github.com/PaddlePaddle/Paddle-Lite/wiki)，编译IOS预测库、Android和ARMLinux预测库
-* 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
-### IOS更新预测库
-* 替换库文件：产出的`lib`目录替换`Paddle-Lite-Demo/PaddleLite-ios-demo/ios-classification_demo/classification_demo/lib`目录
-* 替换头文件：产出的`include`目录下的文件替换`Paddle-Lite-Demo/PaddleLite-ios-demo/ios-classification_demo/classification_demo/paddle_lite`目录下的文件
-### Android更新预测库
-* 替换jar文件：将生成的build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/image_classification_demo/app/libs/PaddlePredictor.jar
-* 替换arm64-v8a jni库文件：将生成build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/image_classification_demo/app/src/main/jniLibs/arm64-v8a/libpaddle_lite_jni.so
-* 替换armeabi-v7a jni库文件：将生成的build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so库替换demo中的Paddle-Lite-Demo/PaddleLite-android-demo/image_classification_demo/app/src/main/jniLibs/armeabi-v7a/libpaddle_lite_jni.so.
-### ARMLinux更新预测库
-* 替换头文件目录，将生成的cxx中的`include`目录替换`Paddle-Lite-Demo/PaddleLite-armlinux-demo/Paddle-Lite/include`目录；
-* 替换armv8动态库，将生成的cxx/libs中的`libpaddle_light_api_shared.so`替换`Paddle-Lite-Demo/PaddleLite-armlinux-demo/Paddle-Lite/libs/armv8/libpaddle_light_api_shared.so`；
-* 替换armv7hf动态库，将生成的cxx/libs中的`libpaddle_light_api_shared.so`替换`Paddle-Lite-Demo/PaddleLite-armlinux-demo/Paddle-Lite/libs/armv7hf/libpaddle_light_api_shared.so`；
 
 ## 效果展示
 

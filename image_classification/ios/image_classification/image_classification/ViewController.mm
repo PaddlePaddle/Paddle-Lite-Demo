@@ -1,4 +1,4 @@
-// Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserved.
+// Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,28 +13,28 @@
 // limitations under the License.
 
 #import "ViewController.h"
-#import <sys/timeb.h>
-#import <opencv2/opencv.hpp>
-#import <opencv2/highgui/ios.h>
-#import <opencv2/highgui/cap_ios.h>
-#include <iostream>
-#include <vector>
-#include <string>
-#include <arm_neon.h>
-#include <mutex>
 #include "include/paddle_api.h"
-#include "include/paddle_use_ops.h"
 #include "include/paddle_use_kernels.h"
+#include "include/paddle_use_ops.h"
 #include "timer.h"
+#include <arm_neon.h>
+#include <iostream>
+#include <mutex>
+#import <opencv2/highgui/cap_ios.h>
+#import <opencv2/highgui/ios.h>
+#import <opencv2/opencv.hpp>
+#include <string>
+#import <sys/timeb.h>
+#include <vector>
 
 using namespace paddle::lite_api;
 using namespace cv;
 
-struct Object{
-    int batch_id;
-    cv::Rect rec;
-    int class_id;
-    float prob;
+struct Object {
+  int batch_id;
+  cv::Rect rec;
+  int class_id;
+  float prob;
 };
 
 std::mutex mtx;
@@ -42,101 +42,102 @@ std::shared_ptr<PaddlePredictor> predictor;
 Timer tic;
 long long count = 0;
 
-double tensor_mean(const Tensor& tin) {
-    auto shape = tin.shape();
-    int64_t size = 1;
-    for (int i = 0; i < shape.size(); i++) {
-        size *= shape[i];
-    }
-    double mean = 0.;
-    auto ptr = tin.data<float>();
-    for (int i = 0; i < size; i++) {
-        mean += ptr[i];
-    }
-    return mean / size;
+double tensor_mean(const Tensor &tin) {
+  auto shape = tin.shape();
+  int64_t size = 1;
+  for (int i = 0; i < shape.size(); i++) {
+    size *= shape[i];
+  }
+  double mean = 0.;
+  auto ptr = tin.data<float>();
+  for (int i = 0; i < size; i++) {
+    mean += ptr[i];
+  }
+  return mean / size;
 }
 
-void neon_mean_scale(const float* din, float* dout, int size, std::vector<float> mean, std::vector<float> scale) {
-    float32x4_t vmean0 = vdupq_n_f32(mean[0]);
-    float32x4_t vmean1 = vdupq_n_f32(mean[1]);
-    float32x4_t vmean2 = vdupq_n_f32(mean[2]);
-    float32x4_t vscale0 = vdupq_n_f32(1.f / scale[0]);
-    float32x4_t vscale1 = vdupq_n_f32(1.f / scale[1]);
-    float32x4_t vscale2 = vdupq_n_f32(1.f / scale[2]);
-    
-    float* dout_c0 = dout;
-    float* dout_c1 = dout + size;
-    float* dout_c2 = dout + size * 2;
-    
-    int i = 0;
-    for (; i < size - 3; i += 4) {
-        float32x4x3_t vin3 = vld3q_f32(din);
-        float32x4_t vsub0 = vsubq_f32(vin3.val[0], vmean0);
-        float32x4_t vsub1 = vsubq_f32(vin3.val[1], vmean1);
-        float32x4_t vsub2 = vsubq_f32(vin3.val[2], vmean2);
-        float32x4_t vs0 = vmulq_f32(vsub0, vscale0);
-        float32x4_t vs1 = vmulq_f32(vsub1, vscale1);
-        float32x4_t vs2 = vmulq_f32(vsub2, vscale2);
-        vst1q_f32(dout_c0, vs0);
-        vst1q_f32(dout_c1, vs1);
-        vst1q_f32(dout_c2, vs2);
-        
-        din += 12;
-        dout_c0 += 4;
-        dout_c1 += 4;
-        dout_c2 += 4;
-    }
-    for (; i < size; i++) {
-        *(dout_c0++) = (*(din++) - mean[0]) / scale[0];
-        *(dout_c1++) = (*(din++) - mean[1]) / scale[1];
-        *(dout_c2++) = (*(din++) - mean[2]) / scale[2];
-    }
-}
+void neon_mean_scale(const float *din, float *dout, int size,
+                     std::vector<float> mean, std::vector<float> scale) {
+  float32x4_t vmean0 = vdupq_n_f32(mean[0]);
+  float32x4_t vmean1 = vdupq_n_f32(mean[1]);
+  float32x4_t vmean2 = vdupq_n_f32(mean[2]);
+  float32x4_t vscale0 = vdupq_n_f32(1.f / scale[0]);
+  float32x4_t vscale1 = vdupq_n_f32(1.f / scale[1]);
+  float32x4_t vscale2 = vdupq_n_f32(1.f / scale[2]);
 
+  float *dout_c0 = dout;
+  float *dout_c1 = dout + size;
+  float *dout_c2 = dout + size * 2;
+
+  int i = 0;
+  for (; i < size - 3; i += 4) {
+    float32x4x3_t vin3 = vld3q_f32(din);
+    float32x4_t vsub0 = vsubq_f32(vin3.val[0], vmean0);
+    float32x4_t vsub1 = vsubq_f32(vin3.val[1], vmean1);
+    float32x4_t vsub2 = vsubq_f32(vin3.val[2], vmean2);
+    float32x4_t vs0 = vmulq_f32(vsub0, vscale0);
+    float32x4_t vs1 = vmulq_f32(vsub1, vscale1);
+    float32x4_t vs2 = vmulq_f32(vsub2, vscale2);
+    vst1q_f32(dout_c0, vs0);
+    vst1q_f32(dout_c1, vs1);
+    vst1q_f32(dout_c2, vs2);
+
+    din += 12;
+    dout_c0 += 4;
+    dout_c1 += 4;
+    dout_c2 += 4;
+  }
+  for (; i < size; i++) {
+    *(dout_c0++) = (*(din++) - mean[0]) / scale[0];
+    *(dout_c1++) = (*(din++) - mean[1]) / scale[1];
+    *(dout_c2++) = (*(din++) - mean[2]) / scale[2];
+  }
+}
 
 // fill tensor with mean and scale, neon speed up
-void preprocess(const Mat& img, int width, int height,
-                            std::vector<float> mean, std::vector<float> scale, bool is_scale) {
-    std::unique_ptr<Tensor> input_tensor(predictor->GetInput(0));
-    input_tensor->Resize({1, 3, height, width});
-    input_tensor->mutable_data<float>();
-    cv::Mat img_resize;
-    cv::resize(img, img_resize, cv::Size(width, height), 0.f, 0.f);
-    cv::Mat imgf;
-    float scale_factor = is_scale? 1 / 255.f : 1.f;
-    img_resize.convertTo(imgf, CV_32FC3, scale_factor);
-    const float* dimg = reinterpret_cast<const float*>(imgf.data);
-    float* dout = input_tensor->mutable_data<float>();
-    neon_mean_scale(dimg, dout, width * height, mean, scale);
+void preprocess(const Mat &img, int width, int height, std::vector<float> mean,
+                std::vector<float> scale, bool is_scale) {
+  std::unique_ptr<Tensor> input_tensor(predictor->GetInput(0));
+  input_tensor->Resize({1, 3, height, width});
+  input_tensor->mutable_data<float>();
+  cv::Mat img_resize;
+  cv::resize(img, img_resize, cv::Size(width, height), 0.f, 0.f);
+  cv::Mat imgf;
+  float scale_factor = is_scale ? 1 / 255.f : 1.f;
+  img_resize.convertTo(imgf, CV_32FC3, scale_factor);
+  const float *dimg = reinterpret_cast<const float *>(imgf.data);
+  float *dout = input_tensor->mutable_data<float>();
+  neon_mean_scale(dimg, dout, width * height, mean, scale);
 }
 
-std::string postprocess(const int topk, const std::vector<std::string> &labels) {
-    std::unique_ptr<const Tensor> output_tensor(predictor->GetOutput(0));
-    auto scores = output_tensor->mutable_data<float>();
-    auto shape_out = output_tensor->shape();
-    int size = 1;
-    for (auto& i : shape_out) {
-        size *= i;
-    }
-    std::vector<std::pair<float, int> > vec;
-    vec.resize(size);
-    for (int i = 0; i < size; i++) {
-        vec[i] = std::make_pair(scores[i], i);
-    }
-    
-    std::partial_sort(vec.begin(), vec.begin() + topk, vec.end(),
-                      std::greater<std::pair<float, int> >());
-    std::string rst;
-    // print topk and score
-    for (int i = 0; i < topk; i++) {
-        float score = vec[i].first;
-        int index = vec[i].second;
-        std::ostringstream buff1;
-        buff1 << "\nscore: " << score << "\n";
-        std::string str = "class: " + labels[index] + buff1.str();
-        rst = rst + str;
-    }
-    return rst;
+std::string postprocess(const int topk,
+                        const std::vector<std::string> &labels) {
+  std::unique_ptr<const Tensor> output_tensor(predictor->GetOutput(0));
+  auto scores = output_tensor->mutable_data<float>();
+  auto shape_out = output_tensor->shape();
+  int size = 1;
+  for (auto &i : shape_out) {
+    size *= i;
+  }
+  std::vector<std::pair<float, int>> vec;
+  vec.resize(size);
+  for (int i = 0; i < size; i++) {
+    vec[i] = std::make_pair(scores[i], i);
+  }
+
+  std::partial_sort(vec.begin(), vec.begin() + topk, vec.end(),
+                    std::greater<std::pair<float, int>>());
+  std::string rst;
+  // print topk and score
+  for (int i = 0; i < topk; i++) {
+    float score = vec[i].first;
+    int index = vec[i].second;
+    std::ostringstream buff1;
+    buff1 << "\nscore: " << score << "\n";
+    std::string str = "class: " + labels[index] + buff1.str();
+    rst = rst + str;
+  }
+  return rst;
 }
 
 @interface ViewController () <CvVideoCameraDelegate>
@@ -161,6 +162,7 @@ std::string postprocess(const int topk, const std::vector<std::string> &labels) 
 @property (nonatomic) std::vector<std::string> labels;
 @property (nonatomic) cv::Mat cvimg;
 -(std::vector<std::string>) load_labels:(const std::string&)path;
+
 @end
 
 @implementation ViewController
@@ -227,55 +229,55 @@ std::string postprocess(const int topk, const std::vector<std::string> &labels) 
     self.imageView.image = MatToUIImage(img);
 }
 
--(std::vector<std::string>) load_labels:(const std::string&)path {
-    std::vector<std::string> labels;
-    FILE *fp = fopen(path.c_str(), "r");
-    if (fp == nullptr) {
-        return labels;
-    }
-    while (!feof(fp)) {
-        char str[1024];
-        fgets(str, 1024, fp);
-        std::string str_s(str);
-        
-        if (str_s.length() > 0) {
-            for (int i = 0; i < str_s.length(); i++) {
-                if (str_s[i] == ' ') {
-                    std::string strr = str_s.substr(i, str_s.length() - i - 1);
-                    labels.push_back(strr);
-                    i = str_s.length();
-                }
-            }
-        }
-    }
-    fclose(fp);
+- (std::vector<std::string>)load_labels:(const std::string &)path {
+  std::vector<std::string> labels;
+  FILE *fp = fopen(path.c_str(), "r");
+  if (fp == nullptr) {
     return labels;
+  }
+  while (!feof(fp)) {
+    char str[1024];
+    fgets(str, 1024, fp);
+    std::string str_s(str);
+
+    if (str_s.length() > 0) {
+      for (int i = 0; i < str_s.length(); i++) {
+        if (str_s[i] == ' ') {
+          std::string strr = str_s.substr(i, str_s.length() - i - 1);
+          labels.push_back(strr);
+          i = str_s.length();
+        }
+      }
+    }
+  }
+  fclose(fp);
+  return labels;
 }
 
 - (IBAction)swith_video_photo:(UISwitch *)sender {
-    NSLog(@"%@", sender.isOn ? @"video ON" : @"video OFF");
-    if (sender.isOn) {
-        self.flag_video.on = YES;
-    } else {
-        self.flag_video.on = NO;
-    }
+  NSLog(@"%@", sender.isOn ? @"video ON" : @"video OFF");
+  if (sender.isOn) {
+    self.flag_video.on = YES;
+  } else {
+    self.flag_video.on = NO;
+  }
 }
 
 - (IBAction)cap_photo:(id)sender {
-    if (!self.flag_process.isOn) {
-        self.result.text = @"please turn on the camera firstly";
-    } else {
-        self.flag_cap_photo = true;
-    }
+  if (!self.flag_process.isOn) {
+    self.result.text = @"please turn on the camera firstly";
+  } else {
+    self.flag_cap_photo = true;
+  }
 }
 
-- (void)PSwitchValueChanged:(UISwitch *) sender {
-    NSLog(@"%@", sender.isOn ? @"process ON" : @"process OFF");
-    if (sender.isOn) {
-        [self.videoCamera start];
-    } else {
-        [self.videoCamera stop];
-    }
+- (void)PSwitchValueChanged:(UISwitch *)sender {
+  NSLog(@"%@", sender.isOn ? @"process ON" : @"process OFF");
+  if (sender.isOn) {
+    [self.videoCamera start];
+  } else {
+    [self.videoCamera stop];
+  }
 }
 
 - (void)GSwitchValueChanged:(UISwitch *) sender {
@@ -307,10 +309,15 @@ std::string postprocess(const int topk, const std::vector<std::string> &labels) 
             [self.videoCamera start];
         }
     }
+    self.videoCamera.defaultAVCaptureDevicePosition =
+        AVCaptureDevicePositionFront;
+    if (self.flag_process.isOn) {
+      [self.videoCamera start];
+    }
+  }
 }
 
-- (void)processImage:(cv::Mat &)image {
-    
+- (void)processImage:(cv::Mat &)image {  
     dispatch_async(dispatch_get_main_queue(), ^{
         NSString *path = [[NSBundle mainBundle] bundlePath];
         std::string app_dir = std::string([path UTF8String]) + "/third-party/assets";
@@ -368,12 +375,14 @@ std::string postprocess(const int topk, const std::vector<std::string> &labels) 
             self.result.text = [NSString stringWithUTF8String:result.str().c_str()];
             self.imageView.image = MatToUIImage(img);
         }
-    });
+      }
+    }
+  });
 }
 
 - (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+  [super didReceiveMemoryWarning];
+  // Dispose of any resources that can be recreated.
 }
 
 @end
