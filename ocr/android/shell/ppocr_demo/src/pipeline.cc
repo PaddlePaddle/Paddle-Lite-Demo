@@ -167,7 +167,7 @@ Pipeline::Pipeline(const std::string &detModelDir,
 bool Pipeline::Process(std::string img_path, std::string output_img_path) {
   cv::Mat rgbaImage = cv::imread(img_path, cv::IMREAD_COLOR);
   int use_direction_classify =
-      static_cat<int>(Config_["use_direction_classify"]);
+      static_cast<int>(Config_["use_direction_classify"]);
   cv::Mat srcimg;
   rgbaImage.copyTo(srcimg);
 

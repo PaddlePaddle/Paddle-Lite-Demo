@@ -10,6 +10,16 @@ MODELS_DIR="$(pwd)/models/"
 IMAGES_DIR="$(pwd)/images/"
 LABELS_DIR="$(pwd)/labels/"
 
+if [ ! -d "$(pwd)/models" ]; then
+  mkdir $(pwd)/models
+fi
+if [ ! -d "$(pwd)/images" ]; then
+  mkdir $(pwd)/images
+fi
+if [ ! -d "$(pwd)/labels" ]; then
+  mkdir $(pwd)/labels
+fi
+
 download_and_uncompress() {
   local url="$1"
   local dir="$2"
