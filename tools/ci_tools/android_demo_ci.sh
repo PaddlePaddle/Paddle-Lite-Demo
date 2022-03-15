@@ -78,12 +78,12 @@ function main {
   # step2. build and run image_classification
   echo "--compile_image_classification--"
   compile_image_classification
-  # step3. build and run object_detection
-  echo "--compile_object_detection--"
-  compile_object_detection
-  # step4. build and run ocr
+  # step3. build and run ocr
   echo "--compile_ocr--"
   compile_ocr
+  # step4. build and run object_detection
+  echo "--compile_object_detection--"
+  compile_object_detection
   echo "--end--"
 }
 
