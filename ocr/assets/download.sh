@@ -5,10 +5,19 @@ CLS_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/models/ch_ppocr_mo
 DET_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/models/ch_ppocr_mobile_v2.0_det_slim_opt_for_cpu_v2_10_rc.tar.gz"
 REC_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/models/ch_ppocr_mobile_v2.0_rec_slim_opt_for_cpu_v2_10_rc.tar.gz"
 CONFIG_TXT_URL="https://paddlelite-demo.bj.bcebos.com/demo/ocr/config.tar.gz"
-
 MODELS_DIR="$(pwd)/models/"
 IMAGES_DIR="$(pwd)/images/"
 LABELS_DIR="$(pwd)/labels/"
+
+if [ ! -d "$(pwd)/models" ]; then
+  mkdir $(pwd)/models
+fi
+if [ ! -d "$(pwd)/images" ]; then
+  mkdir $(pwd)/images
+fi
+if [ ! -d "$(pwd)/labels" ]; then
+  mkdir $(pwd)/labels
+fi
 
 download_and_uncompress() {
   local url="$1"

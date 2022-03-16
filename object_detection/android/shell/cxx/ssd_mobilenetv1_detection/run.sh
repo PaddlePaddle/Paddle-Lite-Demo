@@ -28,7 +28,7 @@ adb shell "cd ${ADB_DIR} \
                ./images/dog.jpg \
                ./labels/pascalvoc_label_list \
                0.5 300 300 \
-               0 1 100 5 0 \
+               0 1 10 1 0 \
            "
 adb pull ${ADB_DIR}/dog_ssd_mobilenetv1_detection_result.jpg ./
 
@@ -41,6 +41,6 @@ adb pull ${ADB_DIR}/dog_ssd_mobilenetv1_detection_result.jpg ./
 #                ./images/dog.jpg \
 #                ./labels/pascalvoc_label_list \
 #                0.5 300 300 \
-#                0 1 100 5 1 \
+#                0 1 10 1 1 \
 #            "
 # adb pull ${ADB_DIR}/dog_ssd_mobilenetv1_detection_result.jpg ./

@@ -2,12 +2,9 @@
 # only cpu lib
 #ANDROID_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_10_rc.tar.gz"
 # cpu + gpu lib
-# ANDROID_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_10_gpu.tar.gz"
-# dev cpu + gpu lib(fix picode run error)
-ANDROID_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_dev_gpu.tar.gz"
-# dev cpu lib(fix picode run error)
-# IOS_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/ios/paddle_lite_libs_v2_10_rc.tar.gz"
-IOS_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/ios/paddle_lite_libs_dev.tar.gz"
+ANDROID_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_10_gpu.tar.gz"
+# cpu lib
+IOS_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/ios/paddle_lite_libs_v2_10_rc.tar.gz"
 ARMLINUX_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/armlinux/paddle_lite_libs_v2_10_rc.tar.gz"
 OPENCV_ANDROID_URL="https://paddle-inference-dist.bj.bcebos.com/opencv4.1.0.tar.gz"
 OPENCV_IOS_URL="https://paddlelite-demo.bj.bcebos.com/libs/ios/opencv2.framework.tar.gz"
