@@ -68,7 +68,7 @@ function compile_ocr {
      echo "-- arm_v7 --"
      # run error
      # bash ./build.sh "armeabi-v7a"
-     cd ../../../../../ 
+     cd ../../../../ 
 }
 
 function main {
