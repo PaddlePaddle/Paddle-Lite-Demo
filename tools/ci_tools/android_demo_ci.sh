@@ -30,7 +30,7 @@ function compile_image_classification {
      bash ./build.sh "arm64-v8a"
      echo "-- arm_v7 --"
      bash ./build.sh "armeabi-v7a"
-     cd ../../../../
+     cd ../../../../../
 }
 
 function compile_object_detection {
@@ -68,7 +68,7 @@ function compile_ocr {
      echo "-- arm_v7 --"
      # run error
      # bash ./build.sh "armeabi-v7a"
-     cd ../../../../../ 
+     cd ../../../../ 
 }
 
 function main {
