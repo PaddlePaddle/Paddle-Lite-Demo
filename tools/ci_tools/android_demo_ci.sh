@@ -34,6 +34,7 @@ function compile_image_classification {
 }
 
 function compile_object_detection {
+     echo "--compile_image_classification---cjx: $(pwd)"
      cd ./object_detection/assets
      chmod +x ./download.sh
      bash ./download.sh
