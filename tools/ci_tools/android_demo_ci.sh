@@ -73,18 +73,18 @@ function compile_ocr {
 
 function main {
   # step1. download android lib
-  echo "--download_lib--: $(pwd)"
+  echo "--download_lib-- current path: $(pwd)"
   download_lib
   # step2. build and run image_classification
-  echo "--compile_image_classification--: $(pwd)"
+  echo "--compile_image_classification--current path: $(pwd)"
   compile_image_classification
   # step3. build and run ocr
-  echo "--compile_ocr--: $(pwd)"
+  echo "--compile_ocr--current path: $(pwd)"
   compile_ocr
   # step4. build and run object_detection
-  echo "--compile_object_detection--: $(pwd)"
+  echo "--compile_object_detection--current path: $(pwd)"
   compile_object_detection
-  echo "--end--: $(pwd)"
+  echo "--end-- current path: $(pwd)"
 }
 
 main
