@@ -21,7 +21,7 @@ adb push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so  ${ADB
 # run
 echo "--run model on cpu---"
 adb shell "cd ${ADB_DIR} \
-           && chmod +x ./image_classification \
+           && chmod +x ./mask_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            &&  ./mask_detection \
                ./models/pyramidbox_lite_for_cpu/model.nb \
