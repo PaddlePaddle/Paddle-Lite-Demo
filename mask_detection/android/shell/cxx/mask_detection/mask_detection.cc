@@ -272,7 +272,7 @@ void run_model(std::string detection_model_file, std::string classify_model_file
 
   // 4. Run predictor
   double first_duration{-1};
-  for (size_t widx = 0; widx < 1; ++widx) {
+  for (size_t widx = 0; widx < warmup; ++widx) {
     if (widx == 0) {
       auto start = GetCurrentUS();
       detection_predictor->Run();
@@ -282,36 +282,35 @@ void run_model(std::string detection_model_file, std::string classify_model_file
     }
   }
 
+  double sum_duration = 0.0;
+  double max_duration = 1e-5;
+  double min_duration = 1e5;
+  double avg_duration = -1;
   std::vector<Face> face;
-  Detector_Postprocess(rgbImage, &face, detection_predictor, scoreThreshold);
+  for (size_t ridx = 0; ridx < repeats; ++ridx) {
+    auto start = GetCurrentUS();
 
-  MaskClassifier_Preprocess(rgbImage, face, classify_predictor);
-  classify_predictor->Run();
-  MaskClassifier_Postprocess(&face, classify_predictor);
+    Detector_Preprocess(detection_predictor, img_path, width, height, rgbImage, gbrImage);
+    detection_predictor->Run();
+    Detector_Postprocess(rgbImage, &face, detection_predictor, scoreThreshold);
+    MaskClassifier_Preprocess(rgbImage, face, classify_predictor);
+    classify_predictor->Run();
+    MaskClassifier_Postprocess(&face, classify_predictor);
+
+    auto duration = (GetCurrentUS() - start) / 1000.0;
+    sum_duration += duration;
+    max_duration = duration > max_duration ? duration : max_duration;
+    min_duration = duration < min_duration ? duration : min_duration;
+    if (first_duration < 0) {
+      first_duration = duration;
+    }
+  }
 
   VisualizeResults(face, &gbrImage);
   cv::imwrite(result_img_path, gbrImage);
 
   auto outputTensor = classify_predictor->GetOutput(0);
   auto outputData = outputTensor->data<float>();
-
-  double sum_duration = 0.0;
-  double max_duration = 1e-5;
-  double min_duration = 1e5;
-  double avg_duration = -1;
-  // for (size_t ridx = 0; ridx < repeats; ++ridx) {
-  //   auto start = GetCurrentUS();
-
-  //   //predictor->Run();
-
-  //   auto duration = (GetCurrentUS() - start) / 1000.0;
-  //   sum_duration += duration;
-  //   max_duration = duration > max_duration ? duration : max_duration;
-  //   min_duration = duration < min_duration ? duration : min_duration;
-  //   if (first_duration < 0) {
-  //     first_duration = duration;
-  //   }
-  //}
 
   avg_duration = sum_duration / static_cast<float>(repeats);
   std::cout << "\n======= benchmark summary =======\n"

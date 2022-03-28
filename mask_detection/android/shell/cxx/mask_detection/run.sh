@@ -29,7 +29,7 @@ adb shell "cd ${ADB_DIR} \
                ./images/girl.png \
                ./images/result.png \
                224 224 \
-               1 1 0 0 0 \
+               1 10 2 0 0 \
                "
 
 # if run on gpu
