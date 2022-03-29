@@ -1,8 +1,12 @@
-# 图像分类 C++ API Demo 使用指南
-在 IOS 上实现图像分类功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
-本文主要介绍图像分类 Demo 运行方法和如何在更新模型/输入/输出处理下，保证图像分类 Demo 仍可继续运行。
+# 口罩检测 C++ API Demo 使用指南
 
-## 如何运行图像分类 Demo
+在 IOS 上实现实时的口罩检测功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
+本文主要介绍口罩检测 Demo 运行方法和如何在更新模型/输入/输出处理下，保证口罩检测 Demo 仍可继续运行。
+
+
+
+
+## 如何运行口罩检测 Demo
 
 ### 环境准备
 
@@ -13,23 +17,24 @@
 <src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode-phone.jpg"/>
 </p>
 
+
 ### 部署步骤
 
-1. 图像分类 Demo 位于 `Paddle-Lite-Demo/image_classification/ios/ios/image_classification`  目录
+1. 图像分类 Demo 位于 `Paddle-Lite-Demo/mask_detection/ios/ios/mask_detection`  目录
 2.  cd `Paddle-Lite-Demo/libs` 目录，运行 `download.sh` 脚本，下载所需要的 Paddle Lite 预测库
-3.  cd `Paddle-Lite-Demo/image_classification/assets` 目录，运行 `download.sh` 脚本，下载 OPT 优化后模型
+3.  cd `Paddle-Lite-Demo/mask_detection/assets` 目录，运行 `download.sh` 脚本，下载 OPT 优化后模型
 
 ```shell
 cd Paddle-Lite-Demo/libs
 # 下载所需要的 Paddle Lite 预测库
 sh download.sh
-cd ../image_classification/assets
+cd ../mask_detection/assets
 # 下载OPT 优化后模型
 sh download.sh
 cd ..
 ```
 
-4.  用 Xcode 打开  `image_classification/image_classification.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和 `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
+4.  用 Xcode 打开  `mask_detection/mask_detection.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和 `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
 
     <p align="center">
     <src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode1.png"/>
