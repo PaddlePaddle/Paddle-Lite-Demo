@@ -1,6 +1,6 @@
 #!/bin/bash
 # setting NDK_ROOT root
-export NDK_ROOT=/zhoukangkang/android-ndk-r20b
+export NDK_ROOT=/Users/zhoukangkang/Library/Android/sdk/ndk/21.1.6352462
 echo "NDK_ROOT is ${NDK_ROOT}"
 
 # configure

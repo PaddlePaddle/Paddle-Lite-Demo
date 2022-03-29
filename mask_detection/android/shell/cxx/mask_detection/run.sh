@@ -31,16 +31,3 @@ adb shell "cd ${ADB_DIR} \
                224 224 \
                1 10 2 0 0 \
                "
-
-# if run on gpu
-# echo "--run model on gpu---"
-# adb shell "cd ${ADB_DIR} \
-#            && chmod +x ./image_classification \
-#            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-#            &&  ./image_classification \
-#                ./models/mobilenet_v1_for_gpu/model.nb \
-#                ./images/tabby_cat.jpg \
-#                ./labels/labels.txt \
-#                3 224 224 \
-#                0 1 100 10 1 \
-#                "

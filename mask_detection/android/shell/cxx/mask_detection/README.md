@@ -57,31 +57,27 @@
 ```shell
 ======= benchmark summary =======
 input_shape(s) (NCHW): {1, 3, 224, 224}
-model_dir:./models/mobilenet_v1_for_cpu/model.nb
-warmup:10
-repeats:100
-power_mode:1
-thread_num:0
+model_dir:./models/pyramidbox_lite_for_cpu/model.nb
+model_dir:./models/mask_detector_for_cpu/model.nb
+warmup:2
+repeats:10
+power_mode:0
+thread_num:1
 *** time info(ms) ***
-1st_duration:33.87
-max_duration:30.657
-min_duration:28.5
-avg_duration:29.046
-
-====== output summary ======
-i: 0,  index: 285,  name: n02124075 Egyptian cat,  score: 0.482869
-i: 1,  index: 281,  name: n02123045 tabby, tabby cat,  score: 0.471595
-i: 2,  index: 282,  name: n02123159 tiger cat,  score: 0.039779
+1st_duration:74.819
+max_duration:58.89
+min_duration:58.135
+avg_duration:58.285
 ``` 
 
 ```shell
  cd Paddle-Lite-Demo/libs
  # 下载所需要的 Paddle Lite 预测库
  sh download.sh
- cd ../image_classification/assets
- # 下载OPT 优化后模型、测试图片、标签文件
+ cd ../mask_detection/assets
+ # 下载OPT 优化后模型
  sh download.sh
- cd ../android/app/shell/cxx/image_classification
+ cd ../android/shell/cxx/mask_detection/
  # 更新 NDK_ROOT 路径，然后完成可执行文件的编译和运行
  sh build.sh
  # CMakeList.txt 里的 System 默认设置是linux；如果在Mac 运行，则需将 CMAKE_SYSTEM_NAME 变量设置为 drawn
@@ -107,47 +103,53 @@ i: 2,  index: 282,  name: n02123159 tiger cat,  score: 0.039779
 **备注：**
   如需更新预测库，例如更新 Android CXX v8 动态库 `so`，则将新的动态库 `so` 更新到 `Paddle-Lite-Demo/libs/android/cxx/libs/arm64-v8a` 目录
 
-2. `Paddle-Lite-Demo/image_classification/assets/` : 存放图像分类 demo 的模型、测试图片、标签文件
+2. `Paddle-Lite-Demo/mask_detection/assets/` : 存放口罩检测 Demo 的模型
 
-3. `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/image_classification.cc` : 图像分类的预测代码
-     - `pre_process(...)` : 完成图像分类的预处理功能
-     - `post_process(...)` : 完成图像分类的后处理功能
-     - `run_model(...)` : 完成图像分类的预测全流程功能
-     - `load_labels(...)` : 完成标签文件读取功能
-     - `neon_mean_scale(...)` : 完成图像数据赋值给Tensor的加速处理功能
+3. `Paddle-Lite-Demo/mask_detection/android/shell/cxx/mask_detection/mask_detection.cc` : 口罩检测的预测代码
+     - `Detector_Preprocess(...)` : 完成口罩检测中的检测模型的预处理功能
+       - 利用OpenCV将读取输入图片，将其从BGR转成RGB，然后将其resize成固定大小，然后调neon_mean_scale函数将图像数据归一化，并将其从NHWC转为NCHW，赋给输入Tensor
+     - `Detector_Postprocess(...)` : 完成口罩检测中检测模型的后处理功能
+       - 根据检测模型的输出数据，将输入的RGB图像上的检测框保存到faces中
+     - `MaskClassifier_Preprocess(...)`: 完成口罩检测中分类模型的预处理功能
+       - 将faces中的检测框框中的输入RGB图像挨个抠出，数据同样归一化，输入给分类模型的输入Tensor
+     - `MaskClassifier_Postprocess(...)`: 完成口罩检测中分类模型的后处理功能
+       - 根据分类模型的输出结果，将faces中每个框的分类结果保存进faces中
+     - `VisualizeResults(...)` : 将检测框和有无戴口罩的概率画在输入图片上
+     - `neon_mean_scale(...)` : 将图像数据由NHWC转为NCHW，且赋给Tensor，运用NEON指令集实现加速处理
 
-4. `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/CMakeLists.txt` :  CMake 文件，约束可执行文件的编译方法
+4. `Paddle-Lite-Demo/mask_detection/android/shell/cxx/mask_detection/CMakeLists.txt` :  CMake 文件，约束可执行文件的编译方法
 
-5. `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/build.sh` : 用于可执行文件的编译和运行
+5. `Paddle-Lite-Demo/mask_detection/android/shell/cxx/mask_detection/build.sh` : 用于可执行文件的编译和运行
 
 ```shell
  # 位置
- Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/build.sh # 脚本默认编译 armv7 可执行文件
+ Paddle-Lite-Demo/mask_detection/android/shell/cxx/mask_detection/build.sh # 脚本默认编译 armv7 可执行文件
  # 如果要编译 armv8 可执行文件，可以将 build.sh 脚本中的 ARM_ABI 变量改为 arm64i-v8a 即可
  # build.sh 中包含了可执行文件的编译和运行功能，其中运行是调用run.sh 脚本进行完成
  # run.sh 脚本中可执行文件的参数含义：
- adb shell "cd ${ADB_DIR} \
-           && chmod +x ./image_classification \
+adb shell "cd ${ADB_DIR} \
+           && chmod +x ./mask_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           && ./image_classification \
-              ./models/mobilenet_v1_for_cpu/model.nb \
-              ./images/tabby_cat.jpg \
-              ./labels/labels.txt \
-              3 224 224 \
-              0 1 100 10 0 \
-           "
+           &&  ./mask_detection \
+               ./models/pyramidbox_lite_for_cpu/model.nb \
+               ./models/mask_detector_for_cpu/model.nb\
+               ./images/girl.png \
+               ./images/result.png \
+               224 224 \
+               1 10 2 0 0 \
+               "
 
- 第一个参数：image_classification 可执行文件，属于必选项
- 第二个参数：./models/mobilenet_v1_for_cpu/model.nb 优化后的分类模型文件，属于必选项
- 第三个参数：./images/tabby_cat.jpg  测试图片，属于必选项
- 第四个参数：./labels/labels.txt  label 文件，属于必选项
- 第五个参数：3 top-k 大小，属于可选项，默认是 1
- 第六个参数：224 输入图片宽度，属于可选项，默认是 224
- 第七个参数：224 输入图片高度，属于可选项，默认是 224
+ 第一个参数：mask_detection 可执行文件，属于必选项
+ 第二个参数：./models/pyramidbox_lite_for_cpu/model.nb 优化后的检测模型文件，属于必选项
+ 第三个参数：./models/mask_detector_for_cpu/model.nb 优化后的分类模型文件，属于必选项
+ 第四个参数：./images/girl.png  测试图片，属于必选项
+ 第五个参数：./images/result.png 显示检测结果的输出文件名，属于必选项
+ 第六个参数：224 输入给检测模型的图片高度，属于可选项，默认是 224
+ 第七个个参数：224 输入给检测模型的宽度，属于可选项，默认是 224
+ 第八个参数：1 线程数，属于可选项，默认是 1
+ 第九个参数：10 repeats 数目，属于可选项，默认是 1
+ 第十个参数：2 warmup 数目，属于可选项，默认是 0
  第八个参数：0 是否绑核，0-绑定大核， 1-绑定小核，2-绑定所有核，3-不绑核，属于可选项，默认是 0
- 第九个参数：1 线程数，属于可选项，默认是 1
- 第十个参数：100 repeats 数目，属于可选项，默认是 1
- 第十一个参数：10 warmup 数目，属于可选项，默认是 0
  第十二个参数：0 use_gpu 是否使用GPU， 属于可选项，默认是 0
 ```
 
@@ -222,8 +224,8 @@ for (int i = 0; i < outputSize; i += 6) {
 
 ### 更新模型
 
-1. 将优化后的模型存放到目录 `Paddle-Lite-Demo/image_classification/assets/models/` 下；
-2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `mobilenet_v1_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/run.sh` 脚本。
+1. 将优化后的模型存放到目录 `Paddle-Lite-Demo/mask_detection/assets/models/` 下；
+2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `mobilenet_v1_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `Paddle-Lite-Demo/image_classification/android/shell/cxx/mask_detection/run.sh` 脚本。
 
 例子：假设更新 mobilenet_v2 模型为例，则先将优化后的模型存放到 `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/run.sh` 下，然后更新脚本
 
@@ -299,13 +301,13 @@ adb shell "cd ${ADB_DIR} \
 ### 更新输入/输出预处理
 1. 更新输入数据
 
-- 将更新的图片存放在 `Paddle-Lite-Demo/image_classification/assets/images/` 下；
-- 更新文件 `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/run.sh` 脚本
+- 将更新的图片存放在 `Paddle-Lite-Demo/mask_detection/assets/images/` 下；
+- 更新文件 `Paddle-Lite-Demo/mask_detection/android/shell/cxx/image_classification/run.sh` 脚本
 
-以更新 `dog.jpg` 为例，则先将 `dog.jpg` 存放在 `Paddle-Lite-Demo/image_classification/assets/images/` 下，然后更新脚本
+以更新 `boy.png` 为例，则先将 `boy.png` 存放在 `Paddle-Lite-Demo/mask_detection/assets/images/` 下，然后更新脚本
 
 ```shell
-# path: Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/run.sh
+# path: Paddle-Lite-Demo/mask_detection/android/shell/cxx/mask_detection/run.sh
 # old
 adb shell "cd ${ADB_DIR} \
            && chmod +x ./image_classification \
