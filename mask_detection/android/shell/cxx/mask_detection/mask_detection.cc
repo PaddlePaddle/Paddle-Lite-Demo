@@ -97,20 +97,20 @@ void Detector_Preprocess(std::shared_ptr<PaddlePredictor> predictor,
   float scales[3] = {0.229f, 0.224f, 0.225f};
   cv::Mat resizedBGRImage;
   cv::cvtColor(bgr_img, rgb_img, cv::COLOR_BGR2RGB);
-  cv::resize(bgr_img, resizedBGRImage, cv::Size(), 0.25, 0.25);
+  cv::resize(bgr_img, resizedBGRImage, cv::Size(width, height));
   resizedBGRImage.convertTo(resizedBGRImage, CV_32FC3, 1 / 255.f);
-  input_tensor->Resize({1, 3, resizedBGRImage.rows , resizedBGRImage.cols});
+  input_tensor->Resize({1, 3, width, height});
   const float *dimg = reinterpret_cast<const float *>(resizedBGRImage.data);
   auto *data = input_tensor->mutable_data<float>();
   neon_mean_scale(dimg, data, resizedBGRImage.cols * resizedBGRImage.rows, means, scales);
 }
 
-void Detector_Postprocess(const cv::Mat &rgbaImage,
+void Detector_Postprocess(const cv::Mat &rgbImage,
                           std::vector<Face> *faces,
                           std::shared_ptr<PaddlePredictor>& predictor,
                           float scoreThreshold) {
-  int imageWidth = rgbaImage.cols;
-  int imageHeight = rgbaImage.rows;
+  int imageWidth = rgbImage.cols;
+  int imageHeight = rgbImage.rows;
   // Get output tensor
   auto outputTensor = predictor->GetOutput(2);
   auto outputData = outputTensor->data<float>();
@@ -196,7 +196,7 @@ void VisualizeResults(const std::vector<Face> &faces,
     std::string text;
     if (faces[i].classid == 1) {
       text = "MASK: ";
-      color = cv::Scalar(255, 0, 0);
+      color = cv::Scalar(0, 255, 0);
     } else {
       text = "NO MASK: ";
       color = cv::Scalar(255, 0, 0);
@@ -268,17 +268,30 @@ void run_model(std::string detection_model_file, std::string classify_model_file
   cv::Mat rgbImage; 
   cv::Mat gbrImage;
   float scoreThreshold = 0.7;
-  Detector_Preprocess(detection_predictor, img_path, width, height, rgbImage, gbrImage);
+  std::vector<Face> face;
 
   // 4. Run predictor
   double first_duration{-1};
   for (size_t widx = 0; widx < warmup; ++widx) {
     if (widx == 0) {
       auto start = GetCurrentUS();
+
+      Detector_Preprocess(detection_predictor, img_path, width, height, rgbImage, gbrImage);
       detection_predictor->Run();
+      Detector_Postprocess(rgbImage, &face, detection_predictor, scoreThreshold);
+      MaskClassifier_Preprocess(rgbImage, face, classify_predictor);
+      classify_predictor->Run();
+      MaskClassifier_Postprocess(&face, classify_predictor);
+
       first_duration = (GetCurrentUS() - start) / 1000.0;
     } else {
+      Detector_Preprocess(detection_predictor, img_path, width, height, rgbImage, gbrImage);
       detection_predictor->Run();
+      Detector_Postprocess(rgbImage, &face, detection_predictor, scoreThreshold);
+      MaskClassifier_Preprocess(rgbImage, face, classify_predictor);
+      classify_predictor->Run();
+      MaskClassifier_Postprocess(&face, classify_predictor);
+
     }
   }
 
@@ -286,7 +299,6 @@ void run_model(std::string detection_model_file, std::string classify_model_file
   double max_duration = 1e-5;
   double min_duration = 1e5;
   double avg_duration = -1;
-  std::vector<Face> face;
   for (size_t ridx = 0; ridx < repeats; ++ridx) {
     auto start = GetCurrentUS();
 
