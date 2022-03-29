@@ -4,8 +4,8 @@ export NDK_ROOT=/Users/zhoukangkang/Library/Android/sdk/ndk/21.1.6352462
 echo "NDK_ROOT is ${NDK_ROOT}"
 
 # configure
-ARM_ABI=arm64-v8a
-# ARM_ABI=armeabi-v7a
+#ARM_ABI=arm64-v8a
+ARM_ABI=armeabi-v7a
 # ARM_TARGET_LANG=gcc
 ARM_TARGET_LANG=clang
 PADDLE_LITE_DIR="$(pwd)/../../../../../libs/android/cxx"

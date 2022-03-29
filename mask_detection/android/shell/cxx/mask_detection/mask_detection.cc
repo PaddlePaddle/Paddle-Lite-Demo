@@ -93,8 +93,8 @@ void Detector_Preprocess(std::shared_ptr<PaddlePredictor> predictor,
   
   // read img and pre-process
   bgr_img = imread(img_path, cv::IMREAD_COLOR);
-  float means[3] = {0.485f, 0.456f, 0.406f};
-  float scales[3] = {0.229f, 0.224f, 0.225f};
+  float means[3] = {0.407843,0.694118,0.482353};
+  float scales[3] = {0.5f, 0.5f, 0.5f};
   cv::Mat resizedBGRImage;
   cv::cvtColor(bgr_img, rgb_img, cv::COLOR_BGR2RGB);
   cv::resize(bgr_img, resizedBGRImage, cv::Size(width, height));

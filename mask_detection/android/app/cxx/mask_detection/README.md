@@ -1,11 +1,7 @@
-[toc]
-
-
-
 # 口罩检测 C++ API Demo 使用指南
 
 在 Android 上实现实时的口罩检测功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
-本文主要介绍口罩检测 Demo 运行方法和如何在更新模型/输入/输出处理下，保证口罩检测 demo 仍可继续运行。
+本文主要介绍口罩检测 Demo 运行方法和如何在更新模型/输入/输出处理下，保证口罩检测 Demo 仍可继续运行。
 
 ## 如何运行口罩检测 Demo
 
@@ -18,7 +14,7 @@
 
 ### 部署步骤
 
-1. 图像分类 Demo 位于 `Paddle-Lite-Demo/mask_detection/android/app/cxx/mask_detection` 目录
+1. 口罩检测 Demo 位于 `Paddle-Lite-Demo/mask_detection/android/app/cxx/mask_detection` 目录
 2. 用 Android Studio 打开 mask_detection 工程
 3. 手机连接电脑，打开 USB 调试和文件传输模式，并在 Android Studio 上连接自己的手机设备（手机需要开启允许从 USB 安装软件权限）
 
@@ -60,7 +56,7 @@
 
 ## Demo 内容介绍
 
-先整体介绍下图像分类 Demo 的代码结构，然后再从 Java 和 C++ 两部分简要的介绍 Demo 每部分功能
+先整体介绍下口罩检测 Demo 的代码结构，然后再从 Java 和 C++ 两部分简要的介绍 Demo 每部分功能
 
 ### 重点关注内容
 
@@ -85,13 +81,12 @@ mask_detection/app/src/main/cpp/Native.cc
 mask_detection/app/src/main/cpp/Pipeline.cc
 ```
 
-4. `model.nb` : 模型文件 (opt 工具转化后 Paddle Lite 模型), `labels.txt`：训练模型时的 `labels` 文件
+4. `model.nb` : 模型文件 (opt 工具转化后 Paddle Lite 模型)
 
 ```shell
 # 位置：
-mask_detection/app/src/main/assets/models/mobilenet_v1_for_cpu/model.nb
-mask_detection/app/src/main/assets/models/mobilenet_v1_for_gpu/model.nb
-mask_detection/app/src/main/assets/labels/pascalvoc_label_list
+mask_detection_demo/app/src/main/assets/models/pyramidbox_lite_for_cpu/model.nb
+mask_detection_demo/app/src/main/assets/models/mask_detector_for_cpu/model.nb
 ```
 
 5. `libpaddle_lite_api_shared.so`：Paddle Lite C++ 预测库
@@ -117,7 +112,6 @@ mask_detection/app/build.gradle
 mask_detection/app/cpp/CMakeLists.txt
 # 如果有cmake 编译选项更新，可以在 CMakeLists.txt 进行修改即可
 ```
-8. 如果想用 gpu 预测，点击界面的`是否使用GPU` 开关，当开关打开时，则用 GPU 推理；否则，使用 CPU 推理
 
 ### Java 端
 
@@ -128,24 +122,34 @@ mask_detection/app/cpp/CMakeLists.txt
     在 `app/src/java/com/baidu/paddle/lite/demo/mask_detection` 目录下，实现 APP 界面消息事件和 Java/C++ 端代码互传的桥梁功能
 * MainActivity
     实现 APP 的创建、运行、释放功能
-    重点关注 `onLoadModel` 和 `onRunModel` 函数，实现 APP 界面值传递和推理处理
+    new了`Native predictor = new Native();`
+    重点关注 `onTextureChanged` 函数，通过调用`predictor.process`实现 APP 界面值传递和推理处理功能
      
     ```java
-     public boolean onLoadModel() {
-        // push model to sdcard
-        String realModelDir = getExternalFilesDir(null) + "/" + modelPath;
-        Utils.copyDirectoryFromAssets(this, modelPath, realModelDir);
-
-        // push label to sdcard
-        String realLabelPath = getExternalFilesDir(null) + "/" + labelPath;
-        Utils.copyFileFromAssets(this, labelPath, realLabelPath);
-        return predictor.init(realModelDir, realLabelPath, cpuThreadNum,
-                cpuPowerMode,
-                inputShape, inputMean,
-                inputStd, topK);
-    }
-    public boolean onRunModel() {
-        return predictor.isLoaded() && predictor.process();
+    @Override
+    public boolean onTextureChanged(int inTextureId, int outTextureId, int textureWidth, int textureHeight) {
+        String savedImagePath = "";
+        synchronized (this) {
+            savedImagePath = MainActivity.this.savedImagePath;
+        }
+        boolean modified = predictor.process(inTextureId, outTextureId, textureWidth, textureHeight, savedImagePath);
+        if (!savedImagePath.isEmpty()) {
+            synchronized (this) {
+                MainActivity.this.savedImagePath = "";
+            }
+        }
+        lastFrameIndex++;
+        if (lastFrameIndex >= 30) {
+            final int fps = (int) (lastFrameIndex * 1e9 / (System.nanoTime() - lastFrameTime));
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    tvStatus.setText(Integer.toString(fps) + "fps");
+                }
+            });
+            lastFrameIndex = 0;
+            lastFrameTime = System.nanoTime();
+        }
+        return modified;
     }
     ```
    
@@ -160,38 +164,45 @@ mask_detection/app/cpp/CMakeLists.txt
 * Native
     实现 Java 与 C++ 端代码互传的桥梁功能
     包含三个功能：`init`初始化、 `process`预测处理 和 `release`释放
+    java 的这些方法均是通过调用相应的native方法实现的，带有 native 关键字的成员函数都是由C++实现的
     备注：
         Java 的 native 方法和 C++ 的 native 方法要一一对应
       
-     ```
-     // 初始化函数
-      public boolean init(String modelDir,
-                        String labelPath,
-                        int cpuThreadNum,
-                        String cpuPowerMode,
-                        long[] inputShape,
-                        float[] inputMean,
-                        float[] inputStd,
-                        int topk);
-      // 释放资源
-      public boolean release();
-      // 预测处理函数，包含预处理、预测和后处理全流程
-      public boolean process();
      ```java
-     
+     // 初始化函数      
+    public boolean init(String fdtModelDir,
+                        int fdtCPUThreadNum,
+                        String fdtCPUPowerMode,
+                        float fdtInputScale,
+                        float[] fdtInputMean,
+                        float[] fdtInputStd,
+                        float fdtScoreThreshold,
+                        String mclModelDir,
+                        int mclCPUThreadNum,
+                        String mclCPUPowerMode,
+                        int mclInputWidth,
+                        int mclInputHeight,
+                        float[] mclInputMean,
+                        float[] mclInputStd);
+    // 释放资源
+    public boolean release();
+    // 预测处理函数，包含预处理、预测和后处理全流程
+    public boolean process(int inTextureId, int outTextureId, int textureWidth, int textureHeight, String savedImagePath);
+     ```
 
 ### C++ 端（native）
 
 * Native
   实现 Java 与 C++ 端代码互传的桥梁功能，将 Java 数值转换为 c++ 数值，调用 c++ 端的完成人脸关键点检测功能
   **注意：**
-  Native 文件生成方法：
+  Native.h 文件生成方法：
   
   ```shell
     cd app/src/java/com/baidu/paddle/lite/demo/mask_detection
     # 在当前目录会生成包含 Native 方法的头文件，用户可以将其内容拷贝至 `cpp/Native.cc` 中
     javac -classpath D:\dev\android-sdk\platforms\android-29\android.jar -encoding utf8 -h . Native.java 
   ```
+  然后 Native.cc 里面实现了 Native.h 里面声明的函数
 
 * Pipeline
   实现输入预处理、推理执行和输出后处理的流水线处理，支持单/多个模型的串行处理
@@ -274,205 +285,159 @@ for (int i = 0; i < outputSize; i += 6) {
 
 ### 更新模型
 
-1. 将优化后的模型存放到目录 `mask_detection/app/src/main/assets/models/` 下；
-2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `mobilenet_v1_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `mask_detection/app/src/main/java/com.baidu.paddle.lite.demo.mask_detection/MainActivity.java` 中代码：
+下面以更新检测模型为例，更新分类模型的方法是一样的。
 
-例子：假设更新 mobilenet_v2 模型为例，则先将优化后的模型存放到 `mask_detection/app/src/main/assets/models/mobilenet_v2_for_cpu/mv2.nb` 下，然后更新代码
+更新模型前必须保证，你的模型和 Demo 中的模型的输入和输出必须有相同的含义。
+
+1. 将优化后的模型存放到目录 `mask_detection/app/src/main/assets/models/` 下；
+2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `pyramidbox_lite_for_cpu/model.nb` 和 `mask_detector_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `mask_detection/app/src/main/res/values/strings.xml` 中代码：
+
+例子：假设更新检测模型为例，则先将优化后的模型存放到 `mask_detection/app/src/main/assets/models/your_for_cpu/model.nb` 下，然后更新代码为
 
 ```java
-// 代码文件 `mask_detection/app/src/main/java/com.baidu.paddle.lite.demo.mask_detection/MainActivity.java`
-public boolean onLoadModel() {
-        // push model to sdcard
-        // String realModelDir = getExternalFilesDir(null) + "/" + modelPath;
-        // update
-        String realModelDir = getExternalFilesDir(null) + "/" + "models/mobilenet_v2_for_cpu/";
-        Utils.copyDirectoryFromAssets(this, modelPath, realModelDir);
-
-        // push label to sdcard
-        String realLabelPath = getExternalFilesDir(null) + "/" + labelPath;
-        Utils.copyFileFromAssets(this, labelPath, realLabelPath);
-        return predictor.init(realModelDir, realLabelPath, cpuThreadNum,
-                cpuPowerMode,
-                inputShape, inputMean,
-                inputStd, topK);
-    }
+// 代码文件 `mask_detection/app/src/main/res/values/strings.xml`
+<string name="FDT_MODEL_DIR_DEFAULT">models/your_for_cpu</string>
 ```
+
 
 **注意：**
 
-- 如果优化后的模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `mask_detection/app/src/main/cpp/Pipeline.cc` 中代码
+- 如果优化后的检测模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `mask_detection/app/src/main/cpp/Pipeline.cc` 中代码
 
 ```c++
 // 代码文件 `mask_detection/app/src/main/cpp/Pipeline.cc`
-Classifier::Classifier(const std::string &modelDir,
-                       const std::string &labelPath, const int cpuThreadNum,
-                       const std::string &cpuPowerMode,
-                       const std::vector<int64_t> &inputShap,
-                       const std::vector<float> &inputMean,
-                       const std::vector<float> &inputStd, const int topk)
-    : inputShape_(inputShap), inputMean_(inputMean), inputStd_(inputStd),
-      topk_(topk) {
+FaceDetector::FaceDetector(const std::string &modelDir, const int cpuThreadNum,
+                           const std::string &cpuPowerMode, float inputScale,
+                           const std::vector<float> &inputMean,
+                           const std::vector<float> &inputStd,
+                           float scoreThreshold)
+    : inputScale_(inputScale), inputMean_(inputMean), inputStd_(inputStd),
+      scoreThreshold_(scoreThreshold) {
   paddle::lite_api::MobileConfig config;
-  // config.set_model_from_file(modelDir + "/model.nb");
-  // update
-  config.set_model_from_file(modelDir + "/mv2.nb");
+  global = modelDir;
+  config.set_model_from_file(modelDir + "/your_model.nb");
   config.set_threads(cpuThreadNum);
   config.set_power_mode(ParsePowerMode(cpuPowerMode));
   predictor_ =
       paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(
           config);
-  labelList_ = LoadLabelList(labelPath);
 }
 ```
 
-- 本 Demo 提供了 setting 界面，可以在将新模型 mobilenet_v2 放在 `assets/models/`后，不用手动更新代码，直接在安装好 APP 的 setting 界面更新模型路径即可
+- 本 Demo 提供了 setting 界面，可以在将新模型 your_for_cpu 放在 `assets/models/`后，不用手动更新代码，直接在安装好 APP 的 setting 界面更新模型路径即可
 
--  如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `mask_detection/app/src/main/cpp/Pipeline.cc` 的 `Classifier::Preprocess` 预处理和 `Classifier::Postprocess` 后处理代码即可。
+-  如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `mask_detection/app/src/main/cpp/Pipeline.cc` 的 `FaceDetector::Preprocess` , `FaceDetector::Postprocess`, `MaskClassifier::Preprocess`, `MaskClassifier::Postprocess` 代码即可。
 
-- 如果需要更新 `labels.txt` 标签文件，则需要将新的标签文件存放在目录 `mask_detection/app/src/main/assets/labels/` 下，并更新 `mask_detection/app/src/main/java/com.baidu.paddle.lite.demo.mask_detection/MainActivity.java` 中 `onLoadModel` 方法的标签文件路径名。
-
-```java
-// 代码文件 `mask_detection/app/src/main/java/com.baidu.paddle.lite.demo.mask_detection/MainActivity.java`
-public boolean onLoadModel() {
-        // push model to sdcard
-        String realModelDir = getExternalFilesDir(null) + "/" + modelPath;
-        Utils.copyDirectoryFromAssets(this, modelPath, realModelDir);
-
-        // push label to sdcard
-        // String realLabelPath = getExternalFilesDir(null) + "/" + labelPath;
-        // updata
-        String realLabelPath = getExternalFilesDir(null) + "/" + newLablePath;
-        Utils.copyFileFromAssets(this, labelPath, realLabelPath);
-        return predictor.init(realModelDir, realLabelPath, cpuThreadNum,
-                cpuPowerMode,
-                inputShape, inputMean,
-                inputStd, topK);
-    }
-```
 
 ### 更新输入/输出预处理
-1. 更新输入数据
 
-- 将更新的图片存放在 `mask_detection/app/src/main/assets/images/` 下；
-- 更新文件 `mask_detection/app/src/main/java/com.baidu.paddle.lite.demo.mask_detection/MainActivity.java`  中的代码
+1. 更新输入预处理
+此处需要更新 `mask_detection/app/src/main/cpp/Pipeline.cc` 中的 `FaceDetector::Preprocess` 和 `MaskClassifier::Preprocess` 预处理代码实现就行。
 
-以更新 `dog.jpg` 为例，则先将 `dog.jpg` 存放在 `mask_detection/app/src/main/assets/images/` 下，然后更新代码
-
-```c++
-// 代码文件 `mask_detection/app/src/main/java/com.baidu.paddle.lite.demo.mask_detection/MainActivity.java` 中 init 方法的图片路径
-public void onLoadModelSuccessed() {
-        // Load test image from path and run model
-        imagePath = "images/dog.jpg"; // change image_path
-        try {
-            if (imagePath.isEmpty()) {
-                return;
-            }
-            Bitmap image = null;
-            // Read test image file from custom path if the first character of mode path is '/', otherwise read test
-            // image file from assets
-            if (!imagePath.substring(0, 1).equals("/")) {
-                InputStream imageStream = getAssets().open(imagePath);
-                image = BitmapFactory.decodeStream(imageStream);
-            } else {
-                if (!new File(imagePath).exists()) {
-                    return;
-                }
-                image = BitmapFactory.decodeFile(imagePath);
-            }
-            if (image != null && predictor.isLoaded()) {
-                predictor.setInputImage(image);
-                runModel();
-            }
-        } catch (IOException e) {
-            Toast.makeText(MainActivity.this, "Load image failed!", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
-}
-```
-
-**注意：**
->> 本 Demo 支持拍照和从相册加载新图片进行推理，此处想更新图片，可通过拍照或从相册加载图片方式实现。
-
-
-
-2. 更新输入预处理
-此处需要更新 `mask_detection/app/src/main/cpp/Pipeline.cc` 中的 `Classifier::Preprocess` 预处理代码实现就行。
-
-3. 更新输出预处理
-此处需要更新 `mask_detection/app/src/main/cpp/Pipeline.cc` 中的 `Classifier::Postprocess` 预处理代码实现就行。
+2. 更新输出预处理
+此处需要更新 `mask_detection/app/src/main/cpp/Pipeline.cc` 中的 `FaceDetector::Postprocess` 和 `MaskClassifier::Postprocess`后处理代码实现就行。
 
 ## 介绍 Pipeline 文件中的方法
 代码文件：`mask_detection/app/src/main/cpp/Pipeline.cc`
 `Pipeline.cc` 包含两个类：Classifier 和 Pipeline 类
 
-- Classifier 用于分类模型的全流程处理，即输入图片预处理、预测处理和输出图片后处理
+- FaceDetector 用于人脸检测模型的全流程处理，即输入图片预处理、预测处理和输出图片后处理
+- MaskClassifier 用于口罩分类模型的全流程处理，即输入图片预处理、预测处理和输出图片后处理
 - Pipeline 用于分类 Demo 全流程处理，即初始化赋值、模型间信息交换、输出结果的显示处理（将结果返回Java/如何在界面回显）
 
 ```c++
-// 检测类的构造函数
-Classifier::Classifier(const std::string &modelDir, const std::string &labelPath,
-                      const int cpuThreadNum, const std::string &cpuPowerMode,
-                      const std::vector<int64_t> &inputShape,
-                      const std::vector<float> &inputMean,
-                      const std::vector<float> &inputStd, const int topk);
-// 检测类的输入预处理函数
-void Classifier::Preprocess(const cv::Mat &rgbaImage);
+// FaceDetector类的构造函数
+FaceDetector::FaceDetector(const std::string &modelDir, const int cpuThreadNum,
+                           const std::string &cpuPowerMode, float inputScale,
+                           const std::vector<float> &inputMean,
+                           const std::vector<float> &inputStd,
+                           float scoreThreshold);
+// FaceDetector类的输入预处理函数
+void FaceDetector::Preprocess(const cv::Mat &rgbaImage);
+// FaceDetector类的输出预处理函数
+void FaceDetector::Postprocess(const cv::Mat &rgbaImage,
+                               std::vector<Face> *faces);
+// FaceDetector类的预测函数
+void FaceDetector::Predict(const cv::Mat &rgbaImage, std::vector<Face> *faces,
+                           double *preprocessTime, double *predictTime,
+                           double *postprocessTime);
 
-// 检测类的输出预处理函数
-void Classifier::Postprocess(const int topk, const std::vector<std::string> &labels,
-                   std::vector<std::string> *results);
+// MaskClassifier 的构造函数
+MaskClassifier::MaskClassifier(const std::string &modelDir,
+                               const int cpuThreadNum,
+                               const std::string &cpuPowerMode, int inputWidth,
+                               int inputHeight,
+                               const std::vector<float> &inputMean,
+                               const std::vector<float> &inputStd);
+// MaskClassifier 的预处理函数
+void MaskClassifier::Preprocess(const cv::Mat &rgbaImage,
+                                const std::vector<Face> &faces);
+// MaskClassifier 的后处理函数
+void MaskClassifier::Postprocess(std::vector<Face> *faces);
 
-// 检测类的预测函数
-void Classifier::Predict(const cv::Mat &rgbaImage, std::vector<RESULT> *results,
-                       double *preprocessTime, double *predictTime,
-                       double *postprocessTime);
+// MaskClassifier 类的预测函数
+void MaskClassifier::Predict(const cv::Mat &rgbaImage, std::vector<Face> *faces,
+                             double *preprocessTime, double *predictTime,
+                             double *postprocessTime);
 
 // Pipeline 的构造函数
-Pipeline::Pipeline(const std::string &modelDir, const std::string &labelPath,
-                   const int cpuThreadNum, const std::string &cpuPowerMode,
-                   int inputWidth, int inputHeight,
-                   const std::vector<float> &inputMean,
-                   const std::vector<float> &inputStd, float scoreThreshold);
-                               double postprocessTime, cv::Mat *rgbaImage)；
+Pipeline::Pipeline(const std::string &fdtModelDir, const int fdtCPUThreadNum,
+                   const std::string &fdtCPUPowerMode, float fdtInputScale,
+                   const std::vector<float> &fdtInputMean,
+                   const std::vector<float> &fdtInputStd,
+                   float detScoreThreshold, const std::string &mclModelDir,
+                   const int mclCPUThreadNum,
+                   const std::string &mclCPUPowerMode, int mclInputWidth,
+                   int mclInputHeight, const std::vector<float> &mclInputMean,
+                   const std::vector<float> &mclInputStd);
+
+// Pipeline 的结果可视化，将预测框和预测结果画在图上
+void Pipeline::VisualizeResults(const std::vector<Face> &faces,
+                                cv::Mat *rgbaImage);
+
+// Pipeline 的结果可视化，将一些处理时间打印在屏幕上
+void Pipeline::VisualizeStatus(double readGLFBOTime, double writeGLTextureTime,
+                               double fdtPreprocessTime, double fdtPredictTime,
+                               double fdtPostprocessTime,
+                               double mclPreprocessTime, double mclPredictTime,
+                               double mclPostprocessTime, cv::Mat *rgbaImage);
 
 // Pipeline 的处理函数，用于模型间前后处理衔接
-bool Pipeline::Process(cv::Mat &rgbaImage);
+bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
+                       int textureHeight, std::string savedImagePath);
 ```
 
-## 通过 setting 界面更新图像分类的相关参数
+## 通过 setting 界面更新口罩检测的相关参数
 
 ### setting 界面参数介绍
-可通过 APP 上的 Settings 按钮，实现图像分类 demo 中些许参数的更新，目前支持以下参数的更新：
+可通过 APP 上的 Settings 按钮，实现口罩检测 Demo 中某些参数的更新，目前支持以下参数的更新：
 参数的默认值可在 `app/src/main/res/values/strings.xml` 查看
-- model setting：（需要提前将模型/图片/标签放在 assets 目录，或者通过 adb push 将其放置手机目录）
-    - model_path 默认是 `models/mobilenet_v1_for_cpu`
-    - image_path 默认是 `images/tabby_cat.jpg`
-    - label_path 默认是 `labels/synset_words.txt`
-
-- CPU setting：
-    - power_mode 默认是 `LITE_POWER_HIGH`
-    - thread_num 默认是 1
-- input setting：
-    - input_shape 默认是 `1, 3, 224, 224`
-    - input_image_format 默认是 `RGB`
-    - input_mean 默认是 `0.485,0.456,0.406`
-    - input_std  默认是 `0.229,0.224,0.225`
+- model setting：（需提前将模型/图片/放在 assets 目录，或者通过 adb push 将其放置手机目录，前提是你得准确知道 APP 的手机安装路径），两个模型的默认路径分别是：
+  - `models/pyramidbox_lite_for_cpu`
+  - `models/mask_detector_for_cpu`
+- Face detector setting：
+  - thread_num 默认是 `1`
+  - power_mode 默认是 `LITE_POWER_HIGH`
+  - input scale 默认是 `0.25`, 表明输入图片将被缩成 1/4 输给网络
+  - 输入每层的均值 input_mean 默认是 `0.407843,0.694118,0.482353`
+  - 输入每层的方差 input_std  默认是 `0.5f, 0.5f, 0.5f`
+- Mask classifier setting：
+  - thread_num 默认是 `1`
+  - power_mode 默认是 `LITE_POWER_HIGH`
+  - 输入被resize成的width 默认是 `128`
+  - 输入被resize成的height 默认是 `128`
+  - 输入每层的均值 `0.5,0.5,0.5`
+  - 输入每层的方差 `1.0,1.0,1.0`
 
 ### setting 界面参数更新
-1）打开 APP，点击右上角的 `:` 符合，选择 `Settings..` 选项，打开 setting 界面；
+
+1）打开 APP，点击右下角的设置图标，打开 Settings 界面；这里可以选中某个参数并更改之。
+
 <p align="center">
-<img src="https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/app_settings.jpg"/>
+<img src=./settings.png width=50%>
 </p>
 
-2）再将 setting 界面的 Enable custom settings 选中☑️，然后更新部分参数；
-<p align="center">
-<img src="https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/app_settings_run.jpg"/>
-</p>
+2）假设更新线程数据，将 CPU Thread Num 设置为 4，更新后，返回原界面，APP将自动重新预测，并可以在左上角观察到启用 4 线程时每个模型的预测耗时。
 
-3）假设更新线程数据，将 CPU Thread Num 设置为 4，更新后，返回原界面，APP将自动重新预测，并打印 4 线程的耗时和结果
-<p align="center">
-<img src="https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/app_settings_thread.jpg"/>
-</p>
-<p align="center">
-<img src="https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/app_settings_res.jpg"/>
-</p>
+
+
