@@ -399,14 +399,22 @@ int main(int argc, char **argv) {
   }
   if (use_gpu) {
     // check model file name
-    // int start = model_file.find_first_of("/");
-    // int end = model_file.find_last_of("/");
-    // std::string model_name = model_file.substr(start + 1, end - start - 1);
-    // if (model_name.find("gpu") == model_name.npos) {
-    //   std::cerr << "[ERROR] predicted-model should use gpu model when use_gpu "
-    //                "is true \n";
-    //   exit(1);
-    // }
+    int start = detection_model_file.find_first_of("/");
+    int end = detection_model_file.find_last_of("/");
+    std::string model_name = detection_model_file.substr(start + 1, end - start - 1);
+    if (model_name.find("gpu") == model_name.npos) {
+      std::cerr << "[ERROR] detection-model should use gpu model when use_gpu "
+                   "is true \n";
+      exit(1);
+    }
+    start = classify_model_file.find_first_of("/");
+    end = classify_model_file.find_last_of("/");
+    model_name = classify_model_file.substr(start + 1, end - start - 1);
+    if (model_name.find("gpu") == model_name.npos) {
+      std::cerr << "[ERROR] classify-model should use gpu model when use_gpu "
+                   "is true \n";
+      exit(1);
+    }
   }
 
   run_model(detection_model_file, classify_model_file ,img_path, result_img_path,
