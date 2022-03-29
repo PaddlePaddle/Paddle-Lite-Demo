@@ -1,3 +1,7 @@
+[toc]
+
+
+
 # 口罩检测 C++ API Demo 使用指南
 
 在 Android 上实现实时的口罩检测功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
@@ -27,7 +31,7 @@
 4. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
 成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动识别图片中的物体并标记
 
-<img src=./mask_detection_install.png width=50%>
+<img src=./mask_detection_install.png width=30%>
 
 ![android_mask_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_mask_detection_cpu.jpg)
 
@@ -38,19 +42,19 @@
  * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
     * 替换 java 库
         * jar 包
-          将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar` 替换 Demo 中的 `Paddle-Lite-Demo/image_classification/android/cxx/image_classification/app/PaddleLite/java/PaddlePredictor.jar`
+          将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar` 替换 Demo 中的 `Paddle-Lite-Demo/mask_detection/android/cxx/mask_detection/app/PaddleLite/java/PaddlePredictor.jar`
         * Java so
             * armeabi-v7a
-              将生成的 `build.lite.android.armv7.clang/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/android/cxx/image_classification/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so`
+              将生成的 `build.lite.android.armv7.clang/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/mask_detection/android/cxx/mask_detection/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so`
             * arm64-v8a
-              将生成的 `build.lite.android.armv8.clang/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/android/cxx/image_classification/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so`
+              将生成的 `build.lite.android.armv8.clang/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/mask_detection/android/cxx/mask_detection/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so`
     * 替换 c++ 库
         * 头文件
-          将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demoimage_classification/android/cxx/image_classification/app/PaddleLite/cxx/include`
+          将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demomask_detection/android/cxx/mask_detection/app/PaddleLite/cxx/include`
         * armeabi-v7a
-          将生成的 `build.lite.android.armv7.clang/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/android/cxx/image_classification/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
+          将生成的 `build.lite.android.armv7.clang/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/mask_detection/android/cxx/mask_detection/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
         * arm64-v8a
-          将生成的 `build.lite.android.armv8.clang/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/android/cxx/image_classification/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
+          将生成的 `build.lite.android.armv8.clang/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/mask_detection/android/cxx/mask_detection/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
 
 ## Demo 内容介绍
 
@@ -62,37 +66,37 @@
 
 ```shell
 # 位置：
-image_classification/app/src/main/java/com/baidu/paddle/lite/demo/image_classification/Native.java
+mask_detection/app/src/main/java/com/baidu/paddle/lite/demo/mask_detection/Native.java
 ```
 
 2. `Native.cc`： Jni 预测代码用于 Java 与 C++ 语言传递信息
 
 ```shell
 # 位置：
-image_classification/app/src/main/cpp/Native.cc
+mask_detection/app/src/main/cpp/Native.cc
 ```
 
 3. `Pipeline.cc`： C++ 预测代码
 
 ```shell
 # 位置：
-image_classification/app/src/main/cpp/Pipeline.cc
+mask_detection/app/src/main/cpp/Pipeline.cc
 ```
 
 4. `model.nb` : 模型文件 (opt 工具转化后 Paddle Lite 模型), `labels.txt`：训练模型时的 `labels` 文件
 
 ```shell
 # 位置：
-image_classification/app/src/main/assets/models/mobilenet_v1_for_cpu/model.nb
-image_classification/app/src/main/assets/models/mobilenet_v1_for_gpu/model.nb
-image_classification/app/src/main/assets/labels/pascalvoc_label_list
+mask_detection/app/src/main/assets/models/mobilenet_v1_for_cpu/model.nb
+mask_detection/app/src/main/assets/models/mobilenet_v1_for_gpu/model.nb
+mask_detection/app/src/main/assets/labels/pascalvoc_label_list
 ```
 
 5. `libpaddle_lite_api_shared.so`：Paddle Lite C++ 预测库
 
 ```shell
 # 位置
-image_classification/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so
+mask_detection/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so
 # 如果要替换动态库 so，则将新的动态库 so 更新到此目录下
 ```
 
@@ -100,7 +104,7 @@ image_classification/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared
 
 ```shell
 # 位置
-image_classification/app/build.gradle
+mask_detection/app/build.gradle
 # 如果需要手动更新模型和预测库，则可将 gradle 脚本中的 `download*` 接口注释即可
 ```
 
@@ -108,7 +112,7 @@ image_classification/app/build.gradle
 
 ```shell
 # 位置
-image_classification/app/cpp/CMakeLists.txt
+mask_detection/app/cpp/CMakeLists.txt
 # 如果有cmake 编译选项更新，可以在 CMakeLists.txt 进行修改即可
 ```
 8. 如果想用 gpu 预测，点击界面的`是否使用GPU` 开关，当开关打开时，则用 GPU 推理；否则，使用 CPU 推理
@@ -118,8 +122,8 @@ image_classification/app/cpp/CMakeLists.txt
 * 模型存放，将下载好的模型解压存放在 `app/src/assets/models` 目录下
 * common Java 包
     在 `app/src/java/com/baidu/paddle/lite/demo/common` 目录下，实现一些公共处理内容，一般不用修改。其中，Utils.java 用于存放一些公用的且与 Java 基类无关的功能，例如模型拷贝、字符串类型转换等
-* image_classification Java 包
-    在 `app/src/java/com/baidu/paddle/lite/demo/image_classification` 目录下，实现 APP 界面消息事件和 Java/C++ 端代码互传的桥梁功能
+* mask_detection Java 包
+    在 `app/src/java/com/baidu/paddle/lite/demo/mask_detection` 目录下，实现 APP 界面消息事件和 Java/C++ 端代码互传的桥梁功能
 * MainActivity
     实现 APP 的创建、运行、释放功能
     重点关注 `onLoadModel` 和 `onRunModel` 函数，实现 APP 界面值传递和推理处理
@@ -182,7 +186,7 @@ image_classification/app/cpp/CMakeLists.txt
   Native 文件生成方法：
   
   ```shell
-    cd app/src/java/com/baidu/paddle/lite/demo/image_classification
+    cd app/src/java/com/baidu/paddle/lite/demo/mask_detection
     # 在当前目录会生成包含 Native 方法的头文件，用户可以将其内容拷贝至 `cpp/Native.cc` 中
     javac -classpath D:\dev\android-sdk\platforms\android-29\android.jar -encoding utf8 -h . Native.java 
   ```
@@ -268,13 +272,13 @@ for (int i = 0; i < outputSize; i += 6) {
 
 ### 更新模型
 
-1. 将优化后的模型存放到目录 `image_classification/app/src/main/assets/models/` 下；
-2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `mobilenet_v1_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `image_classification/app/src/main/java/com.baidu.paddle.lite.demo.image_classification/MainActivity.java` 中代码：
+1. 将优化后的模型存放到目录 `mask_detection/app/src/main/assets/models/` 下；
+2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `mobilenet_v1_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `mask_detection/app/src/main/java/com.baidu.paddle.lite.demo.mask_detection/MainActivity.java` 中代码：
 
-例子：假设更新 mobilenet_v2 模型为例，则先将优化后的模型存放到 `image_classification/app/src/main/assets/models/mobilenet_v2_for_cpu/mv2.nb` 下，然后更新代码
+例子：假设更新 mobilenet_v2 模型为例，则先将优化后的模型存放到 `mask_detection/app/src/main/assets/models/mobilenet_v2_for_cpu/mv2.nb` 下，然后更新代码
 
 ```java
-// 代码文件 `image_classification/app/src/main/java/com.baidu.paddle.lite.demo.image_classification/MainActivity.java`
+// 代码文件 `mask_detection/app/src/main/java/com.baidu.paddle.lite.demo.mask_detection/MainActivity.java`
 public boolean onLoadModel() {
         // push model to sdcard
         // String realModelDir = getExternalFilesDir(null) + "/" + modelPath;
@@ -294,10 +298,10 @@ public boolean onLoadModel() {
 
 **注意：**
 
-- 如果优化后的模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `image_classification/app/src/main/cpp/Pipeline.cc` 中代码
+- 如果优化后的模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `mask_detection/app/src/main/cpp/Pipeline.cc` 中代码
 
 ```c++
-// 代码文件 `image_classification/app/src/main/cpp/Pipeline.cc`
+// 代码文件 `mask_detection/app/src/main/cpp/Pipeline.cc`
 Classifier::Classifier(const std::string &modelDir,
                        const std::string &labelPath, const int cpuThreadNum,
                        const std::string &cpuPowerMode,
@@ -321,12 +325,12 @@ Classifier::Classifier(const std::string &modelDir,
 
 - 本 Demo 提供了 setting 界面，可以在将新模型 mobilenet_v2 放在 `assets/models/`后，不用手动更新代码，直接在安装好 APP 的 setting 界面更新模型路径即可
 
--  如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `image_classification/app/src/main/cpp/Pipeline.cc` 的 `Classifier::Preprocess` 预处理和 `Classifier::Postprocess` 后处理代码即可。
+-  如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `mask_detection/app/src/main/cpp/Pipeline.cc` 的 `Classifier::Preprocess` 预处理和 `Classifier::Postprocess` 后处理代码即可。
 
-- 如果需要更新 `labels.txt` 标签文件，则需要将新的标签文件存放在目录 `image_classification/app/src/main/assets/labels/` 下，并更新 `image_classification/app/src/main/java/com.baidu.paddle.lite.demo.image_classification/MainActivity.java` 中 `onLoadModel` 方法的标签文件路径名。
+- 如果需要更新 `labels.txt` 标签文件，则需要将新的标签文件存放在目录 `mask_detection/app/src/main/assets/labels/` 下，并更新 `mask_detection/app/src/main/java/com.baidu.paddle.lite.demo.mask_detection/MainActivity.java` 中 `onLoadModel` 方法的标签文件路径名。
 
 ```java
-// 代码文件 `image_classification/app/src/main/java/com.baidu.paddle.lite.demo.image_classification/MainActivity.java`
+// 代码文件 `mask_detection/app/src/main/java/com.baidu.paddle.lite.demo.mask_detection/MainActivity.java`
 public boolean onLoadModel() {
         // push model to sdcard
         String realModelDir = getExternalFilesDir(null) + "/" + modelPath;
@@ -347,13 +351,13 @@ public boolean onLoadModel() {
 ### 更新输入/输出预处理
 1. 更新输入数据
 
-- 将更新的图片存放在 `image_classification/app/src/main/assets/images/` 下；
-- 更新文件 `image_classification/app/src/main/java/com.baidu.paddle.lite.demo.image_classification/MainActivity.java`  中的代码
+- 将更新的图片存放在 `mask_detection/app/src/main/assets/images/` 下；
+- 更新文件 `mask_detection/app/src/main/java/com.baidu.paddle.lite.demo.mask_detection/MainActivity.java`  中的代码
 
-以更新 `dog.jpg` 为例，则先将 `dog.jpg` 存放在 `image_classification/app/src/main/assets/images/` 下，然后更新代码
+以更新 `dog.jpg` 为例，则先将 `dog.jpg` 存放在 `mask_detection/app/src/main/assets/images/` 下，然后更新代码
 
 ```c++
-// 代码文件 `image_classification/app/src/main/java/com.baidu.paddle.lite.demo.image_classification/MainActivity.java` 中 init 方法的图片路径
+// 代码文件 `mask_detection/app/src/main/java/com.baidu.paddle.lite.demo.mask_detection/MainActivity.java` 中 init 方法的图片路径
 public void onLoadModelSuccessed() {
         // Load test image from path and run model
         imagePath = "images/dog.jpg"; // change image_path
@@ -390,13 +394,13 @@ public void onLoadModelSuccessed() {
 
 
 2. 更新输入预处理
-此处需要更新 `image_classification/app/src/main/cpp/Pipeline.cc` 中的 `Classifier::Preprocess` 预处理代码实现就行。
+此处需要更新 `mask_detection/app/src/main/cpp/Pipeline.cc` 中的 `Classifier::Preprocess` 预处理代码实现就行。
 
 3. 更新输出预处理
-此处需要更新 `image_classification/app/src/main/cpp/Pipeline.cc` 中的 `Classifier::Postprocess` 预处理代码实现就行。
+此处需要更新 `mask_detection/app/src/main/cpp/Pipeline.cc` 中的 `Classifier::Postprocess` 预处理代码实现就行。
 
 ## 介绍 Pipeline 文件中的方法
-代码文件：`image_classification/app/src/main/cpp/Pipeline.cc`
+代码文件：`mask_detection/app/src/main/cpp/Pipeline.cc`
 `Pipeline.cc` 包含两个类：Classifier 和 Pipeline 类
 
 - Classifier 用于分类模型的全流程处理，即输入图片预处理、预测处理和输出图片后处理
@@ -455,18 +459,18 @@ bool Pipeline::Process(cv::Mat &rgbaImage);
 ### setting 界面参数更新
 1）打开 APP，点击右上角的 `:` 符合，选择 `Settings..` 选项，打开 setting 界面；
 <p align="center">
-<img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/android/app_settings.jpg"/>
+<img src="https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/app_settings.jpg"/>
 </p>
 
 2）再将 setting 界面的 Enable custom settings 选中☑️，然后更新部分参数；
 <p align="center">
-<img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/android/app_settings_run.jpg"/>
+<img src="https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/app_settings_run.jpg"/>
 </p>
 
 3）假设更新线程数据，将 CPU Thread Num 设置为 4，更新后，返回原界面，APP将自动重新预测，并打印 4 线程的耗时和结果
 <p align="center">
-<img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/android/app_settings_thread.jpg"/>
+<img src="https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/app_settings_thread.jpg"/>
 </p>
 <p align="center">
-<img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/android/app_settings_res.jpg"/>
+<img src="https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/app_settings_res.jpg"/>
 </p>
