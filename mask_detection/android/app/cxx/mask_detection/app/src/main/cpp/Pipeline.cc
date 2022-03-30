@@ -146,7 +146,8 @@ void MaskClassifier::Preprocess(const cv::Mat &rgbaImage,
     cv::Mat resizedRGBAImage(
         rgbaImage, cv::Rect(cx - w / 2, cy - h / 2, w, h) &
                        cv::Rect(0, 0, rgbaImage.cols - 1, rgbaImage.rows - 1));
-    cv::resize(resizedRGBAImage, resizedRGBAImage, cv::Size(inputShape[3], inputShape[2]));
+    cv::resize(resizedRGBAImage, resizedRGBAImage,
+               cv::Size(inputShape[3], inputShape[2]));
     cv::Mat resizedBGRImage;
     cv::cvtColor(resizedRGBAImage, resizedBGRImage, cv::COLOR_RGBA2BGR);
     resizedBGRImage.convertTo(resizedBGRImage, CV_32FC3, 1.0 / 255.0f);

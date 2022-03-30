@@ -86,14 +86,14 @@ void neon_mean_scale(const float *din, float *dout, int size, float *mean,
 }
 
 void Detector_Preprocess(std::shared_ptr<PaddlePredictor> predictor,
-                 const std::string img_path, int width, int height,
-                 cv::Mat& rgb_img, cv::Mat& bgr_img) {
+                         const std::string img_path, int width, int height,
+                         cv::Mat &rgb_img, cv::Mat &bgr_img) {
   // Prepare input data from image
   std::unique_ptr<Tensor> input_tensor(std::move(predictor->GetInput(0)));
-  
+
   // read img and pre-process
   bgr_img = imread(img_path, cv::IMREAD_COLOR);
-  float means[3] = {0.407843,0.694118,0.482353};
+  float means[3] = {0.407843, 0.694118, 0.482353};
   float scales[3] = {0.5f, 0.5f, 0.5f};
   cv::Mat resizedBGRImage;
   cv::cvtColor(bgr_img, rgb_img, cv::COLOR_BGR2RGB);
@@ -102,12 +102,12 @@ void Detector_Preprocess(std::shared_ptr<PaddlePredictor> predictor,
   input_tensor->Resize({1, 3, width, height});
   const float *dimg = reinterpret_cast<const float *>(resizedBGRImage.data);
   auto *data = input_tensor->mutable_data<float>();
-  neon_mean_scale(dimg, data, resizedBGRImage.cols * resizedBGRImage.rows, means, scales);
+  neon_mean_scale(dimg, data, resizedBGRImage.cols * resizedBGRImage.rows,
+                  means, scales);
 }
 
-void Detector_Postprocess(const cv::Mat &rgbImage,
-                          std::vector<Face> *faces,
-                          std::shared_ptr<PaddlePredictor>& predictor,
+void Detector_Postprocess(const cv::Mat &rgbImage, std::vector<Face> *faces,
+                          std::shared_ptr<PaddlePredictor> &predictor,
                           float scoreThreshold) {
   int imageWidth = rgbImage.cols;
   int imageHeight = rgbImage.rows;
@@ -138,8 +138,8 @@ void Detector_Postprocess(const cv::Mat &rgbImage,
 }
 
 void MaskClassifier_Preprocess(const cv::Mat &rgbImage,
-                              const std::vector<Face> &faces,
-                              std::shared_ptr<PaddlePredictor>& predictor) {
+                               const std::vector<Face> &faces,
+                               std::shared_ptr<PaddlePredictor> &predictor) {
   // Prepare input tensor
   auto inputTensor = predictor->GetInput(0);
   int batchSize = faces.size();
@@ -168,15 +168,16 @@ void MaskClassifier_Preprocess(const cv::Mat &rgbImage,
     }
     cv::Mat resizedRGBImage(
         rgbImage, cv::Rect(cx - w / 2, cy - h / 2, w, h) &
-                       cv::Rect(0, 0, rgbImage.cols - 1, rgbImage.rows - 1));
-    cv::resize(resizedRGBImage, resizedRGBImage, cv::Size(inputShape[3], inputShape[2]));
+                      cv::Rect(0, 0, rgbImage.cols - 1, rgbImage.rows - 1));
+    cv::resize(resizedRGBImage, resizedRGBImage,
+               cv::Size(inputShape[3], inputShape[2]));
     cv::Mat resizedBGRImage;
     cv::cvtColor(resizedRGBImage, resizedBGRImage, cv::COLOR_RGB2BGR);
     resizedBGRImage.convertTo(resizedBGRImage, CV_32FC3, 1.0 / 255.0f);
     float means[3] = {0.5f, 0.5f, 0.5f};
     float scales[3] = {1.f, 1.f, 1.f};
-    neon_mean_scale(reinterpret_cast<const float *>(resizedBGRImage.data), inputData,
-              inputShape[2] * inputShape[3], means, scales);
+    neon_mean_scale(reinterpret_cast<const float *>(resizedBGRImage.data),
+                    inputData, inputShape[2] * inputShape[3], means, scales);
     inputData += inputShape[1] * inputShape[2] * inputShape[3];
   }
 }
@@ -187,8 +188,7 @@ inline double GetCurrentUS() {
   return 1e+6 * time.tv_sec + time.tv_usec;
 }
 
-void VisualizeResults(const std::vector<Face> &faces,
-                                cv::Mat *gbrImage) {
+void VisualizeResults(const std::vector<Face> &faces, cv::Mat *gbrImage) {
   for (int i = 0; i < faces.size(); i++) {
     auto roi = faces[i].roi;
     // Configure color and text size
@@ -223,7 +223,8 @@ void VisualizeResults(const std::vector<Face> &faces,
   }
 }
 
-void MaskClassifier_Postprocess(std::vector<Face> *faces,std::shared_ptr<PaddlePredictor> &predictor) {
+void MaskClassifier_Postprocess(std::vector<Face> *faces,
+                                std::shared_ptr<PaddlePredictor> &predictor) {
   auto outputTensor = predictor->GetOutput(0);
   auto outputData = outputTensor->data<float>();
   auto outputShape = outputTensor->shape();
@@ -243,19 +244,21 @@ void MaskClassifier_Postprocess(std::vector<Face> *faces,std::shared_ptr<PaddleP
   }
 }
 
-void run_model(std::string detection_model_file, std::string classify_model_file,
-               std::string img_path, std::string result_img_path,
-               int height, int width, int power_mode, int thread_num,
-               int repeats, int warmup) {
+void run_model(std::string detection_model_file,
+               std::string classify_model_file, std::string img_path,
+               std::string result_img_path, int height, int width,
+               int power_mode, int thread_num, int repeats, int warmup) {
 
   // 1. Set MobileConfig
   MobileConfig detection_config;
   detection_config.set_model_from_file(detection_model_file);
-  detection_config.set_power_mode(static_cast<paddle::lite_api::PowerMode>(power_mode));
+  detection_config.set_power_mode(
+      static_cast<paddle::lite_api::PowerMode>(power_mode));
   detection_config.set_threads(thread_num);
   MobileConfig classify_config;
   classify_config.set_model_from_file(classify_model_file);
-  classify_config.set_power_mode(static_cast<paddle::lite_api::PowerMode>(power_mode));
+  classify_config.set_power_mode(
+      static_cast<paddle::lite_api::PowerMode>(power_mode));
   classify_config.set_threads(thread_num);
 
   // 2. Create PaddlePredictor by MobileConfig
@@ -265,7 +268,7 @@ void run_model(std::string detection_model_file, std::string classify_model_file
       CreatePaddlePredictor<MobileConfig>(classify_config);
 
   // 3. Prepare input data from image
-  cv::Mat rgbImage; 
+  cv::Mat rgbImage;
   cv::Mat gbrImage;
   float scoreThreshold = 0.7;
   std::vector<Face> face;
@@ -276,22 +279,25 @@ void run_model(std::string detection_model_file, std::string classify_model_file
     if (widx == 0) {
       auto start = GetCurrentUS();
 
-      Detector_Preprocess(detection_predictor, img_path, width, height, rgbImage, gbrImage);
+      Detector_Preprocess(detection_predictor, img_path, width, height,
+                          rgbImage, gbrImage);
       detection_predictor->Run();
-      Detector_Postprocess(rgbImage, &face, detection_predictor, scoreThreshold);
+      Detector_Postprocess(rgbImage, &face, detection_predictor,
+                           scoreThreshold);
       MaskClassifier_Preprocess(rgbImage, face, classify_predictor);
       classify_predictor->Run();
       MaskClassifier_Postprocess(&face, classify_predictor);
 
       first_duration = (GetCurrentUS() - start) / 1000.0;
     } else {
-      Detector_Preprocess(detection_predictor, img_path, width, height, rgbImage, gbrImage);
+      Detector_Preprocess(detection_predictor, img_path, width, height,
+                          rgbImage, gbrImage);
       detection_predictor->Run();
-      Detector_Postprocess(rgbImage, &face, detection_predictor, scoreThreshold);
+      Detector_Postprocess(rgbImage, &face, detection_predictor,
+                           scoreThreshold);
       MaskClassifier_Preprocess(rgbImage, face, classify_predictor);
       classify_predictor->Run();
       MaskClassifier_Postprocess(&face, classify_predictor);
-
     }
   }
 
@@ -302,7 +308,8 @@ void run_model(std::string detection_model_file, std::string classify_model_file
   for (size_t ridx = 0; ridx < repeats; ++ridx) {
     auto start = GetCurrentUS();
 
-    Detector_Preprocess(detection_predictor, img_path, width, height, rgbImage, gbrImage);
+    Detector_Preprocess(detection_predictor, img_path, width, height, rgbImage,
+                        gbrImage);
     detection_predictor->Run();
     Detector_Postprocess(rgbImage, &face, detection_predictor, scoreThreshold);
     MaskClassifier_Preprocess(rgbImage, face, classify_predictor);
@@ -342,13 +349,13 @@ void run_model(std::string detection_model_file, std::string classify_model_file
 
   // 5. Get output and post process
   std::cout << "\n====== output summary ====== " << std::endl;
-
 }
 
 int main(int argc, char **argv) {
   if (argc < 5) {
     std::cerr << "[ERROR] usage: " << argv[0]
-              << "detection_model_file, classify_model_file, image_path, result_img_path\n";
+              << "detection_model_file, classify_model_file, image_path, "
+                 "result_img_path\n";
     exit(1);
   }
 
@@ -401,7 +408,8 @@ int main(int argc, char **argv) {
     // check model file name
     int start = detection_model_file.find_first_of("/");
     int end = detection_model_file.find_last_of("/");
-    std::string model_name = detection_model_file.substr(start + 1, end - start - 1);
+    std::string model_name =
+        detection_model_file.substr(start + 1, end - start - 1);
     if (model_name.find("gpu") == model_name.npos) {
       std::cerr << "[ERROR] detection-model should use gpu model when use_gpu "
                    "is true \n";
@@ -417,8 +425,8 @@ int main(int argc, char **argv) {
     }
   }
 
-  run_model(detection_model_file, classify_model_file ,img_path, result_img_path,
-            height, width, power_mode,
-            thread_num, repeats, warmup);
+  run_model(detection_model_file, classify_model_file, img_path,
+            result_img_path, height, width, power_mode, thread_num, repeats,
+            warmup);
   return 0;
 }

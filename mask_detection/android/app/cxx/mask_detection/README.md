@@ -438,6 +438,3 @@ bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
 </p>
 
 2）假设更新线程数据，将 CPU Thread Num 设置为 4，更新后，返回原界面，APP将自动重新预测，并可以在左上角观察到启用 4 线程时每个模型的预测耗时。
-
-
-
