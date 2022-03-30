@@ -107,28 +107,33 @@ void pre_process(std::shared_ptr<PaddlePredictor> predictor,
   neon_mean_scale(dimg, data, width * height, mean, scale);
 }
 
-void post_process(std::shared_ptr<PaddlePredictor> predictor, const std::string img_path, const std::vector<std::string> &labels) {
+void post_process(std::shared_ptr<PaddlePredictor> predictor,
+                  const std::string img_path,
+                  const std::vector<std::string> &labels) {
   std::unique_ptr<const Tensor> output_tensor(
       std::move(predictor->GetOutput(0)));
   auto output_data = output_tensor->data<int64_t>();
   auto output_shape = output_tensor->shape();
   cv::Mat img = imread(img_path, cv::IMREAD_COLOR);
   cv::Mat rgb_img;
-  cv::resize(img, rgb_img, cv::Size(output_shape[2], output_shape[1]), 0.f, 0.f);
-  if("background" == labels[0]) {
-    for(int i = 0; i < output_shape[1]; i++) {
-      for(int j = 0; j < output_shape[2]; j++) {
-        int tmp_pix = rgb_img.at<cv::Vec3b>(i, j)[2] + output_data[i * output_shape[2] + j] * 150;
+  cv::resize(img, rgb_img, cv::Size(output_shape[2], output_shape[1]), 0.f,
+             0.f);
+  if ("background" == labels[0]) {
+    for (int i = 0; i < output_shape[1]; i++) {
+      for (int j = 0; j < output_shape[2]; j++) {
+        int tmp_pix = rgb_img.at<cv::Vec3b>(i, j)[2] +
+                      output_data[i * output_shape[2] + j] * 150;
         rgb_img.at<cv::Vec3b>(i, j)[2] = tmp_pix > 255 ? 255 : tmp_pix;
-        tmp_pix = rgb_img.at<cv::Vec3b>(i, j)[1] + output_data[i * output_shape[2] + j] * 150;
+        tmp_pix = rgb_img.at<cv::Vec3b>(i, j)[1] +
+                  output_data[i * output_shape[2] + j] * 150;
         rgb_img.at<cv::Vec3b>(i, j)[1] = tmp_pix > 255 ? 255 : tmp_pix;
       }
     }
   } else {
-    for(int i = 0; i < output_shape[1]; i++) {
-      for(int j = 0; j < output_shape[2]; j++) {
+    for (int i = 0; i < output_shape[1]; i++) {
+      for (int j = 0; j < output_shape[2]; j++) {
         int mask_pix = output_data[i * output_shape[2] + j] ^ 0;
-        int tmp_pix = rgb_img.at<cv::Vec3b>(i, j)[2] + mask_pix  * 150;
+        int tmp_pix = rgb_img.at<cv::Vec3b>(i, j)[2] + mask_pix * 150;
         rgb_img.at<cv::Vec3b>(i, j)[2] = tmp_pix > 255 ? 255 : tmp_pix;
         tmp_pix = rgb_img.at<cv::Vec3b>(i, j)[1] + mask_pix * 150;
         rgb_img.at<cv::Vec3b>(i, j)[1] = tmp_pix > 255 ? 255 : tmp_pix;
@@ -140,9 +145,8 @@ void post_process(std::shared_ptr<PaddlePredictor> predictor, const std::string 
 }
 
 void run_model(std::string model_file, std::string img_path,
-               const std::vector<std::string> &labels,
-               int width, int height, int power_mode, int thread_num,
-               int repeats, int warmup) {
+               const std::vector<std::string> &labels, int width, int height,
+               int power_mode, int thread_num, int repeats, int warmup) {
   // 1. Set MobileConfig
   MobileConfig config;
   config.set_model_from_file(model_file);
@@ -254,8 +258,8 @@ int main(int argc, char **argv) {
   if (argc > 10) {
     use_gpu = atoi(argv[10]);
   }
-  
-  run_model(model_file, img_path, labels, width, height, power_mode,
-            thread_num, repeats, warmup);
+
+  run_model(model_file, img_path, labels, width, height, power_mode, thread_num,
+            repeats, warmup);
   return 0;
 }
