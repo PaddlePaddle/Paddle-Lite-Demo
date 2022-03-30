@@ -29,7 +29,7 @@ adb shell "cd ${ADB_DIR} \
                ./images/tabby_cat.jpg \
                ./labels/labels.txt \
                3 224 224 \
-               0 1 100 10 0 \
+               0 1 10 1 0 \
                "
 # if run on gpu
 # echo "--run model on gpu---"
@@ -41,5 +41,5 @@ adb shell "cd ${ADB_DIR} \
 #                ./images/tabby_cat.jpg \
 #                ./labels/labels.txt \
 #                3 224 224 \
-#                0 1 100 10 1 \
+#                0 1 10 1 1 \
 #                "

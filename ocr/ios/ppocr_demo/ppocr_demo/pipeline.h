@@ -14,9 +14,9 @@
 
 #pragma once
 #include "cls_process.h"
-#include "rec_process.h"
 #include "det_process.h"
 #include "paddle_api.h"
+#include "rec_process.h"
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -30,10 +30,11 @@ class Pipeline {
 public:
   Pipeline(const std::string &detModelDir, const std::string &clsModelDir,
            const std::string &recModelDir, const std::string &cPUPowerMode,
-           const int cPUThreadNum,
-           const std::string &config_path, const std::string &dict_path);
+           const int cPUThreadNum, const std::string &config_path,
+           const std::string &dict_path);
 
-    cv::Mat Process(cv::Mat srcimg, std::string output_img_path, std::vector<std::string> &res_txt);
+  cv::Mat Process(cv::Mat srcimg, std::string output_img_path,
+                  std::vector<std::string> &res_txt);
 
 private:
   std::map<std::string, double> Config_;

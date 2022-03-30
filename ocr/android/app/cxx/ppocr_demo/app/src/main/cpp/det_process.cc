@@ -1,3 +1,17 @@
+// Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 //
 // Created by chenjiao04 on 2021/12/4.
 //
@@ -53,25 +67,27 @@ DetPredictor::DetPredictor(const std::string &modelDir, const int cpuThreadNum,
           config);
 }
 
-void DetPredictor::Preprocess(const cv::Mat &srcimg, const int max_side_len){
-   cv::Mat img = DetResizeImg(srcimg, max_side_len, ratio_hw_);
-   cv::Mat img_fp;
-   img.convertTo(img_fp, CV_32FC3, 1.0 / 255.f);
+void DetPredictor::Preprocess(const cv::Mat &srcimg, const int max_side_len) {
+  cv::Mat img = DetResizeImg(srcimg, max_side_len, ratio_hw_);
+  cv::Mat img_fp;
+  img.convertTo(img_fp, CV_32FC3, 1.0 / 255.f);
 
-   // Prepare input data from image
-   std::unique_ptr<Tensor> input_tensor0(std::move(predictor_->GetInput(0)));
-   input_tensor0->Resize({1, 3, img_fp.rows, img_fp.cols});
-   auto *data0 = input_tensor0->mutable_data<float>();
+  // Prepare input data from image
+  std::unique_ptr<Tensor> input_tensor0(std::move(predictor_->GetInput(0)));
+  input_tensor0->Resize({1, 3, img_fp.rows, img_fp.cols});
+  auto *data0 = input_tensor0->mutable_data<float>();
 
-   std::vector<float> mean = {0.485f, 0.456f, 0.406f};
-   std::vector<float> scale = {1 / 0.229f, 1 / 0.224f, 1 / 0.225f};
-   const float *dimg = reinterpret_cast<const float *>(img_fp.data);
+  std::vector<float> mean = {0.485f, 0.456f, 0.406f};
+  std::vector<float> scale = {1 / 0.229f, 1 / 0.224f, 1 / 0.225f};
+  const float *dimg = reinterpret_cast<const float *>(img_fp.data);
 
-   NHWC3ToNC3HW(dimg, data0, img_fp.rows * img_fp.cols, mean, scale);
+  NHWC3ToNC3HW(dimg, data0, img_fp.rows * img_fp.cols, mean, scale);
 }
 
-std::vector<std::vector<std::vector<int>>> DetPredictor::Postprocess(
-      const cv::Mat srcimg, std::map<std::string, double> Config, int det_db_use_dilate){
+std::vector<std::vector<std::vector<int>>>
+DetPredictor::Postprocess(const cv::Mat srcimg,
+                          std::map<std::string, double> Config,
+                          int det_db_use_dilate) {
   // Get output and post process
   std::unique_ptr<const Tensor> output_tensor(
       std::move(predictor_->GetOutput(0)));
@@ -111,17 +127,18 @@ std::vector<std::vector<std::vector<int>>> DetPredictor::Postprocess(
   return filter_boxes;
 }
 
-std::vector<std::vector<std::vector<int>>> DetPredictor::Predict(cv::Mat &img,
-     std::map<std::string, double> Config, double *preprocessTime,
-     double *predictTime, double *postprocessTime) {
-  // auto t = GetCurrentTime();   
+std::vector<std::vector<std::vector<int>>>
+DetPredictor::Predict(cv::Mat &img, std::map<std::string, double> Config,
+                      double *preprocessTime, double *predictTime,
+                      double *postprocessTime) {
+  // auto t = GetCurrentTime();
   cv::Mat srcimg;
   img.copyTo(srcimg);
 
   // Read img
   int max_side_len = int(Config["max_side_len"]);
   int det_db_use_dilate = int(Config["det_db_use_dilate"]);
-  
+
   Preprocess(img, max_side_len);
 
   // *preprocessTime = GetElapsedTime(t);
@@ -130,7 +147,7 @@ std::vector<std::vector<std::vector<int>>> DetPredictor::Predict(cv::Mat &img,
   // Run predictor
   predictor_->Run();
   // *predictTime = GetElapsedTime(t);
- 
+
   // t = GetCurrentTime();
   auto filter_boxes = Postprocess(srcimg, Config, det_db_use_dilate);
   // *postprocessTime = GetElapsedTime(t);

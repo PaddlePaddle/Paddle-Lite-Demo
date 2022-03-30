@@ -14,10 +14,10 @@
 
 #pragma once
 
+#include "paddle_api.h"
 #include <fstream>
 #include <string>
 #include <vector>
-#include "paddle_api.h"
 
 inline paddle::lite_api::PowerMode ParsePowerMode(std::string mode) {
   if (mode == "LITE_POWER_HIGH") {
