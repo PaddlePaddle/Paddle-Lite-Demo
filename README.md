@@ -144,3 +144,16 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
      * 基于MobileNetV1-SSD的目标检测
 
      ![armlinux_object_detection_raspberry_pi](https://paddlelite-demo.bj.bcebos.com/doc/armlinux_object_detection.jpg)
+
+## 性能优化
+
+* 多线程设置：
+  - demo 中线程数默认是1，用户可以根据手机大核个数，设置最大线程数。如小米9，它有4个A76 大核，线程数最大设置为4；
+  - 设置方法：可以通过界面的setting 按钮进行更新，也可以通过修改源码（`config.set_threads()`）的线程数进行更新。
+* FP16 推理：
+  - demo 中模型默认是FP32 模型，如果**你是在armv8.2 架构以上的手机运行如小米9，则可选用FP16 模型进行推理**；否则，不能使用FP16 模型进行推理。
+  - FP16 推理方法：如果 APP 中 `assets/model` 目录下提供了FP16 模型（nb 模型以_fp16结尾），用户只需更新源码模型路径就行；否则，用户需要下载 [OPT 可执行文件](https://github.com/PaddlePaddle/Paddle-Lite/releases/tag/v2.10)，并参考 [OPT 使用文档](https://paddle-lite.readthedocs.io/zh/develop/user_guides/opt/opt_bin.html)重新转换模型(将 `enable_fp16` 设置为 true，如 `--enable_fp16=1`），然后更新源码中模型路径即可。
+  - 如果提供的预测库没有包含FP16 kernel 算子话，用户需要从 [release 仓库](https://github.com/PaddlePaddle/Paddle-Lite/tags)中下载含有FP16 kernel新的预测库。
+* Int8/稀疏推理：
+  - 用户可以使用 [PaddleSlim 工具](https://github.com/PaddlePaddle/PaddleSlim) 完成模型量化/稀疏化处理，进一步提升模型性能。
+  - 使用方法：用 PaddleSlim 生成新模型，然后参考 FP16 推理方法，更新 demo 中预测模型即可。

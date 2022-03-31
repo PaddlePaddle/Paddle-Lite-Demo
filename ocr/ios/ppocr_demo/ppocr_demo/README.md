@@ -284,3 +284,6 @@ OCR 文字识别 Demo 由三个模型一起完成 OCR 文字识别功能，对�
 
   - `std::vector<std::vector<std::vector<int>>> BoxesFromBitmap(...)` 方法从 Bitmap 图中获取检测框
   - `std::vector<std::vector<std::vector<int>>> FilterTagDetRes(...)` 方法根据识别结果获取目标框位置
+
+## 性能优化方法
+如果你觉得当前性能不符合需求，想进一步提升模型性能，可参考[首页中性能优化文档](/README.md)完成性能优化。

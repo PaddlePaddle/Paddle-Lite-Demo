@@ -486,3 +486,6 @@ bool Pipeline::Process(cv::Mat &rgbaImage, std::string savedImagePath)；
     - input_mean 默认是 `0.5,0.5,0.5`
     - input_std  默认是 `0.5,0.5,0.5`
     - score_threshold 默认是 `0.5`
+
+## 性能优化方法
+如果你觉得当前性能不符合需求，想进一步提升模型性能，可参考[首页中性能优化文档](/README.md)完成性能优化。
