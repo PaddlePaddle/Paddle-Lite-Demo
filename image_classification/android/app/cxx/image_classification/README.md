@@ -468,3 +468,6 @@ bool Pipeline::Process(cv::Mat &rgbaImage);
 <p align="center">
 <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/android/app_settings_res.jpg"/>
 </p>
+
+## 性能优化方法
+如果你觉得当前性能不符合需求，想进一步提升模型性能，可参考[首页中性能优化文档](/README.md)完成性能优化。

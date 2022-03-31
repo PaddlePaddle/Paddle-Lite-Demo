@@ -173,3 +173,6 @@ python ./image_classification.py --model_dir ../../../assets/models/mobilenet_v2
 
 3. 更新输出预处理
 更新文件 `image_classification/liunx/shell/python/image_classifiction.py` 代码中的 `PostProcess` 操作
+
+## 性能优化方法
+如果你觉得当前性能不符合需求，想进一步提升模型性能，可参考[首页中性能优化文档](/README.md)完成性能优化。
