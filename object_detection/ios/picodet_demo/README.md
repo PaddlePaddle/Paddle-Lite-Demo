@@ -83,7 +83,7 @@ cd ..
 
 成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
 
-<p align="center"><img width="300" height="350"  src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/IOS_app.jpeg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="300" height="350"  src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_run_app.jpg"/></p>
+<p align="center"><img width="350" height="500" src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/IOS_app.jpeg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500" src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_run_app.jpg"/></p>
 
 
 ## 更新预测库
