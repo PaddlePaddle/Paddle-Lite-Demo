@@ -1,0 +1,372 @@
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"supportedProtocolVersions":[{"isExperimental":true,"major":1,"minor":1}],"type":"hello"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {
+  "type": "handshake",
+  "cookie": "gradle-cmake-cookie",
+  "protocolVersion": {
+    "isExperimental": true,
+    "major": 1,
+    "minor": 1
+  },
+  "sourceDirectory": "/Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/src/main/cpp",
+  "buildDirectory": "/Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/.cxx/cmake/debug/arm64-v8a",
+  "generator": "Ninja"
+}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"gradle-cmake-cookie","inReplyTo":"handshake","type":"reply"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {
+  "type": "configure",
+  "cacheArguments": [
+    "",
+    "-DCMAKE_CXX_FLAGS\u003d-std\u003dc++11",
+    "-DCMAKE_FIND_ROOT_PATH\u003d/Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/.cxx/cmake/debug/prefab/arm64-v8a/prefab",
+    "-DCMAKE_BUILD_TYPE\u003dDebug",
+    "-DCMAKE_TOOLCHAIN_FILE\u003d/Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/build/cmake/android.toolchain.cmake",
+    "-DANDROID_ABI\u003darm64-v8a",
+    "-DANDROID_NDK\u003d/Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570",
+    "-DCMAKE_ANDROID_ARCH_ABI\u003darm64-v8a",
+    "-DCMAKE_ANDROID_NDK\u003d/Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570",
+    "-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON",
+    "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003d/Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/build/intermediates/cmake/debug/obj/arm64-v8a",
+    "-DCMAKE_MAKE_PROGRAM\u003d/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja",
+    "-DCMAKE_SYSTEM_NAME\u003dAndroid",
+    "-DCMAKE_SYSTEM_VERSION\u003d16",
+    "-DANDROID_PLATFORM\u003dandroid-23",
+    "-DANDROID_STL\u003dc++_shared"
+  ]
+}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Check for working C compiler: /Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Check for working C compiler: /Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang
+CMAKE SERVER: Check for working C compiler: /Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","progressCurrent":33,"progressMaximum":1000,"progressMessage":"Configuring","progressMinimum":0,"type":"progress"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Check for working C compiler: /Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang -- works","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Check for working C compiler: /Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang -- works
+CMAKE SERVER: Check for working C compiler: /Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang -- works
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Detecting C compiler ABI info","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Detecting C compiler ABI info
+CMAKE SERVER: Detecting C compiler ABI info
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","progressCurrent":65,"progressMaximum":1000,"progressMessage":"Configuring","progressMinimum":0,"type":"progress"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Detecting C compiler ABI info - done","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Detecting C compiler ABI info - done
+CMAKE SERVER: Detecting C compiler ABI info - done
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Detecting C compile features","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Detecting C compile features
+CMAKE SERVER: Detecting C compile features
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","progressCurrent":96,"progressMaximum":1000,"progressMessage":"Configuring","progressMinimum":0,"type":"progress"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","progressCurrent":126,"progressMaximum":1000,"progressMessage":"Configuring","progressMinimum":0,"type":"progress"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","progressCurrent":155,"progressMaximum":1000,"progressMessage":"Configuring","progressMinimum":0,"type":"progress"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Detecting C compile features - done","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Detecting C compile features - done
+CMAKE SERVER: Detecting C compile features - done
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Check for working CXX compiler: /Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Check for working CXX compiler: /Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++
+CMAKE SERVER: Check for working CXX compiler: /Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","progressCurrent":184,"progressMaximum":1000,"progressMessage":"Configuring","progressMinimum":0,"type":"progress"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Check for working CXX compiler: /Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ -- works","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Check for working CXX compiler: /Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ -- works
+CMAKE SERVER: Check for working CXX compiler: /Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ -- works
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Detecting CXX compiler ABI info","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Detecting CXX compiler ABI info
+CMAKE SERVER: Detecting CXX compiler ABI info
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","progressCurrent":211,"progressMaximum":1000,"progressMessage":"Configuring","progressMinimum":0,"type":"progress"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Detecting CXX compiler ABI info - done","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Detecting CXX compiler ABI info - done
+CMAKE SERVER: Detecting CXX compiler ABI info - done
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Detecting CXX compile features","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Detecting CXX compile features
+CMAKE SERVER: Detecting CXX compile features
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","progressCurrent":237,"progressMaximum":1000,"progressMessage":"Configuring","progressMinimum":0,"type":"progress"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","progressCurrent":262,"progressMaximum":1000,"progressMessage":"Configuring","progressMinimum":0,"type":"progress"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","progressCurrent":287,"progressMaximum":1000,"progressMessage":"Configuring","progressMinimum":0,"type":"progress"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","progressCurrent":311,"progressMaximum":1000,"progressMessage":"Configuring","progressMinimum":0,"type":"progress"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Detecting CXX compile features - done","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Detecting CXX compile features - done
+CMAKE SERVER: Detecting CXX compile features - done
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Found OpenCV: /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV (found version \"4.2.0\") ","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Found OpenCV: /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV (found version "4.2.0") 
+CMAKE SERVER: Found OpenCV: /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV (found version "4.2.0") 
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"OpenCV libraries: opencv_calib3d;opencv_core;opencv_dnn;opencv_features2d;opencv_flann;opencv_highgui;opencv_imgcodecs;opencv_imgproc;opencv_ml;opencv_objdetect;opencv_photo;opencv_stitching;opencv_video;opencv_videoio","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: OpenCV libraries: opencv_calib3d;opencv_core;opencv_dnn;opencv_features2d;opencv_flann;opencv_highgui;opencv_imgcodecs;opencv_imgproc;opencv_ml;opencv_objdetect;opencv_photo;opencv_stitching;opencv_video;opencv_videoio
+CMAKE SERVER: OpenCV libraries: opencv_calib3d;opencv_core;opencv_dnn;opencv_features2d;opencv_flann;opencv_highgui;opencv_imgcodecs;opencv_imgproc;opencv_ml;opencv_objdetect;opencv_photo;opencv_stitching;opencv_video;opencv_videoio
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","progressCurrent":1000,"progressMaximum":1000,"progressMessage":"Configuring","progressMinimum":0,"type":"progress"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","message":"Configuring done","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Configuring done
+CMAKE SERVER: Configuring done
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"configure","type":"reply"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"type":"compute"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"compute","progressCurrent":1000,"progressMaximum":1000,"progressMessage":"Generating","progressMinimum":0,"type":"progress"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"compute","message":"Generating done","type":"message"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: Generating done
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"cookie":"","inReplyTo":"compute","type":"reply"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"type":"cmakeInputs"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"buildFiles":[{"isCMake":true,"isTemporary":false,"sources":["/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineSystem.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Determine.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeSystem.cmake.in","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeSystemSpecificInitialize.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Initialize.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCCompiler.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCompiler.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Determine-C.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android/Determine-Compiler.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeFindBinUtils.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-FindBinUtils.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCCompiler.cmake.in","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCXXCompiler.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCompiler.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Determine-CXX.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android/Determine-Compiler.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeFindBinUtils.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-FindBinUtils.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCXXCompiler.cmake.in","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeSystemSpecificInformation.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeGenericSystem.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Linux.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/UnixPaths.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCInformation.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeLanguageInformation.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-C.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/CMakeCommonCompilerMacros.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/GNU.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/CMakeCommonCompilerMacros.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Clang-C.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Clang.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCommonLanguageInclude.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeTestCCompiler.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeTestCompilerCommon.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCompilerABI.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeParseImplicitLinkInfo.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCCompilerABI.c","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCompileFeatures.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Internal/FeatureTesting.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-C-FeatureTests.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-C-FeatureTests.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-C-FeatureTests.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCCompiler.cmake.in","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCXXInformation.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeLanguageInformation.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Clang-CXX.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Clang.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCommonLanguageInclude.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeTestCXXCompiler.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeTestCompilerCommon.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCompilerABI.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeParseImplicitLinkInfo.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCXXCompilerABI.cpp","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCompileFeatures.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Internal/FeatureTesting.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-FeatureTests.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-TestableFeatures.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-FeatureTests.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-TestableFeatures.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-FeatureTests.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-TestableFeatures.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-FeatureTests.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-TestableFeatures.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCXXCompiler.cmake.in","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/FindPackageHandleStandardArgs.cmake","/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/FindPackageMessage.cmake"]},{"isCMake":false,"isTemporary":false,"sources":["CMakeLists.txt","/Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/build/cmake/android.toolchain.cmake","/Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/build/cmake/platforms.cmake","/Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/build/cmake/android.toolchain.cmake","../../../OpenCV/sdk/native/jni/OpenCVConfig-version.cmake","../../../OpenCV/sdk/native/jni/OpenCVConfig.cmake","../../../OpenCV/sdk/native/jni/abi-arm64-v8a/OpenCVConfig.cmake","../../../OpenCV/sdk/native/jni/abi-arm64-v8a/OpenCVModules.cmake","../../../OpenCV/sdk/native/jni/abi-arm64-v8a/OpenCVModules-release.cmake"]},{"isCMake":false,"isTemporary":true,"sources":["../../../.cxx/cmake/debug/arm64-v8a/CMakeFiles/3.10.2/CMakeSystem.cmake","../../../.cxx/cmake/debug/arm64-v8a/CMakeFiles/3.10.2/CMakeCCompiler.cmake","../../../.cxx/cmake/debug/arm64-v8a/CMakeFiles/3.10.2/CMakeCXXCompiler.cmake","../../../.cxx/cmake/debug/arm64-v8a/CMakeFiles/feature_tests.c","../../../.cxx/cmake/debug/arm64-v8a/CMakeFiles/feature_tests.c","../../../.cxx/cmake/debug/arm64-v8a/CMakeFiles/feature_tests.c","../../../.cxx/cmake/debug/arm64-v8a/CMakeFiles/3.10.2/CMakeCCompiler.cmake","../../../.cxx/cmake/debug/arm64-v8a/CMakeFiles/feature_tests.cxx","../../../.cxx/cmake/debug/arm64-v8a/CMakeFiles/feature_tests.cxx","../../../.cxx/cmake/debug/arm64-v8a/CMakeFiles/feature_tests.cxx","../../../.cxx/cmake/debug/arm64-v8a/CMakeFiles/feature_tests.cxx","../../../.cxx/cmake/debug/arm64-v8a/CMakeFiles/3.10.2/CMakeCXXCompiler.cmake"]}],"cmakeRootDirectory":"/Users/liuxiaowei12/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10","cookie":"","inReplyTo":"cmakeInputs","sourceDirectory":"/Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/src/main/cpp","type":"reply"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"type":"codemodel"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+
+CMAKE SERVER: 
+
+CMAKE SERVER: [== "CMake Server" ==[
+
+CMAKE SERVER: {"configurations":[{"name":"Debug","projects":[{"buildDirectory":"/Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/.cxx/cmake/debug/arm64-v8a","name":"Project","sourceDirectory":"/Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/src/main/cpp","targets":[{"artifacts":["/Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/build/intermediates/cmake/debug/obj/arm64-v8a/libNative.so"],"buildDirectory":"/Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/.cxx/cmake/debug/arm64-v8a","fileGroups":[{"compileFlags":"-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -std=c++11 -ffast-math -Ofast -Os -DNDEBUG -fno-exceptions -fomit-frame-pointer -fno-asynchronous-unwind-tables -fno-unwind-tables -fvisibility=hidden -fvisibility-inlines-hidden -fdata-sections -ffunction-sections -O0 -fno-limit-debug-info  -fPIC  ","defines":["Native_EXPORTS"],"includePath":[{"path":"/Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/src/main/cpp/../../../PaddleLite/cxx/include"},{"isSystem":true,"path":"/Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/jni/include"}],"isGenerated":false,"language":"CXX","sources":["Native.cc","Pipeline.cc","Utils.cc"]}],"fullName":"libNative.so","linkFlags":"-Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libatomic.a -Wl,--build-id -Wl,--warn-shared-textrel -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments -Wl,-z,noexecstack  -Wl,--gc-sections -Wl,-z,nocopyreloc","linkLibraries":"/Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/src/main/cpp/../../../PaddleLite/cxx/libs/arm64-v8a/libpaddle_light_api_shared.so -ljnigraphics /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_calib3d.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_core.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_dnn.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_features2d.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_flann.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_highgui.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_imgcodecs.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_imgproc.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_ml.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_objdetect.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_photo.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_stitching.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_video.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_videoio.a -lGLESv2 -lEGL -llog /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/3rdparty/libs/arm64-v8a/liblibprotobuf.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_imgcodecs.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/3rdparty/libs/arm64-v8a/liblibjpeg-turbo.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/3rdparty/libs/arm64-v8a/liblibwebp.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/3rdparty/libs/arm64-v8a/liblibpng.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/3rdparty/libs/arm64-v8a/liblibtiff.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/3rdparty/libs/arm64-v8a/liblibjasper.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/3rdparty/libs/arm64-v8a/libIlmImf.a -landroid -llog -lmediandk /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/3rdparty/libs/arm64-v8a/libquirc.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_calib3d.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_features2d.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_flann.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_imgproc.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/staticlibs/arm64-v8a/libopencv_core.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/3rdparty/libs/arm64-v8a/libtbb.a -lc -lz /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/3rdparty/libs/arm64-v8a/libcpufeatures.a /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/3rdparty/libs/arm64-v8a/libittnotify.a -ldl -lm -llog /Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/OpenCV/sdk/native/3rdparty/libs/arm64-v8a/libtegra_hal.a -latomic -lm","linkerLanguage":"CXX","name":"Native","sourceDirectory":"/Users/liuxiaowei12/Downloads/demo_lxw/Paddle-Lite-Demo/face_detection/android/app/cxx/face_detection/app/src/main/cpp","sysroot":"/Users/liuxiaowei12/Library/Android/sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/darwin-x86_64/sysroot","type":"SHARED_LIBRARY"}]}]}],"cookie":"","inReplyTo":"codemodel","type":"reply"}
+
+CMAKE SERVER: ]== "CMake Server" ==]
+

@@ -1,8 +1,8 @@
-# 图像分类 Demo 使用指南
-在 Android 上实现实时的图像分类功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
-本文主要介绍图像分类 Demo 运行方法和如何在更新模型/输入/输出处理下，保证图像分类 demo 仍可继续运行。
+# 人脸检测 Demo 使用指南
+在 Android shell 上实现人脸检测功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
+本文主要介绍人脸检测 Demo 运行方法和如何在更新模型/输入/输出处理下，保证人脸检测 demo 仍可继续运行。
 
-## 如何运行图像分类 Demo
+## 如何运行人脸检测 Demo
 
 ### 环境准备
 
@@ -44,40 +44,37 @@
 
 ### 部署步骤
 
-1. 图像分类 Demo 位于 `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification` 目录
+1. 人脸检测 Demo 位于 `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection` 目录
 2. cd `Paddle-Lite-Demo/libs` 目录，运行 `download.sh` 脚本，下载所需要的 Paddle Lite 预测库
-3. cd `Paddle-Lite-Demo/image_classification/assets` 目录，运行 `download.sh` 脚本，下载OPT 优化后模型、测试图片和标签文件
-4. cd `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification` 目录，运行 `build.sh` 脚本，完成可执行文件的编译和运行。
-5. 运行结果如下所示：
+3. cd `Paddle-Lite-Demo/face_detection/assets` 目录，运行 `download.sh` 脚本，下载OPT 优化后模型、测试图片和标签文件
+4. cd `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection` 目录，运行 `build.sh` 脚本，完成可执行文件的编译和运行。
+5. 运行结果如下所示,并生成一张名叫face_detection.jpg的人脸检测结果图：
 
 ```shell
 ======= benchmark summary =======
-input_shape(s) (NCHW): {1, 3, 224, 224}
-model_dir:./models/mobilenet_v1_for_cpu/model.nb
-warmup:10
-repeats:100
-power_mode:1
-thread_num:0
+input_shape(s) (NCHW): {1, 3, 240, 320}
+model_dir:models/model.nb
+warmup:2
+repeats:10
+power_mode:0
+thread_num:1
 *** time info(ms) ***
-1st_duration:33.87
-max_duration:30.657
-min_duration:28.5
-avg_duration:29.046
+1st_duration:30.485
+max_duration:23.106
+min_duration:22.217
+avg_duration:22.6233
 
-====== output summary ======
-i: 0,  index: 285,  name: n02124075 Egyptian cat,  score: 0.482869
-i: 1,  index: 281,  name: n02123045 tabby, tabby cat,  score: 0.471595
-i: 2,  index: 282,  name: n02123159 tiger cat,  score: 0.039779
+====== output summary ====== 
 ``` 
 
 ```shell
  cd Paddle-Lite-Demo/libs
  # 下载所需要的 Paddle Lite 预测库
  sh download.sh
- cd ../image_classification/assets
+ cd ../face_detection/assets
  # 下载OPT 优化后模型、测试图片、标签文件
  sh download.sh
- cd ../android/app/shell/cxx/image_classification
+ cd ../android/app/shell/cxx/face_detection
  # 完成可执行文件的编译和运行
  sh build.sh
 ```
@@ -102,48 +99,46 @@ i: 2,  index: 282,  name: n02123159 tiger cat,  score: 0.039779
 **备注：**
   如需更新预测库，例如更新 Android CXX v8 动态库 `so`，则将新的动态库 `so` 更新到 `Paddle-Lite-Demo/libs/android/cxx/libs/arm64-v8a` 目录
 
-2. `Paddle-Lite-Demo/image_classification/assets/` : 存放图像分类 demo 的模型、测试图片、标签文件
+2. `Paddle-Lite-Demo/face_detection/assets/` : 存放人脸检测 demo 的模型、测试图片、标签文件
 
-3. `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/image_classification.cc` : 图像分类的预测代码
-     - `pre_process(...)` : 完成图像分类的预处理功能
-     - `post_process(...)` : 完成图像分类的后处理功能
-     - `run_model(...)` : 完成图像分类的预测全流程功能
-     - `load_labels(...)` : 完成标签文件读取功能
+3. `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/face_detection.cc` : 人脸检测的预测代码
+     - `pre_process(...)` : 完成人脸检测的预处理功能
+     - `post_process(...)` : 完成人脸检测的后处理功能
+     - `run_model(...)` : 完成人脸检测的预测全流程功能
      - `neon_mean_scale(...)` : 完成图像数据赋值给Tensor的加速处理功能
 
-4. `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/CMakeLists.txt` :  CMake 文件，约束可执行文件的编译方法
+4. `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/CMakeLists.txt` :  CMake 文件，约束可执行文件的编译方法
 
-5. `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/build.sh` : 用于可执行文件的编译和运行
+5. `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/build.sh` : 用于可执行文件的编译和运行
 
 ```shell
  # 位置
- Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/build.sh # 脚本默认编译 armv7 可执行文件
+ Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/build.sh # 脚本默认编译 armv7 可执行文件
  # 如果要编译 armv8 可执行文件，可以将 build.sh 脚本中的 ARM_ABI 变量改为 arm64i-v8a 即可
  # build.sh 中包含了可执行文件的编译和运行功能，其中运行是调用run.sh 脚本进行完成
  # run.sh 脚本中可执行文件的参数含义：
  adb shell "cd ${ADB_DIR} \
-           && chmod +x ./image_classification \
+           && chmod +x ./face_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           && ./image_classification \
-              ./models/mobilenet_v1_for_cpu/model.nb \
-              ./images/tabby_cat.jpg \
-              ./labels/labels.txt \
-              3 224 224 \
-              0 1 100 10 0 \
+           && ./face_detection \
+              ./models/facedetection_for_cpu/model.nb \
+              ./images/face.jpg \
+              100 0.5 0.5 320 240 \
+              1 0 100 10 \
            "
 
- 第一个参数：image_classification 可执行文件，属于必选项
- 第二个参数：./models/mobilenet_v1_for_cpu/model.nb 优化后的分类模型文件，属于必选项
- 第三个参数：./images/tabby_cat.jpg  测试图片，属于必选项
- 第四个参数：./labels/labels.txt  label 文件，属于必选项
- 第五个参数：3 top-k 大小，属于可选项，默认是 1
- 第六个参数：224 输入图片宽度，属于可选项，默认是 224
- 第七个参数：224 输入图片高度，属于可选项，默认是 224
- 第八个参数：0 是否绑核，0-绑定大核， 1-绑定小核，2-绑定所有核，3-不绑核，属于可选项，默认是 0
+ 第一个参数：face_detection 可执行文件，属于必选项
+ 第二个参数：./models/facedetection_for_cpu/model.nb 优化后的检测模型文件，属于必选项
+ 第三个参数：./images/face.jpg  测试图片，属于必选项
+ 第四个参数：100 预选框的最多个数，属于可选项，默认是 100
+ 第五个参数：iou阈值，默认是0.5
+ 第六个参数：置信度，默认是0.5  
+ 第七个参数：320 输入图片宽度，属于可选项，默认是 320
+ 第八个参数：240 输入图片高度，属于可选项，默认是 240
  第九个参数：1 线程数，属于可选项，默认是 1
- 第十个参数：100 repeats 数目，属于可选项，默认是 1
- 第十一个参数：10 warmup 数目，属于可选项，默认是 0
- 第十二个参数：0 use_gpu 是否使用GPU， 属于可选项，默认是 0
+ 第十个参数：0 是否绑核，0-绑定大核， 1-绑定小核，2-绑定所有核，3-不绑核，属于可选项，默认是 0
+ 第十一个参数：100 repeats 数目，属于可选项，默认是 1
+ 第十二个参数：10 warmup 数目，属于可选项，默认是 0
 ```
 
 ## 代码讲解 （使用 Paddle Lite `C++ API` 执行预测）
@@ -217,117 +212,40 @@ for (int i = 0; i < outputSize; i += 6) {
 
 ### 更新模型
 
-1. 将优化后的模型存放到目录 `Paddle-Lite-Demo/image_classification/assets/models/` 下；
-2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `mobilenet_v1_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/run.sh` 脚本。
+1. 将优化后的模型存放到目录 `Paddle-Lite-Demo/face_detection/assets/models/` 下；
+2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `facedetection_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/run.sh` 脚本。
 
-例子：假设更新 mobilenet_v2 模型为例，则先将优化后的模型存放到 `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/run.sh` 下，然后更新脚本
+例子：假设更新 your_model 模型为例，则先将优化后的模型存放到 `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/run.sh` 下，然后更新脚本
 
 ```shell
-# path: Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/run.sh
+# path: Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/run.sh
 # old
 adb shell "cd ${ADB_DIR} \
-           && chmod +x ./image_classification \
+           && chmod +x ./face_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           && ./image_classification \
-              ./models/mobilenet_v1_for_cpu/model.nb \
-              ./images/tabby_cat.jpg \
-              ./labels/labels.txt \
-              3 224 224 \
-              0 1 100 10 0 \
+           && ./face_detection \
+              ./models/facedetection_for_cpu/model.nb \
+              ./images/face.jpg \
+              100 0.5 0.5 320 240 \
+              1 0 100 10 \
           "
 # now
 adb shell "cd ${ADB_DIR} \
-           && chmod +x ./image_classification \
+           && chmod +x ./face_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           && ./image_classification \
-              ./models/mobilenet_v2_for_cpu/mv2.nb \
-              ./images/tabby_cat.jpg \
-              ./labels/labels.txt \
-              3 224 224 \
-              0 1 100 10 0 \
+           && ./face_detection \
+              ./models/your_model/your_model.nb \
+              ./images/face.jpg \
+              100 0.5 0.5 320 240 \
+              1 0 100 10 \
           "
 ```
 
 **注意：**
--  如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/image_classification.cc` 的 `pre_process` 预处理和 `pre_process` 后处理代码即可。
-
-- 如果需要更新 `labels.txt` 标签文件，则需要将新的标签文件存放在目录 `Paddle-Lite-Demo/image_classification/assets/labels/` 下，并更新 `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/run.sh` 脚本。
-
-```shell
-# path: Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/run.sh
-# old
-adb shell "cd ${ADB_DIR} \
-           && chmod +x ./image_classification \
-           && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           && ./image_classification \
-              ./models/mobilenet_v1_for_cpu/model.nb \
-              ./images/tabby_cat.jpg \
-              ./labels/labels.txt \
-              3 224 224 \
-              0 1 100 10 0 \
-          "
-# now
-adb shell "cd ${ADB_DIR} \
-           && chmod +x ./image_classification \
-           && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           && ./image_classification \
-              ./models/mobilenet_v1_for_cpu/model.nb \
-              ./images/tabby_cat.jpg \
-              ./labels/labels_new.txt \
-              3 224 224 \
-              0 1 100 10 0 \
-          "
-- 如果想在 GPU 上推理，则将run.sh 中 use_gpu 设为True 即可：
-
-adb shell "cd ${ADB_DIR} \
-           && chmod +x ./image_classification \
-           && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           && ./image_classification \
-              ./models/mobilenet_v1_for_cpu/model.nb \
-              ./images/tabby_cat.jpg \
-              ./labels/labels_new.txt \
-              3 224 224 \
-              0 1 100 10 1 \
-          "
-```
-
-### 更新输入/输出预处理
-1. 更新输入数据
-
-- 将更新的图片存放在 `Paddle-Lite-Demo/image_classification/assets/images/` 下；
-- 更新文件 `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/run.sh` 脚本
-
-以更新 `dog.jpg` 为例，则先将 `dog.jpg` 存放在 `Paddle-Lite-Demo/image_classification/assets/images/` 下，然后更新脚本
-
-```shell
-# path: Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/run.sh
-# old
-adb shell "cd ${ADB_DIR} \
-           && chmod +x ./image_classification \
-           && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           && ./image_classification \
-              ./models/mobilenet_v1_for_cpu/model.nb \
-              ./images/tabby_cat.jpg \
-              ./labels/labels.txt \
-              3 224 224 \
-              0 1 100 10 0 \
-          "
-# now
-adb shell "cd ${ADB_DIR} \
-           && chmod +x ./image_classification \
-           && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-           && ./image_classification \
-              ./models/mobilenet_v1_for_cpu/model.nb \
-              ./images/dog.jpg \
-              ./labels/labels.txt \
-              3 224 224 \
-              0 1 100 10 0 \
-          "
-```
-
+-  如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/face_detection.cc` 的 `pre_process` 预处理和 `pre_process` 后处理代码即可。
 
 2. 更新输入预处理
-此处需要更新 `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/image_classification.cc` 的 `pre_process` 预处理实现就行。
+此处需要更新 `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/face_detection.cc` 的 `pre_process` 预处理实现就行。
 
 3. 更新输出预处理
-此处需要更新 `Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification/image_classification.cc` 的 `post_process` 后处理代码实现就行。
+此处需要更新 `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/face_detection.cc` 的 `post_process` 后处理代码实现就行。

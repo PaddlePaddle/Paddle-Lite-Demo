@@ -24,20 +24,8 @@ adb shell "cd ${ADB_DIR} \
            && chmod +x ./face_detection \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            &&  ./face_detection \
-               ./models/model.nb \
+               ./models/facedetection_for_cpu/model.nb \
                ./images/face.jpg \
                100 0.5 0.5 320 240 \
                1 0 100 10 \
                "
-# if run on gpu
-# echo "--run model on gpu---"
-# adb shell "cd ${ADB_DIR} \
-#            && chmod +x ./image_classification \
-#            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
-#            &&  ./image_classification \
-#                ./models/mobilenet_v1_for_gpu/model.nb \
-#                ./images/tabby_cat.jpg \
-#                ./labels/labels.txt \
-#                3 224 224 \
-#                0 1 100 10 1 \
-#                "
