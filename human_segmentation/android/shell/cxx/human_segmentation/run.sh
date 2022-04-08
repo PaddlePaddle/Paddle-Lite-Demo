@@ -22,12 +22,12 @@ adb push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so  ${ADB
 # run
 echo "--run model on cpu---"
 adb shell "cd ${ADB_DIR} \
-           && chmod +x ./human_segmentation \
+           && chmod 111 ./human_segmentation \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            &&  ./human_segmentation \
-               ./models/model.nb   \
-               ./images/human.jpg  \
-               ./labels/label_list \
+               ./model.nb           \
+               ./human.jpg  \
+               ./label_list \
                513 513 4    \
                0 10 10 0    \
                "
