@@ -10,8 +10,8 @@
 1. 在本地环境安装好 Android Studio 工具，详细安装方法请见[Android Stuido 官网](https://developer.android.com/studio)。
 2. 准备一部 Android 手机，并开启 USB 调试模式。开启方法: `手机设置 -> 查找开发者选项 -> 打开开发者选项和 USB 调试模式`
 
-**注意**：
-> 如果您的 Android Studio 尚未配置 NDK ，请根据 Android Studio 用户指南中的[安装及配置 NDK 和 CMake ](https://developer.android.com/studio/projects/install-ndk)内容，预先配置好 NDK 。您可以选择最新的 NDK 版本，或者使用
+**注意**:
+> 如果您的 Android Studio 尚未配置 NDK ，请根据 Android Studio 用户指南中的[安装及配置 NDK 和 CMake ](https://developer.android.com/studio/projects/install-ndk)内容，预先配置好 NDK 。您可以选择最新的 NDK 版本，或者使用。
 Paddle Lite 预测库版本一样的 NDK
 
 ### 部署步骤
@@ -20,7 +20,7 @@ Paddle Lite 预测库版本一样的 NDK
 2. 用 Android Studio 打开 human_segmentation 工程
 3. 手机连接电脑，打开 USB 调试和文件传输模式，并在 Android Studio 上连接自己的手机设备（手机需要开启允许从 USB 安装软件权限）
 
-> **注意**
+**注意**:
 > 如果您在导入项目、编译或者运行过程中遇到 NDK 配置错误的提示，请打开 ` File > Project Structure > SDK Location`，修改 `Andriod NDK location` 为您本机配置的 NDK 所在路径。
 > 如果您是通过 Andriod Studio 的 SDK Tools 下载的 NDK (见本章节"环境准备")，可以直接点击下拉框选择默认路径。
 > 还有一种 NDK 配置方法，你可以在 `human_segmentation/local.properties` 文件中手动添加 NDK 路径配置 `nkd.dir=/root/android-ndk-r20b`
@@ -38,18 +38,18 @@ Paddle Lite 预测库版本一样的 NDK
  * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
     * 替换 java 库
         * jar 包
-          将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar` 替换 Demo 中的 `Paddle-Lite-Demo/human_segmentation/android/app/java/human_segmentation/app/PaddleLite/java/PaddlePredictor.jar`
+          将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar` 替换 Demo 中的 `Paddle-Lite-Demo/human_segmentation/android/app/java/human_segmentation/app/libs/PaddlePredictor.jar`
         * Java so
             * armeabi-v7a
-              将生成的 `build.lite.android.armv7.clang/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/human_segmentation/android/java/human_segmentation/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so`
+              将生成的 `build.lite.android.armv7.clang/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/human_segmentation/android/java/human_segmentation/app/src/main/jniLibs/armeabi-v7a/libpaddle_lite_jni.so`
             * arm64-v8a
-              将生成的 `build.lite.android.armv8.clang/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/human_segmentation/android/java/human_segmentation/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so`              
+              将生成的 `build.lite.android.armv8.clang/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/human_segmentation/android/java/human_segmentation/app/src/main/jniLibs/arm64-v8a/libpaddle_lite_jni.so`              
 
 ## Demo 内容介绍
 
 先整体介绍下目标检测 Demo 的代码结构，然后介绍 Java 各功能模块的功能。
 
-<p align="center">
+<p align="center"><img width="800" height="500">
 <img src="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/androidstudio_interface.png"/>
 </p>
 
@@ -88,14 +88,14 @@ human_segmentation/app/build.gradle
 
 ### Java 端
 
-* 模型存放，将下载好的模型解压存放在 `app/src/assets/models` 目录下
+* 模型存放，将下载好的模型解压存放在 `app/src/assets/image_segmentation/models` 目录下
 * human_segmentation Java 包
    在 `app/src/java/com/baidu/paddle/lite/demo/human_segmentation` 目录下，实现 APP 界面消息事件
 * MainActivity
      实现 APP 的创建、运行、释放功能
      重点关注 `onLoadModel` 和 `onRunModel` 函数，实现 APP 界面值传递和推理处理
      
-     ```
+     ```java
      public boolean onLoadModel() {
              return predictor.init(MainActivity.this, modelPath, labelPath, cpuThreadNum,
                      cpuPowerMode,
@@ -107,8 +107,8 @@ human_segmentation/app/build.gradle
      public boolean onRunModel() {
              return predictor.isLoaded() && predictor.runModel();
      }
-     ```java
-   
+     ```
+
 * SettingActivity
      实现设置界面各个元素的更新与显示如模型地址、线程数、输入shape大小等，如果新增/删除界面的某个元素，均在这个类里面实现
      备注：
@@ -120,7 +120,7 @@ human_segmentation/app/build.gradle
      使用 Java API 实现人像分割模型的预测功能
      重点关注 `init`、 `preProcess`、`postProcess`和 `runModel` 函数，实现 Paddle Lite 端侧推理功能
      
-     ```
+     ```java
      // 预处理函数
      public boolean preProcess();
      // 后处理函数
@@ -132,7 +132,7 @@ human_segmentation/app/build.gradle
                              float[] inputStd);
      // 预测处理函数，包含模型的预处理、预测和后处理三个过程
      public boolean runModel();
-     ```java
+     ```
   
 ## 代码讲解 （使用 Paddle Lite `Java API` 执行预测）
 
@@ -279,7 +279,7 @@ public void onLoadModelSuccessed() {
 }
 ```
 
-**注意**
+**注意**:
 > 本 Demo 支持拍照和从相册加载新图片进行推理。此处想更新图片，可通过拍照或从相册加载图片方式实现。
 
 2. 更新输入预处理
@@ -297,7 +297,6 @@ public void onLoadModelSuccessed() {
     - model_path 默认是 `models/deeplab_mobilenet_for_cpu`
     - image_path 默认是 `images/human.jpg`
     - label_path 默认是 `labels/label_list`
-
 - CPU setting：
     - power_mode 默认是 `LITE_POWER_HIGH`
     - thread_num 默认是 1
