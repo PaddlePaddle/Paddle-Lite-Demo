@@ -18,6 +18,21 @@ function download_lib {
     cd ../
 }
 
+function compile_human_segmentation {
+     cd ./human_segmentation/assets
+     chmod +x ./download.sh
+     bash ./download.sh
+     echo "human_segmentation"
+     cd ../android/shell/cxx/human_segmentation
+     chmod +x ./build.sh
+     sed -i '3s/disk/opt/g' ./build.sh
+     echo "-- arm_v8 --"
+     bash ./build.sh "arm64-v8a"
+     echo "-- arm_v7 --"
+     bash ./build.sh "armeabi-v7a"
+     cd ../../../../../
+}
+
 function compile_image_classification {
      cd ./image_classification/assets
      chmod +x ./download.sh
@@ -84,6 +99,9 @@ function main {
   # step4. build and run object_detection
   echo "--compile_object_detection--: $(pwd)"
   compile_object_detection
+  # step5. build and run human_segmentation
+  echo "--compile_human_segmentation--: $(pwd)"
+  compile_human_segmentation
   echo "--end--: $(pwd)"
 }
 
