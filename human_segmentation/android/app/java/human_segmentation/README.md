@@ -49,8 +49,8 @@ Paddle Lite 预测库版本一样的 NDK
 
 先整体介绍下目标检测 Demo 的代码结构，然后介绍 Java 各功能模块的功能。
 
-<p align="center"><img width="800" height="500">
-<img src="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/androidstudio_interface.png"/>
+<p align="center"><img width="800" height="500"
+src="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/androidstudio_interface.png"/>
 </p>
 
 ### 重点关注内容
