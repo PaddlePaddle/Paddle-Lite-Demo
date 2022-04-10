@@ -49,8 +49,10 @@ void FaceDetector::Preprocess(const cv::Mat &rgbaImage) {
                inputShape[2]);
 }
 
-void FaceDetector::HardNms(std::vector<Face> *input, std::vector<Face> *output, float iou_threshold) {
-  std::sort(input->begin(), input->end(), [](const Face &a, const Face &b) { return a.score > b.score; });
+void FaceDetector::HardNms(std::vector<Face> *input, std::vector<Face> *output,
+                           float iou_threshold) {
+  std::sort(input->begin(), input->end(),
+            [](const Face &a, const Face &b) { return a.score > b.score; });
   int box_num = input->size();
   std::vector<int> merged(box_num, 0);
   for (int i = 0; i < box_num; i++) {
@@ -69,10 +71,12 @@ void FaceDetector::HardNms(std::vector<Face> *input, std::vector<Face> *output, 
       if (merged[j])
         continue;
 
-      float inner_x0 =
-              input->at(i).roi.x > input->at(j).roi.x ? input->at(i).roi.x : input->at(j).roi.x;
-      float inner_y0 =
-              input->at(i).roi.y > input->at(j).roi.y ? input->at(i).roi.y : input->at(j).roi.y;
+      float inner_x0 = input->at(i).roi.x > input->at(j).roi.x
+                           ? input->at(i).roi.x
+                           : input->at(j).roi.x;
+      float inner_y0 = input->at(i).roi.y > input->at(j).roi.y
+                           ? input->at(i).roi.y
+                           : input->at(j).roi.y;
 
       float inputi_x1 = input->at(i).roi.x + input->at(i).roi.width;
       float inputi_y1 = input->at(i).roi.y + input->at(i).roi.height;
@@ -122,10 +126,10 @@ void FaceDetector::Postprocess(const cv::Mat &rgbaImage,
     float class_id = outputData[i];
     // Confidence score
     float score = outputData[i + 1];
-    int left = outputData1[2* i] * imageWidth;
-    int top = outputData1[2*i + 1] * imageHeight;
-    int right = outputData1[2*i + 2] * imageWidth;
-    int bottom = outputData1[2*i + 3] * imageHeight;
+    int left = outputData1[2 * i] * imageWidth;
+    int top = outputData1[2 * i + 1] * imageHeight;
+    int right = outputData1[2 * i + 2] * imageWidth;
+    int bottom = outputData1[2 * i + 3] * imageHeight;
     int width = right - left;
     int height = bottom - top;
     if (score > scoreThreshold_ && score < 1) {
@@ -209,7 +213,8 @@ void FaceKeypointsDetector::Preprocess(
         cv::Rect(0, 0, rgbaImage.cols - 1, rgbaImage.rows - 1);
     // Crop and obtain the face image
     cv::Mat resizedRGBAImage(rgbaImage, (*adjustedFaceROIs)[i]);
-    cv::resize(resizedRGBAImage, resizedRGBAImage, cv::Size(inputShape[3], inputShape[2]));
+    cv::resize(resizedRGBAImage, resizedRGBAImage,
+               cv::Size(inputShape[3], inputShape[2]));
     cv::Mat resizedGRAYImage;
     cv::cvtColor(resizedRGBAImage, resizedGRAYImage, cv::COLOR_RGBA2GRAY);
     resizedGRAYImage.convertTo(resizedGRAYImage, CV_32FC1);
@@ -292,7 +297,7 @@ void Pipeline::VisualizeResults(const std::vector<Face> &faces,
     // Configure color
     cv::Scalar color = cv::Scalar(255, 0, 0);
     // Draw roi object
-//    cv::rectangle(*rgbaImage, faces[i].roi, color, 2);
+    //    cv::rectangle(*rgbaImage, faces[i].roi, color, 2);
     // Draw face keypoints
     for (int j = 0; j < faces[i].keypoints.size(); j++) {
       cv::circle(*rgbaImage, faces[i].keypoints[j], 1, cv::Scalar(0, 255, 0),

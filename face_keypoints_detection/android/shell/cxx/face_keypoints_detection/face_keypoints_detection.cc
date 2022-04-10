@@ -110,8 +110,10 @@ void NHWC1ToNC1HW(const float *src, float *dst, const float *mean,
   }
 }
 
-void HardNms(std::vector<Face> *input, std::vector<Face> *output, float iou_threshold) {
-  std::sort(input->begin(), input->end(), [](const Face &a, const Face &b) { return a.score > b.score; });
+void HardNms(std::vector<Face> *input, std::vector<Face> *output,
+             float iou_threshold) {
+  std::sort(input->begin(), input->end(),
+            [](const Face &a, const Face &b) { return a.score > b.score; });
   int box_num = input->size();
   std::vector<int> merged(box_num, 0);
   for (int i = 0; i < box_num; i++) {
@@ -130,10 +132,12 @@ void HardNms(std::vector<Face> *input, std::vector<Face> *output, float iou_thre
       if (merged[j])
         continue;
 
-      float inner_x0 =
-              input->at(i).roi.x > input->at(j).roi.x ? input->at(i).roi.x : input->at(j).roi.x;
-      float inner_y0 =
-              input->at(i).roi.y > input->at(j).roi.y ? input->at(i).roi.y : input->at(j).roi.y;
+      float inner_x0 = input->at(i).roi.x > input->at(j).roi.x
+                           ? input->at(i).roi.x
+                           : input->at(j).roi.x;
+      float inner_y0 = input->at(i).roi.y > input->at(j).roi.y
+                           ? input->at(i).roi.y
+                           : input->at(j).roi.y;
 
       float inputi_x1 = input->at(i).roi.x + input->at(i).roi.width;
       float inputi_y1 = input->at(i).roi.y + input->at(i).roi.height;
@@ -164,16 +168,16 @@ void HardNms(std::vector<Face> *input, std::vector<Face> *output, float iou_thre
 }
 
 void FaceDetector_Preprocess(std::shared_ptr<PaddlePredictor> predictor,
-                         const std::string img_path, int width, int height,
-                         cv::Mat &img) { //????
+                             const std::string img_path, int width, int height,
+                             cv::Mat &img) { //????
   // Prepare input data from image
   std::unique_ptr<Tensor> input_tensor(std::move(predictor->GetInput(0)));
   input_tensor->Resize({1, 3, height, width});
   // read img and pre-process
   img = imread(img_path, cv::IMREAD_COLOR);
   //   pre_process(img, width, height, data);
-  float means[3] = {0.407843f,0.694118f,0.482353f};
-  float scales[3] = {0.5f,0.5f,0.5f};
+  float means[3] = {0.407843f, 0.694118f, 0.482353f};
+  float scales[3] = {0.5f, 0.5f, 0.5f};
   cv::Mat rgb_img;
   cv::cvtColor(img, rgb_img, cv::COLOR_BGR2RGB);
   cv::resize(rgb_img, rgb_img, cv::Size(width, height), 0.f, 0.f);
@@ -185,8 +189,8 @@ void FaceDetector_Preprocess(std::shared_ptr<PaddlePredictor> predictor,
 }
 
 void FaceDetector_Postprocess(const cv::Mat &rgbImage, std::vector<Face> *faces,
-                          std::shared_ptr<PaddlePredictor> &predictor,
-                          float scoreThreshold_) {
+                              std::shared_ptr<PaddlePredictor> &predictor,
+                              float scoreThreshold_) {
   int imageWidth = rgbImage.cols;
   int imageHeight = rgbImage.rows;
   // Get output tensor
@@ -205,10 +209,10 @@ void FaceDetector_Postprocess(const cv::Mat &rgbImage, std::vector<Face> *faces,
     float class_id = outputData[i];
     // Confidence score
     float score = outputData[i + 1];
-    int left = outputData1[2* i] * imageWidth;
-    int top = outputData1[2*i + 1] * imageHeight;
-    int right = outputData1[2*i + 2] * imageWidth;
-    int bottom = outputData1[2*i + 3] * imageHeight;
+    int left = outputData1[2 * i] * imageWidth;
+    int top = outputData1[2 * i + 1] * imageHeight;
+    int right = outputData1[2 * i + 2] * imageWidth;
+    int bottom = outputData1[2 * i + 3] * imageHeight;
     int width = right - left;
     int height = bottom - top;
     if (score > scoreThreshold_ && score < 1) {
@@ -222,9 +226,10 @@ void FaceDetector_Postprocess(const cv::Mat &rgbImage, std::vector<Face> *faces,
   HardNms(&faces_tmp, faces, 0.5);
 }
 
-void FaceKeypointsDetector_Preprocess(std::shared_ptr<PaddlePredictor> &predictor,
-    const cv::Mat &rgbImage, const std::vector<Face> &faces,
-    std::vector<cv::Rect> *adjustedFaceROIs, int height, int width) {
+void FaceKeypointsDetector_Preprocess(
+    std::shared_ptr<PaddlePredictor> &predictor, const cv::Mat &rgbImage,
+    const std::vector<Face> &faces, std::vector<cv::Rect> *adjustedFaceROIs,
+    int height, int width) {
   // Prepare input tensor
   auto inputTensor = predictor->GetInput(0);
   int batchSize = faces.size();
@@ -257,7 +262,8 @@ void FaceKeypointsDetector_Preprocess(std::shared_ptr<PaddlePredictor> &predicto
         cv::Rect(0, 0, rgbImage.cols - 1, rgbImage.rows - 1);
     // Crop and obtain the face image
     cv::Mat resizedRGBImage(rgbImage, (*adjustedFaceROIs)[i]);
-    cv::resize(resizedRGBImage, resizedRGBImage, cv::Size(inputShape[3], inputShape[2]));
+    cv::resize(resizedRGBImage, resizedRGBImage,
+               cv::Size(inputShape[3], inputShape[2]));
     cv::Mat resizedGRAYImage;
     cv::cvtColor(resizedRGBImage, resizedGRAYImage, cv::COLOR_RGB2GRAY);
     resizedGRAYImage.convertTo(resizedGRAYImage, CV_32FC1);
@@ -281,11 +287,13 @@ void draw(const std::vector<Face> &faces, cv::Mat *rgbImage) {
                  2); //在图像中画出特征点，1是圆的半径
     }
   }
-  cv::imwrite("face_keypoints.jpg", *rgbImage);  
+  cv::imwrite("face_keypoints.jpg", *rgbImage);
 }
 
-void FaceKeypointsDetector_Postprocess(std::shared_ptr<PaddlePredictor> &predictor,
-    const std::vector<cv::Rect> &adjustedFaceROIs, std::vector<Face> *faces, cv::Mat &img) {
+void FaceKeypointsDetector_Postprocess(
+    std::shared_ptr<PaddlePredictor> &predictor,
+    const std::vector<cv::Rect> &adjustedFaceROIs, std::vector<Face> *faces,
+    cv::Mat &img) {
   auto outputTensor = predictor->GetOutput(0);
   auto outputData = outputTensor->data<float>();
   auto outputShape = outputTensor->shape();
@@ -308,8 +316,9 @@ void FaceKeypointsDetector_Postprocess(std::shared_ptr<PaddlePredictor> &predict
 }
 
 void run_model(std::string facedetection_model_file,
-               std::string facekeypoints_model_file, std::string img_path,int height0, int width0,int height1, int width1,
-               int power_mode, int thread_num, int repeats, int warmup) {
+               std::string facekeypoints_model_file, std::string img_path,
+               int height0, int width0, int height1, int width1, int power_mode,
+               int thread_num, int repeats, int warmup) {
 
   // 1. Set MobileConfig
   MobileConfig facedetection_config;
@@ -328,14 +337,15 @@ void run_model(std::string facedetection_model_file,
       CreatePaddlePredictor<MobileConfig>(facedetection_config);
   std::shared_ptr<PaddlePredictor> facekeypoints_predictor =
       CreatePaddlePredictor<MobileConfig>(facekeypoints_config);
-  
+
   cv::Mat img;
   std::vector<Face> faces;
   std::vector<cv::Rect> adjustedFaceROIs;
   float scoreThreshold = 0.7;
 
-  // 3. Prepare FaceDetector input data from image  
-  FaceDetector_Preprocess(facedetection_predictor, img_path, width0, height0, img);
+  // 3. Prepare FaceDetector input data from image
+  FaceDetector_Preprocess(facedetection_predictor, img_path, width0, height0,
+                          img);
 
   // 4. Run predictor
   double facedetection_first_duration{-1};
@@ -345,10 +355,12 @@ void run_model(std::string facedetection_model_file,
       auto start = GetCurrentUS();
       facedetection_predictor->Run();
       facedetection_first_duration = (GetCurrentUS() - start) / 1000.0;
-      FaceDetector_Postprocess(img, &faces, facedetection_predictor, scoreThreshold);
+      FaceDetector_Postprocess(img, &faces, facedetection_predictor,
+                               scoreThreshold);
       if (faces.size() > 0) {
         adjustedFaceROIs.resize(faces.size());
-        FaceKeypointsDetector_Preprocess(facekeypoints_predictor, img, faces, &adjustedFaceROIs, height1, width1);
+        FaceKeypointsDetector_Preprocess(facekeypoints_predictor, img, faces,
+                                         &adjustedFaceROIs, height1, width1);
         start = GetCurrentUS();
         facekeypoints_predictor->Run();
         facekeypoints_first_duration = (GetCurrentUS() - start) / 1000.0;
@@ -357,10 +369,12 @@ void run_model(std::string facedetection_model_file,
       }
     } else {
       facedetection_predictor->Run();
-      FaceDetector_Postprocess(img, &faces, facedetection_predictor, scoreThreshold);
+      FaceDetector_Postprocess(img, &faces, facedetection_predictor,
+                               scoreThreshold);
       if (faces.size() > 0) {
         adjustedFaceROIs.resize(faces.size());
-        FaceKeypointsDetector_Preprocess(facekeypoints_predictor, img, faces, &adjustedFaceROIs, height1, width1);
+        FaceKeypointsDetector_Preprocess(facekeypoints_predictor, img, faces,
+                                         &adjustedFaceROIs, height1, width1);
         facekeypoints_predictor->Run();
       }
     }
@@ -374,60 +388,77 @@ void run_model(std::string facedetection_model_file,
   double facekeypoints_max_duration = 1e-5;
   double facekeypoints_min_duration = 1e5;
   double facekeypoints_avg_duration = -1;
-  bool first = true;  
+  bool first = true;
   for (size_t ridx = 0; ridx < repeats; ++ridx) {
     auto start = GetCurrentUS();
     facedetection_predictor->Run();
     auto facedetection_duration = (GetCurrentUS() - start) / 1000.0;
     facedetection_sum_duration += facedetection_duration;
-    facedetection_max_duration = facedetection_duration > facedetection_max_duration ? facedetection_duration : facedetection_max_duration;
-    facedetection_min_duration = facedetection_duration < facedetection_min_duration ? facedetection_duration : facedetection_min_duration;
+    facedetection_max_duration =
+        facedetection_duration > facedetection_max_duration
+            ? facedetection_duration
+            : facedetection_max_duration;
+    facedetection_min_duration =
+        facedetection_duration < facedetection_min_duration
+            ? facedetection_duration
+            : facedetection_min_duration;
     if (facedetection_first_duration < 0 && first) {
       facedetection_first_duration = facedetection_duration;
     }
-    FaceDetector_Postprocess(img, &faces, facedetection_predictor, scoreThreshold);
+    FaceDetector_Postprocess(img, &faces, facedetection_predictor,
+                             scoreThreshold);
     if (faces.size() > 0) {
       adjustedFaceROIs.resize(faces.size());
-      FaceKeypointsDetector_Preprocess(facekeypoints_predictor, img, faces, &adjustedFaceROIs, height1, width1);
+      FaceKeypointsDetector_Preprocess(facekeypoints_predictor, img, faces,
+                                       &adjustedFaceROIs, height1, width1);
       start = GetCurrentUS();
       facekeypoints_predictor->Run();
       auto facekeypoints_duration = (GetCurrentUS() - start) / 1000.0;
       facekeypoints_sum_duration += facekeypoints_duration;
-      facekeypoints_max_duration = facekeypoints_duration > facekeypoints_max_duration ? facekeypoints_duration : facekeypoints_max_duration;
-      facekeypoints_min_duration = facekeypoints_duration < facekeypoints_min_duration ? facekeypoints_duration : facekeypoints_min_duration;
+      facekeypoints_max_duration =
+          facekeypoints_duration > facekeypoints_max_duration
+              ? facekeypoints_duration
+              : facekeypoints_max_duration;
+      facekeypoints_min_duration =
+          facekeypoints_duration < facekeypoints_min_duration
+              ? facekeypoints_duration
+              : facekeypoints_min_duration;
       if (facekeypoints_first_duration < 0 && first) {
         facekeypoints_first_duration = facekeypoints_duration;
       }
     } else {
       facekeypoints_sum_duration = 0.f;
       facekeypoints_max_duration = 0.f;
-      facekeypoints_min_duration = 0.f;      
+      facekeypoints_min_duration = 0.f;
     }
-    first = false;   
+    first = false;
   }
 
-  FaceKeypointsDetector_Postprocess(facekeypoints_predictor,adjustedFaceROIs, &faces,img);   
+  FaceKeypointsDetector_Postprocess(facekeypoints_predictor, adjustedFaceROIs,
+                                    &faces, img);
 
-  facedetection_avg_duration = facedetection_sum_duration / static_cast<float>(repeats);
-  facekeypoints_avg_duration = facekeypoints_sum_duration / static_cast<float>(repeats);
-  std::cout << "\n======= benchmark summary =======\n"
-            << "input_shape(s) (NCHW): {1, 3, " << height0 << ", " << width0
-            << "}\n"
-            << "model_dir:" << facedetection_model_file << "\n"
-            << "model_dir:" << facekeypoints_model_file << "\n"
-            << "warmup:" << warmup << "\n"
-            << "repeats:" << repeats << "\n"
-            << "power_mode:" << power_mode << "\n"
-            << "thread_num:" << thread_num << "\n"
-            << "*** time info(ms) ***\n"
-            << "facedetection_1st_duration:" << facedetection_first_duration << "\n"
-            << "facedetection_max_duration:" << facedetection_max_duration << "\n"
-            << "facedetection_min_duration:" << facedetection_min_duration << "\n"
-            << "facedetection_avg_duration:" << facedetection_avg_duration << "\n"
-            << "facekeypoints_1st_duration:" << facekeypoints_first_duration << "\n"
-            << "facekeypoints_max_duration:" << facekeypoints_max_duration << "\n"
-            << "facekeypoints_min_duration:" << facekeypoints_min_duration << "\n"
-            << "facekeypoints_avg_duration:" << facekeypoints_avg_duration << "\n";            
+  facedetection_avg_duration =
+      facedetection_sum_duration / static_cast<float>(repeats);
+  facekeypoints_avg_duration =
+      facekeypoints_sum_duration / static_cast<float>(repeats);
+  std::cout
+      << "\n======= benchmark summary =======\n"
+      << "input_shape(s) (NCHW): {1, 3, " << height0 << ", " << width0 << "}\n"
+      << "model_dir:" << facedetection_model_file << "\n"
+      << "model_dir:" << facekeypoints_model_file << "\n"
+      << "warmup:" << warmup << "\n"
+      << "repeats:" << repeats << "\n"
+      << "power_mode:" << power_mode << "\n"
+      << "thread_num:" << thread_num << "\n"
+      << "*** time info(ms) ***\n"
+      << "facedetection_1st_duration:" << facedetection_first_duration << "\n"
+      << "facedetection_max_duration:" << facedetection_max_duration << "\n"
+      << "facedetection_min_duration:" << facedetection_min_duration << "\n"
+      << "facedetection_avg_duration:" << facedetection_avg_duration << "\n"
+      << "facekeypoints_1st_duration:" << facekeypoints_first_duration << "\n"
+      << "facekeypoints_max_duration:" << facekeypoints_max_duration << "\n"
+      << "facekeypoints_min_duration:" << facekeypoints_min_duration << "\n"
+      << "facekeypoints_avg_duration:" << facekeypoints_avg_duration << "\n";
 
   // 5. Get output and post process
   std::cout << "\n====== output summary ====== " << std::endl;
@@ -435,15 +466,16 @@ void run_model(std::string facedetection_model_file,
 
 int main(int argc, char **argv) {
   if (argc < 4) {
-    std::cerr << "[ERROR] usage: " << argv[0]
-              << " facedetection_model_file  facekeypoints_model_file image_path\n";
+    std::cerr
+        << "[ERROR] usage: " << argv[0]
+        << " facedetection_model_file  facekeypoints_model_file image_path\n";
     exit(1);
   }
   std::cout << "This parameters are optional: \n"
             << " <facedetection input_height>, eg: 480 \n"
-            << " <facedetection input_width>, eg: 640 \n"     
+            << " <facedetection input_width>, eg: 640 \n"
             << " <face_keypoints_detection input_height>, eg: 60 \n"
-            << " <face_keypoints_detection input_width>, eg: 60 \n"                   
+            << " <face_keypoints_detection input_width>, eg: 60 \n"
             << "  <thread_num>, eg: 1 for single thread \n"
             << "  <repeats>, eg: 100\n"
             << "  <warmup>, eg: 10\n"
@@ -457,9 +489,9 @@ int main(int argc, char **argv) {
   std::string facekeypoints_model_file = argv[2];
   std::string img_path = argv[3];
   int height0 = 480;
-  int width0 = 640; 
-  int height1= 60;
-  int width1 = 60;   
+  int width0 = 640;
+  int height1 = 60;
+  int width1 = 60;
   int thread_num = 1;
   int repeats = 1;
   int warmup = 0;
@@ -475,7 +507,7 @@ int main(int argc, char **argv) {
   }
   if (argc > 7) {
     width1 = atoi(argv[7]);
-  }  
+  }
   if (argc > 8) {
     thread_num = atoi(argv[8]);
   }
@@ -487,9 +519,10 @@ int main(int argc, char **argv) {
   }
   if (argc > 11) {
     power_mode = atoi(argv[11]);
-  } 
+  }
 
- run_model(facedetection_model_file, facekeypoints_model_file, img_path, height0, width0, height1, width1,
-               power_mode, thread_num, repeats, warmup);
+  run_model(facedetection_model_file, facekeypoints_model_file, img_path,
+            height0, width0, height1, width1, power_mode, thread_num, repeats,
+            warmup);
   return 0;
 }

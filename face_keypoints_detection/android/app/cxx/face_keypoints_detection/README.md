@@ -420,6 +420,3 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
                          int textureHeight, std::string savedImagePath);
   ```
   
-
-
-
