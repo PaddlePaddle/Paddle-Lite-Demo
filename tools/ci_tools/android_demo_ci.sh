@@ -71,6 +71,21 @@ function compile_ocr {
      cd ../../../../ 
 }
 
+function compile_face_keypoints_detection {
+     cd ./face_keypoints_detection/assets
+     chmod +x ./download.sh
+     bash ./download.sh
+     cd ../android/shell/face_keypoints_detection
+     chmod +x ./build.sh
+     sed -i '3s/disk/opt/g' ./build.sh
+     echo "-- arm_v8 --"
+     bash ./build.sh "arm64-v8a"
+     echo "-- arm_v7 --"
+     run error
+     bash ./build.sh "armeabi-v7a"
+     cd ../../../../ 
+}
+
 function main {
   # step1. download android lib
   echo "--download_lib--: $(pwd)"
@@ -85,6 +100,10 @@ function main {
   echo "--compile_object_detection--: $(pwd)"
   compile_object_detection
   echo "--end--: $(pwd)"
+  # step5. build and run face_keypoints_detection
+  echo "--compile_face_keypoints_detection--: $(pwd)"
+  compile_face_keypoints_detection
+  echo "--end--: $(pwd)"   
 }
 
 main
