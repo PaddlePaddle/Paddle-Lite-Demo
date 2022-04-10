@@ -10,7 +10,7 @@
 2. 准备一部 Iphone 手机，并在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
 <p align="center">
-<src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode-phone.jpg"/>
+<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode-phone.jpg"/>
 </p>
 
 ### 部署步骤
@@ -32,36 +32,36 @@ cd ..
 4.  用 Xcode 打开  `image_classification/image_classification.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和 `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
 
     <p align="center">
-    <src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode1.png"/>
+    <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode1.png"/>
     </p>
 
     <p align="center">
-    <src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode2.png"/>
+    <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode2.png"/>
     </p>
 
 
 5.  选中 `image_classification/third-party` 目录 ，右击选择 `Add Files to "third-party" ...`  选项，将预测库、Opencv库和 assets内容（模型、测试图片及标签文件）添加到工程中。操作过程如下图：
      
      <p align="center">
-     <src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_file.jpg"/>
+     <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_file.jpg"/>
      </p>
 
     - 添加  `assets ` 案例
     
     <p align="center">
-    <src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_assets.jpg"/>
+    <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_assets.jpg"/>
     </p>
    
     - 添加预测库案例
       
       <p align="center">
-      <src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_lib.jpg"/>
+      <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_lib.jpg"/>
       </p>
 
     - 添加完成后，工程目录如下：
       
       <p align="center">
-      <src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_finish.jpg"/>
+      <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_finish.jpg"/>
       </p>
      
      **注意：**
@@ -75,7 +75,7 @@ cd ..
 6.  IPhone 手机连接电脑，在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
 <p align="center">
-<img width="600" height="250"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode-phone.jpg"/>
+<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode-phone.jpg"/>
 </p>
 
 
@@ -83,7 +83,7 @@ cd ..
 
 成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
 
-<p align="center"><img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_app_run.jpg"/></p>
+<p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_app_run.jpg"/></p>
 
 
 ## 更新预测库
@@ -108,7 +108,7 @@ cd ..
 先整体介绍下目标检测 Demo 的代码结构，然后再介绍 Demo 每部分功能.
 
 <p align="center">
-<src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_struct.jpg"/>
+<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_struct.jpg"/>
 </p>
 
 ### 整体结构介绍
