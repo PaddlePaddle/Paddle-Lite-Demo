@@ -17,10 +17,10 @@
 #include "paddle_api.h" // NOLINT
 #include <fstream>      // NOLINT
 #include <iostream>     // NOLINT
-#include <sys/time.h>   // NOLINT
-#include <time.h>       // NOLINT
-#include <vector>       // NOLINT
 #include <math.h>
+#include <sys/time.h> // NOLINT
+#include <time.h>     // NOLINT
+#include <vector>     // NOLINT
 /////////////////////////////////////////////////////////////////////////
 // If this demo is linked to static library: libpaddle_api_light_bundled.a
 // , you should include `paddle_use_ops.h` and `paddle_use_kernels.h` to
@@ -69,7 +69,7 @@ void neon_mean_scale(const float *din, float *dout, int size, float *mean,
     dout_c1 += 4;
     dout_c2 += 4;
   }
-       
+
   for (; i < size; i++) {
     *(dout_c0++) = (*(din++) - mean[0]) / scale[0];
     *(dout_c1++) = (*(din++) - mean[1]) / scale[1];
@@ -77,9 +77,9 @@ void neon_mean_scale(const float *din, float *dout, int size, float *mean,
   }
 }
 
-int partitionScore(float (*anchors)[4], float* scores, int left, int right) {
+int partitionScore(float (*anchors)[4], float *scores, int left, int right) {
   float pivot = scores[left];
-  float* pivotA = anchors[left];
+  float *pivotA = anchors[left];
   while (left < right) {
     while (left < right && scores[right] <= pivot)
       right--;
@@ -92,7 +92,7 @@ int partitionScore(float (*anchors)[4], float* scores, int left, int right) {
     while (left < right && scores[left] >= pivot)
       left++;
     if (left < right) {
-      for (int i = 0; i < 4; i++) {      
+      for (int i = 0; i < 4; i++) {
         anchors[right][i] = anchors[left][i];
       }
       scores[right--] = scores[left];
@@ -100,52 +100,55 @@ int partitionScore(float (*anchors)[4], float* scores, int left, int right) {
   }
   scores[left] = pivot;
   for (int i = 0; i < 4; i++) {
-    anchors[left][i] = *(pivotA+i);
+    anchors[left][i] = *(pivotA + i);
   }
   return left;
 }
 
-void quickSortScore(float (*anchors)[4], float* scores, int left, int right) {
+void quickSortScore(float (*anchors)[4], float *scores, int left, int right) {
   int dp;
   if (left < right) {
-      dp = partitionScore(anchors, scores, left, right);
-      quickSortScore(anchors, scores, left, dp - 1);
-      quickSortScore(anchors, scores, dp + 1, right);
-  }        
+    dp = partitionScore(anchors, scores, left, right);
+    quickSortScore(anchors, scores, left, dp - 1);
+    quickSortScore(anchors, scores, dp + 1, right);
+  }
 }
 
-void sortScores(float (*anchors)[4], float* scores, int left, int64_t right) {
+void sortScores(float (*anchors)[4], float *scores, int left, int64_t right) {
   quickSortScore(anchors, scores, left, right);
 }
 
-std::vector<int> nmsScoreFilter(float (*anchors)[4], float* score, const int topN, const float thresh, const int length){
-  auto computeOverlapAreaRate = [](float* anchor1, float* anchor2) -> float {
-    float xx1 = anchor1[0]>anchor2[0]?anchor1[0]:anchor2[0];
-    float yy1 = anchor1[1]>anchor2[1]?anchor1[1]:anchor2[1];
-    float xx2 = anchor1[2]<anchor2[2]?anchor1[2]:anchor2[2];
-    float yy2 = anchor1[3]<anchor2[3]?anchor1[3]:anchor2[3];
+std::vector<int> nmsScoreFilter(float (*anchors)[4], float *score,
+                                const int topN, const float thresh,
+                                const int length) {
+  auto computeOverlapAreaRate = [](float *anchor1, float *anchor2) -> float {
+    float xx1 = anchor1[0] > anchor2[0] ? anchor1[0] : anchor2[0];
+    float yy1 = anchor1[1] > anchor2[1] ? anchor1[1] : anchor2[1];
+    float xx2 = anchor1[2] < anchor2[2] ? anchor1[2] : anchor2[2];
+    float yy2 = anchor1[3] < anchor2[3] ? anchor1[3] : anchor2[3];
     float w = xx2 - xx1 + 1;
     float h = yy2 - yy1 + 1;
-    if(w<0||h<0){
+    if (w < 0 || h < 0) {
       return 0;
     }
     float inter = w * h;
-    float anchor1_area1 = (anchor1[2] - anchor1[0] + 1)*(anchor1[3] - anchor1[1] + 1);
-    float anchor2_area1 = (anchor2[2] - anchor2[0] + 1)*(anchor2[3] - anchor2[1] + 1);
-    //std :: cout << " filter " << inter / (anchor1_area1 + anchor2_area1 - inter) << std :: endl;
+    float anchor1_area1 =
+        (anchor1[2] - anchor1[0] + 1) * (anchor1[3] - anchor1[1] + 1);
+    float anchor2_area1 =
+        (anchor2[2] - anchor2[0] + 1) * (anchor2[3] - anchor2[1] + 1);
     return inter / (anchor1_area1 + anchor2_area1 - inter);
   };
   int count = 0;
   float INVALID_ANCHOR = -10000.0f;
-  for(int i=0;i<length;i++){
-    if(fabs(score[i]-INVALID_ANCHOR) < 1e-5){
+  for (int i = 0; i < length; i++) {
+    if (fabs(score[i] - INVALID_ANCHOR) < 1e-5) {
       continue;
     }
     if (++count >= topN) {
       break;
     }
-    for(int j=i+1;j<length;j++){
-      if(fabs(score[j]-INVALID_ANCHOR) > 1e-5) {
+    for (int j = i + 1; j < length; j++) {
+      if (fabs(score[j] - INVALID_ANCHOR) > 1e-5) {
         if (computeOverlapAreaRate(anchors[i], anchors[j]) > thresh) {
           score[j] = INVALID_ANCHOR;
         }
@@ -153,34 +156,35 @@ std::vector<int> nmsScoreFilter(float (*anchors)[4], float* score, const int top
     }
   }
   std::vector<int> outputIndex;
-  for(int i=0;i<length && count>0;i++){
-    if(fabs(score[i]-INVALID_ANCHOR) > 1e-5){
-        outputIndex.push_back(i);
-        count--;
+  for (int i = 0; i < length && count > 0; i++) {
+    if (fabs(score[i] - INVALID_ANCHOR) > 1e-5) {
+      outputIndex.push_back(i);
+      count--;
     }
   }
   return outputIndex;
 }
 
-void draw(std::vector<std::vector<float>> boxAndScores, cv::Mat& outputImage) {
+void draw(std::vector<std::vector<float>> boxAndScores, cv::Mat &outputImage) {
   int i = 0;
-  for(auto boxAndScore:boxAndScores) {
-    cv::rectangle(outputImage, cv::Point(boxAndScore[0], boxAndScore[1]), cv::Point(boxAndScore[2], boxAndScore[3]),cv::Scalar(0,0,255), 2, 8);
+  for (auto boxAndScore : boxAndScores) {
+    cv::rectangle(outputImage, cv::Point(boxAndScore[0], boxAndScore[1]),
+                  cv::Point(boxAndScore[2], boxAndScore[3]),
+                  cv::Scalar(0, 0, 255), 2, 8);
   }
-  cv::imwrite("face_detection.jpg",outputImage);
-
+  cv::imwrite("face_detection.jpg", outputImage);
 }
 
 cv::Mat pre_process(std::shared_ptr<PaddlePredictor> predictor,
-                 const std::string img_path, int width, int height) {
+                    const std::string img_path, int width, int height) {
   // Prepare input data from image
   std::unique_ptr<Tensor> input_tensor(std::move(predictor->GetInput(0)));
   input_tensor->Resize({1, 3, height, width});
   // read img and pre-process
-  cv::Mat img = imread(img_path, cv::IMREAD_COLOR); 
+  cv::Mat img = imread(img_path, cv::IMREAD_COLOR);
   //   pre_process(img, width, height, data);
-  float means[3] = {127/255.f, 127/255.f, 127/255.f};
-  float scales[3] = {128/255.f, 128/255.f, 128/255.f};
+  float means[3] = {127 / 255.f, 127 / 255.f, 127 / 255.f};
+  float scales[3] = {128 / 255.f, 128 / 255.f, 128 / 255.f};
   cv::Mat rgb_img;
   cv::cvtColor(img, rgb_img, cv::COLOR_BGR2RGB);
   cv::resize(rgb_img, rgb_img, cv::Size(width, height), 0.f, 0.f);
@@ -192,14 +196,16 @@ cv::Mat pre_process(std::shared_ptr<PaddlePredictor> predictor,
   return img;
 }
 
-void post_process(cv::Mat& outputImage, std::shared_ptr<PaddlePredictor> predictor, const int topk, const float nmsParamNmsThreshold, const float confidenceThreshold) {
+void post_process(cv::Mat &outputImage,
+                  std::shared_ptr<PaddlePredictor> predictor, const int topk,
+                  const float nmsParamNmsThreshold,
+                  const float confidenceThreshold) {
   float output_boxs[8840][4];
   float output_scores[8840];
 
   std::unique_ptr<const Tensor> scoresTensor(
       std::move(predictor->GetOutput(0)));
-  std::unique_ptr<const Tensor> boxsTensor(
-      std::move(predictor->GetOutput(1)));
+  std::unique_ptr<const Tensor> boxsTensor(std::move(predictor->GetOutput(1)));
   auto scores_Shape = scoresTensor->shape();
   int64_t scoresSize = 1;
   for (auto s : scores_Shape) {
@@ -214,7 +220,7 @@ void post_process(cv::Mat& outputImage, std::shared_ptr<PaddlePredictor> predict
   auto *scores = scoresTensor->data<float>();
   auto *boxs = boxsTensor->data<float>();
 
-  for (int i = 0, j = 0; i < scoresSize; i += 2, j+=4) {
+  for (int i = 0, j = 0; i < scoresSize; i += 2, j += 4) {
     float rawLeft = boxs[j];
     float rawTop = boxs[j + 1];
     float rawRight = boxs[j + 2];
@@ -227,36 +233,37 @@ void post_process(cv::Mat& outputImage, std::shared_ptr<PaddlePredictor> predict
     output_boxs[number_boxs][1] = clampedTop * imgHeight;
     output_boxs[number_boxs][2] = clampedRight * imgWidth;
     output_boxs[number_boxs][3] = clampedBottom * imgHeight;
-    output_scores[number_boxs] = scores[i+1];
-    number_boxs = number_boxs + 1 ;
+    output_scores[number_boxs] = scores[i + 1];
+    number_boxs = number_boxs + 1;
   }
 
-  sortScores(output_boxs, output_scores, 0, scoresSize-1);
-  auto outputIndex = nmsScoreFilter(output_boxs, output_scores, topk, nmsParamNmsThreshold, scoresSize-1);
+  sortScores(output_boxs, output_scores, 0, scoresSize - 1);
+  auto outputIndex = nmsScoreFilter(output_boxs, output_scores, topk,
+                                    nmsParamNmsThreshold, scoresSize - 1);
 
   std::vector<std::vector<float>> boxAndScores;
   if (outputIndex.size() > 0) {
-    for (auto id:outputIndex) {
-      if(output_scores[id] < confidenceThreshold) continue;
-      if(isnan(output_scores[id])){//skip the NaN score, maybe not correct
-          continue;
+    for (auto id : outputIndex) {
+      if (output_scores[id] < confidenceThreshold)
+        continue;
+      if (isnan(output_scores[id])) { // skip the NaN score, maybe not correct
+        continue;
       }
       std::vector<float> boxScore;
-      for(int k=0;k<4;k++)
-          boxScore.push_back(output_boxs[id][k]);//x1,y1,x2,y2
-      boxScore.push_back(output_scores[id]);  //possibility
-      boxAndScores.push_back(boxScore);      
+      for (int k = 0; k < 4; k++)
+        boxScore.push_back(output_boxs[id][k]); // x1,y1,x2,y2
+      boxScore.push_back(output_scores[id]);    // possibility
+      boxAndScores.push_back(boxScore);
     }
   }
 
   draw(boxAndScores, outputImage);
-
 }
 
 void run_model(std::string model_file, std::string img_path, const int topk,
-               const float nmsParamNmsThreshold, const float confidenceThreshold,
-               int width, int height, int power_mode, int thread_num,
-               int repeats, int warmup) {
+               const float nmsParamNmsThreshold,
+               const float confidenceThreshold, int width, int height,
+               int power_mode, int thread_num, int repeats, int warmup) {
   // 1. Set MobileConfig
   MobileConfig config;
   config.set_model_from_file(model_file);
@@ -318,19 +325,19 @@ void run_model(std::string model_file, std::string img_path, const int topk,
   // 5. Get output and post process
   std::cout << "\n====== output summary ====== " << std::endl;
 
-  post_process(input_image, predictor, topk, nmsParamNmsThreshold, confidenceThreshold);
+  post_process(input_image, predictor, topk, nmsParamNmsThreshold,
+               confidenceThreshold);
 }
 
 int main(int argc, char **argv) {
   if (argc < 3) {
-    std::cerr << "[ERROR] usage: " << argv[0]
-              << " model_file image_path \n";
+    std::cerr << "[ERROR] usage: " << argv[0] << " model_file image_path \n";
     exit(1);
   }
   std::cout << "This parameters are optional: \n"
             << " <topk>, eg: 100 \n"
             << " <input_width>, eg: 320 \n"
-            << " <input_height>, eg: 240 \n"            
+            << " <input_height>, eg: 240 \n"
             << " <nmsThreshold>, eg: 0.5 \n"
             << " <confidenceThreshold>, eg: 0.5 \n"
             << "  <power_mode>, 0: big cluster, high performance\n"
@@ -341,7 +348,7 @@ int main(int argc, char **argv) {
             << "  <repeats>, eg: 100\n"
             << "  <warmup>, eg: 10\n"
             << "  <nmsThreshold>, eg: 0.5\n"
-            << "  <confidenceThreshold>, eg: 0.5\n"                        
+            << "  <confidenceThreshold>, eg: 0.5\n"
             << std::endl;
   std::string model_file = argv[1];
   std::string img_path = argv[2];
@@ -381,7 +388,8 @@ int main(int argc, char **argv) {
     warmup = atoi(argv[11]);
   }
 
-  run_model(model_file, img_path, topk, nmsParamNmsThreshold, confidenceThreshold, width, height, power_mode,
-            thread_num, repeats, warmup);
+  run_model(model_file, img_path, topk, nmsParamNmsThreshold,
+            confidenceThreshold, width, height, power_mode, thread_num, repeats,
+            warmup);
   return 0;
 }

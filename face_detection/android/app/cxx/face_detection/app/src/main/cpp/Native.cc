@@ -27,14 +27,14 @@ extern "C" {
  */
 JNIEXPORT jlong JNICALL
 Java_com_baidu_paddle_lite_demo_face_1detection_Native_nativeInit(
-        JNIEnv *env, jclass thiz, jstring jModelDir, jstring jLabelPath,
-        jint cpuThreadNum, jstring jCPUPowerMode, jlongArray jInputShape,
-        jfloatArray jInputMean, jfloatArray jInputStd) {
+    JNIEnv *env, jclass thiz, jstring jModelDir, jstring jLabelPath,
+    jint cpuThreadNum, jstring jCPUPowerMode, jlongArray jInputShape,
+    jfloatArray jInputMean, jfloatArray jInputStd) {
   std::string modelDir = jstring_to_cpp_string(env, jModelDir);
   std::string labelPath = jstring_to_cpp_string(env, jLabelPath);
   std::string cpuPowerMode = jstring_to_cpp_string(env, jCPUPowerMode);
   std::vector<int64_t> inputShape =
-          jlongarray_to_int64_vector(env, jInputShape);
+      jlongarray_to_int64_vector(env, jInputShape);
   std::vector<float> inputMean = jfloatarray_to_float_vector(env, jInputMean);
   std::vector<float> inputStd = jfloatarray_to_float_vector(env, jInputStd);
   return reinterpret_cast<jlong>(new Pipeline(modelDir, labelPath, cpuThreadNum,
@@ -49,7 +49,7 @@ Java_com_baidu_paddle_lite_demo_face_1detection_Native_nativeInit(
  */
 JNIEXPORT jboolean JNICALL
 Java_com_baidu_paddle_lite_demo_face_1detection_Native_nativeRelease(
-        JNIEnv *env, jclass thiz, jlong ctx) {
+    JNIEnv *env, jclass thiz, jlong ctx) {
   if (ctx == 0) {
     return JNI_FALSE;
   }
@@ -65,7 +65,8 @@ Java_com_baidu_paddle_lite_demo_face_1detection_Native_nativeRelease(
  */
 JNIEXPORT jfloatArray JNICALL
 Java_com_baidu_paddle_lite_demo_face_1detection_Native_nativeProcess(
-        JNIEnv *env, jclass thiz, jlong ctx, jobject jARGB8888ImageBitmap, jint height, jint width) {
+    JNIEnv *env, jclass thiz, jlong ctx, jobject jARGB8888ImageBitmap,
+    jint height, jint width) {
   if (ctx == 0) {
     return JNI_FALSE;
   }
@@ -101,8 +102,10 @@ Java_com_baidu_paddle_lite_demo_face_1detection_Native_nativeProcess(
 
   Pipeline *pipeline = reinterpret_cast<Pipeline *>(ctx);
 
-  std::vector<float> boxAndScore_infertime = pipeline->Process(rgbaImage, height, width);
-  return cpp_array_to_jfloatarray(env, boxAndScore_infertime.data(), boxAndScore_infertime.size());
+  std::vector<float> boxAndScore_infertime =
+      pipeline->Process(rgbaImage, height, width);
+  return cpp_array_to_jfloatarray(env, boxAndScore_infertime.data(),
+                                  boxAndScore_infertime.size());
 }
 
 #ifdef __cplusplus

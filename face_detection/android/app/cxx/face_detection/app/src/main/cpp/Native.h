@@ -28,9 +28,9 @@ inline std::string jstring_to_cpp_string(JNIEnv *env, jstring jstr) {
   }
   const jclass stringClass = env->GetObjectClass(jstr);
   const jmethodID getBytes =
-          env->GetMethodID(stringClass, "getBytes", "(Ljava/lang/String;)[B");
+      env->GetMethodID(stringClass, "getBytes", "(Ljava/lang/String;)[B");
   const jbyteArray stringJbytes = (jbyteArray)env->CallObjectMethod(
-          jstr, getBytes, env->NewStringUTF("UTF-8"));
+      jstr, getBytes, env->NewStringUTF("UTF-8"));
 
   size_t length = (size_t)env->GetArrayLength(stringJbytes);
   jbyte *pBytes = env->GetByteArrayElements(stringJbytes, NULL);
@@ -47,7 +47,7 @@ inline jstring cpp_string_to_jstring(JNIEnv *env, std::string str) {
   auto *data = str.c_str();
   jclass strClass = env->FindClass("java/lang/String");
   jmethodID strClassInitMethodID =
-          env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
+      env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
 
   jbyteArray bytes = env->NewByteArray(strlen(data));
   env->SetByteArrayRegion(bytes, 0, strlen(data),
@@ -55,7 +55,7 @@ inline jstring cpp_string_to_jstring(JNIEnv *env, std::string str) {
 
   jstring encoding = env->NewStringUTF("UTF-8");
   jstring res = (jstring)(
-          env->NewObject(strClass, strClassInitMethodID, bytes, encoding));
+      env->NewObject(strClass, strClassInitMethodID, bytes, encoding));
 
   env->DeleteLocalRef(strClass);
   env->DeleteLocalRef(encoding);
@@ -68,7 +68,7 @@ inline jobject cpp_string_to_jobect(JNIEnv *env, std::string str) {
   auto *data = str.c_str();
   jclass strClass = env->FindClass("java/lang/String");
   jmethodID strClassInitMethodID =
-          env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
+      env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
 
   jbyteArray bytes = env->NewByteArray(strlen(data));
   env->SetByteArrayRegion(bytes, 0, strlen(data),

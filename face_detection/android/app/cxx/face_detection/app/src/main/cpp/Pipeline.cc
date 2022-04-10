@@ -16,25 +16,23 @@
 #include <functional>
 #include <utility>
 
-Detector::Detector(const std::string &modelDir,
-                   const std::string &labelPath, const int cpuThreadNum,
-                   const std::string &cpuPowerMode,
+Detector::Detector(const std::string &modelDir, const std::string &labelPath,
+                   const int cpuThreadNum, const std::string &cpuPowerMode,
                    const std::vector<int64_t> &inputShap,
                    const std::vector<float> &inputMean,
                    const std::vector<float> &inputStd)
-        : inputShape_(inputShap), inputMean_(inputMean), inputStd_(inputStd){
+    : inputShape_(inputShap), inputMean_(inputMean), inputStd_(inputStd) {
   paddle::lite_api::MobileConfig config;
   config.set_model_from_file(modelDir + "/model.nb");
   config.set_threads(cpuThreadNum);
   config.set_power_mode(ParsePowerMode(cpuPowerMode));
   predictor_ =
-          paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(
-                  config);
+      paddle::lite_api::CreatePaddlePredictor<paddle::lite_api::MobileConfig>(
+          config);
   labelList_ = LoadLabelList(labelPath);
 }
 
-std::vector<std::string>
-Detector::LoadLabelList(const std::string &labelPath) {
+std::vector<std::string> Detector::LoadLabelList(const std::string &labelPath) {
   std::ifstream file;
   std::vector<std::string> labels;
   file.open(labelPath);
@@ -76,7 +74,7 @@ std::vector<float> Detector::Postprocess() {
   int topk = 100;
   float nmsParamNmsThreshold = 0.5;
   float confidenceThreshold = 0.5;
-  std :: vector<std::pair<float,std::vector<float>>> vec;
+  std::vector<std::pair<float, std::vector<float>>> vec;
 
   auto scoresTensor = predictor_->GetOutput(0);
   auto boxsTensor = predictor_->GetOutput(1);
@@ -86,7 +84,7 @@ std::vector<float> Detector::Postprocess() {
   auto *scores = scoresTensor->data<float>();
   auto *boxs = boxsTensor->data<float>();
 
-  for (int i = 0, j = 0; i < scoresSize; i += 2, j+=4) {
+  for (int i = 0, j = 0; i < scoresSize; i += 2, j += 4) {
     float rawLeft = boxs[j];
     float rawTop = boxs[j + 1];
     float rawRight = boxs[j + 2];
@@ -107,62 +105,67 @@ std::vector<float> Detector::Postprocess() {
             std::greater<std::pair<float, std::vector<float>>>());
 
   std::vector<int> outputIndex;
-  auto computeOverlapAreaRate = [](std::vector<float>anchor1, std::vector<float>anchor2) -> float {
-      float xx1 = anchor1[0]>anchor2[0]?anchor1[0]:anchor2[0];
-      float yy1 = anchor1[1]>anchor2[1]?anchor1[1]:anchor2[1];
-      float xx2 = anchor1[2]<anchor2[2]?anchor1[2]:anchor2[2];
-      float yy2 = anchor1[3]<anchor2[3]?anchor1[3]:anchor2[3];
-      float w = xx2 - xx1 + 1;
-      float h = yy2 - yy1 + 1;
-      if(w<0||h<0){
-        return 0;
-      }
-      float inter = w * h;
-      float anchor1_area1 = (anchor1[2] - anchor1[0] + 1)*(anchor1[3] - anchor1[1] + 1);
-      float anchor2_area1 = (anchor2[2] - anchor2[0] + 1)*(anchor2[3] - anchor2[1] + 1);
-      return inter / (anchor1_area1 + anchor2_area1 - inter);
+  auto computeOverlapAreaRate = [](std::vector<float> anchor1,
+                                   std::vector<float> anchor2) -> float {
+    float xx1 = anchor1[0] > anchor2[0] ? anchor1[0] : anchor2[0];
+    float yy1 = anchor1[1] > anchor2[1] ? anchor1[1] : anchor2[1];
+    float xx2 = anchor1[2] < anchor2[2] ? anchor1[2] : anchor2[2];
+    float yy2 = anchor1[3] < anchor2[3] ? anchor1[3] : anchor2[3];
+    float w = xx2 - xx1 + 1;
+    float h = yy2 - yy1 + 1;
+    if (w < 0 || h < 0) {
+      return 0;
+    }
+    float inter = w * h;
+    float anchor1_area1 =
+        (anchor1[2] - anchor1[0] + 1) * (anchor1[3] - anchor1[1] + 1);
+    float anchor2_area1 =
+        (anchor2[2] - anchor2[0] + 1) * (anchor2[3] - anchor2[1] + 1);
+    return inter / (anchor1_area1 + anchor2_area1 - inter);
   };
 
   int count = 0;
   float INVALID_ANCHOR = -10000.0f;
-  for(int i=0;i<vec.size();i++){
-    if(fabs(vec[i].first-INVALID_ANCHOR) < 1e-5){
+  for (int i = 0; i < vec.size(); i++) {
+    if (fabs(vec[i].first - INVALID_ANCHOR) < 1e-5) {
       continue;
     }
     if (++count >= topk) {
       break;
     }
-    for(int j=i+1;j<vec.size();j++){
-      if(fabs(vec[j].first-INVALID_ANCHOR) > 1e-5) {
-        if (computeOverlapAreaRate(vec[i].second, vec[j].second) > nmsParamNmsThreshold) {
+    for (int j = i + 1; j < vec.size(); j++) {
+      if (fabs(vec[j].first - INVALID_ANCHOR) > 1e-5) {
+        if (computeOverlapAreaRate(vec[i].second, vec[j].second) >
+            nmsParamNmsThreshold) {
           vec[j].first = INVALID_ANCHOR;
         }
       }
     }
   }
-  for(int i=0;i<vec.size() && count>0;i++){
-    if(fabs(vec[i].first-INVALID_ANCHOR) > 1e-5){
+  for (int i = 0; i < vec.size() && count > 0; i++) {
+    if (fabs(vec[i].first - INVALID_ANCHOR) > 1e-5) {
       outputIndex.push_back(i);
       count--;
     }
   }
   std::vector<float> boxAndScores;
   if (outputIndex.size() > 0) {
-    for (auto id:outputIndex) {
-      if(vec[id].first < confidenceThreshold) continue;
-      if(isnan(vec[id].first)){//skip the NaN score, maybe not correct
+    for (auto id : outputIndex) {
+      if (vec[id].first < confidenceThreshold)
+        continue;
+      if (isnan(vec[id].first)) { // skip the NaN score, maybe not correct
         continue;
       }
-      for(int k=0;k<4;k++)
-        boxAndScores.push_back((vec[id].second)[k]);//x1,y1,x2,y2
-      boxAndScores.push_back((vec[id].first));  //possibility
+      for (int k = 0; k < 4; k++)
+        boxAndScores.push_back((vec[id].second)[k]); // x1,y1,x2,y2
+      boxAndScores.push_back((vec[id].first));       // possibility
     }
   }
   return boxAndScores;
 }
 
 std::vector<float> Detector::Predict(const cv::Mat &rgbaImage) {
-  float preprocessTime,predictTime,postprocessTime;
+  float preprocessTime, predictTime, postprocessTime;
   auto t = GetCurrentTime();
 
   t = GetCurrentTime();
@@ -198,12 +201,12 @@ Pipeline::Pipeline(const std::string &modelDir, const std::string &labelPath,
                    const std::vector<int64_t> &intputShape,
                    const std::vector<float> &inputMean,
                    const std::vector<float> &inputStd) {
-  detector_.reset(new Detector(modelDir, labelPath, cpuThreadNum,
-                               cpuPowerMode, intputShape, inputMean,
-                               inputStd));
+  detector_.reset(new Detector(modelDir, labelPath, cpuThreadNum, cpuPowerMode,
+                               intputShape, inputMean, inputStd));
 }
 
-std::vector<float> Pipeline::Process(cv::Mat &rgbaImage, int height, int width) {
+std::vector<float> Pipeline::Process(cv::Mat &rgbaImage, int height,
+                                     int width) {
   // Feed the image, run inference and parse the results
   detector_->set_imgHeight(height);
   detector_->set_imgWidth(width);

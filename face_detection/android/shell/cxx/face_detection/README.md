@@ -242,8 +242,40 @@ adb shell "cd ${ADB_DIR} \
 ```
 
 **注意：**
--  如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/face_detection.cc` 的 `pre_process` 预处理和 `pre_process` 后处理代码即可。
+-  如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/face_detection.cc` 的 `pre_process` 预处理和 `post_process` 后处理代码即可。
 
+### 更新输入/输出预处理
+
+1. 更新输入数据
+
+- 将更新的图片存放在 `Paddle-Lite-Demo/face_detection/assets/images/` 下；
+- 更新文件 `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/run.sh` 脚本
+
+以更新 `face_new.jpg` 为例，则先将 `face_new.jpg` 存放在 `Paddle-Lite-Demo/face_detection/assets/images/` 下，然后更新脚本
+
+```shell
+# path: Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/run.sh
+# old
+adb shell "cd ${ADB_DIR} \
+           && chmod +x ./face_detection \
+           && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
+           && ./face_detection \
+              ./models/facedetection_for_cpu/model.nb \
+              ./images/face.jpg \
+              100 0.5 0.5 320 240 \
+              1 0 100 10 \
+          "
+# now
+adb shell "cd ${ADB_DIR} \
+           && chmod +x ./face_detection \
+           && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
+           && ./face_detection \
+              ./models/facedetection_for_cpu/model.nb \
+              ./images/face_new.jpg \
+              100 0.5 0.5 320 240 \
+              1 0 100 10 \
+          "
+```
 2. 更新输入预处理
 此处需要更新 `Paddle-Lite-Demo/face_detection/android/shell/cxx/face_detection/face_detection.cc` 的 `pre_process` 预处理实现就行。
 

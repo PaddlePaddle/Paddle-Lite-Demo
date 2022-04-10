@@ -28,55 +28,52 @@
 
 class Detector {
 public: // NOLINT
-    explicit Detector(const std::string &modelDir, const std::string &labelPath,
-                      const int cpuThreadNum, const std::string &cpuPowerMode,
-                      const std::vector<int64_t> &inputShape,
-                      const std::vector<float> &inputMean,
-                      const std::vector<float> &inputStd);
+  explicit Detector(const std::string &modelDir, const std::string &labelPath,
+                    const int cpuThreadNum, const std::string &cpuPowerMode,
+                    const std::vector<int64_t> &inputShape,
+                    const std::vector<float> &inputMean,
+                    const std::vector<float> &inputStd);
 
-    std::vector<float> Predict(const cv::Mat &rgbImage);
-    void set_imgWidth(int width) {
-        imgWidth = width;
-    };
-    void set_imgHeight(int height) {
-        imgHeight = height;
-    };
+  std::vector<float> Predict(const cv::Mat &rgbImage);
+  void set_imgWidth(int width) { imgWidth = width; };
+  void set_imgHeight(int height) { imgHeight = height; };
 
 private: // NOLINT
-    std::vector<std::string> LoadLabelList(const std::string &path);
-    void Preprocess(const cv::Mat &rgbaImage);
-    std::vector<float> Postprocess();
+  std::vector<std::string> LoadLabelList(const std::string &path);
+  void Preprocess(const cv::Mat &rgbaImage);
+  std::vector<float> Postprocess();
 
 private: // NOLINT
-    std::vector<int64_t> inputShape_;
-    int warmup_{1};
-    int repeats_{1};
-    int imgWidth{1280};
-    int imgHeight{720};
-    std::vector<float> inputMean_;
-    std::vector<float> inputStd_;
-    std::vector<std::string> labelList_;
-    std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor_;
+  std::vector<int64_t> inputShape_;
+  int warmup_{1};
+  int repeats_{1};
+  int imgWidth{1280};
+  int imgHeight{720};
+  std::vector<float> inputMean_;
+  std::vector<float> inputStd_;
+  std::vector<std::string> labelList_;
+  std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor_;
 };
 
 class Pipeline {
 public: // NOLINT
-    Pipeline(const std::string &modelDir, const std::string &labelPath,
-             const int cpuThreadNum, const std::string &cpuPowerMode,
-             const std::vector<int64_t> &inputShap,
-             const std::vector<float> &inputMean,
-             const std::vector<float> &inputStd);
+  Pipeline(const std::string &modelDir, const std::string &labelPath,
+           const int cpuThreadNum, const std::string &cpuPowerMode,
+           const std::vector<int64_t> &inputShap,
+           const std::vector<float> &inputMean,
+           const std::vector<float> &inputStd);
 
-    std::vector<float> Process(cv::Mat &rgbaImage, int height, int width); // NOLINT
-
-private: // NOLINT
-    // Visualize the results to origin image
-    void VisualizeResults(cv::Mat *rgbaImage);
-
-    // Visualize the status(performace data) to origin image
-    void VisualizeStatus(double preprocessTime, double predictTime,
-                         double postprocessTime, cv::Mat *rgbaImage);
+  std::vector<float> Process(cv::Mat &rgbaImage, int height,
+                             int width); // NOLINT
 
 private: // NOLINT
-    std::shared_ptr<Detector> detector_;
+  // Visualize the results to origin image
+  void VisualizeResults(cv::Mat *rgbaImage);
+
+  // Visualize the status(performace data) to origin image
+  void VisualizeStatus(double preprocessTime, double predictTime,
+                       double postprocessTime, cv::Mat *rgbaImage);
+
+private: // NOLINT
+  std::shared_ptr<Detector> detector_;
 };
