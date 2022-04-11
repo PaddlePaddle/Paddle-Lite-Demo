@@ -17,7 +17,7 @@ Paddle Lite 预测库版本一样的 NDK
  1. OCR 文字识别 Demo 位于 `Paddle-Lite-Demo/ocr/Android/app/c++/ppocr_demo` 目录
  2. cd `Paddle-Lite-Demo/libs` 目录，运行 `download.sh` 脚本，下载所需要的 Paddle Lite 预测库
  3. cd `Paddle-Lite-Demo/ocr/assets` 目录，运行 `download.sh` 脚本，下载OPT 优化后模型、测试图片和标签文件
- 4. cd `Paddle-Lite-Demo/ocr/Android/app/c++/ppocr_demo` 目录，运行 `prepare.sh` 脚本， 将预测库、模型等资源文件拷贝到当前工程中
+ 4. cd `Paddle-Lite-Demo/ocr/Android/app/c++/ppocr_demo` 目录，运行 `prepare.sh` 脚本， 将模型、测试图片等资源文件拷贝到当前工程中
  5. 用 Android Studio 打开 ppocr_demo 工程
  6. 手机连接电脑，打开 USB 调试和文件传输模式，并在 Android Studio 上连接自己的手机设备（手机需要开启允许从 USB 安装软件权限）
  
