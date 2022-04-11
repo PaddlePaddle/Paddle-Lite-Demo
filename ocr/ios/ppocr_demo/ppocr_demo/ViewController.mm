@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // clang-format off
-#import <opencv2/imgcodecs/ios.h>
 #import <opencv2/opencv.hpp>
+#import <opencv2/imgcodecs/ios.h>
 #import <opencv2/videoio/cap_ios.h>
 // clang-format on
 #import "ViewController.h"
