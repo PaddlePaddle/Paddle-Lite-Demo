@@ -90,7 +90,7 @@ function main {
   # step1. download android lib
   echo "--download_lib--: $(pwd)"
   download_lib
-   # step2. build and run human_segmentation
+  # step2. build and run human_segmentation
   echo "--compile_human_segmentation--: $(pwd)"
   compile_human_segmentation
   # step3. build and run image_classification
