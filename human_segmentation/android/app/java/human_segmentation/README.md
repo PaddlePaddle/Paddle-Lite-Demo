@@ -303,17 +303,17 @@ public void onLoadModelSuccessed() {
 ### setting 界面参数更新
 1）打开 APP，点击右上角的 `:` 符合，选择 `Settings..` 选项，打开 setting 界面；
 <p align="center">
-<img src="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/param_setting.jpg"/>
+<img width="250" height="500" src="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/param_setting.jpg"/>
 </p>
 
 2）再将 setting 界面的 Enable custom settings 选中☑️，然后更新部分参数；
 <p align="center">
-<img src="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/setting.jpg"/>
+<img width="250" height="500" src="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/setting.jpg"/>
 </p>
 
 3）假设更新线程数据，将 CPU Thread Num 设置为 4，更新后，返回原界面，APP将自动重新预测，并打印 4 线程的耗时和结果
 <p align="center">
-<img src="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/cpu_threads.jpg"/>
+<img width="250" height="500" src="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/cpu_threads.jpg"/>
 </p>
 
 ## 性能优化方法

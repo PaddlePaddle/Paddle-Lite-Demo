@@ -90,18 +90,18 @@ function main {
   # step1. download android lib
   echo "--download_lib--: $(pwd)"
   download_lib
-  # step2. build and run image_classification
-  echo "--compile_image_classification--: $(pwd)"
-  compile_image_classification
-  # step3. build and run ocr
-  echo "--compile_ocr--: $(pwd)"
-  compile_ocr
-  # step4. build and run object_detection
-  echo "--compile_object_detection--: $(pwd)"
-  compile_object_detection
-  # step5. build and run human_segmentation
+   # step2. build and run human_segmentation
   echo "--compile_human_segmentation--: $(pwd)"
   compile_human_segmentation
+  # step3. build and run image_classification
+  echo "--compile_image_classification--: $(pwd)"
+  compile_image_classification
+  # step4. build and run ocr
+  echo "--compile_ocr--: $(pwd)"
+  compile_ocr
+  # step5. build and run object_detection
+  echo "--compile_object_detection--: $(pwd)"
+  compile_object_detection
   echo "--end--: $(pwd)"
 }
 
