@@ -11,16 +11,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+// clang-format off
+#import <opencv2/opencv.hpp>
+#import <opencv2/imgcodecs/ios.h>
+#import <opencv2/videoio/cap_ios.h>
+// clang-format on
 #import "ViewController.h"
 #include "pipeline.h"
 #include "timer.h"
 #include <arm_neon.h>
 #include <iostream>
 #include <mutex>
-#import <opencv2/imgcodecs/ios.h>
-#import <opencv2/opencv.hpp>
-#import <opencv2/videoio/cap_ios.h>
 #include <paddle_api.h>
 #include <paddle_use_kernels.h>
 #include <paddle_use_ops.h>
