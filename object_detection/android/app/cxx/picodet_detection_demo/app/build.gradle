@@ -45,7 +45,7 @@ dependencies {
 
 def archives = [
         [
-                'src' : 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_dev_gpu.tar.gz',
+                'src' : 'https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2.11_rc.tar.gz',
                 'dest': 'PaddleLite'
         ],
         [

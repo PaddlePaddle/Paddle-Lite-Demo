@@ -75,7 +75,7 @@ cd ..
 6.  IPhone 手机连接电脑，在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
 <p align="center">
-<img width="600" height="250"  src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/Xcode-phone.jpg"/>
+<img width="300" height="350"  src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/Xcode-phone.jpg"/>
 </p>
 
 
@@ -83,7 +83,7 @@ cd ..
 
 成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
 
-<p align="center"><img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/IOS_app.jpeg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_run_app.jpg"/></p>
+<p align="center"><img width="350" height="500" src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/IOS_app.jpeg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500" src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_run_app.jpg"/></p>
 
 
 ## 更新预测库
@@ -272,3 +272,6 @@ if (_image != nil) {
 
 ### 其他文件
 * `time.h` 包含常见的计时处理函数，用于计时处理
+
+## 性能优化方法
+如果你觉得当前性能不符合需求，想进一步提升模型性能，可参考[首页中性能优化文档](/README.md)完成性能优化。
