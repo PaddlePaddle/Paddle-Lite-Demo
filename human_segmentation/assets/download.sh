@@ -1,5 +1,5 @@
 #!/bin/bash
-MODEL_URL="https://paddlelite-demo.bj.bcebos.com/models/deeplab_mobilenet_fp32_for_cpu_v2_10_rc.tar.gz"
+MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/models/deeplab_mobilenet_fp32_for_cpu_v2_10_rc.tar.gz"
 
 MODELS_DIR="$(pwd)/models/"
 
