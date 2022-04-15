@@ -10,24 +10,24 @@ echo "OPENCV_LITE_DIR is ${OPENCV_LITE_DIR}"
 echo "ASSETS_DIR is ${ASSETS_DIR}"
 echo "ADB_DIR is ${ADB_DIR}"
 # mkdir
-adb -s 4c4f947c shell "cd /data/local/tmp/ && mkdir human_segmentation"
+adb shell "cd /data/local/tmp/ && mkdir human_segmentation"
 # push
-adb -s 4c4f947c push ./build/human_segmentation ${ADB_DIR}
-adb -s 4c4f947c push ${ASSETS_DIR}/models/ ${ADB_DIR}
-adb -s 4c4f947c push ${ASSETS_DIR}/images/ ${ADB_DIR}
-adb -s 4c4f947c push ${ASSETS_DIR}/labels/ ${ADB_DIR}
-adb -s 4c4f947c push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libc++_shared.so  ${ADB_DIR}
-adb -s 4c4f947c push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so  ${ADB_DIR}
+adb push ./build/human_segmentation ${ADB_DIR}
+adb push ${ASSETS_DIR}/models/ ${ADB_DIR}
+adb push ${ASSETS_DIR}/images/ ${ADB_DIR}
+adb push ${ASSETS_DIR}/labels/ ${ADB_DIR}
+adb push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libc++_shared.so  ${ADB_DIR}
+adb push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so  ${ADB_DIR}
 
 # run
 echo "--run model on cpu---"
-adb -s 4c4f947c shell "cd ${ADB_DIR} \
-           && chmod +x ./human_segmentation \
+adb shell "cd ${ADB_DIR} \
+           && chmod 111 ./human_segmentation \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            &&  ./human_segmentation \
-               ./models/model.nb   \
-               ./images/human.jpg  \
-               ./labels/label_list \
+               ./model.nb           \
+               ./human.jpg  \
+               ./label_list \
                513 513 4    \
                0 10 10 0    \
                "
