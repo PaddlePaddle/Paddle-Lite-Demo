@@ -22,6 +22,7 @@ download_and_uncompress() {
   
   cd ..
 }
+
 download_and_uncompress "${OPENCV_IOS_URL}" "${IOS_DIR}"
 
 echo "copy resource successed!"
