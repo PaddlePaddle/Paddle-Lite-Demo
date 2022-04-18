@@ -69,11 +69,11 @@ public class Native {
         Canvas canvas = new Canvas(outputImage);
         Paint rectPaint = new Paint();
         rectPaint.setStyle(Paint.Style.STROKE);
-        rectPaint.setStrokeWidth(2);
+        rectPaint.setStrokeWidth(3);
         Paint txtPaint = new Paint();
         txtPaint.setTextSize(12);
         txtPaint.setAntiAlias(true);
-        int color = 0xFFFFFF33;
+        int color = 0xFF00FFFF;
         rectPaint.setColor(color);
         txtPaint.setColor(color);
         int txtXOffset = 4;

@@ -68,7 +68,19 @@ function compile_object_detection {
      bash ./build.sh "arm64-v8a"
      echo "-- arm_v7 --"
      bash ./build.sh "armeabi-v7a"
-     cd ../../../../../
+     echo "face_detection"
+     cd ../../../../../face_detection/assets
+     chmod +x ./download.sh
+     bash ./download.sh
+     cd ../android/shell/cxx/face_detection
+     chmod +x ./build.sh
+     sed -i '3s/disk/opt/g' ./build.sh
+     echo "-- arm_v8 --"
+     bash ./build.sh "arm64-v8a"
+     echo "-- arm_v7 --"
+     run error
+     bash ./build.sh "armeabi-v7a"
+     cd ../../../../../      
 }
 
 function compile_ocr {
@@ -87,18 +99,7 @@ function compile_ocr {
 }
 
 function compile_face_detection {
-     cd ./face_detection/assets
-     chmod +x ./download.sh
-     bash ./download.sh
-     cd ../android/shell/face_detection
-     chmod +x ./build.sh
-     sed -i '3s/disk/opt/g' ./build.sh
-     echo "-- arm_v8 --"
-     bash ./build.sh "arm64-v8a"
-     echo "-- arm_v7 --"
-     run error
-     bash ./build.sh "armeabi-v7a"
-     cd ../../../../ 
+
 }
 
 function main {
@@ -118,10 +119,6 @@ function main {
   echo "--compile_object_detection--: $(pwd)"
   compile_object_detection
   echo "--end--: $(pwd)"
-  # step5. build and run face_detection
-  echo "--compile_face_detection--: $(pwd)"
-  compile_face_detection
-  echo "--end--: $(pwd)"  
 }
 
 main
