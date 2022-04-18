@@ -28,7 +28,7 @@ Paddle Lite 预测库版本一样的 NDK
     * 如果库和模型下载失败，建议手动下载并拷贝到相应目录下
     
     <p align="center">
-    <img src="./images/run_app.jpg"/>
+    <img src="https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_run_app_cpu.jpg"/>
     </p>
     
     > **注意：**
@@ -43,21 +43,13 @@ Paddle Lite 预测库版本一样的 NDK
 * Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
 * 参考 [Paddle Lite 源码编译文档](https://paddle-lite.readthedocs.io/zh/latest/source_compile/compile_env.html)，编译 Android 预测库
 * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
-    * 替换 java 库
-        * jar 包
-          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar` 替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/PaddlePredictor.jar`
-        * Java so
-            * armeabi-v7a
-              将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so`
-            * arm64-v8a
-              将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so`
     * 替换c++ 库
         * 头文件
-          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/include`
+          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/face_keypoints_detection/android/cxx/face_keypoints_detection/app/PaddleLite/cxx/include`
         * armeabi-v7a
-          将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
+          将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/face_keypoints_detection/android/cxx/face_keypoints_detection/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
         * arm64-v8a
-          将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/PaddleLite-android-demo/face_keypoints_detection_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
+          将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/face_keypoints_detection/android/cxx/face_keypoints_detection/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
    
 ## 效果展示
 
@@ -109,7 +101,7 @@ Paddle Lite 预测库版本一样的 NDK
 
 先整体介绍下人脸关键点检测 Demo 的代码结构，然后再从 Java 和 C++两部分简要的介绍 Demo 每部分功能，更多详细的内容请见：[Demo 使用指南](https://paddlelite-demo.bj.bcebos.com/doc/Introduction_to_face_keypoints_detection_demo.docx)
 
-<p align="center"><img src="./images/predict.jpg"/></p>
+<p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_predict_cpu.jpg"/></p>
 
 1. `Native.java`： Java 预测代码
 
@@ -247,7 +239,7 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
   2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `face_detector_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `face_keypoints_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.face_keypoints_detection/MainActivity.java` 中代码：
 
   <p align="center">
-  <img src="./images/model_change.jpg"/>
+  <img src="https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_model_change_cpu.jpg"/>
   </p>
   
   以将 `face_detector_for_cpu` 模型更新 `ssd_mobilenet_v3` 为例，则先将优化后的模型存放到 `face_keypoints_detection_demo/app/src/main/assets/models/ssd_mobilenet_v3_for_cpu/ssd_mv3.nb` 下，然后更新代码
@@ -282,7 +274,7 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
   如果优化后的模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中代码
 
   <p align="center">
-  <img src="./images/model_name.jpg"/>
+  <img src="https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_model_name_cpu.jpg"/>
   </p>
   
   ```c++
@@ -317,14 +309,14 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
     此处需要更新 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `FaceDetector::Preprocess(const cv::Mat &rgbaImage)` 方法
     
     <p align="center">
-    <img src="./images/input_change_det.jpg"/>
+    <img src="https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_input_change_det_cpu.jpg"/>
     </p>
     
   * 更新人脸关键点模型的输入预处理
     此处需要更新 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `FaceKeypointsDetector::Preprocess(const cv::Mat &rgbaImage, const std::vector<Face> &faces, std::vector<cv::Rect> *adjustedFaceROIs)` 方法
     
     <p align="center">
-    <img src="./images/input_change_key.jpg"/>
+    <img src="https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_input_change_key_cpu.jpg"/>
     </p>
   
   3. 更新输出预处理
@@ -333,14 +325,14 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
   此处需要更新 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `FaceDetector::Postprocess(const cv::Mat &rgbaImage, std::vector<Face> *faces)` 方法
   
   <p align="center">
-  <img src="./images/output_change_det.jpg"/>
+  <img src="https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_output_change_det_cpu.jpg"/>
   </p>
   
   * 更新人脸关键点模型的输出预处理
   此处需要更新 `face_keypoints_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `FaceKeypointsDetector::Postprocess(const std::vector<cv::Rect> &adjustedFaceROIs, std::vector<Face> *faces)` 方法
   
   <p align="center">
-  <img src="./images/output_change_key.jpg"/>
+  <img src="https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_output_change_key_cpu.jpg"/>
   </p>
   
   
@@ -419,4 +411,6 @@ face_keypoints_detection_demo/app/cpp/CMakeLists.txt
   bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
                          int textureHeight, std::string savedImagePath);
   ```
-  
+
+## 性能优化方法
+如果你觉得当前性能不符合需求，想进一步提升模型性能，可参考[首页中性能优化文档](/README.md)完成性能优化。
