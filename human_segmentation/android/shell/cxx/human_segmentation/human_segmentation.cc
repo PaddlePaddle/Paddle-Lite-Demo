@@ -30,6 +30,19 @@
 
 using namespace paddle::lite_api; // NOLINT
 
+void load_labels(const std::string &path, std::vector<std::string> *labels) {
+  std::ifstream ifs(path);
+  if (!ifs.is_open()) {
+    std::cerr << "Load input label file error." << std::endl;
+    exit(1);
+  }
+  std::string line;
+  while (getline(ifs, line)) {
+    labels->push_back(line);
+  }
+  ifs.close();
+}
+
 inline double GetCurrentUS() {
   struct timeval time;
   gettimeofday(&time, NULL);
@@ -218,6 +231,7 @@ int main(int argc, char **argv) {
   std::string img_path = argv[2];
   std::string label_file = argv[3];
   std::vector<std::string> labels;
+  load_labels(label_file, &labels);
   int height = 513;
   int width = 513;
   int warmup = 0;
