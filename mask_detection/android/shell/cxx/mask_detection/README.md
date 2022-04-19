@@ -306,3 +306,6 @@ adb shell "cd ${ADB_DIR} \
 
 3. 更新输出预处理
 此处需要更新 `mask_detection/android/shell/cxx/mask_detection/mask_detection.cc` 中的 `Detector_Postprocess` 和 `MaskClassifier_Postprocess` 后处理代码实现就行。
+
+## 性能优化方法
+如果你觉得当前性能不符合需求，想进一步提升模型性能，可参考[首页中性能优化文档](/README.md)完成性能优化。
