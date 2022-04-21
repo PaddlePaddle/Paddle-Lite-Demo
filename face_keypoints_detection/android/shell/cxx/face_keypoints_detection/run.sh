@@ -10,13 +10,13 @@ echo "OPENCV_LITE_DIR is ${OPENCV_LITE_DIR}"
 echo "ASSETS_DIR is ${ASSETS_DIR}"
 echo "ADB_DIR is ${ADB_DIR}"
 # mkdir
-adb -s shell "cd /data/local/tmp/ && mkdir face_keypoints_detection"
+adb shell "cd /data/local/tmp/ && mkdir face_keypoints_detection"
 # push
-adb -s push ./build/face_keypoints_detection ${ADB_DIR}
-adb -s push ${ASSETS_DIR}/models/ ${ADB_DIR}
-adb -s push ${ASSETS_DIR}/images/ ${ADB_DIR}
-adb -s push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libc++_shared.so  ${ADB_DIR}
-adb -s push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so  ${ADB_DIR}
+adb push ./build/face_keypoints_detection ${ADB_DIR}
+adb push ${ASSETS_DIR}/models/ ${ADB_DIR}
+adb push ${ASSETS_DIR}/images/ ${ADB_DIR}
+adb push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libc++_shared.so  ${ADB_DIR}
+adb push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so  ${ADB_DIR}
 
 # run
 echo "--run model on cpu---"
