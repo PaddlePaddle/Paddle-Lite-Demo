@@ -63,7 +63,7 @@ void Detector::Preprocess(const cv::Mat &rgbaImage) {
   cv::resize(rgbaImage, resizedRGBAImage,
              cv::Size(inputShape_[3], inputShape_[2]));
   cv::Mat resizedRGBImage;
-  cv::cvtColor(resizedRGBAImage, resizedRGBImage, cv::COLOR_BGRA2RGB);
+  cv::cvtColor(resizedRGBAImage, resizedRGBImage, cv::COLOR_RGBA2RGB);
   resizedRGBImage.convertTo(resizedRGBImage, CV_32FC3, 1.0 / 255.0f);
   NHWC3ToNC3HW(reinterpret_cast<const float *>(resizedRGBImage.data), inputData,
                inputMean_.data(), inputStd_.data(), inputShape_[3],
