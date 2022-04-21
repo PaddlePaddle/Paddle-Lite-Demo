@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
-#set(CMAKE_SYSTEM_NAME linux)
-set(CMAKE_SYSTEM_NAME darwin) # mac build
+set(CMAKE_SYSTEM_NAME linux)
+#set(CMAKE_SYSTEM_NAME darwin) # mac build
 if(ARM_TARGET_LANG STREQUAL "gcc")
     set(ANDROID_ARM_NEON True)
     set(CMAKE_NDK_ROOT_TOOLCHAIN_VERSION ${ARM_TARGET_LANG})
