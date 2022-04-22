@@ -81,10 +81,11 @@ cd ..
 
 7. 按下左上角的 Run 按钮，自动编译 APP 并安装到手机。在苹果手机中设置信任该 APP（进入 `设置->通用->设备管理`，选中新安装的 APP 并 `验证该应用`）
 
-成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
+成功后效果如下：
 
-<p align="center"><img width="300" height="350"  src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/IOS_app.jpeg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="300" height="350"  src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_run_app.jpg"/></p>
-
+  | APP 图标 | APP 效果 |
+  | ---     | --- |
+  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/IOS_app.jpeg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_run_app.jpg) |
 
 ## 更新预测库
 

@@ -43,9 +43,9 @@ sh prepare.sh
 
 成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
 
-<p align="center"><img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/IOS2.jpeg"/>
-&#8194;&#8194;&#8194;&#8194;&#8194; <img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/run_app.jpeg"/>
-</p>
+  | APP 图标 | APP 效果 |
+  | ---     | --- |
+  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/IOS2.jpeg)   | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/run_app.jpeg) |
 
 ## 更新预测库
 
