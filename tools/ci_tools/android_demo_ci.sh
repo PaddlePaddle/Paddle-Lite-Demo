@@ -71,6 +71,21 @@ function compile_object_detection {
      cd ../../../../../
 }
 
+function compile_mask_detection {
+     cd ./mask_detection/assets
+     chmod +x ./download.sh
+     bash ./download.sh
+     echo "mask_detection"
+     cd ../android/shell/cxx/mask_detection
+     chmod +x ./build.sh
+     sed -i '3s/disk/opt/g' ./build.sh
+     echo "-- arm_v8 --"
+     bash ./build.sh "arm64-v8a"
+     echo "-- arm_v7 --"
+     bash ./build.sh "armeabi-v7a"
+     cd ../../../../../
+}
+
 function compile_ocr {
      cd ./ocr/assets
      chmod +x ./download.sh
@@ -141,11 +156,15 @@ function main {
   compile_face_keypoints_detection
   echo "--end--: $(pwd)"     
   
-  # step7. build and run object_detection
+  # step7. build and run mask_detection
+  echo "--compile_object_detection--: $(pwd)"
+  compile_mask_detection
+  echo "--end--: $(pwd)"
+  
+  # step8. build and run object_detection
   echo "--compile_object_detection--: $(pwd)"
   compile_object_detection
   echo "--end--: $(pwd)"
-
 }
 
 main
