@@ -124,65 +124,55 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 ## 效果展示
 
 * 图像分类
-  * Android
+  * 基于 MobileNetV1 的目标检测
 
-    ![android_image_classification_cat_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_image_classification_cat_cpu.jpg)      ![android_image_classification_keyboard_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_image_classification_keyboard_cpu.jpg)
+  | Android | iOS | Armlinux |
+  | ---     | --- | ---      |
+  |![android_image_classification_cat_cpu](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/android/app_run_res.jpg) | ![ios_static](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_app_run.jpg) | ![armlinux_image_classification_raspberry_pi](https://paddlelite-demo.bj.bcebos.com/doc/armlinux_image_classification.jpg)|
   
-  * iOS
-
-    ![ios_static](https://paddlelite-demo.bj.bcebos.com/doc/ios_static.jpg)
-  * armLinux
-
-    ![armlinux_image_classification_raspberry_pi](https://paddlelite-demo.bj.bcebos.com/doc/armlinux_image_classification.jpg)
-
 * 目标检测
+  * 基于 MobileNetV1-SSD 的目标检测
 
-  * Android 
-    * 基于 MobileNetV1-SSD 的目标检测
+  | Android | iOS |
+  | ---     | --- |
+  | ![android_object_detection_mv1_cpu](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res.jpg)    | ![ios_mv1_static](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_run_app.jpg) |
+  
+  * 基于 PP-Picodet 的目标检测
 
-    ![android_object_detection_mv1_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_object_detection_cpu.jpg)
-
-    * 基于 PP-picodet 的目标检测
-
-    ![android_object_detection_picodet_cpu](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res.jpg)
-
-  * iOS
-    * 基于 MobileNetV1-SSD 的目标检测
-
-    ![ios_mv1_static](https://paddlelite-demo.bj.bcebos.com/doc/ios-image-detection.jpg)
-
-    * 基于 PP-picodet 的目标检测
-
-    ![ios_picodet_static](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_run_app.jpg)
-
+  | Android | iOS |
+  | ---     | --- |
+  | ![android_object_detection_picodet_cpu](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res.jpg)    | ![ios_picodet_static](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_run_app.jpg) |
+  
 * OCR
-  * Android
 
-    ![android_ocr](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_app_run.jpg)
-
-  * iOS
-
-    ![ios_ocr](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/run_app.jpeg)
+  | Android | iOS |
+  | ---     | --- |
+  | ![android_ocr](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_app_run.jpg)    | ![ios_picodet_static]![ios_ocr](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/run_app.jpeg) | 
 
 * 人脸检测
-   * Android
 
-    ![android_face_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_detection_cpu.jpg)
-
+  | Android | iOS |
+  | ---     | --- |
+  | ![android_face_detection_cpu](https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/app_run_res.jpg)    | 补充中 | 
+  
 * 人脸关键点检测
-  * Android
-
-    ![android_face_keypoints_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_face_keypoints_detection_cpu.jpg)
+  
+  | Android | iOS |
+  | ---     | --- |
+  | ![android_face_keypoints_detection_cpu](https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/app_run_res.jpg)    | 补充中 |
 
 * 口罩识别
-  * Android
-
-  ![android_mask_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_mask_detection_cpu.jpg)
+  
+  | Android | iOS |
+  | ---     | --- |
+  | ![android_mask_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_mask_detection_cpu.jpg)   | 补充中 |
 
 * 人像分割
-  * Android
+  
+  | Android | iOS |
+  | ---     | --- |
+  | ![android_human_segmentation_cpu](https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/process_success.jpg)   | 补充中 |
 
-  ![android_human_segmentation_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_human_segmentation_cpu.jpg)
 
 ## 性能优化
 
