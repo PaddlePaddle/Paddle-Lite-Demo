@@ -100,24 +100,48 @@ function compile_face_detection {
      cd ../../../../../
 }
 
+function compile_face_keypoints_detection {
+     cd ./face_keypoints_detection/assets
+     chmod +x ./download.sh
+     bash ./download.sh
+     cd ../android/shell/cxx/face_keypoints_detection
+     chmod +x ./build.sh
+     sed -i '3s/disk/opt/g' ./build.sh
+     echo "-- arm_v8 --"
+     bash ./build.sh "arm64-v8a"
+     echo "-- arm_v7 --"
+     bash ./build.sh "armeabi-v7a"
+     cd ../../../../../ 
+}
+
 function main {
   # step1. download android lib
   echo "--download_lib--: $(pwd)"
   download_lib
+  
   # step2. build and run human_segmentation
   echo "--compile_human_segmentation--: $(pwd)"
   compile_human_segmentation
+  
   # step3. build and run image_classification
   echo "--compile_image_classification--: $(pwd)"
   compile_image_classification
+  
   # step4. build and run ocr
   echo "--compile_ocr--: $(pwd)"
   compile_ocr
+  
   # step5. build and run face_detection
   echo "--compile_face_detection--: $(pwd)"
   compile_face_detection
   echo "--end--: $(pwd)"    
-  # step6. build and run object_detection
+
+  # step6. build and run face_keypoints_detection
+  echo "--compile_face_keypoints_detection--: $(pwd)"
+  compile_face_keypoints_detection
+  echo "--end--: $(pwd)"     
+  
+  # step7. build and run object_detection
   echo "--compile_object_detection--: $(pwd)"
   compile_object_detection
   echo "--end--: $(pwd)"
