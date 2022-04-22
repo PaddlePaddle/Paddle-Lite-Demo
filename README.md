@@ -135,13 +135,13 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
   | Android | iOS |
   | ---     | --- |
-  | ![android_object_detection_mv1_cpu width="300" height="500" ](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res.jpg)    | ![ios_mv1_static width="300" height="500" ](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_run_app.jpg) |
+  | ![android_object_detection_mv1_cpu width="300" height="500" ](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res.jpg)    | ![ios_mv1_static width="300" height="500" ](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_app_run.jpg) |
   
   * 基于 PP-Picodet 的目标检测
 
   | Android | iOS |
   | ---     | --- |
-  | ![android_object_detection_picodet_cpu width="300" height="500" ](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res.jpg)    | ![ios_picodet_static width="300" height="500" ](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_run_app.jpg) |
+  | ![android_object_detection_picodet_cpu width="300" height="500" ](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res.jpg)    | ![ios_picodet_static width="300" height="500" ](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_app_run.jpg) |
   
 * OCR
 
