@@ -96,7 +96,6 @@ function compile_face_detection {
      echo "-- arm_v8 --"
      bash ./build.sh "arm64-v8a"
      echo "-- arm_v7 --"
-     run error
      bash ./build.sh "armeabi-v7a"
      cd ../../../../../
 }
