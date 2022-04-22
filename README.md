@@ -128,7 +128,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
   | Android | iOS | Armlinux |
   | ---     | --- | ---      |
-  |![android_image_classification_cat_cpu](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/android/app_run_res.jpg) | ![ios_static](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_app_run.jpg) | ![armlinux_image_classification_raspberry_pi](https://paddlelite-demo.bj.bcebos.com/doc/armlinux_image_classification.jpg)|
+  |![android_image_classification_cat_cpu width="350" height="500" ](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/android/app_run_res.jpg) | ![ios_static width="350" height="500" ](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_app_run.jpg) | ![armlinux_image_classification_raspberry_pi width="350" height="500" ](https://paddlelite-demo.bj.bcebos.com/doc/armlinux_image_classification.jpg)|
   
 * 目标检测
   * 基于 MobileNetV1-SSD 的目标检测
