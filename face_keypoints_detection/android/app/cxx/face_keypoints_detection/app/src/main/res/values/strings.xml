@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Face Keypoints Detection</string>
+    <!-- Face detector -->
+    <string name="FDT_CHOOSE_PRE_INSTALLED_MODEL_KEY">FDT_CHOOSE_INSTALLED_MODEL_KEY</string>
+    <string name="FDT_ENABLE_CUSTOM_SETTINGS_KEY">FDT_ENABLE_CUSTOM_SETTINGS_KEY</string>
+    <string name="FDT_MODEL_DIR_KEY">FDT_MODEL_DIR_KEY</string>
+    <string name="FDT_CPU_THREAD_NUM_KEY">FDT_CPU_THREAD_NUM_KEY</string>
+    <string name="FDT_CPU_POWER_MODE_KEY">FDT_CPU_POWER_MODE_KEY</string>
+    <string name="FDT_INPUT_SCALE_KEY">FDT_INPUT_SCALE_KEY</string>
+    <string name="FDT_INPUT_MEAN_KEY">FDT_INPUT_MEAN_KEY</string>
+    <string name="FDT_INPUT_STD_KEY">FDT_INPUT_STD_KEY</string>
+    <string name="FDT_SCORE_THRESHOLD_KEY">FDT_SCORE_THRESHOLD_KEY</string>
+    <string name="FDT_MODEL_DIR_DEFAULT">models/face_detector_for_cpu</string>
+    <string name="FDT_CPU_THREAD_NUM_DEFAULT">1</string>
+    <string name="FDT_CPU_POWER_MODE_DEFAULT">LITE_POWER_HIGH</string>
+    <string name="FDT_INPUT_SCALE_DEFAULT">0.25</string>
+    <string name="FDT_INPUT_MEAN_DEFAULT">0.407843,0.694118,0.482353</string>
+    <string name="FDT_INPUT_STD_DEFAULT">0.5,0.5,0.5</string>
+    <string name="FDT_SCORE_THRESHOLD_DEFAULT">0.7</string>
+    <!-- Face keypoints detector -->
+    <string name="FKP_CHOOSE_PRE_INSTALLED_MODEL_KEY">FKP_CHOOSE_INSTALLED_MODEL_KEY</string>
+    <string name="FKP_ENABLE_CUSTOM_SETTINGS_KEY">FKP_ENABLE_CUSTOM_SETTINGS_KEY</string>
+    <string name="FKP_MODEL_DIR_KEY">FKP_MODEL_DIR_KEY</string>
+    <string name="FKP_CPU_THREAD_NUM_KEY">FKP_CPU_THREAD_NUM_KEY</string>
+    <string name="FKP_CPU_POWER_MODE_KEY">FKP_CPU_POWER_MODE_KEY</string>
+    <string name="FKP_INPUT_WIDTH_KEY">FKP_INPUT_WIDTH_KEY</string>
+    <string name="FKP_INPUT_HEIGHT_KEY">FKP_INPUT_HEIGHT_KEY</string>
+    <string name="FKP_INPUT_MEAN_KEY">FKP_INPUT_MEAN_KEY</string>
+    <string name="FKP_INPUT_STD_KEY">FKP_INPUT_STD_KEY</string>
+    <string name="FKP_MODEL_DIR_DEFAULT">models/facekeypoints_detector_for_cpu</string>
+    <string name="FKP_CPU_THREAD_NUM_DEFAULT">1</string>
+    <string name="FKP_CPU_POWER_MODE_DEFAULT">LITE_POWER_HIGH</string>
+    <string name="FKP_INPUT_WIDTH_DEFAULT">60</string>
+    <string name="FKP_INPUT_HEIGHT_DEFAULT">60</string>
+</resources>
+
