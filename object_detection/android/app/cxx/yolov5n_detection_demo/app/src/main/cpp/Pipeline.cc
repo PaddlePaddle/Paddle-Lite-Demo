@@ -115,11 +115,6 @@ void Detector::Preprocess(const cv::Mat &rgbaImage) {
       memcpy(inputData + channelLength_ * j, input_channels[j].data,
              channelLength_ * sizeof(float));
   }
-
-   /*
-   out.convertTo(out, CV_32FC3, 1.0 / 255.0f);
-   NHWC3ToNC3HW(reinterpret_cast<const float *>(out.data), inputData, channelLength);
-   */
 }
 
 void Detector::ExtractBoxes(int seq_id, const float* in, std::map<int, std::vector<Object>>& outs,
