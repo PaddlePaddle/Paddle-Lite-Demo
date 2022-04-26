@@ -56,175 +56,186 @@ inline double GetCurrentUS() {
   return 1e+6 * time.tv_sec + time.tv_usec;
 }
 
-void pre_process(const cv::Mat& img_ori, int width, int height, float* data) {
-    cv::Mat img = img_ori.clone();
-    int w, h, x, y;
-    int channelLength = width * height;
+void pre_process(const cv::Mat &img_ori, int width, int height, float *data) {
+  cv::Mat img = img_ori.clone();
+  int w, h, x, y;
+  int channelLength = width * height;
 
-    float r_w = width / (img.cols * 1.0);
-    float r_h = height / (img.rows * 1.0);
-    if (r_h > r_w) {
-        w = width;
-        h = r_w * img.rows;
-        x = 0;
-        y = (height - h) / 2;
-    } else {
-        w = r_h * img.cols;
-        h = height;
-        x = (width - w) / 2;
-        y = 0;
-    }
+  float r_w = width / (img.cols * 1.0);
+  float r_h = height / (img.rows * 1.0);
+  if (r_h > r_w) {
+    w = width;
+    h = r_w * img.rows;
+    x = 0;
+    y = (height - h) / 2;
+  } else {
+    w = r_h * img.cols;
+    h = height;
+    x = (width - w) / 2;
+    y = 0;
+  }
 
-    cv::Mat re(h, w, CV_8UC3);
-    cv::resize(img, re, re.size(), 0, 0, cv::INTER_CUBIC);
-    cv::Mat out(height, width, CV_8UC3, cv::Scalar(128, 128, 128));
-    re.copyTo(out(cv::Rect(x, y, re.cols, re.rows)));
+  cv::Mat re(h, w, CV_8UC3);
+  cv::resize(img, re, re.size(), 0, 0, cv::INTER_CUBIC);
+  cv::Mat out(height, width, CV_8UC3, cv::Scalar(128, 128, 128));
+  re.copyTo(out(cv::Rect(x, y, re.cols, re.rows)));
 
-    //split channels
-    out.convertTo(out, CV_32FC3, 1. / 255.);
-    cv::Mat input_channels[3];
-    cv::split(out, input_channels);
-    for (int j = 0; j < 3; j++) {
-        memcpy(data + width * height * j, input_channels[2-j].data, channelLength * sizeof(float));
-    }
+  // split channels
+  out.convertTo(out, CV_32FC3, 1. / 255.);
+  cv::Mat input_channels[3];
+  cv::split(out, input_channels);
+  for (int j = 0; j < 3; j++) {
+    memcpy(data + width * height * j, input_channels[2 - j].data,
+           channelLength * sizeof(float));
+  }
 }
 
-static float iou_calc(const cv::Rect& rec_a, const cv::Rect& rec_b) {
-    cv::Rect u = rec_a | rec_b;
-    cv::Rect s = rec_a & rec_b;
-    float s_area = s.area();
-    if (s_area < 20)
-        return 0.f;
-    return u.area() * 1.0 / s_area;
+static float iou_calc(const cv::Rect &rec_a, const cv::Rect &rec_b) {
+  cv::Rect u = rec_a | rec_b;
+  cv::Rect s = rec_a & rec_b;
+  float s_area = s.area();
+  if (s_area < 20)
+    return 0.f;
+  return u.area() * 1.0 / s_area;
 }
 
-static bool cmp(const Object& a, const Object& b) {
-    return a.prob > b.prob;
-}
+static bool cmp(const Object &a, const Object &b) { return a.prob > b.prob; }
 
-static void nms(std::map<int, std::vector<Object>>& src, std::vector<Object>& res, float nms_thresh = 0.45) {
-    for (auto it = src.begin(); it != src.end(); it++) {
-        auto& dets = it->second;
-        std::sort(dets.begin(), dets.end(), cmp);
-        for (size_t m = 0; m < dets.size(); ++m) {
-            auto& item = dets[m];
-            res.push_back(item);
-            for (size_t n = m + 1; n < dets.size(); ++n) {
-                if (iou_calc(item.rec, dets[n].rec) > nms_thresh) {
-                    dets.erase(dets.begin()+n);
-                    --n;
-                }
-            }
+static void nms(const std::map<int, const std::vector<Object>> &src,
+                std::vector<Object> *res, float nms_thresh = 0.45) {
+  for (auto it = src.begin(); it != src.end(); it++) {
+    auto &dets = it->second;
+    std::sort(dets.begin(), dets.end(), cmp);
+    for (size_t m = 0; m < dets.size(); ++m) {
+      auto &item = dets[m];
+      res.push_back(item);
+      for (size_t n = m + 1; n < dets.size(); ++n) {
+        if (iou_calc(item.rec, dets[n].rec) > nms_thresh) {
+          dets.erase(dets.begin() + n);
+          --n;
         }
+      }
     }
+  }
 }
 
-void extract_boxes(const float* in, std::map<int, std::vector<Object>>& outs,
-    const int& stride, const int* anchors, std::vector<long long>& shape,
-    float ratio, float conf_thres, int offx, int offy, int xdim) {
+void extract_boxes(const float *in, std::map<int, std::vector<Object>> *outs,
+                   const int &stride, const int *anchors,
+                   const std::vector<int64> &shape, float ratio,
+                   float conf_thres, int offx, int offy, int xdim) {
+  int cls_num = shape[3] - 5;
+  for (int c = 0; c < shape[1]; c++) {
+    int step = c * shape[2] * shape[3];
+    for (int r = 0; r < shape[2]; r++) {
+      int offset = step + r * shape[3];
+      float score = in[offset + 4];
 
-    int cls_num = shape[3] - 5;
-    for(int c=0; c < shape[1]; c++) {
-        int step = c * shape[2] * shape[3];
-        for (int r=0; r <  shape[2]; r++){
-            int offset = step + r * shape[3];
-            float score = in[offset + 4];
+      if (score < conf_thres)
+        continue;
 
-            if (score < conf_thres)
-                continue;
-
-	        int max_cls_id = 0;
-		    float max_cls_val = 0;
-            for (int i=0; i<cls_num; i++) {
-                if (in[offset+5+i] > max_cls_val) {
-                    max_cls_val = in[offset+5+i];
-                    max_cls_id = i;
-                }
-            }
-
-            score *= max_cls_val;
-            if(score < conf_thres)
-                continue;
-
-            Object obj;
-            int y = int(r / xdim);
-            int x = int(r % xdim);
-            int cx = static_cast<int>(((in[offset] * 2 - 0.5 + x) * stride - offx) / ratio);
-            int cy = static_cast<int>(((in[offset+1] * 2 - 0.5 + y) * stride - offy) / ratio);
-            int w = static_cast<int>(pow(in[offset+2] * 2, 2) * anchors[2 * c] / ratio);
-            int h = static_cast<int>(pow(in[offset+3] * 2, 2) * anchors[2 * c + 1] /ratio);
-            int left = cx - w / 2.0;
-            int top = cy - h / 2.0;
-
-            obj.rec = cv::Rect(left, top, w, h); //xywh
-            obj.prob = score;
-            obj.class_id = max_cls_id;
-
-            if (outs.count(obj.class_id) == 0) outs.emplace(obj.class_id, std::vector<Object>());
-            outs[obj.class_id].emplace_back(obj);
+      int max_cls_id = 0;
+      float max_cls_val = 0;
+      for (int i = 0; i < cls_num; i++) {
+        if (in[offset + 5 + i] > max_cls_val) {
+          max_cls_val = in[offset + 5 + i];
+          max_cls_id = i;
         }
+      }
+
+      score *= max_cls_val;
+      if (score < conf_thres)
+        continue;
+
+      Object obj;
+      int y = static_cast<int>(r / xdim);
+      int x = static_cast<int>(r % xdim);
+      int cx = static_cast<int>(((in[offset] * 2 - 0.5 + x) * stride - offx) /
+                                ratio);
+      int cy = static_cast<int>(
+          ((in[offset + 1] * 2 - 0.5 + y) * stride - offy) / ratio);
+      int w =
+          static_cast<int>(pow(in[offset + 2] * 2, 2) * anchors[2 * c] / ratio);
+      int h = static_cast<int>(pow(in[offset + 3] * 2, 2) * anchors[2 * c + 1] /
+                               ratio);
+      int left = cx - w / 2.0;
+      int top = cy - h / 2.0;
+
+      obj.rec = cv::Rect(left, top, w, h);
+      obj.prob = score;
+      obj.class_id = max_cls_id;
+
+      if (outs.count(obj.class_id) == 0)
+        outs.emplace(obj.class_id, std::vector<Object>());
+      outs[obj.class_id].emplace_back(obj);
     }
+  }
 }
 
 void post_process(std::shared_ptr<PaddlePredictor> predictor, float thresh,
-                  std::vector<std::string> class_names, cv::Mat &image, int in_width, int in_height) { // NOLINT
-    const int strides[3] = {8, 16, 32};
-    const int anchors[3][6] = {{10, 13, 16, 30, 33, 23}, {30, 61, 62, 45, 59, 119}, {116, 90, 156, 198, 373, 326}};
-    std::map<int, std::vector<Object>> raw_outputs;
-    float r_w = in_width / float(image.cols);
-    float r_h = in_height / float(image.rows);
-    float r, off_x, off_y;
-    if (r_h > r_w) {
-        r = r_w;
-        off_x = 0;
-        off_y = static_cast<int>((in_height - r_w * image.rows) / 2);
-    } else {
-        r = r_h;
-        off_y = 0;
-        off_x = static_cast<int>((in_width - r_h * image.cols) / 2);
-    }
+                  std::vector<std::string> class_names, const cv::Mat &image,
+                  int in_width, int in_height) { // NOLINT
+  const int strides[3] = {8, 16, 32};
+  const int anchors[3][6] = {{10, 13, 16, 30, 33, 23},
+                             {30, 61, 62, 45, 59, 119},
+                             {116, 90, 156, 198, 373, 326}};
+  std::map<int, std::vector<Object>> raw_o.utputs;
+  float r_w = in_width / static_cast<float>(image.cols);
+  float r_h = in_height / static_cast<float>(image.rows);
+  float r, off_x, off_y;
+  if (r_h > r_w) {
+    r = r_w;
+    off_x = 0;
+    off_y = static_cast<int>((in_height - r_w * image.rows) / 2);
+  } else {
+    r = r_h;
+    off_y = 0;
+    off_x = static_cast<int>((in_width - r_h * image.cols) / 2);
+  }
 
-    for (int k = 0; k < 3; k++) {
-        std::unique_ptr<const Tensor> output_tensor(std::move(predictor->GetOutput(k)));
-        auto* outptr = output_tensor->data<float>();
-        auto shape_out = output_tensor->shape();
-        int xdim = int(in_width / strides[k]);
-        extract_boxes(outptr, raw_outputs, strides[k], anchors[k], shape_out, r, thresh, off_x, off_y, xdim);
-    }
+  for (int k = 0; k < 3; k++) {
+    std::unique_ptr<const Tensor> output_tensor(
+        std::move(predictor->GetOutput(k)));
+    auto *outptr = output_tensor->data<float>();
+    auto shape_out = output_tensor->shape();
+    int xdim = static_cast<int>(in_width / strides[k]);
+    extract_boxes(outptr, &raw_outputs, strides[k], anchors[k], &shape_out, r,
+                  thresh, off_x, off_y, xdim);
+  }
 
-    std::vector<Object> outs;
-    nms(raw_outputs, outs, 0.45);
+  std::vector<Object> outs;
+  nms(raw_outputs, &outs, 0.45);
 
-    std::cout<<"cls name size: "<<class_names.size()<<std::endl;
+  // visualize
+  for (auto &obj : outs) {
+    cv::rectangle(image, obj.rec, cv::Scalar(0, 0, 255), 2, cv::LINE_AA);
+    std::string str_prob = std::to_string(obj.prob);
+    std::string class_name =
+        obj.class_id >= 0 && obj.class_id < class_names.size()
+            ? class_names[obj.class_id]
+            : "Unknow";
+    std::string text =
+        class_name + ": " + str_prob.substr(0, str_prob.find(".") + 4);
+    int font_face = cv::FONT_HERSHEY_COMPLEX_SMALL;
+    double font_scale = 1.f;
+    int thickness = 2;
+    cv::Size text_size =
+        cv::getTextSize(text, font_face, font_scale, thickness, nullptr);
+    float new_font_scale = obj.rec.width * 0.35 * font_scale / text_size.width;
+    text_size =
+        cv::getTextSize(text, font_face, new_font_scale, thickness, nullptr);
+    cv::Point origin;
+    origin.x = obj.rec.x + 10;
+    origin.y = obj.rec.y + text_size.height + 10;
+    cv::putText(image, text, origin, font_face, new_font_scale,
+                cv::Scalar(0, 255, 255), thickness, cv::LINE_AA);
 
-    //visualize
-    for(auto& obj : outs) {
-        cv::rectangle(image, obj.rec, cv::Scalar(0, 0, 255), 2, cv::LINE_AA);
-        std::string str_prob = std::to_string(obj.prob);
-        std::string class_name = obj.class_id >= 0 && obj.class_id < class_names.size()
-                           ? class_names[obj.class_id]
-                           : "Unknow";
-        std::string text = class_name + ": " + str_prob.substr(0, str_prob.find(".") + 4);
-        int font_face = cv::FONT_HERSHEY_COMPLEX_SMALL;
-        double font_scale = 1.f;
-        int thickness = 2;
-        cv::Size text_size =
-            cv::getTextSize(text, font_face, font_scale, thickness, nullptr);
-        float new_font_scale = obj.rec.width * 0.35 * font_scale / text_size.width;
-        text_size = cv::getTextSize(text, font_face, new_font_scale, thickness,
-                                    nullptr);
-        cv::Point origin;
-        origin.x = obj.rec.x + 10;
-        origin.y = obj.rec.y + text_size.height + 10;
-        cv::putText(image, text, origin, font_face, new_font_scale,
-                    cv::Scalar(0, 255, 255), thickness, cv::LINE_AA);
-
-        std::cout << "detection, image size: " << image.cols << ", "
-                  << image.rows << ", detect object: " << class_name << ", cls id: " << obj.class_id
-                  << ", score: " << obj.prob << ", location: x=" << obj.rec.x
-                  << ", y=" << obj.rec.y << ", width=" << obj.rec.width << ", height=" << obj.rec.height
-                  << std::endl;
-   }
+    std::cout << "detection, image size: " << image.cols << ", " << image.rows
+              << ", detect object: " << class_name
+              << ", cls id: " << obj.class_id << ", score: " << obj.prob
+              << ", location: x=" << obj.rec.x << ", y=" << obj.rec.y
+              << ", width=" << obj.rec.width << ", height=" << obj.rec.height
+              << std::endl;
+  }
 }
 
 void run_model(std::string model_file, std::string img_path,
@@ -234,7 +245,7 @@ void run_model(std::string model_file, std::string img_path,
   // 1. Set MobileConfig
   MobileConfig config;
   config.set_model_from_file(model_file);
-  std::cout<<"model_file: "<<model_file<<std::endl;
+  std::cout << "model_file: " << model_file << std::endl;
   config.set_power_mode(static_cast<paddle::lite_api::PowerMode>(power_mode));
   config.set_threads(thread_num);
 
@@ -246,7 +257,7 @@ void run_model(std::string model_file, std::string img_path,
   // read img and pre-process
   std::unique_ptr<Tensor> input_tensor0(std::move(predictor->GetInput(0)));
   input_tensor0->Resize({1, 3, height, width});
-  auto* data0 = input_tensor0->mutable_data<float>();
+  auto *data0 = input_tensor0->mutable_data<float>();
   cv::Mat img = imread(img_path, cv::IMREAD_COLOR);
   pre_process(img, width, height, data0);
 

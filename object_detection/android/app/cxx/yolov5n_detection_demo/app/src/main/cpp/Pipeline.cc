@@ -13,6 +13,9 @@
 // limitations under the License.
 
 #include "Pipeline.h"
+#include <algorithm>
+#include <map>
+#include <utility>
 
 Detector::Detector(const std::string &modelDir, const std::string &labelPath,
                    const int cpuThreadNum, const std::string &cpuPowerMode,
@@ -37,26 +40,26 @@ Detector::Detector(const std::string &modelDir, const std::string &labelPath,
   isInited_ = false;
 }
 
-void Detector::InitParams(const int& width, const int& height) {
-    if (isInited_)
-        return;
+void Detector::InitParams(const int &width, const int &height) {
+  if (isInited_)
+    return;
 
-    float r_w = inputWidth_ / (width * 1.0);
-    float r_h = inputHeight_ / (height * 1.0);
-    if (r_h > r_w) {
-        inputW = inputWidth_;
-        inputH = r_w * height;
-        inputX = 0;
-        inputY = (inputHeight_ - inputH) / 2;
-        ratio_ = r_w;
-    } else {
-        inputW = r_h * width;
-        inputH = inputHeight_;
-        inputX = (inputWidth_ - inputW) / 2;
-        inputY = 0;
-        ratio_ = r_h;
-    }
-    isInited_ = true;
+  float r_w = inputWidth_ / (width * 1.0);
+  float r_h = inputHeight_ / (height * 1.0);
+  if (r_h > r_w) {
+    inputW = inputWidth_;
+    inputH = r_w * height;
+    inputX = 0;
+    inputY = (inputHeight_ - inputH) / 2;
+    ratio_ = r_w;
+  } else {
+    inputW = r_h * width;
+    inputH = inputHeight_;
+    inputX = (inputWidth_ - inputW) / 2;
+    inputY = 0;
+    ratio_ = r_h;
+  }
+  isInited_ = true;
 }
 
 std::vector<std::string> Detector::LoadLabelList(const std::string &labelPath) {
@@ -107,108 +110,111 @@ void Detector::Preprocess(const cv::Mat &rgbaImage) {
   cv::Mat out(inputHeight_, inputWidth_, CV_8UC3, cv::Scalar(128, 128, 128));
   re.copyTo(out(cv::Rect(inputX, inputY, re.cols, re.rows)));
 
-  //split channels
+  // split channels
   out.convertTo(out, CV_32FC3, 1. / 255.);
   cv::Mat input_channels[3];
   cv::split(out, input_channels);
   for (int j = 0; j < 3; j++) {
-      memcpy(inputData + channelLength_ * j, input_channels[j].data,
-             channelLength_ * sizeof(float));
+    memcpy(inputData + channelLength_ * j, input_channels[j].data,
+           channelLength_ * sizeof(float));
   }
 }
 
-void Detector::ExtractBoxes(int seq_id, const float* in, std::map<int, std::vector<Object>>& outs,
-    std::vector<int64_t>& shape) {
-    int cls_num = shape[3] - 5;
-    int xdim = int(inputWidth_ / strides_[seq_id]);
-    for(int c=0; c < shape[1]; c++) {
-        int step = c * shape[2] * shape[3];
-        for (int r=0; r <  shape[2]; r++){
-            int offset = step + r * shape[3];
-            float score = in[offset + 4];
-            if (score < confThresh_)
-                continue;
+void Detector::ExtractBoxes(int seq_id, const float *in,
+                            std::map<int, std::vector<Object>> *outs,
+                            const std::vector<int64_t> &shape) {
+  int cls_num = shape[3] - 5;
+  int xdim = static_cast<int>(inputWidth_ / strides_[seq_id]);
+  for (int c = 0; c < shape[1]; c++) {
+    int step = c * shape[2] * shape[3];
+    for (int r = 0; r < shape[2]; r++) {
+      int offset = step + r * shape[3];
+      float score = in[offset + 4];
+      if (score < confThresh_)
+        continue;
 
-            int max_cls_id = 0;
-            float max_cls_val = 0;
-            for (int i=0; i<cls_num; i++) {
-                if (in[offset+5+i] > max_cls_val) {
-                    max_cls_val = in[offset+5+i];
-                    max_cls_id = i;
-                }
-            }
-
-            score *= max_cls_val;
-            if(score < confThresh_)
-                continue;
-
-            Object obj;
-            int y = int(r / xdim);
-            int x = int(r % xdim);
-            int cx = static_cast<int>(((in[offset] * 2 - 0.5 + x) *
-                    strides_[seq_id] - inputX) / ratio_);
-            int cy = static_cast<int>(((in[offset+1] * 2 - 0.5 + y) *
-                    strides_[seq_id] - inputY) / ratio_);
-            int w = static_cast<int>(pow(in[offset+2] * 2, 2) *
-                    anchors_[seq_id][2 * c] / ratio_);
-            int h = static_cast<int>(pow(in[offset+3] * 2, 2) *
-                    anchors_[seq_id][2 * c + 1] /ratio_);
-            int left = cx - w / 2.0;
-            int top = cy - h / 2.0;
-
-            obj.rec = cv::Rect(left, top, w, h); //xywh
-            obj.prob = score;
-            obj.class_id = max_cls_id;
-
-            if (outs.count(obj.class_id) == 0) outs.emplace(obj.class_id, std::vector<Object>());
-            outs[obj.class_id].emplace_back(obj);
+      int max_cls_id = 0;
+      float max_cls_val = 0;
+      for (int i = 0; i < cls_num; i++) {
+        if (in[offset + 5 + i] > max_cls_val) {
+          max_cls_val = in[offset + 5 + i];
+          max_cls_id = i;
         }
+      }
+
+      score *= max_cls_val;
+      if (score < confThresh_)
+        continue;
+
+      Object obj;
+      int y = static_cast<int>(r / xdim);
+      int x = static_cast<int>(r % xdim);
+      int cx = static_cast<int>(
+          ((in[offset] * 2 - 0.5 + x) * strides_[seq_id] - inputX) / ratio_);
+      int cy = static_cast<int>(
+          ((in[offset + 1] * 2 - 0.5 + y) * strides_[seq_id] - inputY) /
+          ratio_);
+      int w = static_cast<int>(pow(in[offset + 2] * 2, 2) *
+                               anchors_[seq_id][2 * c] / ratio_);
+      int h = static_cast<int>(pow(in[offset + 3] * 2, 2) *
+                               anchors_[seq_id][2 * c + 1] / ratio_);
+      int left = cx - w / 2.0;
+      int top = cy - h / 2.0;
+
+      obj.rec = cv::Rect(left, top, w, h);
+      obj.prob = score;
+      obj.class_id = max_cls_id;
+
+      if (outs.count(obj.class_id) == 0)
+        outs.emplace(obj.class_id, std::vector<Object>());
+      outs[obj.class_id].emplace_back(obj);
     }
+  }
 }
 
-static float iou_calc(const cv::Rect& rec_a, const cv::Rect& rec_b) {
-    cv::Rect u = rec_a | rec_b;
-    cv::Rect s = rec_a & rec_b;
-    float s_area = s.area();
-    if (s_area < 20)
-        return 0.f;
-    return u.area() * 1.0 / s_area;
+static float iou_calc(const cv::Rect &rec_a, const cv::Rect &rec_b) {
+  cv::Rect u = rec_a | rec_b;
+  cv::Rect s = rec_a & rec_b;
+  float s_area = s.area();
+  if (s_area < 20)
+    return 0.f;
+  return u.area() * 1.0 / s_area;
 }
 
-static bool cmp(const Object& a, const Object& b) {
-    return a.prob > b.prob;
-}
+static bool cmp(const Object &a, const Object &b) { return a.prob > b.prob; }
 
-void Detector::Nms(std::map<int, std::vector<Object>>& src, std::vector<Object>* res) {
-    for (auto it = src.begin(); it != src.end(); it++) {
-        auto& dets = it->second;
-        std::sort(dets.begin(), dets.end(), cmp);
-        for (size_t m = 0; m < dets.size(); ++m) {
-            auto& item = dets[m];
-            item.class_name = item.class_id >= 0 && item.class_id < labelList_.size()
-                                      ? labelList_[item.class_id]
-                                      : "Unknow";
-            item.fill_color = item.class_id >= 0 && item.class_id < colorMap_.size()
-                                ? colorMap_[item.class_id]
-                                : cv::Scalar(0, 0, 0);
-            res->push_back(item);
-            for (size_t n = m + 1; n < dets.size(); ++n) {
-                if (iou_calc(item.rec, dets[n].rec) > nmsThresh_) {
-                    dets.erase(dets.begin()+n);
-                    --n;
-                }
-            }
+void Detector::Nms(const std::map<int, std::vector<Object>> &src,
+                   std::vector<Object> *res) {
+  for (auto it = src.begin(); it != src.end(); it++) {
+    auto &dets = it->second;
+    std::sort(dets.begin(), dets.end(), cmp);
+    for (size_t m = 0; m < dets.size(); ++m) {
+      auto &item = dets[m];
+      item.class_name = item.class_id >= 0 && item.class_id < labelList_.size()
+                            ? labelList_[item.class_id]
+                            : "Unknow";
+      item.fill_color = item.class_id >= 0 && item.class_id < colorMap_.size()
+                            ? colorMap_[item.class_id]
+                            : cv::Scalar(0, 0, 0);
+      res->push_back(item);
+      for (size_t n = m + 1; n < dets.size(); ++n) {
+        if (iou_calc(item.rec, dets[n].rec) > nmsThresh_) {
+          dets.erase(dets.begin() + n);
+          --n;
         }
+      }
     }
+  }
 }
 
 void Detector::Postprocess(std::vector<Object> *results) {
   std::map<int, std::vector<Object>> raw_outputs;
   for (int k = 0; k < 3; k++) {
-      std::unique_ptr<const paddle::lite_api::Tensor> output_tensor(std::move(predictor_->GetOutput(k)));
-      auto* outptr = output_tensor->data<float>();
-      auto shape_out = output_tensor->shape();
-      ExtractBoxes(k, outptr, raw_outputs, shape_out);
+    std::unique_ptr<const paddle::lite_api::Tensor> output_tensor(
+        std::move(predictor_->GetOutput(k)));
+    auto *outptr = output_tensor->data<float>();
+    auto shape_out = output_tensor->shape();
+    ExtractBoxes(k, outptr, &raw_outputs, shape_out);
   }
   Nms(raw_outputs, results);
 }

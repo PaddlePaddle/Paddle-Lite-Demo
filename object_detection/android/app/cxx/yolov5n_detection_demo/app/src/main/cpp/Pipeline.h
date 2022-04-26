@@ -18,6 +18,7 @@
 #include "paddle_api.h"                // NOLINT
 #include <EGL/egl.h>                   // NOLINT
 #include <GLES2/gl2.h>                 // NOLINT
+#include <map>                         // NOLINT
 #include <memory>                      // NOLINT
 #include <opencv2/core.hpp>            // NOLINT
 #include <opencv2/highgui/highgui.hpp> // NOLINT
@@ -51,10 +52,12 @@ private: // NOLINT
   std::vector<cv::Scalar> GenerateColorMap(int numOfClasses);
   void Preprocess(const cv::Mat &rgbaImage);
   void Postprocess(std::vector<Object> *results);
-  void Nms(std::map<int, std::vector<Object>>& src, std::vector<Object>* res);
-  void ExtractBoxes(int seq_id, const float* in, std::map<int, std::vector<Object>>& outs,
-      std::vector<int64_t>& shape);
-  void InitParams(const int& width, const int& height);
+  void Nms(const std::map<int, std::vector<Object>> &src,
+           std::vector<Object> *res);
+  void ExtractBoxes(int seq_id, const float *in,
+                    std::map<int, std::vector<Object>> *outs,
+                    const std::vector<int64_t> &shape);
+  void InitParams(const int &width, const int &height);
 
 private: // NOLINT
   int inputWidth_;
@@ -69,11 +72,9 @@ private: // NOLINT
   bool isInited_{false};
   int channelLength_;
   const int strides_[3] = {8, 16, 32};
-  const int anchors_[3][6] = {
-          {10, 13, 16, 30, 33, 23},
-          {30, 61, 62, 45, 59, 119},
-          {116, 90, 156, 198, 373, 326}
-  };
+  const int anchors_[3][6] = {{10, 13, 16, 30, 33, 23},
+                              {30, 61, 62, 45, 59, 119},
+                              {116, 90, 156, 198, 373, 326}};
   const float confThresh_ = 0.25;
   const float nmsThresh_ = 0.45;
   float ratio_ = 1.0;
