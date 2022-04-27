@@ -86,7 +86,7 @@ Paddle Lite 预测库版本一样的 NDK
 
  先整体介绍下OCR 文字识别 Demo 的代码结构，然后再从 Java 和 C++ 两部分简要的介绍 Demo 每部分功能.
 
- <p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_android_app.jpg"/></p>
+ <p align="center"><img width="300" height="500" src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_android_app.jpg"/></p>
 
  1. `PaddleLite/` : 存放 PaddleLite 预测库
 
