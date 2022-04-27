@@ -36,7 +36,7 @@ Paddle Lite 预测库版本一样的 NDK
 
   | APP 图标 | APP 效果 |
   | ---     | --- |
-  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_app_pic.jpg)   | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_app_run.jpg) |
+  | ![app_pic width="300" height="500"](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_app_pic.jpg)   | ![app_res width="300" height="500"](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_app_run.jpg) |
 
  ```shell
  cd Paddle-Lite-Demo/libs
