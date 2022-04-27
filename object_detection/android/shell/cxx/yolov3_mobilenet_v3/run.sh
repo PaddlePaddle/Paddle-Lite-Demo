@@ -10,17 +10,17 @@ echo "OPENCV_LITE_DIR is ${OPENCV_LITE_DIR}"
 echo "ASSETS_DIR is ${ASSETS_DIR}"
 echo "ADB_DIR is ${ADB_DIR}"
 # mkdir
-adb -s 4c4f947c shell "cd /data/local/tmp/ && mkdir yolo_v3_mobilenetv3_detection"
+adb shell "cd /data/local/tmp/ && mkdir yolo_v3_mobilenetv3_detection"
 # push
-adb -s 4c4f947c push ./build/yolov3_mobilenet_v3 ${ADB_DIR}
-adb -s 4c4f947c push ${ASSETS_DIR}/models/ ${ADB_DIR}
-adb -s 4c4f947c push ${ASSETS_DIR}/images/ ${ADB_DIR}
-adb -s 4c4f947c push ${ASSETS_DIR}/labels/ ${ADB_DIR}
-adb -s 4c4f947c push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libc++_shared.so  ${ADB_DIR}
-adb -s 4c4f947c push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so  ${ADB_DIR}
+adb push ./build/yolov3_mobilenet_v3 ${ADB_DIR}
+adb push ${ASSETS_DIR}/models/ ${ADB_DIR}
+adb push ${ASSETS_DIR}/images/ ${ADB_DIR}
+adb push ${ASSETS_DIR}/labels/ ${ADB_DIR}
+adb push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libc++_shared.so  ${ADB_DIR}
+adb push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so  ${ADB_DIR}
 
 # run
-adb -s 4c4f947c shell "cd ${ADB_DIR} \
+adb shell "cd ${ADB_DIR} \
            && chmod +x ./yolov3_mobilenet_v3 \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            &&  ./yolov3_mobilenet_v3 \
@@ -30,7 +30,7 @@ adb -s 4c4f947c shell "cd ${ADB_DIR} \
                0.5 320 320 \
                0 1 10 1 0 \
            "
-adb -s 4c4f947c  pull ${ADB_DIR}/dog_yolo_v3_mobilenetv3_detection_result.jpg ./
+adb pull ${ADB_DIR}/dog_yolo_v3_mobilenetv3_detection_result.jpg ./
 
 # if run on gpu
 #adb shell "cd ${ADB_DIR} \
