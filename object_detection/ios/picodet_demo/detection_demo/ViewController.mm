@@ -232,7 +232,7 @@ std::vector<Object> post_process(float thresh,
   _flag_back_cam.on = NO;
   _flag_video.on = NO;
   _flag_cap_photo = false;
-  _image = [UIImage imageNamed:@"third-party/assets/images/dog.jpg"];
+  _image = [UIImage imageNamed:@"third-party/images/dog.jpg"];
   if (_image != nil) {
     printf("load image successed\n");
     imageView.image = _image;
@@ -260,7 +260,7 @@ std::vector<Object> post_process(float thresh,
   [self.view insertSubview:self.imageView atIndex:0];
   self.cvimg.create(640, 480, CV_8UC3);
   NSString *path = [[NSBundle mainBundle] bundlePath];
-  std::string app_dir = std::string([path UTF8String]) + "/third-party/assets";
+  std::string app_dir = std::string([path UTF8String]) + "/third-party";
   std::string label_file_str = app_dir + "/labels/pascalvoc_label_list";
   self.labels = [self load_labels:label_file_str];
   self.colorMap = GenerateColorMap(self.labels.size());
