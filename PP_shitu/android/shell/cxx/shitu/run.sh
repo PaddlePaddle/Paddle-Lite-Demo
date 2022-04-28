@@ -22,8 +22,8 @@ adb push ${PADDLE_LITE_DIR}/libs/${ARM_ABI}/libpaddle_light_api_shared.so  ${ADB
 
 # run
 echo "--run model on cpu---"
-adb -s shell "mkdir ${ADB_DIR}/result"
-adb -s shell "cd ${ADB_DIR} \
+adb shell "mkdir ${ADB_DIR}/result"
+adb shell "cd ${ADB_DIR} \
            && chmod +x ./shitu \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            &&  ./shitu \
