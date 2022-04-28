@@ -83,6 +83,13 @@ function compile_object_detection {
      bash ./build.sh "arm64-v8a"
      echo "-- arm_v7 --"
      bash ./build.sh "armeabi-v7a"
+     cd ../yolov3_mobilenet_v3
+     chmod +x ./build.sh
+     sed -i '3s/disk/opt/g' ./build.sh
+     echo "-- arm_v8 --"
+     bash ./build.sh "arm64-v8a"
+     echo "-- arm_v7 --"
+     bash ./build.sh "armeabi-v7a"
      cd ../../../../../
 }
 

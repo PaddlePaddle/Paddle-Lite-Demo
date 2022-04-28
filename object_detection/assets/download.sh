@@ -2,6 +2,7 @@
 MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/models/ssd_mobilenet_v1_pascalvoc_for_cpu_v2_10.tar.gz"
 GPU_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/models/ssd_mobilenet_v1_pascalvoc_for_gpu_v2_10.tar.gz"
 PICODET_MODLE_URL="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/models/picodet_s_320_coco_for_cpu.tar.gz"
+YOLO_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/models/yolov3_mobilenet_v3_prune86_FPGM_320_fp32_fluid_for_cpu_v2_10.tar.gz"
 MODELS_DIR="$(pwd)/models/"
 # dev cpu + gpu lib(fix picode run error)
 ANDROID_LIBS_URL="https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_dev_gpu.tar.gz"
@@ -28,6 +29,7 @@ download_and_uncompress() {
 download_and_uncompress "${MODEL_URL}" "${MODELS_DIR}"
 download_and_uncompress "${GPU_MODEL_URL}" "${MODELS_DIR}"
 download_and_uncompress "${PICODET_MODLE_URL}" "${MODELS_DIR}"
+download_and_uncompress "${YOLO_MODEL_URL}" "${MODELS_DIR}"
 ANDROID_DIR="$(pwd)/../../libs/android"
 IOS_DIR="$(pwd)/../../libs/ios"
 download_and_uncompress "${ANDROID_LIBS_URL}" "${ANDROID_DIR}"
