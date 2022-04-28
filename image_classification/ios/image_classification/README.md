@@ -84,7 +84,7 @@ cd ..
 
   | APP 图标 | APP 效果 |
   | ---     | --- |
-  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_app.jpg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_app_run.jpg) |
+  | ![app_pic width="300" height="500"](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_app.jpg)    | ![app_res width="300" height="500"](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_app_run.jpg) |
 
 ## 更新预测库
 
