@@ -1,6 +1,6 @@
 #!/bin/bash
 # setting NDK_ROOT root
-export NDK_ROOT=/home/shtf/Android/Sdk/ndk/24.0.8215888/
+export NDK_ROOT=/opt/android-ndk-r20b
 echo "NDK_ROOT is ${NDK_ROOT}"
 
 # configure
@@ -27,7 +27,7 @@ fi
 mkdir build
 #make clean
 cd build
-cmake -DANDROID_PLATFORM=android-24 -DPADDLE_LITE_DIR=${PADDLE_LITE_DIR} -DARM_ABI=${ARM_ABI} -DARM_TARGET_LANG=${ARM_TARGET_LANG} -DOPENCV_LITE_DIR=${OPENCV_LITE_DIR} -DNDK_ROOT=${NDK_ROOT} ..
+cmake -DANDROID_PLATFORM=android-21 -DPADDLE_LITE_DIR=${PADDLE_LITE_DIR} -DARM_ABI=${ARM_ABI} -DARM_TARGET_LANG=${ARM_TARGET_LANG} -DOPENCV_LITE_DIR=${OPENCV_LITE_DIR} -DNDK_ROOT=${NDK_ROOT} ..
 make -j10
 cd ..
 
