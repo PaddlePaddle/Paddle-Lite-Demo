@@ -32,18 +32,18 @@ cd ..
 4.  用 Xcode 打开  `image_classification/image_classification.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和 `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
 
     <p align="center">
-    <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode1.png"/>
+    <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode1.png"/>
     </p>
 
     <p align="center">
-    <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode2.png"/>
+    <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode2.png"/>
     </p>
 
 
 5.  选中 `image_classification/third-party` 目录 ，右击选择 `Add Files to "third-party" ...`  选项，将预测库、Opencv库和 assets内容（模型、测试图片及标签文件）添加到工程中。操作过程如下图：
      
      <p align="center">
-     <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_file.jpg"/>
+     <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_file.jpg"/>
      </p>
 
     - 添加  `assets ` 案例
@@ -55,13 +55,13 @@ cd ..
     - 添加预测库案例
       
       <p align="center">
-      <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_lib.jpg"/>
+      <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_lib.jpg"/>
       </p>
 
     - 添加完成后，工程目录如下：
       
       <p align="center">
-      <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_finish.jpg"/>
+      <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_finish.jpg"/>
       </p>
      
      **注意：**
@@ -108,7 +108,7 @@ cd ..
 先整体介绍下目标检测 Demo 的代码结构，然后再介绍 Demo 每部分功能.
 
 <p align="center">
-<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_struct.jpg"/>
+<img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_struct.jpg"/>
 </p>
 
 ### 整体结构介绍
