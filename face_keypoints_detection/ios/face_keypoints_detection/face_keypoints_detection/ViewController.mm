@@ -377,13 +377,13 @@ void FaceKeypointsDetector_Postprocess(
 
   MobileConfig face_detection_config;
   face_detection_config.set_model_from_file(
-      app_dir + "/models/face_detector_for_cpu/model.nb");
+      app_dir + "/models/face_detection_for_cpu/model.nb");
   face_detection_predictor =
       CreatePaddlePredictor<MobileConfig>(face_detection_config);
 
   MobileConfig face_keypoints_detection_config;
   face_keypoints_detection_config.set_model_from_file(
-      app_dir + "/models/facekeypoints_detector_for_cpu/model.nb");
+      app_dir + "/models/facekeypoints_detection_for_cpu/model.nb");
   face_keypoints_detection_predictor =
       CreatePaddlePredictor<MobileConfig>(face_keypoints_detection_config);
 
