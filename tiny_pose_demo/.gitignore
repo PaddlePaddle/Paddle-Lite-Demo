@@ -1,0 +1,10 @@
+.gradle/
+.idea/
+.vscode/
+app/.cxx/
+app/OpenCV/
+app/PaddleLite*/
+app/build/
+app/cache/
+app/src/main/assets/
+local.properties
