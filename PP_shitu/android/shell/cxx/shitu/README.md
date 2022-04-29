@@ -127,13 +127,17 @@ adb shell "cd ${ADB_DIR} \
               ./images \
               ./models/mainbody_PPLCNet_x2_5_640_quant_v1.0_lite.nb \
               ./models/general_PPLCNet_x2_5_quant_v1.0_lite.nb \
-              ./labels/label.txt"
+              ./labels/label.txt \
+              4 0 1"
 
  第一个参数：shitu 可执行文件，属于必选项
  第二个参数：./images 预测图片文件夹，属于必选项
  第三个参数：./models/mainbody_PPLCNet_x2_5_640_quant_v1.0_lite.nb 目标检查模型，属于必选项
  第四个参数：./models/general_PPLCNet_x2_5_quant_v1.0_lite.nb 识图模型，属于必选项
  第五个参数：./labels/label.txt 标签文件，属于必选项
+ 第六个参数：cpu线程数，属于可选项
+ 第七个参数：warmup次数，属于可选项
+ 第八个参数：repeat次数，属于可选项
 ```
 
 ## 代码讲解 （使用 Paddle Lite `C++ API` 执行预测）

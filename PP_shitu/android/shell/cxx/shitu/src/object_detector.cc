@@ -19,7 +19,7 @@
 
 namespace PPShiTu {
 // PicoDet decode
-ObjectResult disPred2Bbox(const float *dfl_det, int label, float score, int x,
+ObjectResult DisPred2Bbox(const float *dfl_det, int label, float score, int x,
                           int y, int stride, std::vector<float> im_shape,
                           int reg_max) {
   float ct_x = (x + 0.5) * stride;
@@ -77,7 +77,7 @@ void PicoDetPostProcess(std::vector<ObjectResult> *results,
         const float *bbox_pred =
             outs[i + fpn_stride.size()] + (idx * 4 * (reg_max + 1));
         bbox_results[cur_label].push_back(
-            disPred2Bbox(bbox_pred, cur_label, score, col, row, fpn_stride[i],
+            DisPred2Bbox(bbox_pred, cur_label, score, col, row, fpn_stride[i],
                          im_shape, reg_max));
       }
     }

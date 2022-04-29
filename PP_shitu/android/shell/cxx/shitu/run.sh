@@ -28,4 +28,5 @@ adb shell "cd ${ADB_DIR} \
            && export LD_LIBRARY_PATH=${ADB_DIR}:${LD_LIBRARY_PATH} \
            &&  ./shitu \
                ./images ./models/mainbody_PPLCNet_x2_5_640_quant_v1.0_lite.nb \
-               ./models/general_PPLCNet_x2_5_quant_v1.0_lite.nb ./labels/label.txt"
+               ./models/general_PPLCNet_x2_5_quant_v1.0_lite.nb ./labels/label.txt \
+               4 0 1"
