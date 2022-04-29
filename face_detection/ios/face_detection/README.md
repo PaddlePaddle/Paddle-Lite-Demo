@@ -1,8 +1,8 @@
-# 图像分类 C++ API Demo 使用指南
-在 IOS 上实现图像分类功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
-本文主要介绍图像分类 Demo 运行方法和如何在更新模型/输入/输出处理下，保证图像分类 Demo 仍可继续运行。
+# 人脸检测 C++ API Demo 使用指南
+在 IOS 上实现人脸检测功能，此 Demo 有很好的的易用性和开放性，如在 Demo 中跑自己训练好的模型等。
+本文主要介绍人脸检测 Demo 运行方法和如何在更新模型/输入/输出处理下，保证人脸检测 Demo 仍可继续运行。
 
-## 如何运行图像分类 Demo
+## 如何运行人脸检测 Demo
 
 ### 环境准备
 
@@ -10,72 +10,47 @@
 2. 准备一部 Iphone 手机，并在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
 <p align="center">
-<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode-phone.jpg"/>
+<img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode-phone.jpg"/>
 </p>
 
 ### 部署步骤
 
-1. 图像分类 Demo 位于 `Paddle-Lite-Demo/image_classification/ios/ios/image_classification`  目录
+1. 人脸检测 Demo 位于 `Paddle-Lite-Demo/face_detection/ios/face_detection/face_detection`  目录
 2.  cd `Paddle-Lite-Demo/libs` 目录，运行 `download.sh` 脚本，下载所需要的 Paddle Lite 预测库
-3.  cd `Paddle-Lite-Demo/image_classification/assets` 目录，运行 `download.sh` 脚本，下载 OPT 优化后模型
+3.  cd `Paddle-Lite-Demo/face_detection/assets` 目录，运行 `download.sh` 脚本，下载 OPT 优化后模型
 
 ```shell
 cd Paddle-Lite-Demo/libs
 # 下载所需要的 Paddle Lite 预测库
 sh download.sh
-cd ../image_classification/assets
+cd ../face_detection/assets
 # 下载OPT 优化后模型
 sh download.sh
 cd ..
 ```
 
-4.  用 Xcode 打开  `image_classification/image_classification.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和 `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
+4.  用 Xcode 打开  `face_detection/face_detection.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和 `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
 
     <p align="center">
-    <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode1.png"/>
+    <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode1.png"/>
     </p>
 
     <p align="center">
-    <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode2.png"/>
+    <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode2.png"/>
     </p>
 
 
-5.  选中 `image_classification/third-party` 目录 ，右击选择 `Add Files to "third-party" ...`  选项，将预测库、Opencv库和 assets内容（模型、测试图片及标签文件）添加到工程中。操作过程如下图：
-     
-     <p align="center">
-     <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_file.jpg"/>
-     </p>
-
-    - 添加  `assets ` 案例
-    
-    <p align="center">
-    <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_assets.jpg"/>
-    </p>
-   
-    - 添加预测库案例
-      
-      <p align="center">
-      <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_lib.jpg"/>
-      </p>
-
-    - 添加完成后，工程目录如下：
-      
-      <p align="center">
-      <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_finish.jpg"/>
-      </p>
-     
-     **注意：**
-        如果觉得上述方法比较麻烦，可以使用工程下的 `prepare.sh` 脚本，完成上述资源的拷贝
+5.  使用工程下的 `prepare.sh` 脚本，完成上述资源的拷贝
         
-        ```shell
-        # path = Paddle-Lite-Demo/ios/image_classification
-        sh prepare.sh
-        ```
+    ```shell
+    # path = Paddle-Lite-Demo/ios/face_detection
+    sh prepare.sh
+    ```
         
 6.  IPhone 手机连接电脑，在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
 <p align="center">
-<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode-phone.jpg"/>
+<img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode-phone.jpg"/>
 </p>
 
 
@@ -84,7 +59,7 @@ cd ..
 
   | APP 图标 | APP 效果 |
   | ---     | --- |
-  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_app.jpg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_app_run.jpg) |
+  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/ios_app.png)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/ios_app_run_res.png) |
 
 ## 更新预测库
 
@@ -93,19 +68,19 @@ cd ..
 * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
   * 替换 c++ 库
        * 头文件
-         将生成的 `build.lite.ios.xxx.clang/inference_lite_lib.ios64.xxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/image_classification/ios/image_classification/image_classification/third-party/PaddleLite/include`
+         将生成的 `build.lite.ios.xxx.clang/inference_lite_lib.ios64.xxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/face_detection/ios/face_detection/face_detection/third-party/PaddleLite/include`
        * 替换 arm64-v8a 库
-         将生成的 `build.lite.ios.ios64.armv8/inference_lite_lib.ios64.armv8/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/ios/image_classification/image_classification/third-party/PaddleLite/lib/libpaddle_api_light_bundled.a`
+         将生成的 `build.lite.ios.ios64.armv8/inference_lite_lib.ios64.armv8/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/face_detection/ios/face_detection/face_detection/third-party/PaddleLite/lib/libpaddle_api_light_bundled.a`
 
 >**注意：**
 >> 如果要使用 armv7 库，则可将 armv7 库替换至相应目录下：
 >> * armeabi-v7a
->>  将生成的 `build.lite.ios.ios.armv7/inference_lite_lib.ios.armv7/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/ios/image_classification/image_classification/third-party/PaddleLite/lib/libpaddle_api_light_bundled.a`
+>>  将生成的 `build.lite.ios.ios.armv7/inference_lite_lib.ios.armv7/libs/libpaddle_api_light_bundled.a` 库替换 Demo 中的 `Paddle-Lite-Demo/face_detection/ios/face_detection/face_detection/third-party/PaddleLite/lib/libpaddle_api_light_bundled.a`
   
   
 ## Demo 内容介绍
 
-先整体介绍下目标检测 Demo 的代码结构，然后再介绍 Demo 每部分功能.
+先整体介绍下人脸检测 Demo 的代码结构，然后再介绍 Demo 每部分功能.
 
 <p align="center">
 <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_struct.jpg"/>
@@ -116,7 +91,6 @@ cd ..
       * `assets`: 存放预测资源
         - models：模型文件，opt 工具转化后 Paddle Lite 模型
         - images：测试图片
-        - labels：标签文件
       * `PaddleLite`：存放 Paddle Lite 预测库和头文件
         - lib
         - include
@@ -124,22 +98,21 @@ cd ..
 
     ```shell
     # 位置：
-    image_classification/third-party/
+    face_detection/third-party/
     example：
     # IOS 预测库
-    image_classification/third-party/PaddleLite/lib/libpaddle_api_light_bundled.a
+    face_detection/third-party/PaddleLite/lib/libpaddle_api_light_bundled.a
     # 预测库头文件
-    image_classification/third-party/PaddleLite/include/paddle_api.h
-    image_classification/third-party/PaddleLite/include/paddle_use_kernels.h
-    image_classification/third-party/PaddleLite/include/paddle_use_ops.h
+    face_detection/third-party/PaddleLite/include/paddle_api.h
+    face_detection/third-party/PaddleLite/include/paddle_use_kernels.h
+    face_detection/third-party/PaddleLite/include/paddle_use_ops.h
     ```
 
  3.  `ViewController.mm`：主要预测代码
-
-    ```shell
-    # 位置
-    image_classification/ViewController.mm
-    ``` 
+      ```shell
+      # 位置
+      face_detection/ViewController.mm
+      ``` 
 
 ### `ViewController.mm`  文件内容介绍
 
@@ -200,19 +173,19 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 
 ### 更新模型
 1. 将优化后的模型存放到目录 `third-party/assets/models/` 下；
-2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `third-party/assets/models/mobilenet_v1_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `./ViewController.mm` 中代码
+2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `third-party/assets/models/facedetection_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `./ViewController.mm` 中代码
 
-  以更新 mobilenet_v2 模型为例，则先将优化后的模型存放到 `third-party/assets/models/mobilenet_v2_for_cpu/mv2.nb` 下，然后更新代码
+  以更新 new_model.nb 模型为例，则先将优化后的模型存放到 `third-party/assets/models/facedetection_for_cpu/new_model.nb` 下，然后更新代码
 
 ```c++
-// 代码文件 `image_classifictaion/ViewController.mm`
+// 代码文件 `face_detection/ViewController.mm`
 - (void)viewDidLoad {
 ...
 MobileConfig config;
 // old
-// config.set_model_from_file(app_dir+ "/models/mobilenet_v1_for_cpu/model.nb");
+// config.set_model_from_file(app_dir+ "/models/facedetection_for_cpu/model.nb");
 // update now
-config.set_model_from_file(app_dir+ "/models/mobilenet_v2_for_cpu/mv2.nb");
+config.set_model_from_file(app_dir+ "/models/facedetection_for_cpu/new_model.nb");
 predictor = CreatePaddlePredictor<MobileConfig>(config);
 ...
 }
@@ -222,39 +195,24 @@ predictor = CreatePaddlePredictor<MobileConfig>(config);
 
  - 如果更新后模型的输入信息如Shape、Tensor个数等发生改变，需要更新 `ViewController.mm` 文件中 `preprocess(...)` 输入预处理方法，完成模型输入更新
  - 如果更新后模型的输出信息发生改变，需要更新 `ViewController.mm` 文件中 `postprocess(...)` 输出后处理方法，完成模型输出更新即可
- 
-- 如果需要更新 `label.txt`，则需将更新后的标签文件，存放至`third-party/assets/labels/` 目录下。
-若更新后标签名字不一样，应修改代码文件 `./ViewController.mm` 中代码 
 
-```c++
-// 代码文件 `image_classifictaion/ViewController.mm`
-- (void)viewDidLoad {
-...
-// old
-// std::string label_file_str = app_dir+"/labels/labels.txt";
-// update now
-std::string label_file_str = app_dir+"/labels/labels_new.txt";
-self.labels = [self load_labels:label_file_str];
-...
-}
-```
 
 ### 更新输入/输出预处理
 1. 更新输入数据
 
 - 将更新的图片存放在 `third-party/assets/images/` 下；
-- 更新文件 `detection_demo/ViewController.mm` 中的代码
+- 更新文件 `face_detection/ViewController.mm` 中的代码
 
-以更新 `dog.jpg` 为例，则先将 `dog.jpg` 存放在 `third-party/assets/images/` 下，然后更新代码
+以更新 `new_face.jpg` 为例，则先将 `new_face.jpg` 存放在 `third-party/assets/images/` 下，然后更新代码
 
 ```c++
-// 代码文件 `image_classifictaion/ViewController.mm`
+// 代码文件 `face_detection/ViewController.mm`
 - (void)viewDidLoad {
 ...
 // old
-// _image = [UIImage imageNamed:@"third-party/assets/images/tabby_cat.jpg"];
+// _image = [UIImage imageNamed:@"third-party/assets/images/face.jpg"];
 // now
-_image = [UIImage imageNamed:@"third-party/assets/images/dog.jpg"];
+_image = [UIImage imageNamed:@"third-party/assets/images/new_face.jpg"];
 if (_image != nil) {
     printf("load image successed\n");
     imageView.image = _image;
@@ -269,10 +227,10 @@ if (_image != nil) {
 
 
 2. 更新输入预处理
-此处需要更新 `image_classifictaion/ViewController.mm` 中的 `preprocess(...)` 输入预处理方法
+此处需要更新 `face_detection/ViewController.mm` 中的 `preprocess(...)` 输入预处理方法
 
 3. 更新输出预处理
-此处需要更新 `image_classifictaion/ViewController.mm` 中的 `postprocess(...)` 输出后处理方法
+此处需要更新 `face_detection/ViewController.mm` 中的 `postprocess(...)` 输出后处理方法
 
 ### 其他文件
 * `time.h` 包含常见的计时处理函数，用于计时处理
