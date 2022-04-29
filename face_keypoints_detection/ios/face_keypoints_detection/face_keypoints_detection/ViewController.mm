@@ -126,8 +126,9 @@ void neon_mean_scale(const float *din, float *dout, int size,
 }
 
 // fill tensor with mean and scale, neon speed up
-void FaceDetector_Preprocess(const Mat &img, int height, int width, std::vector<float> mean,
-                std::vector<float> scale, bool is_scale) {
+void FaceDetector_Preprocess(const Mat &img, int height, int width,
+                             std::vector<float> mean, std::vector<float> scale,
+                             bool is_scale) {
   std::unique_ptr<Tensor> input_tensor(face_detection_predictor->GetInput(0));
   input_tensor->Resize({1, 3, height, width});
   input_tensor->mutable_data<float>();
@@ -236,8 +237,9 @@ void FaceDetector_Postprocess(const cv::Mat &rgbImage, std::vector<Face> *faces,
 }
 
 void FaceKeypointsDetector_Preprocess(const cv::Mat &rgbImage,
-    const std::vector<Face> &faces, std::vector<cv::Rect> *adjustedFaceROIs,
-    int height, int width) {
+                                      const std::vector<Face> &faces,
+                                      std::vector<cv::Rect> *adjustedFaceROIs,
+                                      int height, int width) {
   // Prepare input tensor
   auto inputTensor = face_keypoints_detection_predictor->GetInput(0);
   int batchSize = faces.size();
@@ -286,7 +288,8 @@ void FaceKeypointsDetector_Preprocess(const cv::Mat &rgbImage,
   }
 }
 
-void FaceKeypointsDetector_Postprocess(const std::vector<cv::Rect> &adjustedFaceROIs, std::vector<Face> *faces,
+void FaceKeypointsDetector_Postprocess(
+    const std::vector<cv::Rect> &adjustedFaceROIs, std::vector<Face> *faces,
     cv::Mat &img) {
   auto outputTensor = face_keypoints_detection_predictor->GetOutput(0);
   auto outputData = outputTensor->data<float>();
@@ -371,63 +374,70 @@ void FaceKeypointsDetector_Postprocess(const std::vector<cv::Rect> &adjustedFace
   self.scale = {0.5f, 0.5f, 0.5f};
   self.input_height = 480;
   self.input_width = 640;
-    
+
   MobileConfig face_detection_config;
-  face_detection_config.set_model_from_file(app_dir + "/models/face_detector_for_cpu/model.nb");
-  face_detection_predictor = CreatePaddlePredictor<MobileConfig>(face_detection_config);
-    
+  face_detection_config.set_model_from_file(
+      app_dir + "/models/face_detector_for_cpu/model.nb");
+  face_detection_predictor =
+      CreatePaddlePredictor<MobileConfig>(face_detection_config);
+
   MobileConfig face_keypoints_detection_config;
-  face_keypoints_detection_config.set_model_from_file(app_dir + "/models/facekeypoints_detector_for_cpu/model.nb");
-  face_keypoints_detection_predictor = CreatePaddlePredictor<MobileConfig>(face_keypoints_detection_config);
-    
+  face_keypoints_detection_config.set_model_from_file(
+      app_dir + "/models/facekeypoints_detector_for_cpu/model.nb");
+  face_keypoints_detection_predictor =
+      CreatePaddlePredictor<MobileConfig>(face_keypoints_detection_config);
+
   cv::Mat img_face;
   UIImageToMat(self.image, img_face);
   cv::Mat img;
   if (img_face.channels() == 4) {
     cv::cvtColor(img_face, img, CV_RGBA2RGB);
   }
-    
+
   imgWidth = img.cols;
   imgHeight = img.rows;
   std::vector<Face> faces;
   std::vector<cv::Rect> adjustedFaceROIs;
   float scoreThreshold = 0.7;
   std::ostringstream result;
-    
-  FaceDetector_Preprocess(img, self.input_height, self.input_width, self.mean, self.scale,
-             true);
+
+  FaceDetector_Preprocess(img, self.input_height, self.input_width, self.mean,
+                          self.scale, true);
   tic.start();
   face_detection_predictor->Run();
   tic.end();
   FaceDetector_Postprocess(img, &faces, scoreThreshold);
-    
+
   float face_detection_time = tic.get_average_ms();
   float face_keypoints_detection_time = 0.f;
 
   if (faces.size() > 0) {
-      adjustedFaceROIs.resize(faces.size());
-      FaceKeypointsDetector_Preprocess(img, faces,
-                                       &adjustedFaceROIs, 60, 60);
-      tic.start();
-      face_keypoints_detection_predictor->Run();
-      tic.end();
-      FaceKeypointsDetector_Postprocess(adjustedFaceROIs, &faces, img);
-      
-      face_keypoints_detection_time = tic.get_average_ms();
+    adjustedFaceROIs.resize(faces.size());
+    FaceKeypointsDetector_Preprocess(img, faces, &adjustedFaceROIs, 60, 60);
+    tic.start();
+    face_keypoints_detection_predictor->Run();
+    tic.end();
+    FaceKeypointsDetector_Postprocess(adjustedFaceROIs, &faces, img);
+
+    face_keypoints_detection_time = tic.get_average_ms();
   }
- 
-  result << "face_detection_time: " << face_detection_time << " ms" << "\nface_keypoints_detection_time: " << face_keypoints_detection_time << " ms" << "\ntotal_time: " << face_detection_time + face_keypoints_detection_time << " ms";
+
+  result << "face_detection_time: " << face_detection_time << " ms"
+         << "\nface_keypoints_detection_time: " << face_keypoints_detection_time
+         << " ms"
+         << "\ntotal_time: "
+         << face_detection_time + face_keypoints_detection_time << " ms";
   self.result.numberOfLines = 0;
   self.result.text = [NSString stringWithUTF8String:result.str().c_str()];
   self.flag_init = true;
-    cv::Mat outputImage = img;
-    for (int i = 0; i < faces.size(); i++) {
-      // Configure color
-      for (int j = 0; j < faces[i].keypoints.size(); j++) {
-        cv::circle(outputImage, faces[i].keypoints[j], 1, cv::Scalar(0, 255, 0),
-                   2); //在图像中画出特征点，1是圆的半径
-      }
+  cv::Mat outputImage = img;
+  for (int i = 0; i < faces.size(); i++) {
+    // Configure color
+    for (int j = 0; j < faces[i].keypoints.size(); j++) {
+      cv::circle(outputImage, faces[i].keypoints[j], 1, cv::Scalar(0, 255, 0),
+                 2); //在图像中画出特征点，1是圆的半径
     }
+  }
   self.imageView.image = MatToUIImage(outputImage);
 }
 
@@ -490,51 +500,59 @@ void FaceKeypointsDetector_Postprocess(const std::vector<cv::Rect> &adjustedFace
           if (image.channels() == 4) {
             cvtColor(image, self->_cvimg, CV_RGBA2RGB);
           }
-            
+
           imgWidth = image.cols;
           imgHeight = image.rows;
           std::vector<Face> faces;
           std::vector<cv::Rect> adjustedFaceROIs;
           float scoreThreshold = 0.7;
-            
-          FaceDetector_Preprocess(self->_cvimg, self.input_height, self.input_width,
-                     self.mean, self.scale, true);
+
+          FaceDetector_Preprocess(self->_cvimg, self.input_height,
+                                  self.input_width, self.mean, self.scale,
+                                  true);
           tic.start();
           face_detection_predictor->Run();
           tic.end();
           FaceDetector_Postprocess(self->_cvimg, &faces, scoreThreshold);
-              
+
           float face_detection_time = tic.get_average_ms();
           float face_keypoints_detection_time = 0.f;
 
           if (faces.size() > 0) {
-              adjustedFaceROIs.resize(faces.size());
-              FaceKeypointsDetector_Preprocess(self->_cvimg, faces,
-                                                 &adjustedFaceROIs, 60, 60);
-              tic.start();
-              face_keypoints_detection_predictor->Run();
-              tic.end();
-              FaceKeypointsDetector_Postprocess(adjustedFaceROIs, &faces, self->_cvimg);
+            adjustedFaceROIs.resize(faces.size());
+            FaceKeypointsDetector_Preprocess(self->_cvimg, faces,
+                                             &adjustedFaceROIs, 60, 60);
+            tic.start();
+            face_keypoints_detection_predictor->Run();
+            tic.end();
+            FaceKeypointsDetector_Postprocess(adjustedFaceROIs, &faces,
+                                              self->_cvimg);
 
-              face_keypoints_detection_time = tic.get_average_ms();
+            face_keypoints_detection_time = tic.get_average_ms();
           }
-            
-          
-            std::ostringstream result;
-            result << "face_detection_time: " << face_detection_time << " ms" << "\nface_keypoints_detection_time: " << face_keypoints_detection_time << " ms" << "\ntotal_time: " << face_detection_time + face_keypoints_detection_time << " ms";
-            self.result.numberOfLines = 0;
-            self.result.text = [NSString stringWithUTF8String:result.str().c_str()];
-            self.flag_init = true;
-              cv::Mat outputImage = self->_cvimg;
-            cvtColor(outputImage, outputImage, CV_RGB2BGR);
-            for (int i = 0; i < faces.size(); i++) {
-              // Configure color
-              for (int j = 0; j < faces[i].keypoints.size(); j++) {
-                cv::circle(outputImage, faces[i].keypoints[j], 1, cv::Scalar(0, 255, 0),
-                           2); //在图像中画出特征点，1是圆的半径
-              }
+
+          std::ostringstream result;
+          result << "face_detection_time: " << face_detection_time << " ms"
+                 << "\nface_keypoints_detection_time: "
+                 << face_keypoints_detection_time << " ms"
+                 << "\ntotal_time: "
+                 << face_detection_time + face_keypoints_detection_time
+                 << " ms";
+          self.result.numberOfLines = 0;
+          self.result.text =
+              [NSString stringWithUTF8String:result.str().c_str()];
+          self.flag_init = true;
+          cv::Mat outputImage = self->_cvimg;
+          cvtColor(outputImage, outputImage, CV_RGB2BGR);
+          for (int i = 0; i < faces.size(); i++) {
+            // Configure color
+            for (int j = 0; j < faces[i].keypoints.size(); j++) {
+              cv::circle(outputImage, faces[i].keypoints[j], 1,
+                         cv::Scalar(0, 255, 0),
+                         2); //在图像中画出特征点，1是圆的半径
             }
-            self.imageView.image = MatToUIImage(outputImage);
+          }
+          self.imageView.image = MatToUIImage(outputImage);
         }
       }
     }

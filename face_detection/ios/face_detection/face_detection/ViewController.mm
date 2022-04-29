@@ -113,98 +113,98 @@ void preprocess(const Mat &img, int height, int width, std::vector<float> mean,
 }
 
 std::vector<std::vector<float>> postprocess() {
-    int topk = 100;
-    float nmsParamNmsThreshold = 0.5;
-    float confidenceThreshold = 0.5;
-    std::vector<std::pair<float, std::vector<float>>> vec;
+  int topk = 100;
+  float nmsParamNmsThreshold = 0.5;
+  float confidenceThreshold = 0.5;
+  std::vector<std::pair<float, std::vector<float>>> vec;
 
-    auto scoresTensor = predictor->GetOutput(0);
-    auto boxsTensor = predictor->GetOutput(1);
-    auto scores_Shape = scoresTensor->shape();
-    int scoresSize = ShapeProduction(scores_Shape);
+  auto scoresTensor = predictor->GetOutput(0);
+  auto boxsTensor = predictor->GetOutput(1);
+  auto scores_Shape = scoresTensor->shape();
+  int scoresSize = ShapeProduction(scores_Shape);
 
-    auto *scores = scoresTensor->data<float>();
-    auto *boxs = boxsTensor->data<float>();
+  auto *scores = scoresTensor->data<float>();
+  auto *boxs = boxsTensor->data<float>();
 
-    for (int i = 0, j = 0; i < scoresSize; i += 2, j += 4) {
-      float rawLeft = boxs[j];
-      float rawTop = boxs[j + 1];
-      float rawRight = boxs[j + 2];
-      float rawBottom = boxs[j + 3];
-      float clampedLeft = fmax(fmin(rawLeft, 1.f), 0.f);
-      float clampedTop = fmax(fmin(rawTop, 1.f), 0.f);
-      float clampedRight = fmax(fmin(rawRight, 1.f), 0.f);
-      float clampedBottom = fmax(fmin(rawBottom, 1.f), 0.f);
-      std::vector<float> box;
-      box.push_back(clampedLeft * imgWidth);
-      box.push_back(clampedTop * imgHeight);
-      box.push_back(clampedRight * imgWidth);
-      box.push_back(clampedBottom * imgHeight);
-      vec.push_back(std::make_pair(scores[i + 1], box));
+  for (int i = 0, j = 0; i < scoresSize; i += 2, j += 4) {
+    float rawLeft = boxs[j];
+    float rawTop = boxs[j + 1];
+    float rawRight = boxs[j + 2];
+    float rawBottom = boxs[j + 3];
+    float clampedLeft = fmax(fmin(rawLeft, 1.f), 0.f);
+    float clampedTop = fmax(fmin(rawTop, 1.f), 0.f);
+    float clampedRight = fmax(fmin(rawRight, 1.f), 0.f);
+    float clampedBottom = fmax(fmin(rawBottom, 1.f), 0.f);
+    std::vector<float> box;
+    box.push_back(clampedLeft * imgWidth);
+    box.push_back(clampedTop * imgHeight);
+    box.push_back(clampedRight * imgWidth);
+    box.push_back(clampedBottom * imgHeight);
+    vec.push_back(std::make_pair(scores[i + 1], box));
+  }
+
+  std::sort(vec.begin(), vec.end(),
+            std::greater<std::pair<float, std::vector<float>>>());
+
+  std::vector<int> outputIndex;
+  auto computeOverlapAreaRate = [](std::vector<float> anchor1,
+                                   std::vector<float> anchor2) -> float {
+    float xx1 = anchor1[0] > anchor2[0] ? anchor1[0] : anchor2[0];
+    float yy1 = anchor1[1] > anchor2[1] ? anchor1[1] : anchor2[1];
+    float xx2 = anchor1[2] < anchor2[2] ? anchor1[2] : anchor2[2];
+    float yy2 = anchor1[3] < anchor2[3] ? anchor1[3] : anchor2[3];
+    float w = xx2 - xx1 + 1;
+    float h = yy2 - yy1 + 1;
+    if (w < 0 || h < 0) {
+      return 0;
     }
+    float inter = w * h;
+    float anchor1_area1 =
+        (anchor1[2] - anchor1[0] + 1) * (anchor1[3] - anchor1[1] + 1);
+    float anchor2_area1 =
+        (anchor2[2] - anchor2[0] + 1) * (anchor2[3] - anchor2[1] + 1);
+    return inter / (anchor1_area1 + anchor2_area1 - inter);
+  };
 
-    std::sort(vec.begin(), vec.end(),
-              std::greater<std::pair<float, std::vector<float>>>());
-
-    std::vector<int> outputIndex;
-    auto computeOverlapAreaRate = [](std::vector<float> anchor1,
-                                     std::vector<float> anchor2) -> float {
-      float xx1 = anchor1[0] > anchor2[0] ? anchor1[0] : anchor2[0];
-      float yy1 = anchor1[1] > anchor2[1] ? anchor1[1] : anchor2[1];
-      float xx2 = anchor1[2] < anchor2[2] ? anchor1[2] : anchor2[2];
-      float yy2 = anchor1[3] < anchor2[3] ? anchor1[3] : anchor2[3];
-      float w = xx2 - xx1 + 1;
-      float h = yy2 - yy1 + 1;
-      if (w < 0 || h < 0) {
-        return 0;
-      }
-      float inter = w * h;
-      float anchor1_area1 =
-          (anchor1[2] - anchor1[0] + 1) * (anchor1[3] - anchor1[1] + 1);
-      float anchor2_area1 =
-          (anchor2[2] - anchor2[0] + 1) * (anchor2[3] - anchor2[1] + 1);
-      return inter / (anchor1_area1 + anchor2_area1 - inter);
-    };
-
-      int count = 0;
-      float INVALID_ANCHOR = -10000.0f;
-      for (int i = 0; i < vec.size(); i++) {
-        if (fabs(vec[i].first - INVALID_ANCHOR) < 1e-5) {
-          continue;
-        }
-        if (++count >= topk) {
-          break;
-        }
-        for (int j = i + 1; j < vec.size(); j++) {
-          if (fabs(vec[j].first - INVALID_ANCHOR) > 1e-5) {
-            if (computeOverlapAreaRate(vec[i].second, vec[j].second) >
-                nmsParamNmsThreshold) {
-              vec[j].first = INVALID_ANCHOR;
-            }
-          }
+  int count = 0;
+  float INVALID_ANCHOR = -10000.0f;
+  for (int i = 0; i < vec.size(); i++) {
+    if (fabs(vec[i].first - INVALID_ANCHOR) < 1e-5) {
+      continue;
+    }
+    if (++count >= topk) {
+      break;
+    }
+    for (int j = i + 1; j < vec.size(); j++) {
+      if (fabs(vec[j].first - INVALID_ANCHOR) > 1e-5) {
+        if (computeOverlapAreaRate(vec[i].second, vec[j].second) >
+            nmsParamNmsThreshold) {
+          vec[j].first = INVALID_ANCHOR;
         }
       }
-      for (int i = 0; i < vec.size() && count > 0; i++) {
-        if (fabs(vec[i].first - INVALID_ANCHOR) > 1e-5) {
-          outputIndex.push_back(i);
-          count--;
-        }
+    }
+  }
+  for (int i = 0; i < vec.size() && count > 0; i++) {
+    if (fabs(vec[i].first - INVALID_ANCHOR) > 1e-5) {
+      outputIndex.push_back(i);
+      count--;
+    }
+  }
+  std::vector<std::vector<float>> boxAndScores;
+  if (outputIndex.size() > 0) {
+    for (auto id : outputIndex) {
+      if (vec[id].first < confidenceThreshold)
+        continue;
+      if (isnan(vec[id].first)) { // skip the NaN score, maybe not correct
+        continue;
       }
-      std::vector<std::vector<float>> boxAndScores;
-      if (outputIndex.size() > 0) {
-        for (auto id : outputIndex) {
-          if (vec[id].first < confidenceThreshold)
-            continue;
-          if (isnan(vec[id].first)) { // skip the NaN score, maybe not correct
-            continue;
-          }
-            std::vector<float> boxAndScore;
-          for (int k = 0; k < 4; k++)
-              boxAndScore.push_back((vec[id].second)[k]); // x1,y1,x2,y2
-          boxAndScores.push_back((boxAndScore));       // possibility
-        }
-      }
-      return boxAndScores;
+      std::vector<float> boxAndScore;
+      for (int k = 0; k < 4; k++)
+        boxAndScore.push_back((vec[id].second)[k]); // x1,y1,x2,y2
+      boxAndScores.push_back((boxAndScore));        // possibility
+    }
+  }
+  return boxAndScores;
 }
 
 @interface ViewController () <CvVideoCameraDelegate>
@@ -266,12 +266,13 @@ std::vector<std::vector<float>> postprocess() {
   self.cvimg.create(640, 480, CV_8UC3);
   NSString *path = [[NSBundle mainBundle] bundlePath];
   std::string app_dir = std::string([path UTF8String]) + "/third-party/assets";
-  self.mean = {0.498,0.498,0.498};
-  self.scale = {0.502,0.502,0.502};
+  self.mean = {0.498, 0.498, 0.498};
+  self.scale = {0.502, 0.502, 0.502};
   self.input_height = 240;
   self.input_width = 320;
   MobileConfig config;
-  config.set_model_from_file(app_dir + "/models/facedetection_for_cpu/model.nb");
+  config.set_model_from_file(app_dir +
+                             "/models/facedetection_for_cpu/model.nb");
   predictor = CreatePaddlePredictor<MobileConfig>(config);
   cv::Mat img_face;
   UIImageToMat(self.image, img_face);
@@ -292,12 +293,12 @@ std::vector<std::vector<float>> postprocess() {
   self.result.numberOfLines = 0;
   self.result.text = [NSString stringWithUTF8String:result.str().c_str()];
   self.flag_init = true;
-    cv::Mat outputImage = img;
-    for (auto boxAndScore : boxs_scores) {
-      cv::rectangle(outputImage, cv::Point(boxAndScore[0], boxAndScore[1]),
-                    cv::Point(boxAndScore[2], boxAndScore[3]),
-                    cv::Scalar(0, 0, 255), 2, 8);
-    }
+  cv::Mat outputImage = img;
+  for (auto boxAndScore : boxs_scores) {
+    cv::rectangle(outputImage, cv::Point(boxAndScore[0], boxAndScore[1]),
+                  cv::Point(boxAndScore[2], boxAndScore[3]),
+                  cv::Scalar(0, 0, 255), 2, 8);
+  }
   self.imageView.image = MatToUIImage(outputImage);
 }
 
@@ -360,28 +361,30 @@ std::vector<std::vector<float>> postprocess() {
           if (image.channels() == 4) {
             cvtColor(image, self->_cvimg, CV_RGBA2RGB);
           }
-            
-            imgWidth = image.cols;
-            imgHeight = image.rows;
+
+          imgWidth = image.cols;
+          imgHeight = image.rows;
           preprocess(self->_cvimg, self.input_height, self.input_width,
                      self.mean, self.scale, true);
           tic.start();
           predictor->Run();
           tic.end();
-            auto boxs_scores = postprocess();
-            std::ostringstream result;
-            result << "\ntime: " << tic.get_average_ms() << " ms";
-            self.result.numberOfLines = 0;
-            self.result.text = [NSString stringWithUTF8String:result.str().c_str()];
-            self.flag_init = true;
-              cv::Mat outputImage = self->_cvimg;
-            cvtColor(outputImage, outputImage, CV_RGB2BGR);
-              for (auto boxAndScore : boxs_scores) {
-                cv::rectangle(outputImage, cv::Point(boxAndScore[0], boxAndScore[1]),
-                              cv::Point(boxAndScore[2], boxAndScore[3]),
-                              cv::Scalar(0, 0, 255), 2, 8);
-              }
-            self.imageView.image = MatToUIImage(outputImage);
+          auto boxs_scores = postprocess();
+          std::ostringstream result;
+          result << "\ntime: " << tic.get_average_ms() << " ms";
+          self.result.numberOfLines = 0;
+          self.result.text =
+              [NSString stringWithUTF8String:result.str().c_str()];
+          self.flag_init = true;
+          cv::Mat outputImage = self->_cvimg;
+          cvtColor(outputImage, outputImage, CV_RGB2BGR);
+          for (auto boxAndScore : boxs_scores) {
+            cv::rectangle(outputImage,
+                          cv::Point(boxAndScore[0], boxAndScore[1]),
+                          cv::Point(boxAndScore[2], boxAndScore[3]),
+                          cv::Scalar(0, 0, 255), 2, 8);
+          }
+          self.imageView.image = MatToUIImage(outputImage);
         }
       }
     }
