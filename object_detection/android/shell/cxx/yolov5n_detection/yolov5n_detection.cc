@@ -101,14 +101,14 @@ static float iou_calc(const cv::Rect &rec_a, const cv::Rect &rec_b) {
 
 static bool cmp(const Object &a, const Object &b) { return a.prob > b.prob; }
 
-static void nms(const std::map<int, const std::vector<Object>> &src,
+static void nms(const std::map<int, std::vector<Object>> *src,
                 std::vector<Object> *res, float nms_thresh = 0.45) {
-  for (auto it = src.begin(); it != src.end(); it++) {
-    auto &dets = it->second;
+  for (auto it = src->begin(); it != src->end(); it++) {
+    auto dets = it->second;
     std::sort(dets.begin(), dets.end(), cmp);
     for (size_t m = 0; m < dets.size(); ++m) {
       auto &item = dets[m];
-      res.push_back(item);
+      res->push_back(item);
       for (size_t n = m + 1; n < dets.size(); ++n) {
         if (iou_calc(item.rec, dets[n].rec) > nms_thresh) {
           dets.erase(dets.begin() + n);
@@ -121,8 +121,8 @@ static void nms(const std::map<int, const std::vector<Object>> &src,
 
 void extract_boxes(const float *in, std::map<int, std::vector<Object>> *outs,
                    const int &stride, const int *anchors,
-                   const std::vector<int64> &shape, float ratio,
-                   float conf_thres, int offx, int offy, int xdim) {
+                   std::vector<int> shape, float ratio, float conf_thres,
+                   int offx, int offy, int xdim) {
   int cls_num = shape[3] - 5;
   for (int c = 0; c < shape[1]; c++) {
     int step = c * shape[2] * shape[3];
@@ -164,9 +164,9 @@ void extract_boxes(const float *in, std::map<int, std::vector<Object>> *outs,
       obj.prob = score;
       obj.class_id = max_cls_id;
 
-      if (outs.count(obj.class_id) == 0)
-        outs.emplace(obj.class_id, std::vector<Object>());
-      outs[obj.class_id].emplace_back(obj);
+      if (outs->count(obj.class_id) == 0)
+        outs->emplace(obj.class_id, std::vector<Object>());
+      (*outs)[obj.class_id].emplace_back(obj);
     }
   }
 }
@@ -178,7 +178,7 @@ void post_process(std::shared_ptr<PaddlePredictor> predictor, float thresh,
   const int anchors[3][6] = {{10, 13, 16, 30, 33, 23},
                              {30, 61, 62, 45, 59, 119},
                              {116, 90, 156, 198, 373, 326}};
-  std::map<int, std::vector<Object>> raw_o.utputs;
+  std::map<int, std::vector<Object>> raw_outputs;
   float r_w = in_width / static_cast<float>(image.cols);
   float r_h = in_height / static_cast<float>(image.rows);
   float r, off_x, off_y;
@@ -197,13 +197,14 @@ void post_process(std::shared_ptr<PaddlePredictor> predictor, float thresh,
         std::move(predictor->GetOutput(k)));
     auto *outptr = output_tensor->data<float>();
     auto shape_out = output_tensor->shape();
+    std::vector<int> shape_new(shape_out.begin(), shape_out.end());
     int xdim = static_cast<int>(in_width / strides[k]);
-    extract_boxes(outptr, &raw_outputs, strides[k], anchors[k], &shape_out, r,
+    extract_boxes(outptr, &raw_outputs, strides[k], anchors[k], shape_new, r,
                   thresh, off_x, off_y, xdim);
   }
 
   std::vector<Object> outs;
-  nms(raw_outputs, &outs, 0.45);
+  nms(&raw_outputs, &outs, 0.45);
 
   // visualize
   for (auto &obj : outs) {

@@ -165,9 +165,9 @@ void Detector::ExtractBoxes(int seq_id, const float *in,
       obj.prob = score;
       obj.class_id = max_cls_id;
 
-      if (outs.count(obj.class_id) == 0)
-        outs.emplace(obj.class_id, std::vector<Object>());
-      outs[obj.class_id].emplace_back(obj);
+      if (outs->count(obj.class_id) == 0)
+        outs->emplace(obj.class_id, std::vector<Object>());
+      (*outs)[obj.class_id].emplace_back(obj);
     }
   }
 }
@@ -186,7 +186,7 @@ static bool cmp(const Object &a, const Object &b) { return a.prob > b.prob; }
 void Detector::Nms(const std::map<int, std::vector<Object>> &src,
                    std::vector<Object> *res) {
   for (auto it = src.begin(); it != src.end(); it++) {
-    auto &dets = it->second;
+    auto dets = it->second;
     std::sort(dets.begin(), dets.end(), cmp);
     for (size_t m = 0; m < dets.size(); ++m) {
       auto &item = dets[m];
