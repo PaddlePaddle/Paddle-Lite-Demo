@@ -26,7 +26,7 @@
 4. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
 成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动标记人脸关键点
 
-<p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/app_run_res.jpg"/></p>
+<p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/android_app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/android_app_run_res.jpg"/></p>
 
 ## 更新预测库
 
@@ -408,7 +408,7 @@ bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
 1）打开 APP，点击右下角的设置图标，打开 Settings 界面；这里可以选中某个参数并更改之。
 
 <p align="center">
-<img src=https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/app_settings.jpg width=50%>
+<img src=https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/android_app_settings.jpg width=50%>
 </p>
 
 2）假设更新线程数据，将 CPU Thread Num 设置为 4，更新后，返回原界面，APP将自动重新预测，并可以在左上角观察到启用 4 线程时每个模型的预测耗时。

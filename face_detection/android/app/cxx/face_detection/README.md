@@ -27,7 +27,7 @@
 4. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
 成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动检测图片中的人脸并标记
 
-<p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/app_run_res.jpg"/></p>
+<p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_run_res.jpg"/></p>
 
 ## 更新预测库
 
@@ -388,7 +388,7 @@ std::vector<float> Pipeline::Process(cv::Mat &rgbaImage, int height, int width);
 ### setting 界面参数更新
 打开 APP，点击右上角的 `:` 符合，选择 `Settings..` 选项，打开 setting 界面；
 <p align="center">
-<img src=https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/app_settings.jpg>
+<img src=https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_settings.jpg>
 </p>
 
 ## 性能优化方法
