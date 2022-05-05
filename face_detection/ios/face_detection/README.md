@@ -55,11 +55,9 @@ cd ..
 
 
 7. 按下左上角的 Run 按钮，自动编译 APP 并安装到手机。在苹果手机中设置信任该 APP（进入 `设置->通用->设备管理`，选中新安装的 APP 并 `验证该应用`）
-成功后效果如下：
+成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动检测图片中的人脸并标记
 
-  | APP 图标 | APP 效果 |
-  | ---     | --- |
-  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/ios_app.png)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/ios_app_run_res.png) |
+<p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/ios_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/ios_app_run_res.jpg"/></p>
 
 ## 更新预测库
 
