@@ -28,7 +28,9 @@
 成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动识别图片中的物体并标记
 
 
-![mask_detection_install.jpg](https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/mask_detection_install.jpg)
+<p align="center">
+<img src=https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/mask_detection_install.jpg>
+</p>
 
 ![android_mask_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_mask_detection_cpu.jpg)
 
