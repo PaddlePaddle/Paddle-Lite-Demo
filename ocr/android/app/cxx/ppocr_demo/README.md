@@ -32,9 +32,11 @@ Paddle Lite 预测库版本一样的 NDK
 >> 如果以上步骤仍旧无法解决 NDK 配置错误，请尝试根据 Andriod Studio 官方文档中的[更新 Android Gradle 插件](https://developer.android.com/studio/releases/gradle-plugin?hl=zh-cn#updating-plugin)章节，尝试更新Android Gradle plugin版本。
 
 7. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
-成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动识别图片中的物体并标记
+成功后效果如下：
 
-<p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_app_run.jpg"/></p>
+  | APP 图标 | APP 效果 |
+  | ---     | --- |
+  | ![app_pic width="300" height="500"](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_app_pic.jpg)   | ![app_res width="300" height="500"](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_app_run.jpg) |
 
  ```shell
  cd Paddle-Lite-Demo/libs
@@ -84,7 +86,7 @@ Paddle Lite 预测库版本一样的 NDK
 
  先整体介绍下OCR 文字识别 Demo 的代码结构，然后再从 Java 和 C++ 两部分简要的介绍 Demo 每部分功能.
 
- <p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_android_app.jpg"/></p>
+ <p align="center"><img width="300" height="500" src="https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/android/ppocr_android_app.jpg"/></p>
 
  1. `PaddleLite/` : 存放 PaddleLite 预测库
 

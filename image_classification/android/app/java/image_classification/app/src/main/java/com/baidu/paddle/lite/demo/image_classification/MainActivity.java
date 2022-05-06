@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     protected TextView tvTop2Result;
     protected TextView tvTop3Result;
     protected TextView tvInferenceTime;
-    protected Switch mSwitch;
+    // protected Switch mSwitch;
 
     // Model settings of image classification
     protected String modelPath = "";
@@ -152,26 +152,26 @@ public class MainActivity extends AppCompatActivity {
         tvTop3Result = findViewById(R.id.tv_top3_result);
         tvInferenceTime = findViewById(R.id.tv_inference_time);
         tvInputSetting.setMovementMethod(ScrollingMovementMethod.getInstance());
-        mSwitch=(Switch) findViewById(R.id.btn_switch);
-        mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    useGpu = true;
-                } else {
-                    useGpu = false;
-                }
-                if (useGpu) {
-                    modelPath = modelPath.split("/")[0] + "/mobilenet_v1_for_gpu";
-                } else {
-                    modelPath = modelPath.split("/")[0] + "/mobilenet_v1_for_cpu";
-                }
-                tvInputSetting.setText("Model: " + modelPath.substring(modelPath.lastIndexOf("/") + 1) + "\n" + "CPU" +
-                        " Thread Num: " + Integer.toString(cpuThreadNum) + "\n" + "CPU Power Mode: " + cpuPowerMode + "\n");
-                tvInputSetting.scrollTo(0, 0);
-                loadModel();
-            }
-        });
+        // mSwitch=(Switch) findViewById(R.id.btn_switch);
+        // mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        //     @Override
+        //     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        //         if(isChecked) {
+        //             useGpu = true;
+        //         } else {
+        //             useGpu = false;
+        //         }
+        //         if (useGpu) {
+        //             modelPath = modelPath.split("/")[0] + "/mobilenet_v1_for_gpu";
+        //         } else {
+        //             modelPath = modelPath.split("/")[0] + "/mobilenet_v1_for_cpu";
+        //         }
+        //         tvInputSetting.setText("Model: " + modelPath.substring(modelPath.lastIndexOf("/") + 1) + "\n" + "CPU" +
+        //                 " Thread Num: " + Integer.toString(cpuThreadNum) + "\n" + "CPU Power Mode: " + cpuPowerMode + "\n");
+        //         tvInputSetting.scrollTo(0, 0);
+        //         loadModel();
+        //     }
+        // });
     }
 
     @Override
