@@ -29,6 +29,13 @@
 
 <p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_pic.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_run_res.jpg"/></p>
 
+
+
+  | APP 图标 | APP 效果 |
+  | ---     | --- |
+  | <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_pic.jpg"/>    | <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_run_res.jpg"/> |
+
+## 更新预测库
 ## 更新预测库
 
 * Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
