@@ -27,15 +27,12 @@
 4. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
 成功后效果如下:
 
-<center>
 
   | APP 图标 | APP 效果 |
   | ---     | --- |
-  | <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_pic.jpg"/>    | <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_run_res.jpg"/> |
+  | <img width="750" height="750"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_pic.jpg"/>    | <img width="750" height="750"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_run_res.jpg"/> |
 
-</center>
 
-## 更新预测库
 ## 更新预测库
 
 * Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
