@@ -29,11 +29,11 @@
 
 
 <p align="center">
-<img src=https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/mask_detection_install.jpg width=20%>
+<img src=https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/mask_detection_install.jpg width=30%>
+</p>
+<p align="center">
 ![android_mask_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_mask_detection_cpu.jpg)
 </p>
-
-
 
 ## 更新预测库
 
