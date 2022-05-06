@@ -20,7 +20,7 @@ Paddle Lite 预测库版本一样的 NDK
 3. 手机连接电脑，打开 USB 调试和文件传输模式，并在 Android Studio 上连接自己的手机设备（手机需要开启允许从 USB 安装软件权限）
 
 <p align="center">
-<img src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/run_app.jpg"/>
+<img src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/run_app1.jpg"/>
 </p>
 
 > **注意：**
@@ -34,7 +34,7 @@ Paddle Lite 预测库版本一样的 NDK
   
   | APP 图标 | APP 效果 |
   | ---     | --- |
-  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_pic.jpg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res.jpg) |
+  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_pic2.jpg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res1.jpg) |
 
 ## 更新预测库
 
@@ -61,7 +61,7 @@ Paddle Lite 预测库版本一样的 NDK
 
 先整体介绍下目标检测 Demo 的代码结构，然后再从 Java 和 C++ 两部分简要的介绍 Demo 每部分功能.
 
-<p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/predict.jpg"/></p>
+<p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/predict1.jpg"/></p>
 
 1. `Native.java`： Java 预测代码
 
