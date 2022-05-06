@@ -29,7 +29,7 @@
 
 
 <p align="center">
-<img src=https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/mask_detection_install.jpg width=50%>
+<img src=https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/mask_detection_install.jpg width=20%>
 </p>
 
 ![android_mask_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_mask_detection_cpu.jpg)
