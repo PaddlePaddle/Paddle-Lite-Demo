@@ -33,6 +33,21 @@ function compile_human_segmentation {
      cd ../../../../../
 }
 
+function compile_ppshitu {
+     cd ./PP_shitu/assets
+     chmod +x ./download.sh
+     bash ./download.sh
+     echo "PP_shitu"
+     cd ../android/shell/cxx/shitu
+     chmod +x ./build.sh
+     sed -i '3s/disk/opt/g' ./build.sh
+     echo "-- arm_v8 --"
+     bash ./build.sh "arm64-v8a"
+     echo "-- arm_v7 --"
+     bash ./build.sh "armeabi-v7a"
+     cd ../../../../../
+}
+
 function compile_image_classification {
      cd ./image_classification/assets
      chmod +x ./download.sh
@@ -60,8 +75,23 @@ function compile_object_detection {
      bash ./build.sh "arm64-v8a"
      echo "-- arm_v7 --"
      bash ./build.sh "armeabi-v7a"
+     echo "yolov5n_detection"
+     cd ../yolov5n_detection
+     chmod +x ./build.sh
+     sed -i '3s/disk/opt/g' ./build.sh
+     echo "-- arm_v8 --"
+     bash ./build.sh "arm64-v8a"
+     echo "-- arm_v7 --"
+     bash ./build.sh "armeabi-v7a"
      echo "picodet_detection"
      cd ../picodet_detection
+     chmod +x ./build.sh
+     sed -i '3s/disk/opt/g' ./build.sh
+     echo "-- arm_v8 --"
+     bash ./build.sh "arm64-v8a"
+     echo "-- arm_v7 --"
+     bash ./build.sh "armeabi-v7a"
+     cd ../yolov3_mobilenet_v3
      chmod +x ./build.sh
      sed -i '3s/disk/opt/g' ./build.sh
      echo "-- arm_v8 --"
@@ -154,14 +184,19 @@ function main {
   # step6. build and run face_keypoints_detection
   echo "--compile_face_keypoints_detection--: $(pwd)"
   compile_face_keypoints_detection
-  echo "--end--: $(pwd)"     
+  echo "--end--: $(pwd)"  
+
+  # step7. build and run face_keypoints_detection
+  echo "--compile_ppshitu--: $(pwd)"
+  compile_ppshitu
+  echo "--end--: $(pwd)"    
   
-  # step7. build and run mask_detection
+  # step8. build and run mask_detection
   echo "--compile_object_detection--: $(pwd)"
   compile_mask_detection
   echo "--end--: $(pwd)"
   
-  # step8. build and run object_detection
+  # step9. build and run object_detection
   echo "--compile_object_detection--: $(pwd)"
   compile_object_detection
   echo "--end--: $(pwd)"
