@@ -61,7 +61,7 @@ Paddle Lite 预测库版本一样的 NDK
 
 先整体介绍下目标检测 Demo 的代码结构，然后再从 Java 和 C++ 两部分简要的介绍 Demo 每部分功能.
 
-<p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/predict2.jpg"/></p>
+<p align="center"><img src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/predict3.jpg"/></p>
 
 1. `Native.java`： Java 预测代码
 
