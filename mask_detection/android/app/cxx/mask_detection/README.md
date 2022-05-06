@@ -433,7 +433,7 @@ bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
 1）打开 APP，点击右下角的设置图标，打开 Settings 界面；这里可以选中某个参数并更改之。
 
 <p align="center">
-<img src=https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/settings.png width=50%>
+<img src=https://paddlelite-demo.bj.bcebos.com/demo/mask_detection/docs_img/android/settings.jpg width=50%>
 </p>
 
 2）假设更新线程数据，将 CPU Thread Num 设置为 4，更新后，返回原界面，APP将自动重新预测，并可以在左上角观察到启用 4 线程时每个模型的预测耗时。
