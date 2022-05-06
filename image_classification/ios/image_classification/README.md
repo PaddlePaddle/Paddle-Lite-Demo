@@ -32,18 +32,18 @@ cd ..
 4.  用 Xcode 打开  `image_classification/image_classification.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和 `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
 
     <p align="center">
-    <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode1.png"/>
+    <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode1.png"/>
     </p>
 
     <p align="center">
-    <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode2.png"/>
+    <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode2.png"/>
     </p>
 
 
 5.  选中 `image_classification/third-party` 目录 ，右击选择 `Add Files to "third-party" ...`  选项，将预测库、Opencv库和 assets内容（模型、测试图片及标签文件）添加到工程中。操作过程如下图：
      
      <p align="center">
-     <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_file.jpg"/>
+     <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_file.jpg"/>
      </p>
 
     - 添加  `assets ` 案例
@@ -55,13 +55,13 @@ cd ..
     - 添加预测库案例
       
       <p align="center">
-      <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_lib.jpg"/>
+      <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_lib.jpg"/>
       </p>
 
     - 添加完成后，工程目录如下：
       
       <p align="center">
-      <img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_finish.jpg"/>
+      <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_finish.jpg"/>
       </p>
      
      **注意：**
@@ -80,11 +80,11 @@ cd ..
 
 
 7. 按下左上角的 Run 按钮，自动编译 APP 并安装到手机。在苹果手机中设置信任该 APP（进入 `设置->通用->设备管理`，选中新安装的 APP 并 `验证该应用`）
+成功后效果如下：
 
-成功后效果如下，图一：APP安装到手机        图二： APP打开后的效果，会自动识别图片中的物体并标记
-
-<p align="center"><img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_app.jpg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_app_run.jpg"/></p>
-
+  | APP 图标 | APP 效果 |
+  | ---     | --- |
+  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_app.jpg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_app_run.jpg) |
 
 ## 更新预测库
 
@@ -108,7 +108,7 @@ cd ..
 先整体介绍下目标检测 Demo 的代码结构，然后再介绍 Demo 每部分功能.
 
 <p align="center">
-<img width="350" height="500"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_struct.jpg"/>
+<img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_image_struct.jpg"/>
 </p>
 
 ### 整体结构介绍
