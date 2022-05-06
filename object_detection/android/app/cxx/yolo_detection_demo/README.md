@@ -34,7 +34,7 @@ Paddle Lite 预测库版本一样的 NDK
   
   | APP 图标 | APP 效果 |
   | ---     | --- |
-  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_pic3.jpg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res1.jpg) |
+  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_pic4.jpg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res1.jpg) |
 
 ## 更新预测库
 
