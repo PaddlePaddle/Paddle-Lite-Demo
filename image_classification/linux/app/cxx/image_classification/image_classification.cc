@@ -149,7 +149,7 @@ post_process(std::shared_ptr<PaddlePredictor> predictor, const int topk,
                     std::greater<std::pair<float, int>>());
 
   std::vector<RESULT> results(topk);
-  for (int i = 0; i < vec.size(); i++) {
+  for (int i = 0; i < topk; i++) {
     float score = vec[i].first;
     int index = vec[i].second;
     results[i].class_name = "Unknown";
