@@ -102,7 +102,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     * 在图像分类Demo中，你还可以通过上方的"Gallery"和"Take Photo"按钮从相册或相机中加载测试图像；
 
 * ARMLinux or Shell
-    * 模型和预测库下载
+    * 预测库下载
     ```bash
     $ cd Paddle-Lite-Demo/libs
     $ ./download.sh # 下载预测库
@@ -110,17 +110,17 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     * 图像分类Demo的编译与运行（以下所有命令均在设备上操作）
     ```bash
     $ cd Paddle-Lite-Demo/image_classification/assets
-    $ ./download.sh # 下载模型
+    $ ./download.sh # 下载模型、测试图片和标签文件
     $ cd Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification
-    $ ./build.sh armv8 # 运行程序
+    $ ./build.sh armv8 # 编译可执行文件，并运行程序
     ```
     在终端打印预测结果和性能数据。
     * 目标检测Demo的编译与运行（以下所有命令均在设备上操作）
     ```bash
     $ cd Paddle-Lite-Demo/object_detection/assets
-    $ ./download.sh # 下载模型
+    $ ./download.sh # 下载模型、测试图片和标签文件
     $ cd Paddle-Lite-Demo/object_detection/android/shell/cxx/yolov3_mobilenet_v3
-    $ ./build.sh armv8 # 运行程序
+    $ ./build.sh armv8 # 编译可执行文件，并运行程序
     ```
     在终端打印预测结果和性能数据，同时在build目录中生成dog_yolo_v3_mobilenetv3_detection_result.jpg.jpg。
 
