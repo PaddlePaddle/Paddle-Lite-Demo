@@ -32,31 +32,35 @@ cd ..
 4.  用 Xcode 打开  `human_segmentation/human_segmentation.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和 `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
 
     <p align="center">
-    <img width="400" height="300"  src="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/ios/update_xcode.jpg"/>
+    <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode1.png"/>
+    </p>
+
+    <p align="center">
+    <img src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/Xcode2.png"/>
     </p>
 
 5.  选中 `human_segmentation/third-party` 目录 ，右击选择 `Add Files to "third-party" ...`  选项，将预测库、Opencv库和 assets内容（模型、测试图片及标签文件）添加到工程中。操作过程如下图：
      
      <p align="center">
-     <img width="300" height="450"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_file.jpg"/>
+     <img width="300" height="400"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_file.jpg"/>
      </p>
 
     - 添加  `assets ` 案例
     
     <p align="center">
-    <img width="300" height="400"  src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_assets.jpg"/>
+    <img width="400" height="100"  src="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/ios/ios_add_assets.jpg"/>
     </p>
    
     - 添加预测库案例
       
       <p align="center">
-      <img width="400" height="300" src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_lib.jpg"/>
+      <img width="400" height="80" src="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/ios/ios_add_lib.jpg"/>
       </p>
 
     - 添加完成后，工程目录如下：
       
       <p align="center">
-      <img width="200" height="200" src="https://paddlelite-demo.bj.bcebos.com/demo/image_classification/docs_img/ios/ios_add_finish.jpg"/>
+      <img width="200" height="180" src="https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/ios/ios_add_finish.jpg"/>
       </p>
      
      **注意：**
@@ -129,10 +133,10 @@ cd ..
 
  3.  `ViewController.mm`：主要预测代码
 
-    ```shell
+  ```shell
     # 位置
     human_segmentation/ViewController.mm
-    ``` 
+  ``` 
 
 ### `ViewController.mm`  文件内容介绍
 
