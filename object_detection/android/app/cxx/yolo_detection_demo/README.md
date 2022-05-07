@@ -32,15 +32,9 @@ Paddle Lite 预测库版本一样的 NDK
 4. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
 成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动识别图片中的物体并标记
 
-<style>
-table{
-    margin: auto;
-}
-</style>
-
   | APP 图标 | APP 效果 |
   | ---     | --- |
-  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_pic4.jpg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res1.jpg) |
+  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_pic4.jpg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res3.jpg) |
 
 ## 更新预测库
 
