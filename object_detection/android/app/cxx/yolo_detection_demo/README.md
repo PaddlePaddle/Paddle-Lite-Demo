@@ -15,8 +15,8 @@ Paddle Lite 预测库版本一样的 NDK
 
 ### 部署步骤
 
-1. 目标检测 Demo 位于 `Paddle-Lite-Demo/object_detection/android/app/cxx/picodet_detection_demo` 目录
-2. 用 Android Studio 打开 picodet_detection_demo 工程
+1. 目标检测 Demo 位于 `Paddle-Lite-Demo/object_detection/android/app/cxx/yolo_detection_demo` 目录
+2. 用 Android Studio 打开 yolo_detection_demo 工程
 3. 手机连接电脑，打开 USB 调试和文件传输模式，并在 Android Studio 上连接自己的手机设备（手机需要开启允许从 USB 安装软件权限）
 
 <p align="center">
@@ -26,7 +26,7 @@ Paddle Lite 预测库版本一样的 NDK
 > **注意：**
 >> 如果您在导入项目、编译或者运行过程中遇到 NDK 配置错误的提示，请打开 ` File > Project Structure > SDK Location`，修改 `Andriod NDK location` 为您本机配置的 NDK 所在路径。
 >> 如果您是通过 Andriod Studio 的 SDK Tools 下载的 NDK (见本章节"环境准备")，可以直接点击下拉框选择默认路径。
->> 还有一种 NDK 配置方法，你可以在 `picodet_detection_demo/local.properties` 文件中手动完成 NDK 路径配置，如下图所示
+>> 还有一种 NDK 配置方法，你可以在 `yolo_detection_demo/local.properties` 文件中手动完成 NDK 路径配置，如下图所示
 >> 如果以上步骤仍旧无法解决 NDK 配置错误，请尝试根据 Andriod Studio 官方文档中的[更新 Android Gradle 插件](https://developer.android.com/studio/releases/gradle-plugin?hl=zh-cn#updating-plugin)章节，尝试更新Android Gradle plugin版本。
 
 4. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
@@ -34,7 +34,7 @@ Paddle Lite 预测库版本一样的 NDK
 
   | APP 图标 | APP 效果 |
   | ---     | --- |
-  | ![app_pic ](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_pic4.jpg)    | ![app_res ](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res3.jpg) |
+  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_pic4.jpg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res3.jpg) |
 
 ## 更新预测库
 
@@ -43,19 +43,19 @@ Paddle Lite 预测库版本一样的 NDK
  * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
     * 替换 java 库
         * jar 包
-          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar` 替换 Demo 中的 `Paddle-Lite-Demo/object_detection/andrdoid/app/cxx/picodet_detection_demo/app/PaddleLite/java/PaddlePredictor.jar`
+          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/java/jar/PaddlePredictor.jar` 替换 Demo 中的 `Paddle-Lite-Demo/object_detection/andrdoid/app/cxx/yolo_detection_demo/app/PaddleLite/java/PaddlePredictor.jar`
         * Java so
             * armeabi-v7a
-              将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/object_detection/andrdoid/app/cxx/picodet_detection_demo/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so`
+              将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/object_detection/andrdoid/app/cxx/yolo_detection_demo/app/PaddleLite/java/libs/armeabi-v7a/libpaddle_lite_jni.so`
             * arm64-v8a
-              将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/object_detection/andrdoid/app/cxx/picodet_detection_demo/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so`
+              将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/java/so/libpaddle_lite_jni.so` 库替换 Demo 中的 `Paddle-Lite-Demo/object_detection/andrdoid/app/cxx/yolo_detection_demo/app/PaddleLite/java/libs/arm64-v8a/libpaddle_lite_jni.so`
     * 替换 c++ 库
         * 头文件
-          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/object_detection/andrdoid/app/cxx/picodet_detection_demo/app/PaddleLite/cxx/include`
+          将生成的 `build.lite.android.xxx.gcc/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/object_detection/andrdoid/app/cxx/yolo_detection_demo/app/PaddleLite/cxx/include`
         * armeabi-v7a
-          将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/object_detection/andrdoid/app/cxx/picodet_detection_demo/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
+          将生成的 `build.lite.android.armv7.gcc/inference_lite_lib.android.armv7/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/object_detection/andrdoid/app/cxx/yolo_detection_demo/app/PaddleLite/cxx/libs/armeabi-v7a/libpaddle_lite_api_shared.so`
         * arm64-v8a
-          将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/object_detection/andrdoid/app/cxx/picodet_detection_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
+          将生成的 `build.lite.android.armv8.gcc/inference_lite_lib.android.armv8/cxx/libs/libpaddle_lite_api_shared.so` 库替换 Demo 中的 `Paddle-Lite-Demo/object_detection/andrdoid/app/cxx/yolo_detection_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so`
 
 ## Demo 内容介绍
 
@@ -67,36 +67,36 @@ Paddle Lite 预测库版本一样的 NDK
 
 ```shell
 # 位置：
-picodet_detection_demo/app/src/main/java/com/baidu/paddle/lite/demo/object_detection/Native.java
+yolo_detection_demo/app/src/main/java/com/baidu/paddle/lite/demo/object_detection/Native.java
 ```
 
 2. `Native.cc`： Jni 预测代码用于 Java 与 C++ 语言传递信息
 
 ```shell
 # 位置：
-picodet_detection_demo/app/src/main/cpp/Native.cc
+yolo_detection_demo/app/src/main/cpp/Native.cc
 ```
 
 3. `Pipeline.cc`： C++ 预测代码
 
 ```shell
 # 位置：
-picodet_detection_demo/app/src/main/cpp/Pipeline.cc
+yolo_detection_demo/app/src/main/cpp/Pipeline.cc
 ```
 
-4. `model.nb` : 模型文件 (opt 工具转化后 Paddle Lite 模型), `pascalvoc_label_list`：训练模型时的 `labels` 文件
+4. `model.nb` : 模型文件 (opt 工具转化后 Paddle Lite 模型), `coco-labels-2014_2017.txt`：训练模型时的 `labels` 文件
 
 ```shell
 # 位置：
-picodet_detection_demo/app/src/main/assets/models/ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb
-picodet_detection_demo/app/src/main/assets/labels/pascalvoc_label_list
+yolo_detection_demo/app/src/main/assets/models/yolov3_mobilenet_v3_for_cpu/model.nb
+yolo_detection_demo/app/src/main/assets/labels/coco-labels-2014_2017.txt
 ```
 
 5. `libpaddle_lite_api_shared.so`：Paddle Lite C++ 预测库
 
 ```shell
 # 位置
-picodet_detection_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so
+yolo_detection_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shared.so
 # 如果要替换动态库 so，则将新的动态库 so 更新到此目录下
 ```
 
@@ -104,7 +104,7 @@ picodet_detection_demo/app/PaddleLite/cxx/libs/arm64-v8a/libpaddle_lite_api_shar
 
 ```shell
 # 位置
-picodet_detection_demo/app/build.gradle
+yolo_detection_demo/app/build.gradle
 # 如果需要手动更新模型和预测库，则可将 gradle 脚本中的 `download*` 接口注释即可
 ```
 
@@ -112,7 +112,7 @@ picodet_detection_demo/app/build.gradle
 
 ```shell
 # 位置
-picodet_detection_demo/app/cpp/CMakeLists.txt
+yolo_detection_demo/app/cpp/CMakeLists.txt
 # 如果有cmake 编译选项更新，可以在 CMakeLists.txt 进行修改即可
 ```
 ### Java 端
@@ -196,7 +196,7 @@ picodet_detection_demo/app/cpp/CMakeLists.txt
   Native 文件生成方法：
    
   ```shell
-   cd app/src/java/com/baidu/paddle/lite/demo/face_keypoints_detection
+   cd app/src/java/com/baidu/paddle/lite/demo/yolo_detection_demo
    # 在当前目录会生成包含 Native 方法的头文件，用户可以将其内容拷贝至 `cpp/Native.cc` 中
    javac -classpath D:\dev\android-sdk\platforms\android-29\android.jar -encoding utf8 -h . Native.java 
   ```
@@ -282,13 +282,13 @@ for (int i = 0; i < outputSize; i += 6) {
 
 ### 更新模型
 
-1. 将优化后的模型存放到目录 `picodet_detection_demo/app/src/main/assets/models/` 下；
-2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `picodet_s_320_coco_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `picodet_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.object_detection/MainActivity.java` 中代码：
+1. 将优化后的模型存放到目录 `yolo_detection_demo/app/src/main/assets/models/` 下；
+2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `yolo_detection_demo/model.nb`，则代码不需更新；否则话，需要修改 `yolo_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.object_detection/MainActivity.java` 中代码：
 
-以更新 ssd_mobilenet_v3 模型为例，则先将优化后的模型存放到 `picodet_detection_demo/app/src/main/assets/models/ssd_mobilenet_v3_for_cpu/ssd_mv3.nb` 下，然后更新代码
+以更新 ssd_mobilenet_v3 模型为例，则先将优化后的模型存放到 `yolo_detection_demo/app/src/main/assets/models/ssd_mobilenet_v3_for_cpu/ssd_mv3.nb` 下，然后更新代码
 
 ```java
-// 代码文件 `picodet_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.object_detection/MainActivity.java`
+// 代码文件 `yolo_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.object_detection/MainActivity.java`
 public void checkAndUpdateSettings() {
         if (SettingsActivity.checkAndUpdateSettings(this)) {
             // old
@@ -313,10 +313,10 @@ public void checkAndUpdateSettings() {
 ```
 **注意：**
 
-- 如果优化后的模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `picodet_detection_demo/app/src/main/cpp/Pipeline.cc` 中代码
+- 如果优化后的模型名字不是 `model.nb`，则需要将优化后的模型名字更新为 `model.nb` 或修改 `yolo_detection_demo/app/src/main/cpp/Pipeline.cc` 中代码
 
 ```c++
-// 代码文件 `picodet_detection_demo/app/src/main/cpp/Pipeline.cc`
+// 代码文件 `yolo_detection_demo/app/src/main/cpp/Pipeline.cc`
 Detector::Detector(const std::string &modelDir, const std::string &labelPath,
                    const int cpuThreadNum, const std::string &cpuPowerMode,
                    int inputWidth, int inputHeight,
@@ -340,13 +340,13 @@ Detector::Detector(const std::string &modelDir, const std::string &labelPath,
 ```
 
 
--  如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `picodet_detection_demo/app/src/main/cpp/Pipeline.cc` 的 `Detector::Preprocess` 预处理和 `Detector::Postprocess` 后处理代码即可。
+-  如果更新模型的输入/输出 Tensor 个数、shape 和 Dtype 发生更新，需要更新文件 `yolo_detection_demo/app/src/main/cpp/Pipeline.cc` 的 `Detector::Preprocess` 预处理和 `Detector::Postprocess` 后处理代码即可。
 
 
-- 如果需要更新 `pascalvoc_label_list` 标签文件，则需要将新的标签文件存放在目录 `picodet_detection_demo/app/src/main/assets/labels/` 下，并参考模型更新方法更新 `picodet_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.object_detection/MainActivity.java` 代码文件
+- 如果需要更新 `pascalvoc_label_list` 标签文件，则需要将新的标签文件存放在目录 `yolo_detection_demo/app/src/main/assets/labels/` 下，并参考模型更新方法更新 `yolo_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.object_detection/MainActivity.java` 代码文件
 
 ```java
-// 代码文件 `picodet_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.object_detection/MainActivity.java`
+// 代码文件 `yolo_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.object_detection/MainActivity.java`
 public void checkAndUpdateSettings() {
         if (SettingsActivity.checkAndUpdateSettings(this)) {
             String realModelDir = getCacheDir() + "/" + SettingsActivity.modelDir;
@@ -373,13 +373,13 @@ public void checkAndUpdateSettings() {
 ### 更新输入/输出预处理
 
 1. 更新输入数据
-  - 将更新的图片存放在 `picodet_detection_demo/app/src/main/assets/images/` 下；
-  - 更新文件 `picodet_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.object_detection/MainActivity.java` 中的代码
+  - 将更新的图片存放在 `yolo_detection_demo/app/src/main/assets/images/` 下；
+  - 更新文件 `yolo_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.object_detection/MainActivity.java` 中的代码
 
-  以更新 `cat.jpg` 为例，则先将 `cat.jpg` 存放在 `picodet_detection_demo/app/src/main/assets/images/` 下，然后更新代码
+  以更新 `cat.jpg` 为例，则先将 `cat.jpg` 存放在 `yolo_detection_demo/app/src/main/assets/images/` 下，然后更新代码
 
 ```java
-// 代码文件 `picodet_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.object_detection/MainActivity.java`
+// 代码文件 `yolo_detection_demo/app/src/main/java/com.baidu.paddle.lite.demo.object_detection/MainActivity.java`
 public boolean onTextureChanged(Bitmap ARGB8888ImageBitmap) {
         String savedImagePath = "";
         synchronized (this) {
@@ -414,23 +414,23 @@ public boolean onTextureChanged(Bitmap ARGB8888ImageBitmap) {
 
 
 2. 更新输入预处理
-此处需要更新 `picodet_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `Detector::Preprocess(const cv::Mat &rgbaImage)` 方法
+此处需要更新 `yolo_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `Detector::Preprocess(const cv::Mat &rgbaImage)` 方法
 
 **注意：** 如果模型的的输入 tensor 个数、输入 shape 和数据类型 Dtype 有更新，可以在 `Detector::Preprocess(const cv::Mat &rgbaImage)` 方法中更新模型的输入
 
 
 3. 更新输出预处理
-此处需要更新 `picodet_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `Detector::Postprocess(std::vector<Object> *results)` 方法
+此处需要更新 `yolo_detection_demo/app/src/main/cpp/Pipeline.cc` 中的 `Detector::Postprocess(std::vector<Object> *results)` 方法
 
 **注意：**
 
-- 如果需要更新输出显示效果，可以更新 `picodet_detection_demo/app/src/main/cpp/Pipeline.cc`中的 `Pipeline::VisualizeStatus(double preprocessTime, double predictTime, double postprocessTime, cv::Mat *rgbaImage)` 方法 和 `Pipeline::VisualizeResults(const std::vector<Object> &results, cv::Mat *rgbaImage)` 方法即可
+- 如果需要更新输出显示效果，可以更新 `yolo_detection_demo/app/src/main/cpp/Pipeline.cc`中的 `Pipeline::VisualizeStatus(double preprocessTime, double predictTime, double postprocessTime, cv::Mat *rgbaImage)` 方法 和 `Pipeline::VisualizeResults(const std::vector<Object> &results, cv::Mat *rgbaImage)` 方法即可
 
 - 如果模型的的输出 tensor 个数、输出 shape 和数据类型 Dtype 有更新，可以在 `Detector::Postprocess(std::vector<Object> *results)` 方法中更新模型的输出
 
 ## 介绍 Pipeline 文件中的方法
 
-代码文件：`picodet_detection_demo/app/src/main/cpp/Pipeline.cc`
+代码文件：`yolo_detection_demo/app/src/main/cpp/Pipeline.cc`
 `Pipeline.cc` 包含两个类：Detector 和 Pipeline 类
 
 - Detector 用于检测模型的全流程处理，即输入图片预处理、预测处理和输出图片后处理
@@ -475,16 +475,16 @@ bool Pipeline::Process(cv::Mat &rgbaImage, std::string savedImagePath)；
 参数的默认值可在 `app/src/main/res/values/strings.xml` 查看
 
 - model setting：（需要提前将模型/图片/标签放在 assets 目录，或者通过 adb push 将其放置手机目录）
-    - model_path 默认是 `models/ssd_mobilenet_v1_pascalvoc_for_cpu`
-    - label_path 默认是 `labels/pascalvoc_label_list`
+    - model_path 默认是 `models/yolov3_mobilenet_v3_for_cpu`
+    - label_path 默认是 `labels/coco-labels-2014_2017.txt`
 
 - CPU setting：
     - power_mode 默认是 `LITE_POWER_HIGH`
     - thread_num 默认是 1
 
 - input setting：
-    - input_height 默认是 `300`
-    - input_width 默认是 `300`
+    - input_height 默认是 `320`
+    - input_width 默认是 `320`
     - input_mean 默认是 `0.5,0.5,0.5`
     - input_std  默认是 `0.5,0.5,0.5`
     - score_threshold 默认是 `0.5`
