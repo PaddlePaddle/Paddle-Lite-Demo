@@ -24,11 +24,11 @@
 >> 还有一种 NDK 配置方法，你可以在 `face_keypoints_detection/local.properties` 文件中手动完成 NDK 路径配置。
 >> 如果以上步骤仍旧无法解决 NDK 配置错误，请尝试根据 Andriod Studio 官方文档中的[更新 Android Gradle 插件](https://developer.android.com/studio/releases/gradle-plugin?hl=zh-cn#updating-plugin)章节，尝试更新Android Gradle plugin版本。
 4. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
-成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动标记人脸关键点
+成功后效果如下: 
 
   | APP 图标 | APP 效果 |
   | ---     | --- |
-  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/app_pic.jpg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/app_run_res.jpg) |
+  | <img width="750" height="750"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/android_app_pic.jpg"/>    | <img width="750" height="750"  src="https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/android_app_run_res.jpg"/> |
 
 ## 更新预测库
 
@@ -410,7 +410,7 @@ bool Pipeline::Process(int inTexureId, int outTextureId, int textureWidth,
 1）打开 APP，点击右下角的设置图标，打开 Settings 界面；这里可以选中某个参数并更改之。
 
 <p align="center">
-<img src=https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/app_settings.jpg width=50%>
+<img src=https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/android_app_settings.jpg width=50%>
 </p>
 
 2）假设更新线程数据，将 CPU Thread Num 设置为 4，更新后，返回原界面，APP将自动重新预测，并可以在左上角观察到启用 4 线程时每个模型的预测耗时。
