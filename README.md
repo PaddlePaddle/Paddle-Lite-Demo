@@ -96,30 +96,33 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
     * 通过USB连接Android手机或开发板；
     * 载入工程后，点击菜单栏的Run->Run 'App'按钮，在弹出的"Select Deployment Target"窗口选择已经连接的Android设备（连接失败请检查本机adb工具是否正常），然后点击"OK"按钮；
     * 由于Demo所用到的库和模型均通过app/build.gradle脚本在线下载，因此，第一次编译耗时较长（取决于网络下载速度），请耐心等待；
-    * 对于图像分类Demo，如果库和模型下载失败，建议手动下载并拷贝到相应目录下：1) [paddle_lite_libs.tar.gz](https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_3_0.tar.gz)：解压后将java/PaddlePredictor.jar拷贝至Paddle-Lite-Demo/PaddleLite-android-demo/image_classification_demo/app/libs，将java/libs/armeabi-v7a/libpaddle_lite_jni.so拷贝至Paddle-Lite-Demo/PaddleLite-android-demo/image_classification_demo/app/src/main/jniLibs/armeabi-v7a/libpaddle_lite_jni.so，将java/libs/armeabi-v8a/libpaddle_lite_jni.so拷贝至Paddle-Lite-Demo/PaddleLite-android-demo/image_classification_demo/app/src/main/jniLibs/arm64-v8a/libpaddle_lite_jni.so 2）[mobilenet_v1_for_cpu.tar.gz](https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_cpu_v2_3_0.tar.gz)：解压至Paddle-Lite-Demo/PaddleLite-android-demo/image_classification_demo/app/src/main/assets/models/mobilenet_v1_for_cpu 3）[mobilenet_v1_for_npu.tar.gz](https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_npu_v2_3_0.tar.gz)：解压至Paddle-Lite-Demo/PaddleLite-android-demo/image_classification_demo/app/src/main/assets/models/mobilenet_v1_for_npu
-    * 在图像分类Demo中，默认会载入一张猫的图像，并会在图像下方给出CPU的预测结果，如果你使用的是麒麟810或990芯片的华为手机（如Nova5系列），可以在右上角的上下文菜单选择"Settings..."打开设置窗口切换NPU模型进行预测；
+    * 对于图像分类Demo，如果库和模型下载失败，建议手动下载并拷贝到相应目录下：
+      1) [paddle_lite_libs.tar.gz](https://paddlelite-demo.bj.bcebos.com/libs/android/paddle_lite_libs_v2_3_0.tar.gz)：解压后将 `inference_*/cxx` 拷贝至 `Paddle-Lite-Demo/image_classification/android/app/cxx/image_classification/app/PaddleLite/cxx`，将 `inference_*/java` 拷贝至 `Paddle-Lite-Demo/image_classification/android/app/cxx/image_classification/app/PaddleLite/java`
+      2) [mobilenet_v1_for_cpu.tar.gz](https://paddlelite-demo.bj.bcebos.com/models/mobilenet_v1_fp32_224_for_cpu_v2_3_0.tar.gz)：解压至 `Paddle-Lite-Demo/image_classification/android/app/cxx/image_classification/app/app/src/main/assets/models/mobilenet_v1_for_cpu` 目录
     * 在图像分类Demo中，你还可以通过上方的"Gallery"和"Take Photo"按钮从相册或相机中加载测试图像；
 
-* ARMLinux
-    * 模型和预测库下载
+* ARMLinux or Shell
+    * 预测库下载
     ```bash
-    $ cd Paddle-Lite-Demo/PaddleLite-armlinux-demo
-    $ ./download_models_and_libs.sh # 下载模型和预测库
+    $ cd Paddle-Lite-Demo/libs
+    $ ./download.sh # 下载预测库
     ```
     * 图像分类Demo的编译与运行（以下所有命令均在设备上操作）
     ```bash
-    $ cd Paddle-Lite-Demo/PaddleLite-armlinux-demo/image_classification_demo
-    $ ./run.sh armv8 # RK3399
-    $ ./run.sh armv7hf # 树莓派3B
+    $ cd Paddle-Lite-Demo/image_classification/assets
+    $ ./download.sh # 下载模型、测试图片和标签文件
+    $ cd Paddle-Lite-Demo/image_classification/android/shell/cxx/image_classification
+    $ ./build.sh armv8 # 编译可执行文件，并运行程序
     ```
-    在终端打印预测结果和性能数据，同时在build目录中生成result.jpg。
+    在终端打印预测结果和性能数据。
     * 目标检测Demo的编译与运行（以下所有命令均在设备上操作）
     ```bash
-    $ cd Paddle-Lite-Demo/PaddleLite-armlinux-demo/object_detection_demo
-    $ ./run.sh armv8 # RK3399
-    $ ./run.sh armv7hf # 树莓派3B
+    $ cd Paddle-Lite-Demo/object_detection/assets
+    $ ./download.sh # 下载模型、测试图片和标签文件
+    $ cd Paddle-Lite-Demo/object_detection/android/shell/cxx/yolov3_mobilenet_v3
+    $ ./build.sh armv8 # 编译可执行文件，并运行程序
     ```
-    在终端打印预测结果和性能数据，同时在build目录中生成result.jpg。
+    在终端打印预测结果和性能数据，同时在build目录中生成dog_yolo_v3_mobilenetv3_detection_result.jpg.jpg。
 
 ## 效果展示
 
@@ -147,7 +150,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
   | Android | iOS |
   | ---     | --- |
-  | ![android_ocr width="300" height="500" ](./docs_img/ocr/ppocr_app_run.jpg)   | ![ios_ocr width="300" height="500" ](//paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/run_app.jpeg) | 
+  | ![android_ocr width="300" height="500" ](./docs_img/ocr/ppocr_app_run.jpg)   | ![ios_ocr width="300" height="500" ](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/run_app.jpeg) | 
 
 * 人脸检测
 

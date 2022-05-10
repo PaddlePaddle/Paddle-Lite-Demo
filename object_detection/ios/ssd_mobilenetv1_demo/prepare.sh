@@ -3,6 +3,12 @@
 #  prepare.sh
 #  image_classification
 # copy asset
+if [ ! -d "./detection_demo/third-party" ]; then
+    mkdir ./detection_demo/third-party
+fi
+if [ ! -d "./detection_demo/third-party/assets" ]; then
+    mkdir ./detection_demo/third-party/assets
+fi
 cp -r ../../assets ./detection_demo/third-party
 # mkdir PaddleLite
 if [ ! -d "./detection_demo/third-party/PaddleLite" ]; then
