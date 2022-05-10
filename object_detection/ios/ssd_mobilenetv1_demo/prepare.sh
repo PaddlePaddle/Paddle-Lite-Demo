@@ -6,7 +6,7 @@
 if [ ! -d "./detection_demo/third-party" ]; then
     mkdir ./detection_demo/third-party
 fi
-cp -r ../../assets ./detection_demo/third-party
+cp -r ../../assets ./detection_demo/third-party/assets
 # mkdir PaddleLite
 if [ ! -d "./detection_demo/third-party/PaddleLite" ]; then
  mkdir ./detection_demo/third-party/PaddleLite

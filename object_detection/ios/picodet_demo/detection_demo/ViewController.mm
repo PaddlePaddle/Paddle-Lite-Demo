@@ -261,7 +261,7 @@ std::vector<Object> post_process(float thresh,
   self.cvimg.create(640, 480, CV_8UC3);
   NSString *path = [[NSBundle mainBundle] bundlePath];
   std::string app_dir = std::string([path UTF8String]) + "/third-party/assets";
-  std::string label_file_str = app_dir + "/labels/pascalvoc_label_list";
+  std::string label_file_str = app_dir + "/labels/coco_label_list.txt";
   self.labels = [self load_labels:label_file_str];
   self.colorMap = GenerateColorMap(self.labels.size());
   MobileConfig config;
