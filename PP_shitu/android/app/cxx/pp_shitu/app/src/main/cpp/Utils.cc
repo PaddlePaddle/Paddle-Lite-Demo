@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "Utils.h"
-#include <arm_neon.h>
+#include "Utils.h"    // NOLINT
+#include <algorithm>  // NOLINT
+#include <arm_neon.h> // NOLINT
 
 int64_t ShapeProduction(const std::vector<int64_t> &shape) {
   int64_t res = 1;

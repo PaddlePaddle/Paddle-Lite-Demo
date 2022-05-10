@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "Pipeline.h"
+#include <algorithm>
 #include <functional>
 #include <utility>
 
@@ -55,7 +56,7 @@ void PrintResult(std::vector<ObjectResult> det_result) {
   }
 }
 
-void VisualResult(cv::Mat &img, std::vector<ObjectResult> results) {
+void VisualResult(cv::Mat &img, std::vector<ObjectResult> results) { // NOLINT
   for (int i = 0; i < results.size(); i++) {
     int w = results[i].rect[2] - results[i].rect[0];
     int h = results[i].rect[3] - results[i].rect[1];
