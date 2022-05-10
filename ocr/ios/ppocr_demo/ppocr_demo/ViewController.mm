@@ -117,8 +117,7 @@ long long count = 0;
   //        "\n";
   //    }
 
-  result << "花费了" << tic.get_average_ms() * 1000 << "秒"
-         << "\n";
+  result << "花费了" << tic.get_average_ms() << " ms\n";
 
   self.result.numberOfLines = 0;
   self.result.text = [NSString stringWithUTF8String:result.str().c_str()];
@@ -201,8 +200,7 @@ long long count = 0;
           //        res_txt[2*i+1] << "\n";
           //    }
 
-          result << "花费了" << tic.get_average_ms() * 1000 << "秒"
-                 << "\n";
+          result << "花费了" << tic.get_average_ms() << " ms\n";
 
           cvtColor(img_vis, self->_cvimg, COLOR_RGB2BGR);
           self.result.numberOfLines = 0;
