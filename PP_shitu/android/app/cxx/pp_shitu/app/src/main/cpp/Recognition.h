@@ -13,8 +13,8 @@
 // limitations under the License.
 
 #pragma once
+#include "Utils.h"            // NOLINT
 #include "paddle_api.h"       // NOLINT
-#include "utils.h"            // NOLINT
 #include <arm_neon.h>         // NOLINT
 #include <fstream>            // NOLINT
 #include <iostream>           // NOLINT
@@ -29,19 +29,17 @@
 using namespace paddle::lite_api; // NOLINT
 using namespace std;              // NOLINT
 
-namespace PPShiTu {
 class Recognition {
 public: // NOLINT
   explicit Recognition(std::string model_path, std::string label_path,
                        std::vector<int> input_shape, int cpu_nums, int warm_up,
-                       int repeats) {
+                       int repeats, std::string cpu_power) {
     MobileConfig config;
     config.set_threads(cpu_nums);
-    config.set_power_mode(LITE_POWER_HIGH);
+    config.set_power_mode(ParsePowerMode(cpu_power));
     config.set_model_from_file(model_path);
     this->predictor_ = CreatePaddlePredictor<MobileConfig>(config);
     LoadLabel(label_path);
-
     warm_up_ = warm_up;
     repeats_ = repeats;
     size_ = input_shape[2];
@@ -82,4 +80,3 @@ private: // NOLINT
 
   cv::Mat ResizeImage(const cv::Mat img);
 };
-} // NOLINT
