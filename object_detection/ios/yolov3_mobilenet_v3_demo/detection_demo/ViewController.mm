@@ -47,33 +47,6 @@ struct RESULT {
   float h;
 };
 
-void load_labels(const std::string &path, std::vector<std::string> *labels) {
-  std::ifstream ifs(path);
-  if (!ifs.is_open()) {
-    std::cerr << "Load input label file error." << std::endl;
-    exit(1);
-  }
-  std::string line;
-  while (getline(ifs, line)) {
-    labels->push_back(line);
-  }
-  ifs.close();
-}
-
-std::vector<std::string> LoadLabelList(const std::string &labelPath) {
-  std::ifstream file;
-  std::vector<std::string> labels;
-  file.open(labelPath);
-  while (file) {
-    std::string line;
-    std::getline(file, line);
-    labels.push_back(line);
-  }
-  file.clear();
-  file.close();
-  return labels;
-}
-
 std::mutex mtx;
 std::shared_ptr<PaddlePredictor> predictor;
 Timer tic;
@@ -153,44 +126,6 @@ void pre_process(const Mat &img_in, int width, int height, bool is_scale) {
   sizeData[1] = inputShape[2];
 }
 
-void neon_mean_scale(const float *din, float *dout, int size, float *mean,
-                     float *scale) {
-  float32x4_t vmean0 = vdupq_n_f32(mean[0]);
-  float32x4_t vmean1 = vdupq_n_f32(mean[1]);
-  float32x4_t vmean2 = vdupq_n_f32(mean[2]);
-  float32x4_t vscale0 = vdupq_n_f32(1.f / scale[0]);
-  float32x4_t vscale1 = vdupq_n_f32(1.f / scale[1]);
-  float32x4_t vscale2 = vdupq_n_f32(1.f / scale[2]);
-
-  float *dout_c0 = dout;
-  float *dout_c1 = dout + size;
-  float *dout_c2 = dout + size * 2;
-
-  int i = 0;
-  for (; i < size - 3; i += 4) {
-    float32x4x3_t vin3 = vld3q_f32(din);
-    float32x4_t vsub0 = vsubq_f32(vin3.val[0], vmean0);
-    float32x4_t vsub1 = vsubq_f32(vin3.val[1], vmean1);
-    float32x4_t vsub2 = vsubq_f32(vin3.val[2], vmean2);
-    float32x4_t vs0 = vmulq_f32(vsub0, vscale0);
-    float32x4_t vs1 = vmulq_f32(vsub1, vscale1);
-    float32x4_t vs2 = vmulq_f32(vsub2, vscale2);
-    vst1q_f32(dout_c0, vs0);
-    vst1q_f32(dout_c1, vs1);
-    vst1q_f32(dout_c2, vs2);
-
-    din += 12;
-    dout_c0 += 4;
-    dout_c1 += 4;
-    dout_c2 += 4;
-  }
-  for (; i < size; i++) {
-    *(dout_c0++) = (*(din++) - mean[0]) / scale[0];
-    *(dout_c1++) = (*(din++) - mean[1]) / scale[1];
-    *(dout_c2++) = (*(din++) - mean[2]) / scale[2];
-  }
-}
-
 std::vector<cv::Scalar> GenerateColorMap(int numOfClasses) {
   std::vector<cv::Scalar> colorMap = std::vector<cv::Scalar>(numOfClasses);
   for (int i = 0; i < numOfClasses; i++) {
@@ -209,88 +144,6 @@ std::vector<cv::Scalar> GenerateColorMap(int numOfClasses) {
   return colorMap;
 }
 
-/*
-// fill tensor with mean and scale, neon speed up
-void pre_process(const Mat &img_in, int width, int height, bool is_scale) {
-  if (img_in.channels() == 4) {
-    cv::cvtColor(img_in, img_in, CV_RGBA2RGB);
-  }
-  // Prepare input data from image
-  std::unique_ptr<Tensor> input_tensor(predictor->GetInput(0));
-  input_tensor->Resize({1, 3, height, width});
-  float means[3] = {0.5f, 0.5f, 0.5f};
-  float scales[3] = {0.5f, 0.5f, 0.5f};
-  cv::Mat im;
-  cv::resize(img_in, im, cv::Size(width, height), 0.f, 0.f);
-  cv::Mat imgf;
-  float scale_factor = is_scale ? 1 / 255.f : 1.f;
-  im.convertTo(imgf, CV_32FC3, scale_factor);
-  const float *dimg = reinterpret_cast<const float *>(imgf.data);
-  float *dout = input_tensor->mutable_data<float>();
-  neon_mean_scale(dimg, dout, width * height, means, scales);
-}
-
-std::vector<Object> post_process(float thresh,
-                                 std::vector<std::string> class_names,
-                                 std::vector<cv::Scalar> color_map,
-                                 cv::Mat &image) { // NOLINT
-  std::unique_ptr<const Tensor> output_tensor(predictor->GetOutput(0));
-  auto *data = output_tensor->data<float>();
-  auto shape_out = output_tensor->shape();
-  int64_t size = 1;
-  for (auto &i : shape_out) {
-    size *= i;
-  }
-  std::vector<Object> result;
-  for (int iw = 0; iw < size; iw += 6) {
-    int oriw = image.cols;
-    int orih = image.rows;
-    // Class id
-    auto class_id = static_cast<int>(round(data[0]));
-    // Confidence score
-    auto score = data[1];
-    if (score > thresh) {
-      Object obj;
-      int x = static_cast<int>(data[2] * oriw);
-      int y = static_cast<int>(data[3] * orih);
-      int w = static_cast<int>(data[4] * oriw) - x;
-      int h = static_cast<int>(data[5] * orih) - y;
-      cv::Rect rec_clip =
-          cv::Rect(x, y, w, h) & cv::Rect(0, 0, image.cols, image.rows);
-      obj.class_name = class_id >= 0 && class_id < class_names.size()
-                           ? class_names[class_id]
-                           : "Unknow";
-      obj.fill_color = class_id >= 0 && class_id < color_map.size()
-                           ? color_map[class_id]
-                           : cv::Scalar(0, 0, 0);
-      obj.prob = score;
-      obj.rec = rec_clip;
-      if (w > 0 && h > 0 && obj.prob <= 1) {
-        cv::rectangle(image, rec_clip, obj.fill_color, 2);
-        std::string str_prob = std::to_string(obj.prob);
-        std::string text =
-            obj.class_name + ": " + str_prob.substr(0, str_prob.find(".") + 4);
-        int font_face = cv::FONT_HERSHEY_COMPLEX_SMALL;
-        double font_scale = 1.f;
-        int thickness = 4;
-        cv::Size text_size =
-            cv::getTextSize(text, font_face, font_scale, thickness, nullptr);
-        float new_font_scale = w * 0.35 * font_scale / text_size.width;
-        text_size = cv::getTextSize(text, font_face, new_font_scale, thickness,
-                                    nullptr);
-        cv::Point origin;
-        origin.x = x + 10;
-        origin.y = y + text_size.height + 10;
-        cv::putText(image, text, origin, font_face, new_font_scale,
-                    cv::Scalar(0, 255, 255), thickness);
-        result.push_back(obj);
-      }
-    }
-    data += 6;
-  }
-  return result;
-}
-*/
 int64_t ShapeProduction(const std::vector<int64_t> &shape) {
   int64_t res = 1;
   for (auto i : shape)
@@ -447,13 +300,10 @@ void VisualizeResults(const std::vector<RESULT> &results, cv::Mat *rgbaImage) {
   tic.end();
   Timer post_tic;
   post_tic.start();
-  // auto rec_out = post_process(self.thresh, self.labels, self.colorMap, img);
-
-  std::vector<RESULT> result;
-  post_process(predictor, &result, thresh, self.input_width, self.input_height,
-               self.labels, colorMap);
-  VisualizeResults(result, &img);
-
+  std::vector<RESULT> result1;
+  post_process(predictor, &result1, self.thresh, self.input_width,
+               self.input_height, self.labels, self.colorMap);
+  VisualizeResults(result1, &img);
   post_tic.end();
   std::ostringstream result;
   result << "preprocess time: " << pre_tic.get_average_ms() << " ms\n";
@@ -549,8 +399,10 @@ void VisualizeResults(const std::vector<RESULT> &results, cv::Mat *rgbaImage) {
           tic.end();
           Timer post_tic;
           post_tic.start();
-          auto rec_out = post_process(self.thresh, self.labels, self.colorMap,
-                                      self->_cvimg);
+          std::vector<RESULT> result1;
+          post_process(predictor, &result1, self.thresh, self.input_width,
+                       self.input_height, self.labels, self.colorMap);
+          VisualizeResults(result1, &self->_cvimg);
           post_tic.end();
           std::ostringstream result;
           result << "preprocess time: " << pre_tic.get_average_ms() << " ms\n";
