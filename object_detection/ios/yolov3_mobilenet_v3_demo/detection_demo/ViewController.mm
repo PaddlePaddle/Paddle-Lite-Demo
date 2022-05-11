@@ -291,6 +291,12 @@ std::vector<Object> post_process(float thresh,
   return result;
 }
 */
+int64_t ShapeProduction(const std::vector<int64_t> &shape) {
+  int64_t res = 1;
+  for (auto i : shape)
+    res *= i;
+  return res;
+}
 void post_process(std::shared_ptr<PaddlePredictor> predictor,
                   std::vector<RESULT> *results, float scoreThreshold, int width,
                   int height, std::vector<std::string> labelList,
