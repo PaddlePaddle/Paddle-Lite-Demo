@@ -95,9 +95,9 @@ void NHWC3ToNC3HW(const float *src, float *dst, const float *mean,
     dst_c2 += 4;
   }
   for (; i < size; i++) {
-    *(dst_c0++) = (*(src++) - mean[0]) / std[0];
-    *(dst_c1++) = (*(src++) - mean[1]) / std[1];
-    *(dst_c2++) = (*(src++) - mean[2]) / std[2];
+    *(dst_c0++) = (*(src++) - mean[0]) * vscale0;
+    *(dst_c1++) = (*(src++) - mean[1]) * vscale1;
+    *(dst_c2++) = (*(src++) - mean[2]) * vscale2;
   }
 }
 
@@ -426,3 +426,4 @@ void VisualizeResults(const std::vector<RESULT> &results, cv::Mat *rgbaImage) {
 }
 
 @end
+
