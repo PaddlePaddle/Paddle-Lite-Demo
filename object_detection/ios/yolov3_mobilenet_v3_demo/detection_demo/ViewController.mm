@@ -37,6 +37,43 @@ struct Object {
   float prob;
 };
 
+struct RESULT {
+  std::string class_name;
+  cv::Scalar fill_color;
+  float score;
+  float x;
+  float y;
+  float w;
+  float h;
+};
+
+void load_labels(const std::string &path, std::vector<std::string> *labels) {
+  std::ifstream ifs(path);
+  if (!ifs.is_open()) {
+    std::cerr << "Load input label file error." << std::endl;
+    exit(1);
+  }
+  std::string line;
+  while (getline(ifs, line)) {
+    labels->push_back(line);
+  }
+  ifs.close();
+}
+
+std::vector<std::string> LoadLabelList(const std::string &labelPath) {
+  std::ifstream file;
+  std::vector<std::string> labels;
+  file.open(labelPath);
+  while (file) {
+    std::string line;
+    std::getline(file, line);
+    labels.push_back(line);
+  }
+  file.clear();
+  file.close();
+  return labels;
+}
+
 std::mutex mtx;
 std::shared_ptr<PaddlePredictor> predictor;
 Timer tic;
@@ -192,7 +229,7 @@ void pre_process(const Mat &img_in, int width, int height, bool is_scale) {
   float *dout = input_tensor->mutable_data<float>();
   neon_mean_scale(dimg, dout, width * height, means, scales);
 }
-*/
+
 std::vector<Object> post_process(float thresh,
                                  std::vector<std::string> class_names,
                                  std::vector<cv::Scalar> color_map,
@@ -252,6 +289,65 @@ std::vector<Object> post_process(float thresh,
     data += 6;
   }
   return result;
+}
+*/
+void post_process(std::shared_ptr<PaddlePredictor> predictor,
+                  std::vector<RESULT> *results, float scoreThreshold, int width,
+                  int height, std::vector<std::string> labelList,
+                  std::vector<cv::Scalar> colorMap) { // NOLINT
+  auto outputTensor = predictor->GetOutput(0);
+  auto outputData = outputTensor->data<float>();
+  auto outputShape = outputTensor->shape();
+  int outputSize = ShapeProduction(outputShape);
+  for (int i = 0; i < outputSize; i += 6) {
+    // Class id
+    auto class_id = static_cast<int>(round(outputData[i]));
+    // Confidence score
+    auto score = outputData[i + 1];
+    if (score < scoreThreshold)
+      continue;
+    RESULT object;
+    object.class_name = class_id >= 0 && class_id < labelList.size()
+                            ? labelList[class_id]
+                            : "Unknow";
+    object.fill_color = class_id >= 0 && class_id < colorMap.size()
+                            ? colorMap[class_id]
+                            : cv::Scalar(0, 0, 0);
+    object.score = score;
+    object.x = outputData[i + 2] / width;
+    object.y = outputData[i + 3] / height;
+    object.w = (outputData[i + 4] - outputData[i + 2] + 1) / width;
+    object.h = (outputData[i + 5] - outputData[i + 3] + 1) / height;
+    results->push_back(object);
+  }
+}
+
+void VisualizeResults(const std::vector<RESULT> &results, cv::Mat *rgbaImage) {
+  int w = rgbaImage->cols;
+  int h = rgbaImage->rows;
+  for (int i = 0; i < results.size(); i++) {
+    RESULT object = results[i];
+    cv::Rect boundingBox =
+        cv::Rect(object.x * w, object.y * h, object.w * w, object.h * h) &
+        cv::Rect(0, 0, w - 1, h - 1);
+    // Configure text size
+    std::string text = object.class_name + " ";
+    text += std::to_string(static_cast<int>(object.score * 100)) + "%";
+    int fontFace = cv::FONT_HERSHEY_PLAIN;
+    double fontScale = 1.5f;
+    float fontThickness = 1.0f;
+    cv::Size textSize =
+        cv::getTextSize(text, fontFace, fontScale, fontThickness, nullptr);
+    // Draw roi object, text, and background
+    cv::rectangle(*rgbaImage, boundingBox, object.fill_color, 2);
+    cv::rectangle(*rgbaImage,
+                  cv::Point2d(boundingBox.x,
+                              boundingBox.y - round(textSize.height * 1.25f)),
+                  cv::Point2d(boundingBox.x + boundingBox.width, boundingBox.y),
+                  object.fill_color, -1);
+    cv::putText(*rgbaImage, text, cv::Point2d(boundingBox.x, boundingBox.y),
+                fontFace, fontScale, cv::Scalar(255, 255, 255), fontThickness);
+  }
 }
 
 @interface ViewController () <CvVideoCameraDelegate>
@@ -314,15 +410,16 @@ std::vector<Object> post_process(float thresh,
   self.cvimg.create(640, 480, CV_8UC3);
   NSString *path = [[NSBundle mainBundle] bundlePath];
   std::string app_dir = std::string([path UTF8String]) + "/third-party/assets";
-  std::string label_file_str = app_dir + "/labels/pascalvoc_label_list";
+  std::string label_file_str = app_dir + "/labels/coco_label_list.txt";
   self.labels = [self load_labels:label_file_str];
   self.colorMap = GenerateColorMap(self.labels.size());
   MobileConfig config;
-  config.set_model_from_file(
-      app_dir + "/models/ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb");
+  config.set_model_from_file(app_dir + "/models/"
+                                       "yolov3_mobilenet_v3_prune86_FPGM_320_"
+                                       "fp32_fluid_for_cpu_v2_10/model.nb");
   predictor = CreatePaddlePredictor<MobileConfig>(config);
-  self.input_height = 300;
-  self.input_width = 300;
+  self.input_height = 320;
+  self.input_width = 320;
   self.thresh = 0.5f;
   cv::Mat img_cat;
   UIImageToMat(self.image, img_cat);
@@ -344,7 +441,13 @@ std::vector<Object> post_process(float thresh,
   tic.end();
   Timer post_tic;
   post_tic.start();
-  auto rec_out = post_process(self.thresh, self.labels, self.colorMap, img);
+  // auto rec_out = post_process(self.thresh, self.labels, self.colorMap, img);
+
+  std::vector<RESULT> result;
+  post_process(predictor, &result, thresh, self.input_width, self.input_height,
+               self.labels, colorMap);
+  VisualizeResults(result, &img);
+
   post_tic.end();
   std::ostringstream result;
   result << "preprocess time: " << pre_tic.get_average_ms() << " ms\n";
