@@ -71,9 +71,9 @@ void NHWC3ToNC3HW(const float *src, float *dst, const float *mean,
   float32x4_t vmean0 = vdupq_n_f32(mean ? mean[0] : 0.0f);
   float32x4_t vmean1 = vdupq_n_f32(mean ? mean[1] : 0.0f);
   float32x4_t vmean2 = vdupq_n_f32(mean ? mean[2] : 0.0f);
-    float scale0 = 1.0f / std[0];
-    float scale1 = 1.0f / std[1];
-    float scale2 = 1.0f / std[2];
+  float scale0 = 1.0f / std[0];
+  float scale1 = 1.0f / std[1];
+  float scale2 = 1.0f / std[2];
   float32x4_t vscale0 = vdupq_n_f32(std ? scale0 : 1.0f);
   float32x4_t vscale1 = vdupq_n_f32(std ? scale1 : 1.0f);
   float32x4_t vscale2 = vdupq_n_f32(std ? scale2 : 1.0f);
