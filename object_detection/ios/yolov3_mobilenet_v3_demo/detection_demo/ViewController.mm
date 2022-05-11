@@ -71,9 +71,12 @@ void NHWC3ToNC3HW(const float *src, float *dst, const float *mean,
   float32x4_t vmean0 = vdupq_n_f32(mean ? mean[0] : 0.0f);
   float32x4_t vmean1 = vdupq_n_f32(mean ? mean[1] : 0.0f);
   float32x4_t vmean2 = vdupq_n_f32(mean ? mean[2] : 0.0f);
-  float32x4_t vscale0 = vdupq_n_f32(std ? (1.0f / std[0]) : 1.0f);
-  float32x4_t vscale1 = vdupq_n_f32(std ? (1.0f / std[1]) : 1.0f);
-  float32x4_t vscale2 = vdupq_n_f32(std ? (1.0f / std[2]) : 1.0f);
+    float scale0 = 1.0f / std[0];
+    float scale1 = 1.0f / std[1];
+    float scale2 = 1.0f / std[2];
+  float32x4_t vscale0 = vdupq_n_f32(std ? scale0 : 1.0f);
+  float32x4_t vscale1 = vdupq_n_f32(std ? scale1 : 1.0f);
+  float32x4_t vscale2 = vdupq_n_f32(std ? scale2 : 1.0f);
   float *dst_c0 = dst;
   float *dst_c1 = dst + size;
   float *dst_c2 = dst + size * 2;
@@ -95,9 +98,9 @@ void NHWC3ToNC3HW(const float *src, float *dst, const float *mean,
     dst_c2 += 4;
   }
   for (; i < size; i++) {
-    *(dst_c0++) = (*(src++) - mean[0]) * vscale0;
-    *(dst_c1++) = (*(src++) - mean[1]) * vscale1;
-    *(dst_c2++) = (*(src++) - mean[2]) * vscale2;
+    *(dst_c0++) = (*(src++) - mean[0]) * scale0;
+    *(dst_c1++) = (*(src++) - mean[1]) * scale1;
+    *(dst_c2++) = (*(src++) - mean[2]) * scale2;
   }
 }
 
