@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Workspace
-   version = "1.0">
-   <FileRef
-      location = "self:/Users/chenjiao04/Downloads/Paddle-Lite-Demo/object_detection/ios/ios-detection_demo/ssd_mobilenetv1_demo.xcodeproj">
-   </FileRef>
-</Workspace>

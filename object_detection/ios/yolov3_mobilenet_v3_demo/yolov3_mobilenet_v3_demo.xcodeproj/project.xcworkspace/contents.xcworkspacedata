@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "self:/Users/arm_mac/xingjing/paddle-lite-demo/mydemo/Paddle-Lite-Demo/object_detection/ios/yolov3_mobilenet_v3_demo/yolov3_mobilenet_v3_demo.xcodeproj">
+   </FileRef>
+</Workspace>
