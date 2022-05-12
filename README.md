@@ -10,6 +10,12 @@ Paddle-Lite 提供了多个应用场景的 demo，并支持 Android、iOS 和 Ar
     * 基于 [ssd_mobilenetv1](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/models/ssd_mobilenet_v1_pascalvoc_fp32_300_fluid.tar.gz) 模型
       * [Android 示例](./object_detection/android/app/cxx/ssd_mobilenetv1_detection_demo/)
       * [iOS 示例](./object_detection/ios/ssd_mobilenetv1_demo/)
+    * 基于 [yolov3_mobilenet_v3](https://paddlemodels.bj.bcebos.com/object_detection/mobile_models/lite/yolov3_mobilenet_v3.tar) 模型
+      * [Android 示例](./object_detection/android/app/cxx/yolo_detection_demo/)
+      * [iOS 示例](./object_detection/ios/yolov3_mobilenet_v3_demo/)
+    * 基于 yolov5 模型
+      * [Android 示例](./object_detection/android/app/cxx/yolov5n_detection_demo/)
+      * iOS 示例
     * 基于 [pp_picodet](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/models/picodet_s_320_coco_for_cpu.tar.gz) 模型
       * [Android 示例](./object_detection/android/app/cxx/picodet_detection_demo/)
       * [iOS 示例](./object_detection/ios/picodet_demo/)
@@ -18,35 +24,38 @@ Paddle-Lite 提供了多个应用场景的 demo，并支持 Android、iOS 和 Ar
       * [Android 示例](./ocr/android/)
       * [iOS 示例](./ocr/ios/)
 * 人脸检测
-   * 基于 [face-detection](https://paddlelite-demo.bj.bcebos.com/models/facedetection_fp32_240_430_fluid.tar.gz) 模型
+    * 基于 [face-detection](https://paddlelite-demo.bj.bcebos.com/models/facedetection_fp32_240_430_fluid.tar.gz) 模型
       * [Android 示例](./face_detection/android/)
-      * iOS 示例
+      * [iOS 示例]((./face_detection/ios/face_detection))
 * 人脸关键点检测
-   * 基于 [face-detection](https://paddlelite-demo.bj.bcebos.com/models/facedetection_fp32_240_430_fluid.tar.gz) 和 [face-keypoint](https://paddlelite-demo.bj.bcebos.com/models/facekeypoints_detector_fp32_60_60_fluid.tar.gz) 模型
+    * 基于 [face-detection](https://paddlelite-demo.bj.bcebos.com/models/facedetection_fp32_240_430_fluid.tar.gz) 和 [face-keypoint](https://paddlelite-demo.bj.bcebos.com/models/facekeypoints_detector_fp32_60_60_fluid.tar.gz) 模型
       * [Android 示例](./face_keypoints_detection/android/)
-      * iOS 示例
+      * [iOS 示例](./face_keypoints_detection/ios/face_keypoints_detection)
 * 口罩识别
-   * 基于 [pyramidbox](https://paddlelite-demo.bj.bcebos.com/models/pyramidbox_lite_fp32_fluid.tar.gz) + [mask_detect](https://paddlelite-demo.bj.bcebos.com/models/mask_detector_fp32_128_128_fluid.tar.gz) 模型
+    * 基于 [pyramidbox](https://paddlelite-demo.bj.bcebos.com/models/pyramidbox_lite_fp32_fluid.tar.gz) + [mask_detect](https://paddlelite-demo.bj.bcebos.com/models/mask_detector_fp32_128_128_fluid.tar.gz) 模型
       * [Android 示例](./mask_detection/android/)
       * iOS 示例
 * 人像分割
-   * 基于 [DeeplabV3](https://paddlelite-demo.bj.bcebos.com/models/deeplab_mobilenet_fp32_fluid.tar.gz) 模型
+    * 基于 [DeeplabV3](https://paddlelite-demo.bj.bcebos.com/models/deeplab_mobilenet_fp32_fluid.tar.gz) 模型
       * [Android 示例](./human_segmentation/android/)
+      * [iOS 示例](./human_segmentation/ios/human_segmentation)
+* PP 识图
+   * 基于 [PPLCNet](https://paddle-imagenet-models-name.bj.bcebos.com/dygraph/lite/ppshitu_lite_models_v1.0.tar) 两个模型模型
+      * [Android 示例](./PP_shitu/android/)
       * iOS 示例
 
-
 关于 Paddle-Lite 更多示例，请参考如下文档链接：
-- [文档官网](https://paddle-lite.readthedocs.io/zh/latest/index.html)
-- [Android 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/android_app_demo.html) [[图像分类]](https://paddlelite-demo.bj.bcebos.com/apps/android/mobilenet_classification_demo.apk)  [[目标检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/yolo_detection_demo.apk) [[口罩检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/mask_detection_demo.apk)  [[人脸关键点]](https://paddlelite-demo.bj.bcebos.com/apps/android/face_keypoints_detection_demo.apk) [[人像分割]](https://paddlelite-demo.bj.bcebos.com/apps/android/human_segmentation_demo.apk)
-- [iOS 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/ios_app_demo.html)
-- [ARMLinux 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/linux_arm_demo.html)
-- [X86 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/x86.html)
-- [OpenCL 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/opencl.html)
-- [FPGA 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/fpga.html)
-- [华为 NPU 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/huawei_kirin_npu.html)
-- [百度 XPU 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/baidu_xpu.html)
-- [瑞芯微 NPU 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/rockchip_npu.html)
-- [联发科 APU 示例](https://paddle-lite.readthedocs.io/zh/latest/demo_guides/mediatek_apu.html)
+- [文档官网](https://paddle-lite.readthedocs.io/zh/develop/index.html)
+- [Android 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/android_app_demo.html) [[图像分类]](https://paddlelite-demo.bj.bcebos.com/apps/android/mobilenet_classification_demo.apk)  [[目标检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/yolo_detection_demo.apk) [[口罩检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/mask_detection_demo.apk)  [[人脸关键点]](https://paddlelite-demo.bj.bcebos.com/apps/android/face_keypoints_detection_demo.apk) [[人像分割]](https://paddlelite-demo.bj.bcebos.com/apps/android/human_segmentation_demo.apk)
+- [iOS 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/ios_app_demo.html)
+- [ARMLinux 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/linux_arm_demo.html)
+- [X86 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/x86.html)
+- [OpenCL 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/opencl.html)
+- [FPGA 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/fpga.html)
+- [华为 NPU 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/huawei_kirin_npu.html)
+- [百度 XPU 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/baidu_xpu.html)
+- [瑞芯微 NPU 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/rockchip_npu.html)
+- [联发科 APU 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/mediatek_apu.html)
 
 ## 要求
 
@@ -127,20 +136,12 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 ## 效果展示
 
 * 图像分类
-  * 基于 MobileNetV1 的目标检测
 
   | Android | iOS | Armlinux |
   | ---     | --- | ---      |
   |![android_image_classification_cat_cpu width="200" height="500" ](./docs_img/image_classify/app_run_res.jpg) | ![ios_static width="200" height="500" ](./docs_img/image_classify/ios_app_run.jpg) | ![armlinux_image_classification_raspberry_pi width="200" height="500" ](./docs_img/image_classify/armlinux_image_classification.jpg)|
   
 * 目标检测
-  * 基于 MobileNetV1-SSD 的目标检测
-
-  | Android | iOS |
-  | ---     | --- |
-  | ![android_object_detection_picodet_cpu width="300" height="500" ](./docs_img/object_detection/app_run_res.jpg)    | ![ios_picodet_static width="300" height="500" ](./docs_img/object_detection/ios_app_run.jpg) |
-  
-  * 基于 PP-Picodet 的目标检测
 
   | Android | iOS |
   | ---     | --- |
@@ -156,13 +157,13 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
   | Android | iOS |
   | ---     | --- |
-  | ![android_face_detection_cpu](https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/app_run_res.jpg)    | 补充中 | 
+  | ![android_face_detection_cpu](https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_run_res.jpg)    | 补充中 | 
   
 * 人脸关键点检测
   
   | Android | iOS |
   | ---     | --- |
-  | ![android_face_keypoints_detection_cpu](https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/app_run_res.jpg)    | 补充中 |
+  | ![android_face_keypoints_detection_cpu](https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/android_app_run_res.jpg)    | 补充中 |
 
 * 口罩识别
   
@@ -175,6 +176,12 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
   | Android | iOS |
   | ---     | --- |
   | ![android_human_segmentation_cpu](https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/process_success.jpg)   | 补充中 |
+
+* PP 识图
+
+  | Android | iOS |
+  | ---     | --- |
+  | ![android_human_segmentation_cpu](https://paddlelite-demo.bj.bcebos.com/demo/PP_shitu/doc_img/app_interface.jpg)   | 补充中 |
 
 
 ## 性能优化
