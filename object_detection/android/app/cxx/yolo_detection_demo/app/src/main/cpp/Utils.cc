@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "Utils.h"
+
 #include <arm_neon.h>
 
 int64_t ShapeProduction(const std::vector<int64_t> &shape) {

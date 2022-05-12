@@ -14,6 +14,7 @@
 #include "opencv2/core.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
+
 #include "paddle_api.h" // NOLINT
 #include <fstream>      // NOLINT
 #include <iostream>     // NOLINT
