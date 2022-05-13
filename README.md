@@ -42,7 +42,7 @@ Paddle-Lite 提供了多个应用场景的 demo，并支持 Android、iOS 和 Ar
 * PP 识图
    * 基于 [PPLCNet](https://paddle-imagenet-models-name.bj.bcebos.com/dygraph/lite/ppshitu_lite_models_v1.0.tar) 两个模型模型
       * [Android 示例](./PP_shitu/android/)
-      * iOS 示例
+      * [iOS 示例](./PP_shitu/ios/)
 
 关于 Paddle-Lite 更多示例，请参考如下文档链接：
 - [文档官网](https://paddle-lite.readthedocs.io/zh/develop/index.html)
@@ -151,7 +151,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
 
   | Android | iOS |
   | ---     | --- |
-  | ![android_ocr width="300" height="500" ](./docs_img/ocr/ppocr_app_run.jpg)   | ![ios_ocr width="300" height="500" ](https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/run_app.jpeg) | 
+  | <img width=300 height=300 src=./docs_img/ocr/ppocr_app_run.jpg>   | <img width=300 height=300 src=https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/run_app.jpg> | 
 
 * 人脸检测
 
@@ -175,13 +175,13 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
   
   | Android | iOS |
   | ---     | --- |
-  | ![android_human_segmentation_cpu](https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/process_success.jpg)   | 补充中 |
+  | <img width=250 height=400 src=https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/process_success.jpg>   | <img width=400 height=400 src=https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/ios/app_interface.jpg> |
 
 * PP 识图
 
   | Android | iOS |
   | ---     | --- |
-  | ![android_human_segmentation_cpu](https://paddlelite-demo.bj.bcebos.com/demo/PP_shitu/doc_img/app_interface.jpg)   | 补充中 |
+  | <img width=300 height=500 src=https://paddlelite-demo.bj.bcebos.com/demo/PP_shitu/doc_img/app_interface.jpg> | <img width=300 height=500 src=https://paddlelite-demo.bj.bcebos.com/demo/PP_shitu/doc_img/ios_app.jpg>  |
 
 
 ## 性能优化
