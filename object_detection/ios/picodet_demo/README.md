@@ -40,37 +40,15 @@ cd ..
     </p>
 
 
-5.  选中 `ssd_mobilnetv1_demo/third-party` 目录 ，右击选择 `Add Files to "third-party" ...`  选项，将预测库、Opencv库和 assets内容（模型、测试图片及标签文件）添加到工程中。操作过程如下图：
-     
-     <p align="center">
-     <src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_add_file.jpg"/>
-     </p>
-
-    - 添加  `assets ` 案例
-    
-    <p align="center">
-    <src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_add_assets.jpg"/>
-    </p>
-   
-    - 添加预测库案例
+5.  选中 `ssd_mobilnetv1_demo/third-party` 目录 ，右击选择 `Add Files to "third-party" ...`  选项，将预测库、Opencv库和 assets内容（模型、测试图片及标签文件）添加到工程中。
       
-      <p align="center">
-      <src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_add_lib.jpg"/>
-      </p>
-
-    - 添加完成后，工程目录如下：
-      
-      <p align="center">
-      <src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_add_finish.jpg"/>
-      </p>
-     
-     **注意：**
-        如果觉得上述方法比较麻烦，可以使用工程下的 `prepare.sh` 脚本，完成上述资源的拷贝
+**注意：**
+  如果觉得上述方法比较麻烦，可以使用工程下的 `prepare.sh` 脚本，完成上述资源的拷贝
         
-        ```shell
-        # path = Paddle-Lite-Demo/ios/object_detection
-        sh prepare.sh
-        ```
+  ```shell
+    # path = Paddle-Lite-Demo/ios/object_detection
+    sh prepare.sh
+  ```
         
 6.  IPhone 手机连接电脑，在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
@@ -84,7 +62,7 @@ cd ..
 
   | APP 图标 | APP 效果 |
   | ---     | --- |
-  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/IOS_app.jpeg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_run_app.jpg) |
+  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/IOS_app.jpeg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/app_run_res.jpg) |
 
 
 ## 更新预测库
@@ -131,7 +109,7 @@ cd ..
     detection_demo/third-party/PaddleLite/include/paddle_use_ops.h
     ```
 
- 3.  `ViewController.mm`：主要预测代码
+ 2.  `ViewController.mm`：主要预测代码
 
     ```shell
     # 位置
