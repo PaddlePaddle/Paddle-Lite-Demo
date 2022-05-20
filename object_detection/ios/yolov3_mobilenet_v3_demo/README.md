@@ -15,7 +15,7 @@
 
 ### 部署步骤
 
-1. 目标检测 Demo 位于 `Paddle-Lite-Demo/object_detection/ios/ssd_mobilnetv1_demo`  目录
+1. 目标检测 Demo 位于 `Paddle-Lite-Demo/object_detection/ios/yolov3_mobilenet_v3_demo`  目录
 2.  cd `Paddle-Lite-Demo/libs` 目录，运行 `download.sh` 脚本，下载所需要的 Paddle Lite 预测库
 3.  cd `Paddle-Lite-Demo/object_detection/assets` 目录，运行 `download.sh` 脚本，下载 OPT 优化后模型
 
@@ -29,7 +29,7 @@ sh download.sh
 cd ..
 ```
 
-4.  用 Xcode 打开  `ssd_mobilnetv1_demo/ssd_mobilnetv1_demo.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和 `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
+4.  用 Xcode 打开  `yolov3_mobilenet_v3_demo/yolov3_mobilenet_v3_demo.xcodeproj`  文件，修改工程配置。依次修改  `General/Identity`  和 `Signing&Capabilities`  属性，替换为自己的工程代号和团队名称。（必须修改，不然无法通过编译）
 
     <p align="center">
     <src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/Xcode1.png"/>
@@ -40,15 +40,37 @@ cd ..
     </p>
 
 
-5.  选中 `ssd_mobilnetv1_demo/third-party` 目录 ，右击选择 `Add Files to "third-party" ...`  选项，将预测库、Opencv库和 assets内容（模型、测试图片及标签文件）添加到工程中。
+5.  选中 `yolov3_mobilenet_v3_demo/third-party` 目录 ，右击选择 `Add Files to "third-party" ...`  选项，将预测库、Opencv库和 assets内容（模型、测试图片及标签文件）添加到工程中。操作过程如下图：
+     
+     <p align="center">
+     <src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_add_file.jpg"/>
+     </p>
+
+    - 添加  `assets ` 案例
+    
+    <p align="center">
+    <src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_add_assets.jpg"/>
+    </p>
+   
+    - 添加预测库案例
       
-**注意：**
-  如果觉得上述方法比较麻烦，可以使用工程下的 `prepare.sh` 脚本，完成上述资源的拷贝
+      <p align="center">
+      <src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_add_lib.jpg"/>
+      </p>
+
+    - 添加完成后，工程目录如下：
+      
+      <p align="center">
+      <src="https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_add_finish.jpg"/>
+      </p>
+     
+     **注意：**
+        如果觉得上述方法比较麻烦，可以使用工程下的 `prepare.sh` 脚本，完成上述资源的拷贝
         
-  ```shell
-    # path = Paddle-Lite-Demo/ios/object_detection
-    sh prepare.sh
-  ```
+        ```shell
+        # path = Paddle-Lite-Demo/ios/object_detection
+        sh prepare.sh
+        ```
         
 6.  IPhone 手机连接电脑，在 Xcode 中连接自己的手机 （第一次连接 IPhone 到电脑时，需要在 IPhone 的 `设置->通用->设备管理` 中选择本电脑并信任）
 
@@ -62,7 +84,7 @@ cd ..
 
   | APP 图标 | APP 效果 |
   | ---     | --- |
-  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/IOS_app.jpeg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/app_run_res.jpg) |
+  | ![app_pic](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/IOS_app.jpeg)    | ![app_res](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/ios/ios_run_app.jpg) |
 
 
 ## 更新预测库
@@ -109,7 +131,7 @@ cd ..
     detection_demo/third-party/PaddleLite/include/paddle_use_ops.h
     ```
 
- 2.  `ViewController.mm`：主要预测代码
+ 3.  `ViewController.mm`：主要预测代码
 
     ```shell
     # 位置
@@ -175,7 +197,7 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
 
 ### 更新模型
 1. 将优化后的模型存放到目录 `third-party/assets/models/` 下；
-2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `third-party/assets/models/ssd_mobilenet_v1_pascalvoc_for_cpu/model.nb`，则代码不需更新；否则话，需要修改 `./ViewController.mm` 中代码
+2. 如果模型名字跟工程中模型名字一模一样，即均是使用 `third-party/assets/models/yolov3_mobilenet_v3_prune86_FPGM_320_fp32_fluid_for_cpu_v2_10/model.nb`，则代码不需更新；否则话，需要修改 `./ViewController.mm` 中代码
 
   以更新 ssd_mobilenet_v3 模型为例，则先将优化后的模型存放到 `third-party/assets/models/ssd_mobilenet_v3_for_cpu/mv2.nb` 下，然后更新代码
 
