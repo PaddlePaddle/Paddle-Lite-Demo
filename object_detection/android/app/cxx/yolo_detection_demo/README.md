@@ -28,6 +28,7 @@ Paddle Lite 预测库版本一样的 NDK
 >> 如果您是通过 Andriod Studio 的 SDK Tools 下载的 NDK (见本章节"环境准备")，可以直接点击下拉框选择默认路径。
 >> 还有一种 NDK 配置方法，你可以在 `yolo_detection_demo/local.properties` 文件中手动完成 NDK 路径配置，如下图所示
 >> 如果以上步骤仍旧无法解决 NDK 配置错误，请尝试根据 Andriod Studio 官方文档中的[更新 Android Gradle 插件](https://developer.android.com/studio/releases/gradle-plugin?hl=zh-cn#updating-plugin)章节，尝试更新Android Gradle plugin版本。
+
 4. 点击 Run 按钮，自动编译 APP 并安装到手机。(该过程会自动下载 Paddle Lite 预测库和模型，需要联网)
 成功后效果如下，图一：APP 安装到手机        图二： APP 打开后的效果，会自动识别图片中的物体并标记
 
@@ -124,7 +125,7 @@ yolo_detection_demo/app/cpp/CMakeLists.txt
 * MainActivity
     实现 APP 的创建、运行、释放功能
     重点关注 `checkAndUpdateSettings`和 `onTextureChanged` 函数，实现 APP 界面值向 C++ 端值互传及预测处理流程
-
+    
     ```java
       public void checkAndUpdateSettings() {
              if (SettingsActivity.checkAndUpdateSettings(this)) {
@@ -172,7 +173,7 @@ yolo_detection_demo/app/cpp/CMakeLists.txt
           return modified;
       }
     ```
-
+   
 * SettingActivity
     实现设置界面各个元素的更新与显示，如果新增/删除界面的某个元素，均在这个类里面实现
     备注：
@@ -186,14 +187,14 @@ yolo_detection_demo/app/cpp/CMakeLists.txt
     包含三个功能：`init`初始化、 `process`预测处理 和 `release`释放
     备注：
         Java 的 native 方法和 C++ 的 native 方法要一一对应
-
+     
  ### C++ 端（native）
 
  * Native
   实现 Java 与 C++ 端代码互传的桥梁功能，将 Java 数值转换为 c++ 数值，调用 c++ 端的完成人脸关键点检测功能
   **注意：**
   Native 文件生成方法：
-
+   
   ```shell
    cd app/src/java/com/baidu/paddle/lite/demo/yolo_detection_demo
    # 在当前目录会生成包含 Native 方法的头文件，用户可以将其内容拷贝至 `cpp/Native.cc` 中
@@ -220,13 +221,16 @@ Android 示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下
 #include "include/paddle_api.h"
 #include "include/paddle_use_ops.h"
 #include "include/paddle_use_kernels.h"
+
 // 1. 设置 MobileConfig
 MobileConfig config;
 config.set_model_from_file(<modelPath>); // 设置 NaiveBuffer 格式模型路径
 config.set_power_mode(LITE_POWER_NO_BIND); // 设置 CPU 运行模式
 config.set_threads(4); // 设置工作线程数
+
 // 2. 创建 PaddlePredictor
 std::shared_ptr<PaddlePredictor> predictor = CreatePaddlePredictor<MobileConfig>(config);
+
 // 3. 设置输入数据
 std::unique_ptr<Tensor> input_tensor(std::move(predictor->GetInput(0)));
 input_tensor->Resize({1, 3, 224, 224});
@@ -235,8 +239,10 @@ for (int i = 0; i < ShapeProduction(input_tensor->shape()); ++i) {
   data[i] = 1;
 }
 // 如果输入是图片，则可在第三步时将预处理后的图像数据赋值给输入 Tensor
+
 // 4. 执行预测
 predictor->run();
+
 // 5. 获取输出数据
 std::unique_ptr<const Tensor> output_tensor(std::move(predictor->GetOutput(0)));
 std::cout << "Output shape " << output_tensor->shape()[1] << std::endl;
@@ -244,6 +250,7 @@ for (int i = 0; i < ShapeProduction(output_tensor->shape()); i += 100) {
   std::cout << "Output[" << i << "]: " << output_tensor->data<float>()[i]
             << std::endl;
 }
+
 // 例如目标检测：输出后处理，输出检测结果=
 auto outputData = outputTensor->data<float>();
 auto outputShape = outputTensor->shape();
@@ -400,6 +407,7 @@ public boolean onTextureChanged(Bitmap ARGB8888ImageBitmap) {
         }
         return modified;
     }
+
 ```
 
 **注意：** 本 Demo 是以视频流做输入数据，如果要用图片，可以通过摄像头将图片输入，不用修改代码；或者修改输入 image 参数，将图片以 cv::mat 或 Bitmap 方式传进去
@@ -437,8 +445,10 @@ Detector::Detector(const std::string &modelDir, const std::string &labelPath,
                    const std::vector<float> &inputStd, float scoreThreshold)；
 // 检测类的输入预处理函数
 void Detector::Preprocess(const cv::Mat &rgbaImage)；
+
 // 检测类的输出预处理函数
 void Detector::Postprocess(std::vector<Object> *results)；
+
 // 检测类的预测函数
 void Detector::Predict(const cv::Mat &rgbaImage, std::vector<Object> *results,
                        double *preprocessTime, double *predictTime,
@@ -458,20 +468,26 @@ void Pipeline::VisualizeStatus(double preprocessTime, double predictTime,
 // Pipeline 的处理函数，用于模型间前后处理衔接
 bool Pipeline::Process(cv::Mat &rgbaImage, std::string savedImagePath)；
 ```
+
 ### setting 界面参数介绍
+
 可通过 APP 上的 Settings 按钮，实现目标检测 demo 中些许参数的更新，目前支持以下参数的更新：
 参数的默认值可在 `app/src/main/res/values/strings.xml` 查看
+
 - model setting：（需要提前将模型/图片/标签放在 assets 目录，或者通过 adb push 将其放置手机目录）
     - model_path 默认是 `models/yolov3_mobilenet_v3_for_cpu`
     - label_path 默认是 `labels/coco-labels-2014_2017.txt`
+
 - CPU setting：
     - power_mode 默认是 `LITE_POWER_HIGH`
     - thread_num 默认是 1
+
 - input setting：
     - input_height 默认是 `320`
     - input_width 默认是 `320`
     - input_mean 默认是 `0.5,0.5,0.5`
     - input_std  默认是 `0.5,0.5,0.5`
     - score_threshold 默认是 `0.5`
+
 ## 性能优化方法
 如果你觉得当前性能不符合需求，想进一步提升模型性能，可参考[首页中性能优化文档](/README.md)完成性能优化。
