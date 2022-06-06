@@ -36,7 +36,7 @@ Paddle Lite 预测库版本一样的 NDK
   | ---     | --- |
   | ![app_pic ](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_pic4.jpg)    | ![app_res ](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/docs_img/android/app_run_res3.jpg) |
 
-备注：本 demo 支持 Picodet 增强版模型，即将模型的后处理写入网络中，用户无需书写复杂的后处理nms等逻辑操作。
+>> 备注：本 demo 支持 Picodet 增强版模型，即将模型的后处理写入网络中，用户无需书写复杂的后处理nms等逻辑操作。
 
 |序号| 说明 |[Picodet]( https://github.com/PaddlePaddle/PaddleDetection/tree/release/2.4/configs/picodet/legacy_model)和	[Picodet 增强版]( https://github.com/PaddlePaddle/PaddleDetection/tree/release/2.4/configs/picodet)|	
 |---|---|---|
