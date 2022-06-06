@@ -41,8 +41,7 @@ Paddle Lite 预测库版本一样的 NDK
 |序号| 说明 |[Picodet]( https://github.com/PaddlePaddle/PaddleDetection/tree/release/2.4/configs/picodet/legacy_model)和	[Picodet 增强版]( https://github.com/PaddlePaddle/PaddleDetection/tree/release/2.4/configs/picodet)|	
 |---|---|---|
 |0|算法前后处理|Picodet 和 Picodet 增强版，算法的前、后处理完全相同<br>1.前处理：包括 Detection 常见的减均值等操作<br>2.后处理：包括 nms 等|
-|1|后处理写入模型结构|1. 该 Picodet Demo 使用[PicoDet-S 320*320](https://paddledet.bj.bcebos.com/deploy/Inference/picodet_s_320_coco_lcnet.tar)实现<br>2.该 Demo 仅支持增强版模型替换，即将模型的后处理写入网络，具体操作方法请参考[PaddleDetection导出部分](https://github.com/PaddlePaddle/PaddleDetection/tree/release/2.4/configs/picodet#%E5%AF%BC%E5%87%BA%E5%8F%8A%E8%BD%AC%E6%8D%A2%E6%A8%A1%E5%9E%8B)）<br> **注意：**替换模型时，需要修改输入shape、类别数等；（1）详细修改数值需结合实际训练情况完成（2）修改代码位置下方文档说明|
-|1|后处理写入模型结构|1. 该 Picodet Demo 使用[PicoDet-S 320*320](https://paddledet.bj.bcebos.com/deploy/Inference/picodet_s_320_coco_lcnet.tar)实现<br>2.该 Demo 仅支持增强版模型替换，即将模型的后处理写入网络，具体操作方法请参考[PaddleDetection导出部分](https://github.com/PaddlePaddle/PaddleDetection/tree/release/2.4/configs/picodet#%E5%AF%BC%E5%87%BA%E5%8F%8A%E8%BD%AC%E6%8D%A2%E6%A8%A1%E5%9E%8B)）<br>**注意：**替换模型时，需要修改输入shape、类别数等；（1）详细修改数值需结合实际训练情况完成（2）修改代码位置下方文档说明|
+|1|后处理写入模型结构|1. 该 Picodet Demo 使用[PicoDet-S 320*320](https://paddledet.bj.bcebos.com/deploy/Inference/picodet_s_320_coco_lcnet.tar)实现<br>2.该 Demo 仅支持增强版模型替换，即将模型的后处理写入网络，具体操作方法请参考[PaddleDetection导出部分](https://github.com/PaddlePaddle/PaddleDetection/tree/release/2.4/configs/picodet#%E5%AF%BC%E5%87%BA%E5%8F%8A%E8%BD%AC%E6%8D%A2%E6%A8%A1%E5%9E%8B)）<br>**注意：**替换模型时，需要修改输入shape、类别数等；（1）详细修改数值需结合实际训练情况完成（2）修改代码位置下方文档说明 | 
 |2|后处理不在模型结构|该 Demo无 后处理解码+nms逻辑，不支持「不带后处理的模型」替换工作，需要用户自行添加完成|
 
 
