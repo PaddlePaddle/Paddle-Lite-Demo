@@ -157,7 +157,7 @@ cv::Mat post_process(std::shared_ptr<PaddlePredictor> predictor, cv::Mat img,
   _flag_back_cam.on = NO;
   _flag_video.on = NO;
   _flag_cap_photo = false;
-  _image = [UIImage imageNamed:@"third-party/images/human.jpg"];
+  _image = [UIImage imageNamed:@"third-party/assets/images/human.jpg"];
   if (_image != nil) {
     printf("load image successed\n");
     imageView.image = _image;
@@ -190,10 +190,10 @@ cv::Mat post_process(std::shared_ptr<PaddlePredictor> predictor, cv::Mat img,
   self.scale = {1, 1, 1};
   self.input_height = 513;
   self.input_width = 513;
-  std::string label_file_str = app_dir + "/labels/label_list";
+  std::string label_file_str = app_dir + "assets/labels/label_list";
   self.labels = [self load_labels:label_file_str];
   MobileConfig config;
-  config.set_model_from_file(app_dir + "/models/model.nb");
+  config.set_model_from_file(app_dir + "assets/models/model.nb");
   predictor = CreatePaddlePredictor<MobileConfig>(config);
   cv::Mat img_cat;
   UIImageToMat(self.image, img_cat);
