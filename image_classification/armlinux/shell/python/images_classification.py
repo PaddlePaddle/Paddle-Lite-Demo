@@ -11,18 +11,19 @@ import cv2
 import time
 
 # image_path是图片的路径，单张图片路径为xxx.png/jpg,多张图片路径为xxx.txt
-model_dir  = "../../../assets/models/PPLCNet/model.nb"
+model_dir = "../../../assets/models/PPLCNet/model.nb"
 image_path = '../../../assets/images/test_list.txt'
-labels_path= '../../../assets/labels/label.txt'
-input_shape= [1,3,224,224]
+labels_path = '../../../assets/labels/label.txt'
+input_shape = [1, 3, 224, 224]
 thread_num = 4
 warmup_num = 10
 repeat_num = 100
 topk = 3
 
+
 # 加载标签集labels
 def load_labels():
-    labels = [] 
+    labels = []
     fp_r = open(labels_path, 'r')
     data = fp_r.readline()[:-1]
     while data:
@@ -32,17 +33,19 @@ def load_labels():
     fp_r.close()
     return labels
 
+
 # (1) 设置配置信息并创建预测器
 config = MobileConfig()
 config.set_model_from_file(model_dir)
 predictor = create_paddle_predictor(config)
 labels = load_labels()
 
+
 # (2) 从图片读入数据 image_data
 def RunModel():
     # 将任意分辨率的图像数据缩放为224*224
-    resize_img = cv2.resize(img, [input_shape[2], input_shape[3]]
-                            ,interpolation=cv2.INTER_AREA)
+    resize_img = cv2.resize(
+        img, [input_shape[2], input_shape[3]], interpolation=cv2.INTER_AREA)
     # 将RGB图像数据转换为HSV
     arr = np.array(resize_img)
     rows = resize_img.shape[0]
@@ -89,7 +92,8 @@ def RunModel():
         scores_dict.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)
     # print(res_val)
     return res_val
-       
+
+
 # 单张图片分类
 if image_path[-3:] != 'txt':
     img = cv2.imread(image_path, cv2.COLOR_BGR2RGB)
@@ -118,7 +122,8 @@ if image_path[-3:] != 'txt':
         time_val.append(elapse)
         sum = sum + elapse
     print("================== 速度报告 ===================")
-    print("模型: " + model_dir + ", 平均运行时长: ", sum / repeat_num,"ms, 最短时长: ", min(time_val), "ms")
+    print("模型: " + model_dir + ", 平均运行时长: ", sum / repeat_num, "ms, 最短时长: ",
+          min(time_val), "ms")
 
 # 多张图片分类，数组img_list用于存放批量图片路径
 else:
@@ -132,7 +137,8 @@ else:
     f.close()
     print("================== 预测报告 ===================")
     for img_path in img_list:
-        img = cv2.imread('../../../assets/images/'+img_path, cv2.COLOR_BGR2RGB)
+        img = cv2.imread('../../../assets/images/' + img_path,
+                         cv2.COLOR_BGR2RGB)
         res_val = RunModel()
         result = labels[res_val[0][0]]
         score = res_val[0][1]
