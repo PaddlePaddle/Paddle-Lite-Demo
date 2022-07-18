@@ -23,7 +23,7 @@ cd Paddle-Lite-Demo/image_classification/linux/shell/python
 python images_classification.py
 ```
 
-   3.运行结果如下：在树莓派4B/32G上CPU的占用率始终稳定在30%左右
+   3.运行结果如下：在树莓派4B/32G上CPU的占用率始终稳定在30%左右。
 
 ![image-20220718145220897](https://s2.loli.net/2022/07/18/ldBfoUTOJM5aFZK.png)
 
