@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DependentLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_parent"
+    ohos:width="match_parent"
+    ohos:background_element="$color:direct_layout_color">
+    <DependentLayout
+        ohos:height="match_parent"
+        ohos:width="match_parent">
+        <DirectionalLayout
+            ohos:id="$+id:v_input_info"
+            ohos:width="match_parent"
+            ohos:height="match_content"
+            ohos:layout_alignment="top"
+            ohos:orientation="vertical">
+            <Text
+                ohos:id="$+id:tv_input_setting"
+                ohos:width="match_content"
+                ohos:height="match_content"
+                ohos:scrollable="true"
+                ohos:start_margin="12vp"
+                ohos:end_margin="12vp"
+                ohos:top_margin="10vp"
+                ohos:bottom_margin="5vp"
+                ohos:additional_line_spacing="4vp"
+                ohos:multiple_lines="true"
+                ohos:max_text_lines="6"
+                ohos:text=""/>
+
+        </DirectionalLayout>
+        <DependentLayout
+            ohos:id="$+id:lt_image_layout"
+            ohos:width="match_content"
+            ohos:height="match_content"
+            ohos:above="$+id:v_output_info"
+            ohos:below="$+id:v_input_info">
+
+            <Image
+                ohos:id="$+id:iv_input_image"
+                ohos:width="400vp"
+                ohos:height="400vp"
+                ohos:horizontal_center="true"
+                ohos:vertical_center="true"
+                ohos:start_margin="12vp"
+                ohos:end_margin="12vp"
+                ohos:top_margin="5vp"
+                ohos:bottom_margin="5vp"
+                ohos:scale_mode="stretch"/>
+        </DependentLayout>
+
+        <DependentLayout
+            ohos:id="$+id:v_output_info"
+            ohos:width="match_content"
+            ohos:height="match_content"
+            ohos:align_parent_bottom="true"
+            ohos:alignment="bottom"
+            ohos:horizontal_center="true">
+
+            <Text
+                ohos:id="$+id:tv_output_result"
+                ohos:width="match_content"
+                ohos:height="match_content"
+                ohos:align_parent_top="true"
+                ohos:start_margin="12vp"
+                ohos:end_margin="12vp"
+                ohos:top_margin="5vp"
+                ohos:bottom_margin="5vp"
+                ohos:text_alignment="center"
+                ohos:additional_line_spacing="5vp"
+                ohos:multiple_lines="true"
+                ohos:max_text_lines="5"
+                ohos:text=""/>
+
+            <Text
+                ohos:id="$+id:tv_inference_time"
+                ohos:width="match_content"
+                ohos:height="match_content"
+                ohos:below="$+id:tv_output_result"
+                ohos:text_alignment="center"
+                ohos:start_margin="12vp"
+                ohos:horizontal_center="true"
+                ohos:end_margin="12vp"
+                ohos:top_margin="5vp"
+                ohos:bottom_margin="10vp"
+                ohos:text=""/>
+
+        </DependentLayout>
+
+    </DependentLayout>
+</DependentLayout>
