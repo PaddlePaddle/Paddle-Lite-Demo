@@ -1,0 +1,60 @@
+repos:
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.19.4
+    hooks:
+      - id: pyupgrade
+        args: [ "--py38-plus" ]
+  - repo: https://github.com/pre-commit/mirrors-isort
+    rev: 1ba6bfc # Use the revision sha / tag you want to point at
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
+  - repo: https://github.com/psf/black
+    rev: 21.12b0
+    hooks:
+      - id: black
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 4.0.1
+    hooks:
+      - id: flake8
+        language_version: python3
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: check-docstring-first
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: debug-statements
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: requirements-txt-fixer
+  - repo: https://github.com/pre-commit/mirrors-pylint
+    rev: 56b3cb4
+    hooks:
+      - id: pylint
+        args:
+          - --max-line-length=120
+          - --ignore-imports=yes
+          - -d duplicate-code
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.9.0
+    hooks:
+      - id: python-check-mock-methods
+      - id: python-use-type-annotations
+      - id: python-check-blanket-noqa
+      - id: python-use-type-annotations
+      - id: text-unicode-replacement-char
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 9feadeb
+    hooks:
+      - id: mypy
+        exclude: ^tests/
+        args:
+          [
+              --disallow-untyped-defs,
+              --check-untyped-defs,
+              --warn-redundant-casts,
+              --no-implicit-optional,
+              --strict-optional
+          ]
