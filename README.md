@@ -140,39 +140,39 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
   | Android | iOS | Armlinux |
   | ---     | --- | ---      |
   |![android_image_classification_cat_cpu width="200" height="500" ](./docs_img/image_classify/app_run_res.jpg) | ![ios_static width="200" height="500" ](./docs_img/image_classify/ios_app_run.jpg) | ![armlinux_image_classification_raspberry_pi width="200" height="500" ](./docs_img/image_classify/armlinux_image_classification.jpg)|
-  
+
 * 目标检测
 
   | Android | iOS |
   | ---     | --- |
   | ![android_object_detection_picodet_cpu width="300" height="500" ](./docs_img/object_detection/app_run_res.jpg)    | ![ios_picodet_static width="300" height="500" ](./docs_img/object_detection/ios_app_run.jpg) |
-  
+
 * OCR
 
   | Android | iOS |
   | ---     | --- |
-  | <img width=300 height=300 src=./docs_img/ocr/ppocr_app_run.jpg>   | <img width=300 height=300 src=https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/run_app.jpg> | 
+  | <img width=300 height=300 src=./docs_img/ocr/ppocr_app_run.jpg>   | <img width=300 height=300 src=https://paddlelite-demo.bj.bcebos.com/demo/ocr/docs_img/ios/run_app.jpg> |
 
 * 人脸检测
 
   | Android | iOS |
   | ---     | --- |
-  | ![android_face_detection_cpu](https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_run_res.jpg)    | 补充中 | 
-  
+  | ![android_face_detection_cpu](https://paddlelite-demo.bj.bcebos.com/demo/face_detection/docs_img/android_app_run_res.jpg)    | 补充中 |
+
 * 人脸关键点检测
-  
+
   | Android | iOS |
   | ---     | --- |
   | ![android_face_keypoints_detection_cpu](https://paddlelite-demo.bj.bcebos.com/demo/face_keypoints_detection/android_app_run_res.jpg)    | 补充中 |
 
 * 口罩识别
-  
+
   | Android | iOS |
   | ---     | --- |
   | ![android_mask_detection_cpu](https://paddlelite-demo.bj.bcebos.com/doc/android_mask_detection_cpu.jpg)   | 补充中 |
 
 * 人像分割
-  
+
   | Android | iOS |
   | ---     | --- |
   | <img width=250 height=500 src=https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/android/process_success.jpg>   | <img width=400 height=500 src=https://paddlelite-demo.bj.bcebos.com/demo/human_segmentation/doc_images/ios/app_interface.jpg> |

@@ -286,4 +286,3 @@ public class MainAbilitySlice extends AbilitySlice {
         sender.sendEvent(REQUEST_LOAD_MODEL);
     }
 }
-

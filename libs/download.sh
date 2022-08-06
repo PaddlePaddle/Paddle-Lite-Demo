@@ -28,13 +28,13 @@ LINUX_DIR="$(pwd)/linux"
 download_and_uncompress() {
   local url="$1"
   local dir="$2"
-  
+
   echo "Start downloading ${url}"
   curl -L ${url} > ${dir}/download.tar.gz
   cd ${dir}
   tar -zxvf download.tar.gz
   rm -f download.tar.gz
-  
+
   cd ..
 }
 

@@ -132,7 +132,7 @@ Tensor outputTensor = getOutput(0);
  for (long s : outputShape) {
    outputSize *= s;
  }
- 
+
  int objectIdx = 0;
  for (int i = 0; i < outputSize; i += 6) {
    float score = outputTensor.getFloatData()[i + 1];
@@ -152,7 +152,7 @@ Tensor outputTensor = getOutput(0);
    float clampedTop = Math.max(Math.min(rawTop, 1.f), 0.f);
    float clampedRight = Math.max(Math.min(rawRight, 1.f), 0.f);
    float clampedBottom = Math.max(Math.min(rawBottom, 1.f), 0.f);
-   // detect_box coordinate 
+   // detect_box coordinate
    float imgLeft = clampedLeft * imgWidth;
    float imgTop = clampedTop * imgWidth;
    float imgRight = clampedRight * imgHeight;

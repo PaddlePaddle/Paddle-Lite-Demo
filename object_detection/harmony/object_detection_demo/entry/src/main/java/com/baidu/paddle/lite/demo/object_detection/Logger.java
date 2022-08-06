@@ -146,7 +146,7 @@ public final class Logger {
 
   public void d(final Throwable t, final String format, final Object... args) {
     if (checkLoggable(HiLog.DEBUG)) {
-      
+
 
       HiLog.debug(LABEL, format, args, t);
     }
