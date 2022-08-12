@@ -14,7 +14,7 @@ else()
 endif()
 
 project(object_detection_demo)
-set(DEPEND_LIBS "")
+
 message(STATUS "TARGET ARCH ABI: ${TARGET_ARCH_ABI}")
 message(STATUS "PADDLE LITE DIR: ${PADDLE_LITE_DIR}")
 include_directories(${PADDLE_LITE_DIR}/include)
@@ -27,6 +27,10 @@ elseif(TARGET_ARCH_ABI STREQUAL "armv7hf")
     set(CMAKE_CXX_FLAGS "-march=armv7-a -mfloat-abi=hard -mfpu=neon-vfpv4 ${CMAKE_CXX_FLAGS}")
     set(CMAKE_C_FLAGS "-march=armv7-a -mfloat-abi=hard -mfpu=neon-vfpv4 ${CMAKE_C_FLAGS}" )
 endif()
+
+include_directories(${PADDLE_LITE_DIR}/libs/${TARGET_ARCH_ABI}/third_party/yaml-cpp/include)
+link_directories(${PADDLE_LITE_DIR}/libs/${TARGET_ARCH_ABI}/third_party/yaml-cpp)
+
 find_package(OpenMP REQUIRED)
 if(OpenMP_FOUND OR OpenMP_CXX_FOUND)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
@@ -52,10 +56,7 @@ else()
     return()
 endif()
 
-add_subdirectory(${THIRD_PARTY_DIR}/yaml-cpp)
-list(APPEND DEPEND_LIBS yaml-cpp)
-include_directories(${THIRD_PARTY_DIR}/yaml-cpp/include)
 
 add_executable(object_detection_demo object_detection_demo.cc)
 
-target_link_libraries(object_detection_demo paddle_full_api_shared dl ${OpenCV_LIBS} ${DEPEND_LIBS})
+target_link_libraries(object_detection_demo paddle_full_api_shared dl ${OpenCV_LIBS} yaml-cpp)

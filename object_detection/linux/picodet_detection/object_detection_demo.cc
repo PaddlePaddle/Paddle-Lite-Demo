@@ -329,13 +329,13 @@ int main(int argc, char **argv) {
   std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor = nullptr;
   std::vector<paddle::lite_api::Place> valid_places;
   valid_places.push_back(
-      paddle::lite_api::Place{TARGET(kNNAdapter), PRECISION(kInt8)});
-  valid_places.push_back(
-      paddle::lite_api::Place{TARGET(kNNAdapter), PRECISION(kFloat)});
-  valid_places.push_back(
       paddle::lite_api::Place{TARGET(kARM), PRECISION(kInt8)});
   valid_places.push_back(
       paddle::lite_api::Place{TARGET(kARM), PRECISION(kFloat)});
+  valid_places.push_back(
+      paddle::lite_api::Place{TARGET(kNNAdapter), PRECISION(kInt8)});
+  valid_places.push_back(
+      paddle::lite_api::Place{TARGET(kNNAdapter), PRECISION(kFloat)});
   cxx_config.set_valid_places(valid_places);
   std::string device = "verisilicon_timvx";
   cxx_config.set_nnadapter_device_names({device});
