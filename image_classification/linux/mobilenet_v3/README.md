@@ -1,9 +1,9 @@
-# 目标检测 C++ API Demo 使用指南
+# 分类 C++ API Demo 使用指南
 
-在 ARMLinux 上实现实时的目标检测功能，此 Demo 有较好的的易用性和扩展性，如在 Demo 中跑自己训练好的模型等。
+在 ARMLinux 上实现实时的分类功能，此 Demo 有较好的的易用性和扩展性，如在 Demo 中跑自己训练好的模型等。
  - 如果该开发板使用搭载了芯原 NPU （瑞芯微、晶晨、JQL、恩智浦）的 Soc，将有更好的加速效果。
 
-## 如何运行目标检测 Demo
+## 如何运行分类 Demo
 
 ### 环境准备
 
@@ -30,25 +30,25 @@ $ sudo make install
 
 ### 部署步骤
 
-1. 将本 repo 上传至 VIM3 开发板，或者直接开发板上下载或者 git clone 本 repo
-2. 目标检测 Demo 位于 `Paddle-Lite-Demo/object_detection/linux/picodet_detection` 目录
-3. 进入 `Paddle-Lite-Demo/object_detection/linux` 目录, 终端中执行 `download_models_and_libs.sh` 脚本自动下载模型和 Paddle Lite 预测库
+1. 将本 repo 上传至 开发板，或者直接开发板上下载或者 git clone 本 repo
+2. 分类 Demo 位于 `Paddle-Lite-Demo/image_classification/linux/mobilenet_v3` 目录
+3. 进入 `Paddle-Lite-Demo/image_classification/linux` 目录, 终端中执行 `download_models_and_libs.sh` 脚本自动下载模型和 Paddle Lite 预测库
 
 ```shell
-cd Paddle-Lite-Demo/object_detection/linux   # 1. 终端中进入 Paddle-Lite-Demo/object_detection/linux
-sh download_models_and_libs.sh               # 2. 执行脚本下载依赖项 （需要联网）
+cd Paddle-Lite-Demo/image_classification/linux   # 1. 终端中进入 Paddle-Lite-Demo/image_classification/linux
+sh download_models_and_libs.sh                   # 2. 执行脚本下载依赖项 （需要联网）
 ```
 
 下载完成后会出现提示： `Download successful!`
 4. 执行用例(保证 ARMLinux 环境准备完成)
 
 ```shell
-cd picodet_detection        # 1. 终端中进入
-sh build.sh armv8           # 2. 编译 Demo 可执行程序，默认编译 armv8，如果是 32bit 环境，则改成 sh build.sh armv7hf。
-sh run.sh armv8             # 3. 执行物体检测（picodet 模型） demo，会直接开启摄像头，启动图形界面并呈现检测结果。如果是 32bit 环境，则改成 sh run.sh armv7hf
+cd mobilenet_v3       # 1. 终端中进入
+sh build.sh armv8     # 2. 编译 Demo 可执行程序，默认编译 armv8，如果是 32bit 环境，则改成 sh build.sh armv7hf。
+sh run.sh armv8       # 3. 执行物体分类（mobilenet_v3 模型） demo，会直接开启摄像头，启动图形界面并呈现分类结果。如果是 32bit 环境，则改成 sh run.sh armv7hf
 ```
 
-### Demo 结果如下:（注意，示例的 picodet 仅使用 coco 数据集，在实际场景中效果一般，请使用实际业务场景重新训练）
+### Demo 结果如下:（注意，示例的 mobilenet_v3 仅使用 coco 数据集，在实际场景中效果一般，请使用实际业务场景重新训练）
 
   <img src="https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/demo_view.jpg" alt="demo_view" style="zoom: 10%;" />
 
@@ -59,29 +59,29 @@ sh run.sh armv8             # 3. 执行物体检测（picodet 模型） demo，�
  * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
     * 替换 c++ 库
         * 头文件
-          将生成的 `build.lite.linux.armv8.gcc/inference_lite_lib.armlinux.armv8.nnadapter/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/object_detection/linux/Paddle-Lite/include`
+          将生成的 `build.lite.linux.armv8.gcc/inference_lite_lib.armlinux.armv8.nnadapter/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demo/image_classification/linux/Paddle-Lite/include`
         * armv8
-          将生成的 `build.lite.linux.armv8.gcc/inference_lite_lib.armlinux.armv8.nnadapter/cxx/libs/libpaddle_full_api_shared.so、libnnadapter.so、libtim-vx.so、libverisilicon_timvx.so` 库替换 Demo 中的 `Paddle-Lite-Demo/object_detection/linux/Paddle-Lite/libs/armv8/` 目录下同名 so
+          将生成的 `build.lite.linux.armv8.gcc/inference_lite_lib.armlinux.armv8.nnadapter/cxx/libs/libpaddle_full_api_shared.so、libnnadapter.so、libtim-vx.so、libverisilicon_timvx.so` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/linux/Paddle-Lite/libs/armv8/` 目录下同名 so
         * armv7hf
-          将生成的 `build.lite.linux.armv7hf.gcc/inference_lite_lib.armlinux.armv7hf.nnadapter/cxx/libs/libpaddle_full_api_shared.so、libnnadapter.so、libtim-vx.so、libverisilicon_timvx.so` 库替换 Demo 中的 `Paddle-Lite-Demo/object_detection/linux/Paddle-Lite/libs/armv7hf/` 目录下同名 so
+          将生成的 `build.lite.linux.armv7hf.gcc/inference_lite_lib.armlinux.armv7hf.nnadapter/cxx/libs/libpaddle_full_api_shared.so、libnnadapter.so、libtim-vx.so、libverisilicon_timvx.so` 库替换 Demo 中的 `Paddle-Lite-Demo/image_classification/linux/Paddle-Lite/libs/armv7hf/` 目录下同名 so
 
 ## Demo 内容介绍
 
-先整体介绍下目标检测 Demo 的代码结构，然后再简要地介绍 Demo 每部分功能.
+先整体介绍下分类 Demo 的代码结构，然后再简要地介绍 Demo 每部分功能.
 
-1. `object_detection_demo.cc`： C++ 预测代码
+1. `image_classification_demo.cc`： C++ 预测代码
 
 ```shell
 # 位置：
-Paddle-Lite-Demo/object_detection/linux/picodet_detection/object_detection_demo.cc
+Paddle-Lite-Demo/image_classification/linux/mobilenet_v3/image_classification_demo.cc
 ```
 
-2. `models` : 模型文件夹 (执行 download_models_and_libs.sh 后会下载 picodet Paddle 模型), label 使用 Paddle-Lite-Demo/object_detection/assets/labels 目录下 coco_label_list.txt
+2. `models` : 模型文件夹 (执行 download_models_and_libs.sh 后会下载 mobilenet_v3 Paddle 模型), label 使用 Paddle-Lite-Demo/image_classification/assets/labels 目录下 coco_label_list.txt
 
 ```shell
 # 位置：
-Paddle-Lite-Demo/object_detection/linux/picodet_detection/models/picodetv2_relu6_coco_no_fuse
-Paddle-Lite-Demo/object_detection/assets/labels/coco_label_list.txt
+Paddle-Lite-Demo/image_classification/linux/mobilenet_v3/models/mobilenet_v3
+Paddle-Lite-Demo/image_classification/assets/labels/coco_label_list.txt
 ```
 
 3. `Paddle-Lite`：内含 Paddle-Lite 头文件和 动态库，默认带有 timvx 加速库，以及第三方库 yaml-cpp 用于解析 yml 配置文件（执行 download_models_and_libs.sh 后会下载）
@@ -89,15 +89,15 @@ Paddle-Lite-Demo/object_detection/assets/labels/coco_label_list.txt
 ```shell
 # 位置
 # 如果要替换动态库 so，则将新的动态库 so 更新到此目录下
-Paddle-Lite-Demo/object_detection/linux/Paddle-Lite/libs/armv8
-Paddle-Lite-Demo/object_detection/linux/Paddle-Lite/include
+Paddle-Lite-Demo/image_classification/linux/Paddle-Lite/libs/armv8
+Paddle-Lite-Demo/image_classification/linux/Paddle-Lite/include
 ```
 
 4. `CMakeLists.txt` : C++ 预测代码的编译脚本，用于生成可执行文件
 
 ```shell
 # 位置
-Paddle-Lite-Demo/object_detection/linux/picodet_detection/CMakeLists.txt
+Paddle-Lite-Demo/image_classification/linux/mobilenet_v3/CMakeLists.txt
 # 如果有cmake 编译选项更新，可以在 CMakeLists.txt 进行修改即可，默认编译 armv8 可执行文件；
 ```
 
@@ -105,14 +105,14 @@ Paddle-Lite-Demo/object_detection/linux/picodet_detection/CMakeLists.txt
 
 ```shell
 # 位置
-Paddle-Lite-Demo/object_detection/linux/picodet_detection/build.sh
+Paddle-Lite-Demo/image_classification/linux/mobilenet_v3/build.sh
 ```
 
 6. `run.sh` : 运行脚本，请注意设置 arm-aarch，armv8 或者 armv7hf。默认为armv8
 
 ```shell
 # 位置
-Paddle-Lite-Demo/object_detection/linux/picodet_detection/run.sh
+Paddle-Lite-Demo/image_classification/linux/mobilenet_v3/run.sh
 ```
 - 请注意，运行需要5个元素：测试程序、模型、label 文件、异构配置、yaml 文件。
 
@@ -161,16 +161,10 @@ config.set_threads(4); // 设置工作线程数
 // 4. 创建 PaddlePredictor
 predictor = CreatePaddlePredictor<MobileConfig>(config);
 
-// 5. 设置输入数据，注意，如果是带后处理的 picodet ，则是有两个输入
+// 5. 设置输入数据，注意，如果是带后处理的 mobilenet_v3 ，则是有两个输入
 std::unique_ptr<Tensor> input_tensor(std::move(predictor->GetInput(0)));
 input_tensor->Resize({1, 3, 416, 416});
 auto* data = input_tensor->mutable_data<float>();
-// scale_factor tensor
-auto scale_factor_tensor = predictor->GetInput(1);
-scale_factor_tensor->Resize({1, 2});
-auto scale_factor_data = scale_factor_tensor->mutable_data<float>();
-scale_factor_data[0] = 1.0f;
-scale_factor_data[1] = 1.0f;
 
 // 6. 执行预测
 predictor->run();
@@ -178,17 +172,17 @@ predictor->run();
 // 7. 获取输出数据
 std::unique_ptr<const Tensor> output_tensor(std::move(predictor->GetOutput(0)));
 
+}
 ```
 
 ## 如何更新模型和输入/输出预处理
 
 ### 更新模型
-1. 请参考 PaddleDetection 中 [picodet 重训和全量化文档](https://github.com/PaddlePaddle/PaddleDetection/blob/develop/configs/picodet/FULL_QUANTIZATION.md)，基于用户自己数据集重训并且重新全量化
-2. 将模型存放到目录 `object_detection_demo/models/` 下；
-3. 模型名字跟工程中模型名字一模一样，即均是使用 `model`、`params`；
+1. 将模型存放到目录 `image_classification_demo/linux/mobilenet_v3/models/` 下；
+2. 模型名字跟工程中模型名字一模一样，即均是使用 `model`、`params`；
 
 ```shell
-# shell 脚本 `object_detection_demo/run.sh`
+# shell 脚本 `image_classification_demo/linux/mobilenet_v3/run.sh`
 TARGET_ABI=armv8 # for 64bit, such as Amlogic A311D
 #TARGET_ABI=armv7hf # for 32bit, such as Rockchip 1109/1126
 if [ -n "$1" ]; then
@@ -199,72 +193,61 @@ export GLOG_v=0 # Paddle-Lite 日志等级
 export VSI_NN_LOG_LEVEL=0 # TIM-VX 日志等级
 export VIV_VX_ENABLE_GRAPH_TRANSFORM=-pcq:1 # NPU 开启 perchannel 量化模型
 export VIV_VX_SET_PER_CHANNEL_ENTROPY=100 # 同上 
-build/object_detection_demo models/picodetv2_relu6_coco_no_fuse ../../assets/labels/coco_label_list.txt models/picodetv2_relu6_coco_no_fuse/subgraph.txt models/picodetv2_relu6_coco_no_fuse/picodet.yml  # 执行 Demo 程序，4个 arg 分别为：模型、 label 文件、 自定义异构配置、 yaml
+build/image_classification_demo models/mobilenet_v3 ../../assets/labels/coco_label_list.txt null null  # 执行 Demo 程序，4个 arg 分别为：模型、 label 文件、 自定义异构配置、 yaml
 ```
 
-- 如果需要更新 `label_list` 或者 `yaml` 文件，则修改 `object_detection_demo/run.sh` 中执行命令的第二个和第四个 arg 指定为新的 label 文件和 yaml 配置文件；
+- 如果需要更新 `label_list` 或者 `yaml` 文件，则修改 `image_classification_demo/linux/mobilenet_v3/run.sh` 中执行命令的第二个和第四个 arg 指定为新的 label 文件和 yaml 配置文件；
 
 ```shell
-# 代码文件 `object_detection_demo/rush.sh`
+# 代码文件 `image_classification_demo/linux/mobilenet_v3/run.sh`
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${PADDLE_LITE_DIR}/libs/${TARGET_ARCH_ABI} 
-build/object_detection_demo {模型} {label} {自定义异构配置文件} {yaml}
+build/image_classification_demo {模型} {label} {自定义异构配置文件} {yaml}
 ```
 
 ### 更新输入/输出预处理
 
 1. 更新输入预处理
-预处理完全根据 yaml 文件来，如果完全按照 PaddleDetection 中 picodet 重训，只需要替换 yaml 文件即可
+预处理完全根据 yaml 文件来，如果完全按照 PaddleDetection 中 mobilenet_v3 重训，只需要替换 yaml 文件即可
 
 2. 更新输出预处理
-此处需要更新 `object_detection_demo/object_detection_demo.cc` 中的 `postprocess` 方法
+此处需要更新 `image_classification_demo/linux/mobilenet_v3/image_classification_demo.cc` 中的 `postprocess` 方法
 
 ```c++
-std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
-                                const std::vector<std::string> &word_labels,
-                                const float score_threshold,
-                                cv::Mat &output_image, double time) {
-  std::vector<RESULT> results;
-  std::vector<cv::Scalar> colors = {
-      cv::Scalar(237, 189, 101), cv::Scalar(0, 0, 255),
-      cv::Scalar(102, 153, 153), cv::Scalar(255, 0, 0),
-      cv::Scalar(9, 255, 0),     cv::Scalar(0, 0, 0),
-      cv::Scalar(51, 153, 51)};
-  for (int64_t i = 0; i < output_size; i += 6) {
-    if (output_data[i + 1] < score_threshold) {
-      continue;
+std::vector<RESULT>
+postprocess(std::shared_ptr<PaddlePredictor> predictor,
+             const std::vector<std::string> &labels,
+             cv::Mat &output_image) {
+  std::unique_ptr<const Tensor> output_tensor(
+      std::move(predictor->GetOutput(0)));
+  auto *scores = output_tensor->data<float>();
+  auto shape_out = output_tensor->shape();
+  int64_t size = 1;
+  for (auto &i : shape_out) {
+    size *= i;
+  }
+  std::vector<std::pair<float, int>> vec;
+  vec.resize(size);
+  for (int i = 0; i < size; i++) {
+    vec[i] = std::make_pair(scores[i], i);
+  }
+
+  std::partial_sort(vec.begin(), vec.begin() + 3, vec.end(),
+                    std::greater<std::pair<float, int>>());
+
+  std::vector<RESULT> results(3);
+  for (int i = 0; i < 3; i++) {
+    float score = vec[i].first;
+    int index = vec[i].second;
+    results[i].class_name = "Unknown";
+    if (index >= 0 && index < labels.size()) {
+      results[i].class_name = labels[index];
     }
-    int class_id = static_cast<int>(output_data[i]);
-    float score = output_data[i + 1];
-    RESULT result;
-    std::string class_name = "Unknown";
-    if (word_labels.size() > 0 && class_id >= 0 &&
-        class_id < word_labels.size()) {
-      class_name = word_labels[class_id];
-    }
-    result.class_name = class_name;
-    result.score = score;
-    result.left = output_data[i + 2] / 416; // 此处416根据输入的 HW 得来
-    result.top = output_data[i + 3] / 416;
-    result.right = output_data[i + 4] / 416;
-    result.bottom = output_data[i + 5] / 416;
-    int lx = static_cast<int>(result.left * output_image.cols);
-    int ly = static_cast<int>(result.top * output_image.rows);
-    int w = static_cast<int>(result.right * output_image.cols) - lx;
-    int h = static_cast<int>(result.bottom * output_image.rows) - ly;
-    cv::Rect bounding_box =
-        cv::Rect(lx, ly, w, h) &
-        cv::Rect(0, 0, output_image.cols, output_image.rows);
-    if (w > 0 && h > 0 && score <= 1) {
-      cv::Scalar color = colors[results.size() % colors.size()];
-      cv::rectangle(output_image, bounding_box, color);
-      cv::rectangle(output_image, cv::Point2d(lx, ly),
-                    cv::Point2d(lx + w, ly - 10), color, -1);
-      cv::putText(output_image, std::to_string(results.size()) + "." +
-                                    class_name + ":" + std::to_string(score),
-                  cv::Point2d(lx, ly), cv::FONT_HERSHEY_PLAIN, 1,
-                  cv::Scalar(255, 255, 255));
-      results.push_back(result);
-    }
+    results[i].score = score;
+    cv::putText(output_image,
+                "Top" + std::to_string(i + 1) + "." + results[i].class_name +
+                    ":" + std::to_string(results[i].score),
+                cv::Point2d(5, i * 18 + 20), cv::FONT_HERSHEY_PLAIN, 1,
+                cv::Scalar(51, 255, 255));
   }
   return results;
 }
@@ -300,7 +283,6 @@ valid_places.push_back(
  - 如果精度不行，请参考后续步骤。
 
 ### 第三步，获取整网拓扑信息
- - 回退第一步的修改，使用
  - 修改 run.sh ，将其中 export GLOG_v=0 改为 export GLOG_v=5
  - 运行 Demo，等摄像头启动，即可 ctrl+c 关闭 Demo
  - 收集日志，搜索关键字 "subgraph operators" 随后那一段，便是整个模型的拓扑信息，其格式如下：
@@ -311,33 +293,10 @@ valid_places.push_back(
     ```
 
 ### 第四步，修改异构配置文件
- - 首先看到示例 Demo 中 Paddle-Lite-Demo/object_detection/linux/picodet_detection/models/picodetv2_relu6_coco_no_fuse 目录下的 subgraph.txt 文件。(feed 和 fetch 分别代表整个模型的输入和输入)
-  ```
-  feed:feed:scale_factor
-  feed:feed:image
-
-  sqrt:tmp_3:sqrt_0.tmp_0
-  reshape2:sqrt_0.tmp_0:reshape2_0.tmp_0,reshape2_0.tmp_1
-
-  matmul_v2:softmax_0.tmp_0,auto_113_:linear_0.tmp_0
-  reshape2:linear_0.tmp_0:reshape2_2.tmp_0,reshape2_2.tmp_1
-
-  sqrt:tmp_6:sqrt_1.tmp_0
-  reshape2:sqrt_1.tmp_0:reshape2_3.tmp_0,reshape2_3.tmp_1
-
-  matmul_v2:softmax_1.tmp_0,auto_113_:linear_1.tmp_0
-  reshape2:linear_1.tmp_0:reshape2_5.tmp_0,reshape2_5.tmp_1
-
-  sqrt:tmp_9:sqrt_2.tmp_0
-  reshape2:sqrt_2.tmp_0:reshape2_6.tmp_0,reshape2_6.tmp_1
-
-  matmul_v2:softmax_2.tmp_0,auto_113_:linear_2.tmp_0
-  ...
-  ```
- - 在 txt 中的都是需要异构至 cpu 计算的 layer，在示例 Demo 中，我们把 picodet 后处理的部分异构至 arm cpu 做计算，不必担心，Paddle-Lite 的 arm kernel 性能也是非常卓越。
- - 如果新训练的模型没有额外修改 layer，则直接复制使用示例 Demo 中的 subgraph.txt 即可
+ - 首先在 Paddle-Lite-Demo/image_classification/linux/mobilenet_v3/models/mobilenet_v3_perchannel 目录下新建 subgraph.txt 文件。
+ - 在 txt 中的都是需要异构至 cpu 计算的 layer，我们把 mobilenet_v3 部分异构至 arm cpu 做计算，不必担心，Paddle-Lite 的 arm kernel 性能也是非常卓越。
  - 此时 ./run.sh 看看精度是否符合预期，如果精度符合预期，恭喜，可以跳过本章节，enjoy it。
- - 如果精度不符合预期，则将上文『第二步，获取整网拓扑信息』中获取的拓扑信息，从 "feed" 之后第一行，直到 "sqrt" 之前，都复制进 sugraph.txt。这一步代表了将大量的 backbone 部分算子放到 arm cpu 计算。
+ - 如果精度不符合预期，则将上文『第二步，获取整网拓扑信息』中获取的拓扑信息，从 "feed" 之后第一行，直到 "fetch" 之前，都复制进 sugraph.txt。这一步代表了将大量的 backbone 部分算子放到 arm cpu 计算。
  - 此时 ./run.sh 看看精度是否符合预期，如果精度达标，那说明在 backbone 中确实存在引入 NPU 精度异常的层（再次重申，在 subgraph.txt 的代表强制在 arm cpu 计算）。
  - 逐行删除、成片删除、二分法，发挥开发人员的耐心，找到引入 NPU 精度异常的 layer，将其留在 subgraph.txt 中，按照经验，如果有 NPU 精度问题，可能会有 1~5 层conv layer 需要异构。
  - 剩余没有精度问题的 layer 在 subgraph.txt 中删除即可
