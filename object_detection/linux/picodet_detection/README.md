@@ -118,7 +118,7 @@ Paddle-Lite-Demo/object_detection/linux/picodet_detection/run.sh
 
 ## 代码讲解 （使用 Paddle Lite `C++ API` 执行预测）
 
-ARMLinux 示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://paddle-lite.readthedocs.io/zh/latest/api_reference/c++_api_doc.html)。
+ARMLinux 示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://www.paddlepaddle.org.cn/lite/develop/api_reference/cxx_api_doc.html)。
 
 ```c++
 #include <iostream>
@@ -300,9 +300,9 @@ valid_places.push_back(
  - 如果精度不行，请参考后续步骤。
 
 ### 第三步，获取整网拓扑信息
- - 回退第一步的修改，使用
+ - 回退第一步的修改，使用 arm cpu
  - 修改 run.sh ，将其中 export GLOG_v=0 改为 export GLOG_v=5
- - 运行 Demo，等摄像头启动，即可 ctrl+c 关闭 Demo
+ - 运行 Demo，等摄像头启动，Ctrl+c 即可关闭 Demo
  - 收集日志，搜索关键字 "subgraph operators" 随后那一段，便是整个模型的拓扑信息，其格式如下：
     - 每行记录由『算子类型:输入张量名列表:输出张量名列表』组成（即以分号分隔算子类型、输入和输出张量名列表），以逗号分隔输入、输出张量名列表中的每个张量名；
     - 示例说明：
