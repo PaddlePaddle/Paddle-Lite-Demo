@@ -11,12 +11,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-/*
-#include "paddle_api.h"
-#include "yaml-cpp/yaml.h"
-#include <arm_neon.h>
+#include "./pose_detection_demo.h"
+
 #include <fstream>
 #include <limits>
+
+#include "./paddle_api.h"
+#include "yaml-cpp/yaml.h"
+
+/*
+#include <arm_neon>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
