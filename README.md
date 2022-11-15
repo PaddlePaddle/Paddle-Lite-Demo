@@ -31,6 +31,9 @@ Paddle-Lite 提供了多个应用场景的 demo，并支持 Android、iOS 和 Ar
     * 基于 [face-detection](https://paddlelite-demo.bj.bcebos.com/models/facedetection_fp32_240_430_fluid.tar.gz) 和 [face-keypoint](https://paddlelite-demo.bj.bcebos.com/models/facekeypoints_detector_fp32_60_60_fluid.tar.gz) 模型
       * [Android 示例](./face_keypoints_detection/android/)
       * [iOS 示例](./face_keypoints_detection/ios/face_keypoints_detection)
+* 姿态检测
+    * 基于 [pp_tinypose](https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/models/PP_TinyPose_128x96_qat_dis_nopact.tgz) 模型
+      * [ArmLinux 示例](./pose_detection/linux/)
 * 口罩识别
     * 基于 [pyramidbox](https://paddlelite-demo.bj.bcebos.com/models/pyramidbox_lite_fp32_fluid.tar.gz) + [mask_detect](https://paddlelite-demo.bj.bcebos.com/models/mask_detector_fp32_128_128_fluid.tar.gz) 模型
       * [Android 示例](./mask_detection/android/)
