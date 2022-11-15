@@ -9,10 +9,13 @@
 
 * 准备 ARMLiunx 开发版，将系统刷为 Ubuntu，用于 Demo 编译和运行。请注意，本 Demo 是使用板上编译，而非交叉编译，因此需要图形界面的开发板操作系统。
 * 如果需要使用 芯原 NPU 的计算加速，对 NPU 驱动版本有严格要求，请务必注意事先参考 [芯原 TIM-VX 部署示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/verisilicon_timvx.html#id6)，将 NPU 驱动改为要求的版本。
-* Paddle Lite 当前已验证的开发板为 Khadas VIM3（芯片为 Amlogic A311d）、荣品 RV1126、荣品RV1109，其它平台用户可自行尝试；
- - Khadas VIM3：由于 VIM3 出厂自带 Android 系统，请先刷成 Ubuntu 系统，在此提供刷机教程：[VIM3/3L Linux 文档](https://docs.khadas.com/linux/zh-cn/vim3)，其中有详细描述刷机方法。以及系统镜像：VIM3 Linux：VIM3_Ubuntu-gnome-focal_Linux-4.9_arm64_EMMC_V1.0.7-210625：[官方链接](http://dl.khadas.com/firmware/VIM3/Ubuntu/EMMC/VIM3_Ubuntu-gnome-focal_Linux-4.9_arm64_EMMC_V1.0.7-210625.img.xz)；[百度云备用链接](https://paddlelite-demo.bj.bcebos.com/devices/verisilicon/firmware/khadas/vim3/VIM3_Ubuntu-gnome-focal_Linux-4.9_arm64_EMMC_V1.0.7-210625.img.xz)
- - 荣品 RV1126、1109：由于出场自带 buildroot 系统，如果使用 GUI 界面的 demo，请先刷成 Ubuntu 系统，在此提供刷机教程：[RV1126/1109 教程](https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/os_img/rockchip/RV1126-RV1109%E4%BD%BF%E7%94%A8%E6%8C%87%E5%AF%BC%E6%96%87%E6%A1%A3-V3.0.pdf)，[刷机工具](https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/os_img/rockchip/RKDevTool_Release.zip)，以及镜像：[1126镜像](https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/os_img/update-pro-rv1126-ubuntu20.04-5-720-1280-v2-20220505.img)，[1109镜像](https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/os_img/update-pro-rv1109-ubuntu20.04-5.5-720-1280-v2-20220429.img)。完整的文档和各种镜像请参考[百度网盘链接](https://pan.baidu.com/s/1Id0LMC0oO2PwR2YcYUAaiQ#list/path=%2F&parentPath=%2Fsharelink2521613171-184070898837664)，密码：2345。
+* Paddle Lite 当前已验证的开发板为 Khadas VIM3（芯片为 Amlogic A311D）、Khadas VIM3L（芯片为 Amlogic S905D3）、荣品 RV1126、荣品RV1109，其它平台用户可自行尝试；
+  - Khadas VIM3：由于 VIM3 出厂自带 Android 系统，请先刷成 Ubuntu 系统，在此提供刷机教程：[VIM3/3L Linux 文档](https://docs.khadas.com/linux/zh-cn/vim3)，其中有详细描述刷机方法。以及系统镜像：VIM3 Linux：VIM3_Ubuntu-gnome-focal_Linux-4.9_arm64_EMMC_V1.0.7-210625：[官方链接](http://dl.khadas.com/firmware/VIM3/Ubuntu/EMMC/VIM3_Ubuntu-gnome-focal_Linux-4.9_arm64_EMMC_V1.0.7-210625.img.xz)；[百度云备用链接](https://paddlelite-demo.bj.bcebos.com/devices/verisilicon/firmware/khadas/vim3/VIM3_Ubuntu-gnome-focal_Linux-4.9_arm64_EMMC_V1.0.7-210625.img.xz)
+  - 荣品 RV1126、1109：由于出场自带 buildroot 系统，如果使用 GUI 界面的 demo，请先刷成 Ubuntu 系统，在此提供刷机教程：[RV1126/1109 教程](https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/os_img/rockchip/RV1126-RV1109%E4%BD%BF%E7%94%A8%E6%8C%87%E5%AF%BC%E6%96%87%E6%A1%A3-V3.0.pdf)，[刷机工具](https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/os_img/rockchip/RKDevTool_Release.zip)，以及镜像：[1126镜像](https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/os_img/update-pro-rv1126-ubuntu20.04-5-720-1280-v2-20220505.img)，[1109镜像](https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/os_img/update-pro-rv1109-ubuntu20.04-5.5-720-1280-v2-20220429.img)。完整的文档和各种镜像请参考[百度网盘链接](https://pan.baidu.com/s/1Id0LMC0oO2PwR2YcYUAaiQ#list/path=%2F&parentPath=%2Fsharelink2521613171-184070898837664)，密码：2345。
 * 准备 usb camera，注意使用 openCV capture 图像时，请注意 usb camera 的 video序列号作为入参。
+```shell
+ls -l /dev/video*  #查看usb camera的video序列号
+```
 * 请注意，瑞芯微芯片不带有 HDMI 接口，图像显示是依赖 MIPI DSI，所以请准备好 MIPI 显示屏（我们提供的镜像是 720*1280 分辨率，网盘中有更多分辨率选择，注意：请选择 camera-gc2093x2 的镜像）。
 * 配置开发板的网络。如果是办公网络红区，可以将开发板和PC用以太网链接，然后PC共享网络给开发板。
 * gcc g++ opencv cmake 的安装（以下所有命令均在设备上操作）
@@ -40,7 +43,16 @@ sh download_models_and_libs.sh               # 2. 执行脚本下载依赖项 �
 ```
 
 下载完成后会出现提示： `Download successful!`
-4. 执行用例(保证 ARMLinux 环境准备完成)
+
+4. 进入 `Paddle-Lite-Demo/object_detection/linux/Paddle-Lite/libs/armv8` 目录，根据部署的芯片替换对应的库（默认为A311D，可跳过此步骤；RV1109、RV1126所依赖库相同，也可跳过此步骤）
+
+```shell
+cd Paddle-Lite-Demo/object_detection/linux/Paddle-Lite/libs/armv8 # 1. 终端中进入 Paddle-Lite-Demo/object_detection/linux/Paddle-Lite/libs/armv8
+cp -f libs_S905D3/* ./                                            # 2-1. 将S905D3所需库文件复制到当前目录下
+cp -f libs_A311D/* ./                                             # 2-2. 将A311D所需库文件复制到当前目录下(当前目录下默认有A311D所需库文件)
+```
+
+5. 执行用例(保证 ARMLinux 环境准备完成)
 
 ```shell
 cd picodet_detection        # 1. 终端中进入
@@ -49,8 +61,7 @@ sh run.sh armv8             # 3. 执行物体检测（picodet 模型） demo，�
 ```
 
 ### Demo 结果如下:（注意，示例的 picodet 仅使用 coco 数据集，在实际场景中效果一般，请使用实际业务场景重新训练）
-
-  <img src="https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/demo_view.jpg" alt="demo_view" style="zoom: 10%;" />
+  <center><img decoding="async" src="https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/demo_view.jpg" alt="tinpose_view_image" width="30%"></center>
 
 ## 更新预测库
 
@@ -80,7 +91,7 @@ Paddle-Lite-Demo/object_detection/linux/picodet_detection/object_detection_demo.
 
 ```shell
 # 位置：
-Paddle-Lite-Demo/object_detection/linux/picodet_detection/models/picodetv2_relu6_coco_no_fuse
+Paddle-Lite-Demo/object_detection/assets/models/picodetv2_relu6_coco_no_fuse
 Paddle-Lite-Demo/object_detection/assets/labels/coco_label_list.txt
 ```
 
@@ -133,12 +144,12 @@ ARMLinux 示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以�
 paddle::lite_api::CxxConfig cxx_config;
 std::vector<paddle::lite_api::Place> valid_places;
 valid_places.push_back(
-      paddle::lite_api::Place{TARGET(kNNAdapter), PRECISION(kInt8)});
-// 如果只需要 cpu 计算，那到此结束即可，下面是设置 NPU 的代码段
-valid_places.push_back(
       paddle::lite_api::Place{TARGET(kARM), PRECISION(kInt8)});
 valid_places.push_back(
       paddle::lite_api::Place{TARGET(kARM), PRECISION(kFloat)});
+// 如果只需要 CPU 计算，那到此结束即可，下面是设置 NPU 的代码段
+valid_places.push_back(
+      paddle::lite_api::Place{TARGET(kNNAdapter), PRECISION(kInt8)});
 cxx_config.set_valid_places(valid_places);
 std::string device = "verisilicon_timvx";
 cxx_config.set_nnadapter_device_names({device});
@@ -311,7 +322,7 @@ valid_places.push_back(
     ```
 
 ### 第四步，修改异构配置文件
- - 首先看到示例 Demo 中 Paddle-Lite-Demo/object_detection/linux/picodet_detection/models/picodetv2_relu6_coco_no_fuse 目录下的 subgraph.txt 文件。(feed 和 fetch 分别代表整个模型的输入和输入)
+ - 首先看到示例 Demo 中 Paddle-Lite-Demo/object_detection/assets/models/picodetv2_relu6_coco_no_fuse 目录下的 subgraph.txt 文件。(feed 和 fetch 分别代表整个模型的输入和输入)
   ```
   feed:feed:scale_factor
   feed:feed:image
