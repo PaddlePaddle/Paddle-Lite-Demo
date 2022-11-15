@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// include "./pose_detection_demo.h"
+#include <arm_neon>
 
 #include <fstream>
 #include <limits>
@@ -20,7 +20,6 @@
 #include "yaml-cpp/yaml.h"
 
 /*
-#include <arm_neon>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
