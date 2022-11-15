@@ -61,7 +61,9 @@ sh run.sh armv8             # 3. 执行物体检测（picodet 模型） demo，�
 ```
 
 ### Demo 结果如下:（注意，示例的 picodet 仅使用 coco 数据集，在实际场景中效果一般，请使用实际业务场景重新训练）
-<center><img decoding="async" src="https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/demo_view.jpg" alt="tinpose_view_image" width="30%"></center>
+<center class="half">
+  <img decoding="async" src="https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/demo_view.jpg" alt="picodet_view_image" width="50%">
+</center>
 
 ## 更新预测库
 
