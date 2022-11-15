@@ -11,22 +11,23 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <arm_neon>
+#include <arm_neon.h>
+#include <stdio.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 #include <fstream>
 #include <limits>
+#include <vector>
+
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/opencv.hpp>
 
 #include "./paddle_api.h"
 #include "yaml-cpp/yaml.h"
 
 /*
-#include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/opencv.hpp>
-#include <stdio.h>
-#include <sys/time.h>
-#include <unistd.h>
-#include <vector>
 */
 const int WARMUP_COUNT = 1;
 const int REPEAT_COUNT = 2;
