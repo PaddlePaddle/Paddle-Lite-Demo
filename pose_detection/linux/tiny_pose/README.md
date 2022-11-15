@@ -58,7 +58,7 @@ cp -f libs_A311D/* ./                                             # 2-2. 将A311
 cd tiny_pose                # 1. 终端中进入。以下如果是 32bit 环境（RV1126、RV1109...），则armv8->armv7hf
 sh build.sh armv8           # 2. 编译 Demo 可执行程序
 sh run.sh armv8             # 3-1. 执行姿态检测（pptinypose 模型） demo，单帧图片运行，将/image中的图片作为输入，保存处理后图片并呈现检测结果
-sh run_rt.sh armv8          # 3-2. 执行姿态检测（pptinypose 模型） demo，实时视频运行，会直接开启摄像头，启动图形界面并呈现检测结果
+sh run_realtime.sh armv8          # 3-2. 执行姿态检测（pptinypose 模型） demo，实时视频运行，会直接开启摄像头，启动图形界面并呈现检测结果
 ```
 
 ### Demo 结果如下:（注意，示例的 tiny-pose 仅使用 coco 数据集与部分其他数据集，在实际场景中效果一般，请使用实际业务场景重新训练）
