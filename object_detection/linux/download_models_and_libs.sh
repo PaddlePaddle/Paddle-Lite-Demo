@@ -2,7 +2,7 @@
 
 set -e
 
-DETECTION_MODEL_DIR="$(pwd)/picodet_detection/models"
+DETECTION_MODEL_DIR="../assets/models"
 LIBS_DIR="$(pwd)"
 
 DETECTION_MODEL_URL="https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/models/picodetv2_relu6_coco_no_fuse.tar.gz"
