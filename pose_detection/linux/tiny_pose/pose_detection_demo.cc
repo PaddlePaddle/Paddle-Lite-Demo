@@ -28,7 +28,7 @@
 #include "yaml-cpp/yaml.h"
 
 const int WARMUP_COUNT = 1;
-const int REPEAT_COUNT = 2;
+const int REPEAT_COUNT = 1;
 const int CPU_THREAD_NUM = 2;
 int SEARCH_SCOPE = 4;
 const paddle::lite_api::PowerMode CPU_POWER_MODE =
