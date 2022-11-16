@@ -197,7 +197,7 @@ std::unique_ptr<const Tensor> output_tensor(std::move(predictor->GetOutput(0)));
 
 ### 更新模型
 1. 请参考 PaddleDetection 中 [picodet 重训和全量化文档](https://github.com/PaddlePaddle/PaddleDetection/blob/develop/configs/picodet/FULL_QUANTIZATION.md)，基于用户自己数据集重训并且重新全量化
-2. 将模型存放到目录 `object_detection_demo/models/` 下；
+2. 将模型存放到目录 `object_detection/assets/models/` 下；
 3. 模型名字跟工程中模型名字一模一样，即均是使用 `model`、`params`；
 
 ```shell
@@ -212,7 +212,7 @@ export GLOG_v=0 # Paddle-Lite 日志等级
 export VSI_NN_LOG_LEVEL=0 # TIM-VX 日志等级
 export VIV_VX_ENABLE_GRAPH_TRANSFORM=-pcq:1 # NPU 开启 perchannel 量化模型
 export VIV_VX_SET_PER_CHANNEL_ENTROPY=100 # 同上 
-build/object_detection_demo models/picodetv2_relu6_coco_no_fuse ../../assets/labels/coco_label_list.txt models/picodetv2_relu6_coco_no_fuse/subgraph.txt models/picodetv2_relu6_coco_no_fuse/picodet.yml  # 执行 Demo 程序，4个 arg 分别为：模型、 label 文件、 自定义异构配置、 yaml
+build/object_detection_demo ../../assets/models/picodetv2_relu6_coco_no_fuse ../../assets/models/coco_label_list.txt ../../assets/models/picodetv2_relu6_coco_no_fuse/subgraph.txt ../../assets/models/picodetv2_relu6_coco_no_fuse/picodet.yml  # 执行 Demo 程序，4个 arg 分别为：模型、 label 文件、 自定义异构配置、 yaml
 ```
 
 - 如果需要更新 `label_list` 或者 `yaml` 文件，则修改 `object_detection_demo/run.sh` 中执行命令的第二个和第四个 arg 指定为新的 label 文件和 yaml 配置文件；
