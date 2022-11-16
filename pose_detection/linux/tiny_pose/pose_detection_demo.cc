@@ -200,8 +200,8 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
                                 cv::Mat *output_image, double time) {
   bool target_detected = true;
   std::vector<RESULT> results;
-  float scale_x = output_image.rows / 32.f;
-  float scale_y = output_image.cols / 24.f;
+  float scale_x = (*output_image)->rows / 32.f;
+  float scale_y = (*output_image)->cols / 24.f;
   std::vector<cv::Point> kpts;
   std::vector<std::array<int, 2>> link_kpt = {
       {0, 1},   {1, 3},   {3, 5},   {5, 7},   {7, 9},  {5, 11},
