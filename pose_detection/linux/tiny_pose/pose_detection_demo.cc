@@ -230,10 +230,10 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
     }
     // vision show
     for (auto p : kpts) {
-      cv::circle(output_image, p, 2, cv::Scalar(0, 0, 255), -1);
+      cv::circle(*output_image, p, 2, cv::Scalar(0, 0, 255), -1);
     }
     for (auto idx : link_kpt) {
-      cv::line(output_image, kpts[idx[0]], kpts[idx[1]], cv::Scalar(255, 0, 0),
+      cv::line(*output_image, kpts[idx[0]], kpts[idx[1]], cv::Scalar(255, 0, 0),
                1);
     }
   }
@@ -306,11 +306,13 @@ process(const cv::Mat &input_image,
     output_size *= dim;
   }
   cv::Mat output_image = input_image.clone();
+  cv::Mat *output_image_pr = &output_image;
   double postprocess_start_time = get_current_us();
 
   // Run postprocess
-  std::vector<RESULT> results = postprocess(
-      output_data, output_size, SCORE_THRESHOLD, output_image, prediction_time);
+  std::vector<RESULT> results =
+      postprocess(output_data, output_size, SCORE_THRESHOLD, output_image_pr,
+                  prediction_time);
   double postprocess_end_time = get_current_us();
   double postprocess_time =
       (postprocess_end_time - postprocess_start_time) / 1000.f;
