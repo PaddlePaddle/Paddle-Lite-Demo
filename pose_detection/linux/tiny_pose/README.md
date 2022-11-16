@@ -231,46 +231,45 @@ build/pose_detection_demo ../../assets/models/PP_TinyPose_128x96_qat_dis_nopact 
 ```c++
 std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
                                 const float score_threshold,
-                                cv::Mat &output_image, double time) {
-	bool target_detected=true;
-	std::vector<RESULT> results;
-	float scale_x=output_image.rows/32.f;
-	float scale_y=output_image.cols/24.f;
-	std::vector<cv::Point> kpts;
-	std::vector<std::array<int, 2>> link_kpt = {
-		{0,1},{1,3},{3,5},{5,7},{7,9},
-							{5,11},{11,13},{13,15},
-		{0,2},{2,4},{4,6},{6,8},{8,10},
-							{6,12},{12,14},{14,16},
-		{11,12}};
-	
-	//get posted result
-	for (int64_t i = 0; i < output_size; i += 768) {
-		results.push_back(get_keypoints(output_data+i,i/768));
-		if(results[i/768].num_joints<0){
-			target_detected=false;
-			break;
-		}
-	}
+                                cv::Mat *output_image, double time) {
+  bool target_detected = true;
+  std::vector<RESULT> results;
+  float scale_x = output_image->rows / 32.f;
+  float scale_y = output_image->cols / 24.f;
+  std::vector<cv::Point> kpts;
+  std::vector<std::array<int, 2>> link_kpt = {
+      {0, 1},   {1, 3},   {3, 5},   {5, 7},   {7, 9},  {5, 11},
+      {11, 13}, {13, 15}, {0, 2},   {2, 4},   {4, 6},  {6, 8},
+      {8, 10},  {6, 12},  {12, 14}, {14, 16}, {11, 12}};
 
-	//shell&vision show
-	if(target_detected){
-		//shell show
-		printf("results: %ld\n", results.size());
-		for (int i = 0; i < results.size(); i++) {
-		std::array<float, 2> center=find_center(results[i],scale_x,scale_y);
-		kpts.push_back(cv::Point(center[1],center[0]));
-		printf("[%d] - %f, %f\n", results[i].num_joints, center[0], center[1]);
-		}
-            //vision show
-		for(auto p:kpts){
-			cv::circle(output_image,p,2,cv::Scalar(0, 0, 255),-1);
-		}
-		for(auto idx:link_kpt){
-			cv::line(output_image,kpts[idx[0]],kpts[idx[1]],cv::Scalar(255, 0, 0),1);
-		}
-	}
-	return results;
+  // get posted result
+  for (int64_t i = 0; i < output_size; i += 768) {
+    results.push_back(get_keypoints(output_data + i, i / 768));
+    if (results[i / 768].num_joints < 0) {
+      target_detected = false;
+      break;
+    }
+  }
+
+  // shell&vision show
+  if (target_detected) {
+    // shell show
+    printf("results: %ld\n", results.size());
+    for (int i = 0; i < results.size(); i++) {
+      std::array<float, 2> center = find_center(results[i], scale_x, scale_y);
+      kpts.push_back(cv::Point(center[1], center[0]));
+      printf("[%d] - %f, %f\n", results[i].num_joints, center[0], center[1]);
+    }
+    // vision show
+    for (auto p : kpts) {
+      cv::circle(*output_image, p, 2, cv::Scalar(0, 0, 255), -1);
+    }
+    for (auto idx : link_kpt) {
+      cv::line(*output_image, kpts[idx[0]], kpts[idx[1]], cv::Scalar(255, 0, 0),
+               1);
+    }
+  }
+  return results;
 }
 ```
 
@@ -313,35 +312,3 @@ valid_places.push_back(
     ```
       op_type0:var_name0,var_name1:var_name2          表示将算子类型为 op_type0、输入张量为var_name0 和 var_name1、输出张量为 var_name2 的节点强制运行在 ARM CPU 上
     ```
-
-### 第四步，修改异构配置文件
- - 首先看到示例 Demo 中 Paddle-Lite-Demo/pose_detection/assets/models/PP_TinyPose_128x96_qat_dis_nopact 目录下的 subgraph.txt 文件。(feed 和 fetch 分别代表整个模型的输入和输出)
-  ```
-  feed:feed:scale_factor
-  feed:feed:image
-
-  sqrt:tmp_3:sqrt_0.tmp_0
-  reshape2:sqrt_0.tmp_0:reshape2_0.tmp_0,reshape2_0.tmp_1
-
-  matmul_v2:softmax_0.tmp_0,auto_113_:linear_0.tmp_0
-  reshape2:linear_0.tmp_0:reshape2_2.tmp_0,reshape2_2.tmp_1
-
-  sqrt:tmp_6:sqrt_1.tmp_0
-  reshape2:sqrt_1.tmp_0:reshape2_3.tmp_0,reshape2_3.tmp_1
-
-  matmul_v2:softmax_1.tmp_0,auto_113_:linear_1.tmp_0
-  reshape2:linear_1.tmp_0:reshape2_5.tmp_0,reshape2_5.tmp_1
-
-  sqrt:tmp_9:sqrt_2.tmp_0
-  reshape2:sqrt_2.tmp_0:reshape2_6.tmp_0,reshape2_6.tmp_1
-
-  matmul_v2:softmax_2.tmp_0,auto_113_:linear_2.tmp_0
-  ...
-  ```
- - 在 txt 中的都是需要异构至 cpu 计算的 layer，在示例 Demo 中，我们把 tinypose 后处理的部分异构至 arm cpu 做计算，不必担心，Paddle-Lite 的 arm kernel 性能也是非常卓越。
- - 如果新训练的模型没有额外修改 layer，则直接复制使用示例 Demo 中的 subgraph.txt 即可
- - 此时 ./run*.sh 看看精度是否符合预期，如果精度符合预期，恭喜，可以跳过本章节，enjoy it。
- - 如果精度不符合预期，则将上文『第二步，获取整网拓扑信息』中获取的拓扑信息，从 "feed" 之后第一行，直到 "sqrt" 之前，都复制进 sugraph.txt。这一步代表了将大量的 backbone 部分算子放到 arm cpu 计算。
- - 此时 ./run*.sh 看看精度是否符合预期，如果精度达标，那说明在 backbone 中确实存在引入 NPU 精度异常的层（再次重申，在 subgraph.txt 的代表强制在 arm cpu 计算）。
- - 逐行删除、成片删除、二分法，发挥开发人员的耐心，找到引入 NPU 精度异常的 layer，将其留在 subgraph.txt 中，按照经验，如果有 NPU 精度问题，可能会有 1~5 层conv layer 需要异构。
- - 剩余没有精度问题的 layer 在 subgraph.txt 中删除即可

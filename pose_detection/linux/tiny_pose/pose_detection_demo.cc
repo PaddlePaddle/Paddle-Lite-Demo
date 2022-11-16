@@ -54,7 +54,6 @@ inline int64_t get_current_us() {
 
 RESULT get_keypoints(const float *score_map, int num_joints) {
   struct RESULT result;
-
   // rough center
   int x = 0, y = 0;
   float max_score = -1.f;
@@ -66,11 +65,9 @@ RESULT get_keypoints(const float *score_map, int num_joints) {
       }
     }
   }
-
   // no target
   if (max_score < SCORE_THRESHOLD)
     return result;
-
   // get potential points
   SEARCH_SCOPE = std::min({SEARCH_SCOPE, x, y, 31 - x, 23 - y});
   for (int i = x - SEARCH_SCOPE; i <= x + SEARCH_SCOPE; i++) {
@@ -207,7 +204,6 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
       {0, 1},   {1, 3},   {3, 5},   {5, 7},   {7, 9},  {5, 11},
       {11, 13}, {13, 15}, {0, 2},   {2, 4},   {4, 6},  {6, 8},
       {8, 10},  {6, 12},  {12, 14}, {14, 16}, {11, 12}};
-
   // get posted result
   for (int64_t i = 0; i < output_size; i += 768) {
     results.push_back(get_keypoints(output_data + i, i / 768));
@@ -216,7 +212,6 @@ std::vector<RESULT> postprocess(const float *output_data, int64_t output_size,
       break;
     }
   }
-
   // shell&vision show
   if (target_detected) {
     // shell show
@@ -248,7 +243,6 @@ process(const cv::Mat &input_image,
   int input_width = INPUT_SHAPE[3];
   int input_height = INPUT_SHAPE[2];
   auto *input_data = input_tensor->mutable_data<float>();
-
 // get scale factor
 #if 0
   auto scale_factor_tensor = predictor->GetInput(1);
@@ -257,7 +251,6 @@ process(const cv::Mat &input_image,
   scale_factor_data[0] = 1.f;
   scale_factor_data[1] = 1.f;
 #endif
-
   // Run preprocess
   double preprocess_start_time = get_current_us();
   preprocess(input_image, INPUT_MEAN, INPUT_STD, INPUT_SCALE, input_width,
@@ -266,7 +259,6 @@ process(const cv::Mat &input_image,
   double preprocess_time =
       (preprocess_end_time - preprocess_start_time) / 1000.f;
   double prediction_time;
-
   // Run predictor
   // warm up to skip the first inference for stable time,
   // remove it in actual products
@@ -294,7 +286,6 @@ process(const cv::Mat &input_image,
   printf("warmup: %d repeat: %d, average: %f ms, max: %f ms, min: %f ms\n",
          WARMUP_COUNT, REPEAT_COUNT, prediction_time, max_time_cost,
          min_time_cost);
-
   // Get output
   std::unique_ptr<const paddle::lite_api::Tensor> output_tensor(
       std::move(predictor->GetOutput(0)));
@@ -306,7 +297,6 @@ process(const cv::Mat &input_image,
   cv::Mat output_image = input_image.clone();
   cv::Mat *output_image_pr = &output_image;
   double postprocess_start_time = get_current_us();
-
   // Run postprocess
   std::vector<RESULT> results =
       postprocess(output_data, output_size, SCORE_THRESHOLD, output_image_pr,
@@ -314,7 +304,6 @@ process(const cv::Mat &input_image,
   double postprocess_end_time = get_current_us();
   double postprocess_time =
       (postprocess_end_time - postprocess_start_time) / 1000.f;
-
   // runtime summary
   printf("Preprocess time: %f ms\n", preprocess_time);
   printf("Prediction time: %f ms\n", prediction_time);
@@ -332,20 +321,16 @@ int main(int argc, char **argv) {
            "isn't provided.");
     return -1;
   }
-
   // save argvs: argv[1]=model argv[2]=subgragh argv[3]=yaml
   std::string model_path = argv[1];
   std::string nnadapter_subgraph_partition_config_path = argv[2];
   std::string yaml_path = argv[3];
-
   // read yaml
   if (yaml_path != "null") {
     load_yaml_config(yaml_path);
   }
-
   // Run inference by using full api with CxxConfig
   paddle::lite_api::CxxConfig cxx_config;
-
   // build model
   if (1) {
     cxx_config.set_model_file(model_path + "/model.pdmodel");
@@ -353,21 +338,17 @@ int main(int argc, char **argv) {
   } else {
     cxx_config.set_model_dir(model_path);
   }
-
   // CPU config
   cxx_config.set_threads(CPU_THREAD_NUM);
   cxx_config.set_power_mode(CPU_POWER_MODE);
-
   // create paddle predictor
   std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor = nullptr;
-
   // CPU mode
   std::vector<paddle::lite_api::Place> valid_places;
   valid_places.push_back(
       paddle::lite_api::Place{TARGET(kARM), PRECISION(kInt8)});
   valid_places.push_back(
       paddle::lite_api::Place{TARGET(kARM), PRECISION(kFloat)});
-
 // NPU mode
 #if 1
   valid_places.push_back(
@@ -378,11 +359,9 @@ int main(int argc, char **argv) {
 #endif
   std::string device = "verisilicon_timvx";
   cxx_config.set_nnadapter_device_names({device});
-
 // Set the subgraph custom partition configuration file
 // cxx_config.set_nnadapter_context_properties(nnadapter_context_properties);
 // cxx_config.set_nnadapter_model_cache_dir(nnadapter_model_cache_dir);
-
 // subgragh config
 #if 1
   if (!nnadapter_subgraph_partition_config_path.empty()) {
@@ -404,7 +383,6 @@ int main(int argc, char **argv) {
     }
   }
 #endif
-
   // save opmodel
   try {
     predictor = paddle::lite_api::CreatePaddlePredictor(cxx_config);
@@ -413,7 +391,6 @@ int main(int argc, char **argv) {
   } catch (std::exception e) {
     printf("An internal error occurred in PaddleLite(cxx config).\n");
   }
-
   // use ‘MobileConfig’ for .nb
   paddle::lite_api::MobileConfig config;
   config.set_model_from_file(model_path + ".nb");
