@@ -60,6 +60,7 @@ sh build.sh armv8           # 2. 编译 Demo 可执行程序
 sh run.sh armv8             # 3-1. 执行姿态检测（pptinypose 模型） demo，单帧图片运行，将/image中的图片作为输入，保存处理后图片并呈现检测结果
 sh run_realtime.sh armv8          # 3-2. 执行姿态检测（pptinypose 模型） demo，实时视频运行，会直接开启摄像头，启动图形界面并呈现检测结果
 ```
+注意：部分环节可能出现运行时间较长的情况，请耐心等待。另外，若画面刷新率较低，可修改程序中的WARMUP_COUNT、REPEAT_COUNT参数重新编译运行。
 
 ### Demo 结果如下:（注意，示例的 tiny-pose 仅使用 coco 数据集与部分其他数据集，在实际场景中效果一般，请使用实际业务场景重新训练）
 <center class="half">
