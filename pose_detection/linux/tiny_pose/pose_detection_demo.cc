@@ -27,8 +27,6 @@
 #include "./paddle_api.h"
 #include "yaml-cpp/yaml.h"
 
-/*
-*/
 const int WARMUP_COUNT = 1;
 const int REPEAT_COUNT = 2;
 const int CPU_THREAD_NUM = 2;
