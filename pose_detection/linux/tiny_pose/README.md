@@ -216,7 +216,7 @@ export GLOG_v=0 # Paddle-Lite 日志等级
 export VSI_NN_LOG_LEVEL=0 # TIM-VX 日志等级
 export VIV_VX_ENABLE_GRAPH_TRANSFORM=-pcq:1 # NPU 开启 perchannel 量化模型
 export VIV_VX_SET_PER_CHANNEL_ENTROPY=100 # 同上 
-build/pose_detection_demo ../../assets/models/PP_TinyPose_128x96_qat_dis_nopact ../../assets/models/PP_TinyPose_128x96_qat_dis_nopact/subgraph.txt ../../assets/models/PP_TinyPose_128x96_qat_dis_nopact/infer_cfg.yml ../../assets/images/posedet_demo.jpg ../../assets/images/posedet_demo_output.jpg  # 执行 Demo 程序，5个 arg 分别为：模型、 自定义异构配置、 yaml、 input_image、 output_image
+build/pose_detection_demo ../../assets/models/PP_TinyPose_128x96_qat_dis_nopact ../../assets/models/PP_TinyPose_128x96_qat_dis_nopact/verisilicon_timvx_subgraph_partition_config_file.txt ../../assets/models/PP_TinyPose_128x96_qat_dis_nopact/infer_cfg.yml ../../assets/images/posedet_demo.jpg ../../assets/images/posedet_demo_output.jpg  # 执行 Demo 程序，5个 arg 分别为：模型、 自定义异构配置、 yaml、 input_image、 output_image
 ```
 
 

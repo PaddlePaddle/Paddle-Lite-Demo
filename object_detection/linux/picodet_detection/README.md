@@ -212,7 +212,7 @@ export GLOG_v=0 # Paddle-Lite 日志等级
 export VSI_NN_LOG_LEVEL=0 # TIM-VX 日志等级
 export VIV_VX_ENABLE_GRAPH_TRANSFORM=-pcq:1 # NPU 开启 perchannel 量化模型
 export VIV_VX_SET_PER_CHANNEL_ENTROPY=100 # 同上 
-build/object_detection_demo ../../assets/models/picodetv2_relu6_coco_no_fuse ../../assets/models/coco_label_list.txt ../../assets/models/picodetv2_relu6_coco_no_fuse/subgraph.txt ../../assets/models/picodetv2_relu6_coco_no_fuse/picodet.yml  # 执行 Demo 程序，4个 arg 分别为：模型、 label 文件、 自定义异构配置、 yaml
+build/object_detection_demo ../../assets/models/picodetv2_relu6_coco_no_fuse ../../assets/models/coco_label_list.txt ../../assets/models/picodetv2_relu6_coco_no_fuse/verisilicon_timvx_subgraph_partition_config_file.txt ../../assets/models/picodetv2_relu6_coco_no_fuse/picodet.yml  # 执行 Demo 程序，4个 arg 分别为：模型、 label 文件、 自定义异构配置、 yaml
 ```
 
 - 如果需要更新 `label_list` 或者 `yaml` 文件，则修改 `object_detection_demo/run.sh` 中执行命令的第二个和第四个 arg 指定为新的 label 文件和 yaml 配置文件；
@@ -324,7 +324,7 @@ valid_places.push_back(
     ```
 
 ### 第四步，修改异构配置文件
- - 首先看到示例 Demo 中 Paddle-Lite-Demo/object_detection/assets/models/picodetv2_relu6_coco_no_fuse 目录下的 subgraph.txt 文件。(feed 和 fetch 分别代表整个模型的输入和输入)
+ - 首先看到示例 Demo 中 Paddle-Lite-Demo/object_detection/assets/models/picodetv2_relu6_coco_no_fuse 目录下的 verisilicon_timvx_subgraph_partition_config_file.txt 文件。(feed 和 fetch 分别代表整个模型的输入和输入)
   ```
   feed:feed:scale_factor
   feed:feed:image
@@ -348,9 +348,9 @@ valid_places.push_back(
   ...
   ```
  - 在 txt 中的都是需要异构至 cpu 计算的 layer，在示例 Demo 中，我们把 picodet 后处理的部分异构至 arm cpu 做计算，不必担心，Paddle-Lite 的 arm kernel 性能也是非常卓越。
- - 如果新训练的模型没有额外修改 layer，则直接复制使用示例 Demo 中的 subgraph.txt 即可
+ - 如果新训练的模型没有额外修改 layer，则直接复制使用示例 Demo 中的 verisilicon_timvx_subgraph_partition_config_file.txt 即可
  - 此时 ./run.sh 看看精度是否符合预期，如果精度符合预期，恭喜，可以跳过本章节，enjoy it。
  - 如果精度不符合预期，则将上文『第二步，获取整网拓扑信息』中获取的拓扑信息，从 "feed" 之后第一行，直到 "sqrt" 之前，都复制进 sugraph.txt。这一步代表了将大量的 backbone 部分算子放到 arm cpu 计算。
- - 此时 ./run.sh 看看精度是否符合预期，如果精度达标，那说明在 backbone 中确实存在引入 NPU 精度异常的层（再次重申，在 subgraph.txt 的代表强制在 arm cpu 计算）。
- - 逐行删除、成片删除、二分法，发挥开发人员的耐心，找到引入 NPU 精度异常的 layer，将其留在 subgraph.txt 中，按照经验，如果有 NPU 精度问题，可能会有 1~5 层conv layer 需要异构。
- - 剩余没有精度问题的 layer 在 subgraph.txt 中删除即可
+ - 此时 ./run.sh 看看精度是否符合预期，如果精度达标，那说明在 backbone 中确实存在引入 NPU 精度异常的层（再次重申，在 verisilicon_timvx_subgraph_partition_config_file.txt 的代表强制在 arm cpu 计算）。
+ - 逐行删除、成片删除、二分法，发挥开发人员的耐心，找到引入 NPU 精度异常的 layer，将其留在 verisilicon_timvx_subgraph_partition_config_file.txt 中，按照经验，如果有 NPU 精度问题，可能会有 1~5 层conv layer 需要异构。
+ - 剩余没有精度问题的 layer 在 verisilicon_timvx_subgraph_partition_config_file.txt 中删除即可
