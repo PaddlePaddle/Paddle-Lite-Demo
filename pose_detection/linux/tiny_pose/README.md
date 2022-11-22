@@ -57,8 +57,7 @@ cp -f libs_A311D/* ./                                             # 2-2. 将A311
 ```shell
 cd tiny_pose                # 1. 终端中进入。以下如果是 32bit 环境（RV1126、RV1109...），则armv8->armv7hf
 sh build.sh armv8           # 2. 编译 Demo 可执行程序
-sh run.sh armv8             # 3-1. 执行姿态检测（pptinypose 模型） demo，单帧图片运行，将/image中的图片作为输入，保存处理后图片并呈现检测结果
-sh run_realtime.sh armv8          # 3-2. 执行姿态检测（pptinypose 模型） demo，实时视频运行，会直接开启摄像头，启动图形界面并呈现检测结果
+sh run.sh armv8             # 3. 执行姿态检测（pptinypose 模型） demo，默认实时检测，单帧检测参考“如何更新模型和输入/输出预处理”章节修改脚本
 ```
 注意：部分环节可能出现运行时间较长的情况，请耐心等待。另外，若画面刷新率较低，可修改程序中的WARMUP_COUNT、REPEAT_COUNT参数重新编译运行。
 
@@ -71,7 +70,7 @@ sh run_realtime.sh armv8          # 3-2. 执行姿态检测（pptinypose 模型�
 ## 更新预测库
 
 * Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
- * 参考 [芯原 TIM-VX 部署示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/verisilicon_timvx.html#tim-vx)，编译预测库
+ * 参考 [(瑞芯微/晶晨/恩智浦) 芯原 TIM-VX](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/verisilicon_timvx.html#tim-vx)，编译预测库
  * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
     * 替换 c++ 库
         * 头文件
@@ -123,11 +122,11 @@ Paddle-Lite-Demo/pose_detection/linux/tiny_pose/CMakeLists.txt
 Paddle-Lite-Demo/pose_detection/linux/tiny_pose/build.sh
 ```
 
-6. `run*.sh` : 运行脚本，请注意设置 arm-aarch，armv8 或者 armv7hf。默认为armv8
+6. `run.sh` : 运行脚本，请注意设置 arm-aarch，armv8 或者 armv7hf。默认为armv8
 
 ```shell
 # 位置
-Paddle-Lite-Demo/pose_detection/linux/tiny_pose/run*.sh
+Paddle-Lite-Demo/pose_detection/linux/tiny_pose/run.sh
 ```
 - 请注意，运行需要4个元素：测试程序、模型、异构配置、yaml 文件。
 
@@ -205,7 +204,7 @@ std::unique_ptr<const Tensor> output_tensor(std::move(predictor->GetOutput(0)));
 3. 模型名字跟工程中模型名字一模一样，即均是使用 `model.pdmodel`、`model.pdiparams`；
 
 ```shell
-# shell 脚本 `tiny_pose/run*.sh`
+# shell 脚本 `tiny_pose/run.sh`
 TARGET_ABI=armv8 # for 64bit, such as Amlogic A311D
 #TARGET_ABI=armv7hf # for 32bit, such as Rockchip 1109/1126
 if [ -n "$1" ]; then
@@ -216,7 +215,9 @@ export GLOG_v=0 # Paddle-Lite 日志等级
 export VSI_NN_LOG_LEVEL=0 # TIM-VX 日志等级
 export VIV_VX_ENABLE_GRAPH_TRANSFORM=-pcq:1 # NPU 开启 perchannel 量化模型
 export VIV_VX_SET_PER_CHANNEL_ENTROPY=100 # 同上 
-build/pose_detection_demo ../../assets/models/PP_TinyPose_128x96_qat_dis_nopact ../../assets/models/PP_TinyPose_128x96_qat_dis_nopact/verisilicon_timvx_subgraph_partition_config_file.txt ../../assets/models/PP_TinyPose_128x96_qat_dis_nopact/infer_cfg.yml ../../assets/images/posedet_demo.jpg ../../assets/images/posedet_demo_output.jpg  # 执行 Demo 程序，5个 arg 分别为：模型、 自定义异构配置、 yaml、 input_image、 output_image
+build/pose_detection_demo ../../assets/models/PP_TinyPose_128x96_qat_dis_nopact ../../assets/models/PP_TinyPose_128x96_qat_dis_nopact/verisilicon_timvx_subgraph_partition_config_file.txt ../../assets/models/PP_TinyPose_128x96_qat_dis_nopact/infer_cfg.yml
+# 执行 Demo 程序，3个 arg 分别为：模型、 自定义异构配置、 yaml
+# 若需执行单帧图片，在脚本末尾另外添加2个 arg ： ../../assets/images/posedet_demo.jpg ../../assets/images/posedet_demo_output.jpg
 ```
 
 
