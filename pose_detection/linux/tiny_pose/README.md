@@ -57,7 +57,7 @@ cp -f libs_A311D/* ./                                             # 2-2. 将A311
 ```shell
 cd tiny_pose                # 1. 终端中进入。以下如果是 32bit 环境（RV1126、RV1109...），则armv8->armv7hf
 sh build.sh armv8           # 2. 编译 Demo 可执行程序
-sh run.sh armv8             # 3. 执行姿态检测（pptinypose 模型） demo，默认实时检测，单帧检测参考“如何更新模型和输入/输出预处理”章节修改脚本
+sh run.sh armv8             # 3. 执行姿态检测demo，默认实时检测，单帧检测参考“如何更新模型和输入/输出预处理”章节修改脚本
 ```
 注意：部分环节可能出现运行时间较长的情况，请耐心等待。另外，若画面刷新率较低，可修改程序中的WARMUP_COUNT、REPEAT_COUNT参数重新编译运行。
 
