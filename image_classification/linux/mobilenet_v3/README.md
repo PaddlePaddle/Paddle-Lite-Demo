@@ -8,7 +8,7 @@
 ### 环境准备
 
 * 准备 ARMLiunx 开发版，将系统刷为 Ubuntu，用于 Demo 编译和运行。请注意，本 Demo 是使用板上编译，而非交叉编译，因此需要图形界面的开发板操作系统。
-* 如果需要使用 芯原 NPU 的计算加速，对 NPU 驱动版本有严格要求，请务必注意事先参考 [芯原 TIM-VX 部署示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/verisilicon_timvx.html#id6)，将 NPU 驱动改为要求的版本。
+* 如果需要使用 芯原 NPU 的计算加速，对 NPU 驱动版本有严格要求，请务必注意事先参考 [芯原 TIM-VX 部署示例](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/verisilicon_timvx.html#id6)，将 NPU 驱动改为要求的版本。
 * Paddle Lite 当前已验证的开发板为 Khadas VIM3（芯片为 Amlogic A311d）、荣品 RV1126、荣品RV1109，其它平台用户可自行尝试；
  - Khadas VIM3：由于 VIM3 出厂自带 Android 系统，请先刷成 Ubuntu 系统，在此提供刷机教程：[VIM3/3L Linux 文档](https://docs.khadas.com/linux/zh-cn/vim3)，其中有详细描述刷机方法。以及系统镜像：VIM3 Linux：VIM3_Ubuntu-gnome-focal_Linux-4.9_arm64_EMMC_V1.0.7-210625：[官方链接](http://dl.khadas.com/firmware/VIM3/Ubuntu/EMMC/VIM3_Ubuntu-gnome-focal_Linux-4.9_arm64_EMMC_V1.0.7-210625.img.xz)；[百度云备用链接](https://paddlelite-demo.bj.bcebos.com/devices/verisilicon/firmware/khadas/vim3/VIM3_Ubuntu-gnome-focal_Linux-4.9_arm64_EMMC_V1.0.7-210625.img.xz)
  - 荣品 RV1126、1109：由于出场自带 buildroot 系统，如果使用 GUI 界面的 demo，请先刷成 Ubuntu 系统，在此提供刷机教程：[RV1126/1109 教程](https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/os_img/rockchip/RV1126-RV1109%E4%BD%BF%E7%94%A8%E6%8C%87%E5%AF%BC%E6%96%87%E6%A1%A3-V3.0.pdf)，[刷机工具](https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/os_img/rockchip/RKDevTool_Release.zip)，以及镜像：[1126镜像](https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/os_img/update-pro-rv1126-ubuntu20.04-5-720-1280-v2-20220505.img)，[1109镜像](https://paddlelite-demo.bj.bcebos.com/Paddle-Lite-Demo/os_img/update-pro-rv1109-ubuntu20.04-5.5-720-1280-v2-20220429.img)。完整的文档和各种镜像请参考[百度网盘链接](https://pan.baidu.com/s/1Id0LMC0oO2PwR2YcYUAaiQ#list/path=%2F&parentPath=%2Fsharelink2521613171-184070898837664)，密码：2345。
@@ -55,7 +55,7 @@ sh run.sh armv8       # 3. 执行物体分类（mobilenet_v3 模型） demo，�
 ## 更新预测库
 
 * Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
- * 参考 [芯原 TIM-VX 部署示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/verisilicon_timvx.html#tim-vx)，编译预测库
+ * 参考 [芯原 TIM-VX 部署示例](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/verisilicon_timvx.html#tim-vx)，编译预测库
  * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
     * 替换 c++ 库
         * 头文件
@@ -118,7 +118,7 @@ Paddle-Lite-Demo/image_classification/linux/mobilenet_v3/run.sh
 
 ## 代码讲解 （使用 Paddle Lite `C++ API` 执行预测）
 
-ARMLinux 示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://paddle-lite.readthedocs.io/zh/latest/api_reference/c++_api_doc.html)。
+ARMLinux 示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://www.paddlepaddle.org.cn/lite/develop/api_reference/cxx_api_doc.html)。
 
 ```c++
 #include <iostream>

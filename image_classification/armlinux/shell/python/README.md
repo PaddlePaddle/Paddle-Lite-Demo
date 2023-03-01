@@ -50,8 +50,8 @@ i: 2, index: 282, name: n02123159 tiger cat
 ## 更新预测库
 
 * Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
- * 参考 [Paddle Lite 源码编译文档](https://paddle-lite.readthedocs.io/zh/latest/source_compile/compile_env.html)准环境
- * 参考[源码编译 (ARMLinux)](https://paddle-lite.readthedocs.io/zh/develop/source_compile/linux_x86_compile_arm_linux.html)编译和安装 Paddle Lite 的 python 包。
+ * 参考 [Paddle Lite 源码编译文档](https://www.paddlepaddle.org.cn/lite/develop/source_compile/compile_env.html)准环境
+ * 参考[源码编译 (ARMLinux)](https://www.paddlepaddle.org.cn/lite/develop/source_compile/linux_x86_compile_arm_linux.html)编译和安装 Paddle Lite 的 python 包。
 
 ## Demo 内容介绍
 
@@ -71,7 +71,7 @@ i: 2, index: 282, name: n02123159 tiger cat
 
 ## 代码讲解 （使用 Paddle Lite `Python API` 执行预测）
 
-该示例基于 Python API 开发，调用 Paddle Lite `Python API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite Python API ](https://paddle-lite.readthedocs.io/zh/develop/api_reference/python_api_doc.html)。
+该示例基于 Python API 开发，调用 Paddle Lite `Python API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite Python API ](https://www.paddlepaddle.org.cn/lite/develop/api_reference/python_api_doc.html)。
 
 ```py
 # 1 引入必要的库
