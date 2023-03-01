@@ -313,7 +313,7 @@ valid_places.push_back(
  - 如果精度不行，请参考后续步骤。
 
 ### 第三步，获取整网拓扑信息
- - 回退第一步的修改，使用
+ - 回退第一步的修改，使用 NPU 加速
  - 修改 run.sh ，将其中 export GLOG_v=0 改为 export GLOG_v=5
  - 运行 Demo，等摄像头启动，即可 ctrl+c 关闭 Demo
  - 收集日志，搜索关键字 "subgraph operators" 随后那一段，便是整个模型的拓扑信息，其格式如下：
