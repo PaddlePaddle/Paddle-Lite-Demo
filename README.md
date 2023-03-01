@@ -48,7 +48,7 @@ Paddle-Lite 提供了多个应用场景的 demo，并支持 Android、iOS 和 Ar
 
 关于 Paddle-Lite 更多示例，请参考如下文档链接：
 - [文档官网](https://www.paddlepaddle.org.cn/lite)
-- [Android 示例](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/android_app_demo.html) [[图像分类]](https://paddlelite-demo.bj.bcebos.com/apps/android/mobilenet_classification_demo.apk)  [[目标检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/yolo_detection_demo.apk) [[口罩检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/mask_detection_demo.apk)  [[人脸关键点]](https://paddlelite-demo.bj.bcebos.com/apps/android/face_keypoints_detection_demo.apk) [[人像分割]](https://paddlelite-demo.bj.bcebos.com/apps/android/human_segmentation_demo.apk)
+- [Android apps](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/android_app_demo.html) [[图像分类]](https://paddlelite-demo.bj.bcebos.com/apps/android/mobilenet_classification_demo.apk)  [[目标检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/yolo_detection_demo.apk) [[口罩检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/mask_detection_demo.apk)  [[人脸关键点]](https://paddlelite-demo.bj.bcebos.com/apps/android/face_keypoints_detection_demo.apk) [[人像分割]](https://paddlelite-demo.bj.bcebos.com/apps/android/human_segmentation_demo.apk)
 - [iOS apps](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/ios_app_demo.html)
 - [Linux apps](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/linux_arm_demo.html)
 - [Arm](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/arm_cpu.html)
