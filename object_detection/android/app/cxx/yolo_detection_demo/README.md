@@ -39,7 +39,7 @@ Paddle Lite 预测库版本一样的 NDK
 ## 更新预测库
 
 * Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
- * 参考 [Paddle Lite 源码编译文档](https://paddle-lite.readthedocs.io/zh/latest/source_compile/compile_env.html)，编译 Android 预测库
+ * 参考 [Paddle Lite 源码编译文档](https://www.paddlepaddle.org.cn/lite/develop/source_compile/compile_env.html)，编译 Android 预测库
  * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
     * 替换 java 库
         * jar 包
@@ -213,7 +213,7 @@ yolo_detection_demo/app/cpp/CMakeLists.txt
 
 ## 代码讲解 （使用 Paddle Lite `C++ API` 执行预测）
 
-Android 示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://paddle-lite.readthedocs.io/zh/latest/api_reference/c++_api_doc.html)。
+Android 示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://www.paddlepaddle.org.cn/lite/develop/api_reference/cxx_api_doc.html)。
 
 ```c++
 #include <iostream>

@@ -33,7 +33,7 @@
 ## 更新预测库
 
 * Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
- * 参考 [Paddle Lite 源码编译文档](https://paddle-lite.readthedocs.io/zh/latest/source_compile/compile_env.html)，编译 Android 预测库
+ * 参考 [Paddle Lite 源码编译文档](https://www.paddlepaddle.org.cn/lite/develop/source_compile/compile_env.html)，编译 Android 预测库
     * 替换 c++ 库
         * 头文件
           将生成的 `build.lite.android.xxx.clang/inference_lite_lib.android.xxx/cxx/include` 文件夹替换 Demo 中的 `Paddle-Lite-Demoface_keypoints_detection/android/cxx/face_keypoints_detection/app/PaddleLite/cxx/include`
@@ -202,7 +202,7 @@ face_keypoints_detection/app/cpp/CMakeLists.txt
 
 ## 代码讲解 （使用 Paddle Lite `C++ API` 执行预测）
 
-Android 示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://paddle-lite.readthedocs.io/zh/latest/api_reference/c++_api_doc.html)。
+Android 示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下五步。更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://www.paddlepaddle.org.cn/lite/develop/api_reference/cxx_api_doc.html)。
 
 ```c++
 #include <iostream>

@@ -8,7 +8,7 @@
 
 * 准备 ARMLiunx 开发版，用于 Demo 运行。
 * Paddle Lite 当前已验证 RK3399（[Ubuntu 18.04](http://www.t-firefly.com/doc/download/page/id/3.html)） 或 树莓派 3B（[Raspbian Buster with desktop](https://www.raspberrypi.org/downloads/raspbian/)），这两个软、硬件环境，其它平台用户可自行尝试；
-* 支持树莓派 3B 摄像头采集图像，具体参考[树莓派 3B 摄像头安装与测试](/PaddleLite-armlinux-demo/enable-camera-on-raspberry-pi.md)
+* 支持树莓派 3B 摄像头采集图像，具体参考[树莓派 3B 摄像头安装与测试](https://github.com/PaddlePaddle/Paddle-Lite-Demo/blob/master/PaddleLite-armlinux-demo/enable-camera-on-raspberry-pi.md)
 * gcc g++ opencv cmake 的安装（以下所有命令均在设备上操作）
 
 ```bash
@@ -51,7 +51,7 @@ sh run.sh
 ## 如何更新预测库
 
 * Paddle Lite 项目：https://github.com/PaddlePaddle/Paddle-Lite
- * 参考 [Paddle Lite 源码编译文档](https://paddle-lite.readthedocs.io/zh/latest/source_compile/compile_env.html)，编译 Android 预测库
+ * 参考 [Paddle Lite 源码编译文档](https://www.paddlepaddle.org.cn/lite/develop/source_compile/compile_env.html)，编译 Android 预测库
  * 编译最终产物位于 `build.lite.xxx.xxx.xxx` 下的 `inference_lite_lib.xxx.xxx`
     * 替换 c++ 库
         * 头文件
@@ -147,7 +147,7 @@ use_direction_classify  0  # 是否使用方向分类器，0 表示不使用，1
 ## 代码讲解 （使用 Paddle Lite `C++ API` 执行预测）
 
 该示例基于 C++ API 开发，调用 Paddle Lite `C++s API` 包括以下五步。
-更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://paddle-lite.readthedocs.io/zh/latest/api_reference/c++_api_doc.html)。
+更详细的 `API` 描述参考：[Paddle Lite C++ API ](https://www.paddlepaddle.org.cn/lite/develop/api_reference/cxx_api_doc.html)。
 
 ```c++
 #include <iostream>

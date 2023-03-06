@@ -13,7 +13,7 @@ Paddle-Lite 提供了多个应用场景的 demo，并支持 Android、iOS 和 Ar
     * 基于 [yolov3_mobilenet_v3](https://paddlemodels.bj.bcebos.com/object_detection/mobile_models/lite/yolov3_mobilenet_v3.tar) 模型
       * [Android 示例](./object_detection/android/app/cxx/yolo_detection_demo/)
       * [iOS 示例](./object_detection/ios/yolov3_mobilenet_v3_demo/)
-    * 基于 [yolov5](https://console.bce.baidu.com/bos/?_=1653031668468#/bos/bucket?name=paddlelite-demo&location=bj&tab=object&path=models%2Fyolov5n%2F)  模型
+    * 基于 [yolov5](https://paddlelite-demo.bj.bcebos.com/models/yolov5n/yolov5n.zip)  模型
       * [Android 示例](./object_detection/android/app/cxx/yolov5n_detection_demo/)
       * iOS 示例
     * 基于 [pp_picodet](https://paddlelite-demo.bj.bcebos.com/demo/object_detection/models/picodet_s_320_coco_for_cpu.tar.gz) 模型
@@ -26,7 +26,7 @@ Paddle-Lite 提供了多个应用场景的 demo，并支持 Android、iOS 和 Ar
 * 人脸检测
     * 基于 [face-detection](https://paddlelite-demo.bj.bcebos.com/models/facedetection_fp32_240_430_fluid.tar.gz) 模型
       * [Android 示例](./face_detection/android/)
-      * [iOS 示例]((./face_detection/ios/face_detection))
+      * [iOS 示例](./face_detection/ios/face_detection/)
 * 人脸关键点检测
     * 基于 [face-detection](https://paddlelite-demo.bj.bcebos.com/models/facedetection_fp32_240_430_fluid.tar.gz) 和 [face-keypoint](https://paddlelite-demo.bj.bcebos.com/models/facekeypoints_detector_fp32_60_60_fluid.tar.gz) 模型
       * [Android 示例](./face_keypoints_detection/android/)
@@ -37,7 +37,6 @@ Paddle-Lite 提供了多个应用场景的 demo，并支持 Android、iOS 和 Ar
 * 口罩识别
     * 基于 [pyramidbox](https://paddlelite-demo.bj.bcebos.com/models/pyramidbox_lite_fp32_fluid.tar.gz) + [mask_detect](https://paddlelite-demo.bj.bcebos.com/models/mask_detector_fp32_128_128_fluid.tar.gz) 模型
       * [Android 示例](./mask_detection/android/)
-      * iOS 示例
 * 人像分割
     * 基于 [DeeplabV3](https://paddlelite-demo.bj.bcebos.com/models/deeplab_mobilenet_fp32_fluid.tar.gz) 模型
       * [Android 示例](./human_segmentation/android/)
@@ -48,17 +47,26 @@ Paddle-Lite 提供了多个应用场景的 demo，并支持 Android、iOS 和 Ar
       * [iOS 示例](./PP_shitu/ios/PPshitu)
 
 关于 Paddle-Lite 更多示例，请参考如下文档链接：
-- [文档官网](https://paddle-lite.readthedocs.io/zh/develop/index.html)
-- [Android 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/android_app_demo.html) [[图像分类]](https://paddlelite-demo.bj.bcebos.com/apps/android/mobilenet_classification_demo.apk)  [[目标检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/yolo_detection_demo.apk) [[口罩检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/mask_detection_demo.apk)  [[人脸关键点]](https://paddlelite-demo.bj.bcebos.com/apps/android/face_keypoints_detection_demo.apk) [[人像分割]](https://paddlelite-demo.bj.bcebos.com/apps/android/human_segmentation_demo.apk)
-- [iOS 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/ios_app_demo.html)
-- [ARMLinux 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/linux_arm_demo.html)
-- [X86 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/x86.html)
-- [OpenCL 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/opencl.html)
-- [FPGA 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/fpga.html)
-- [华为 NPU 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/huawei_kirin_npu.html)
-- [百度 XPU 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/baidu_xpu.html)
-- [瑞芯微 NPU 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/rockchip_npu.html)
-- [联发科 APU 示例](https://paddle-lite.readthedocs.io/zh/develop/demo_guides/mediatek_apu.html)
+- [文档官网](https://www.paddlepaddle.org.cn/lite)
+- [Android apps](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/android_app_demo.html) [[图像分类]](https://paddlelite-demo.bj.bcebos.com/apps/android/mobilenet_classification_demo.apk)  [[目标检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/yolo_detection_demo.apk) [[口罩检测]](https://paddlelite-demo.bj.bcebos.com/apps/android/mask_detection_demo.apk)  [[人脸关键点]](https://paddlelite-demo.bj.bcebos.com/apps/android/face_keypoints_detection_demo.apk) [[人像分割]](https://paddlelite-demo.bj.bcebos.com/apps/android/human_segmentation_demo.apk)
+- [iOS apps](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/ios_app_demo.html)
+- [Linux apps](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/linux_arm_demo.html)
+- [Arm](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/arm_cpu.html)
+- [x86](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/x86.html)
+- [OpenCL](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/opencl.html)
+- [Metal](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/metal.html)
+- [华为麒麟 NPU](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/huawei_kirin_npu.html)
+- [华为昇腾 NPU](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/huawei_ascend_npu.html)
+- [昆仑芯 XPU](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/kunlunxin_xpu.html)
+- [昆仑芯 XTCL](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/kunlunxin_xtcl.html)
+- [高通 QNN](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/qualcomm_qnn.html)
+- [寒武纪 MLU](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/cambricon_mlu.html)
+- [(瑞芯微/晶晨/恩智浦) 芯原 TIM-VX](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/verisilicon_timvx.html)
+- [Android NNAPI](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/android_nnapi.html)
+- [联发科 APU](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/mediatek_apu.html)
+- [颖脉 NNA](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/imagination_nna.html)
+- [Intel OpenVINO](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/intel_openvino.html)
+- [亿智 NPU](https://www.paddlepaddle.org.cn/lite/develop/demo_guides/eeasytech_npu.html)
 
 ## 要求
 
@@ -75,7 +83,7 @@ Paddle-Lite 提供了多个应用场景的 demo，并支持 Android、iOS 和 Ar
 
 * ARMLinux
     * RK3399（[Ubuntu 18.04](http://www.t-firefly.com/doc/download/page/id/3.html)） 或 树莓派3B（[Raspbian Buster with desktop](https://www.raspberrypi.org/downloads/raspbian/)），暂时验证了这两个软、硬件环境，其它平台用户可自行尝试；
-    * 支持树莓派3B摄像头采集图像，具体参考[树莓派3B摄像头安装与测试](/PaddleLite-armlinux-demo/enable-camera-on-raspberry-pi.md)
+    * 支持树莓派 3B 摄像头采集图像，具体参考[树莓派 3B 摄像头安装与测试](https://github.com/PaddlePaddle/Paddle-Lite-Demo/blob/master/PaddleLite-armlinux-demo/enable-camera-on-raspberry-pi.md)
     * gcc g++ opencv cmake的安装（以下所有命令均在设备上操作）
     ```bash
     $ sudo apt-get update
@@ -194,7 +202,7 @@ $ git clone https://github.com/PaddlePaddle/Paddle-Lite-Demo
   - 设置方法：可以通过界面的setting 按钮进行更新，也可以通过修改源码（`config.set_threads()`）的线程数进行更新。
 * FP16 推理：
   - demo 中模型默认是FP32 模型，如果**你是在armv8.2 架构以上的手机运行如小米9，则可选用FP16 模型进行推理**；否则，不能使用FP16 模型进行推理。
-  - FP16 推理方法：如果 APP 中 `assets/model` 目录下提供了FP16 模型（nb 模型以_fp16结尾），用户只需更新源码模型路径就行；否则，用户需要下载 [OPT 可执行文件](https://github.com/PaddlePaddle/Paddle-Lite/releases/tag/v2.10)，并参考 [OPT 使用文档](https://paddle-lite.readthedocs.io/zh/develop/user_guides/opt/opt_bin.html)重新转换模型(将 `enable_fp16` 设置为 true，如 `--enable_fp16=1`），然后更新源码中模型路径即可。
+  - FP16 推理方法：如果 APP 中 `assets/model` 目录下提供了FP16 模型（nb 模型以_fp16结尾），用户只需更新源码模型路径就行；否则，用户需要下载 [OPT 可执行文件](https://github.com/PaddlePaddle/Paddle-Lite/releases/tag/v2.10)，并参考 [OPT 使用文档](https://www.paddlepaddle.org.cn/lite/develop/user_guides/opt/opt_bin.html)重新转换模型(将 `enable_fp16` 设置为 true，如 `--enable_fp16=1`），然后更新源码中模型路径即可。
   - 如果提供的预测库没有包含FP16 kernel 算子话，用户需要从 [release 仓库](https://github.com/PaddlePaddle/Paddle-Lite/tags)中下载含有FP16 kernel新的预测库。
 * Int8/稀疏推理：
   - 用户可以使用 [PaddleSlim 工具](https://github.com/PaddlePaddle/PaddleSlim) 完成模型量化/稀疏化处理，进一步提升模型性能。
