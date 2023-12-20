@@ -101,8 +101,8 @@ void neon_mean_scale(const float *din, float *dout, int size, float *mean,
   }
   for (; i < size; i++) {
     *(dout_c0++) = (*(din++) - mean[0]) / scale[0];
-    *(dout_c0++) = (*(din++) - mean[1]) / scale[1];
-    *(dout_c0++) = (*(din++) - mean[2]) / scale[2];
+    *(dout_c1++) = (*(din++) - mean[1]) / scale[1];
+    *(dout_c2++) = (*(din++) - mean[2]) / scale[2];
   }
 }
 
